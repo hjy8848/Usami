@@ -1,0 +1,347 @@
+{
+  "world_id": "world_d7b758c82586402e848a",
+  "generator_version": "saas-generator-0.1.0",
+  "seed": 42,
+  "config_hash": "47f34c4a7c19d4ea8ddac5c81d2d79a927b0322f76c1d42419d099267705753a",
+  "clock": "2026-01-15T12:00:00Z",
+  "rules": {
+    "version": "saas-rules-0.1.0",
+    "refund_window_days": 14,
+    "plans": {
+      "starter": {
+        "id": "starter",
+        "name": "Starter",
+        "rank": 0,
+        "max_seats": 5
+      },
+      "team": {
+        "id": "team",
+        "name": "Team",
+        "rank": 1,
+        "max_seats": 20
+      },
+      "business": {
+        "id": "business",
+        "name": "Business",
+        "rank": 2,
+        "max_seats": 100
+      }
+    }
+  },
+  "users": {
+    "user_000": {
+      "id": "user_000",
+      "name": "User 0",
+      "email": "user0@usami.example"
+    },
+    "user_001": {
+      "id": "user_001",
+      "name": "User 1",
+      "email": "user1@usami.example"
+    },
+    "user_002": {
+      "id": "user_002",
+      "name": "User 2",
+      "email": "user2@usami.example"
+    },
+    "user_003": {
+      "id": "user_003",
+      "name": "User 3",
+      "email": "user3@usami.example"
+    },
+    "user_004": {
+      "id": "user_004",
+      "name": "User 4",
+      "email": "user4@usami.example"
+    },
+    "user_005": {
+      "id": "user_005",
+      "name": "User 5",
+      "email": "user5@usami.example"
+    },
+    "user_006": {
+      "id": "user_006",
+      "name": "User 6",
+      "email": "user6@usami.example"
+    },
+    "user_007": {
+      "id": "user_007",
+      "name": "User 7",
+      "email": "user7@usami.example"
+    }
+  },
+  "organizations": {
+    "org_000": {
+      "id": "org_000",
+      "name": "Workspace 0",
+      "owner_id": "user_000",
+      "subscription_id": "sub_000"
+    },
+    "org_001": {
+      "id": "org_001",
+      "name": "Workspace 1",
+      "owner_id": "user_001",
+      "subscription_id": "sub_001"
+    },
+    "org_002": {
+      "id": "org_002",
+      "name": "Workspace 2",
+      "owner_id": "user_002",
+      "subscription_id": "sub_002"
+    }
+  },
+  "memberships": {
+    "membership_000_user_000": {
+      "id": "membership_000_user_000",
+      "org_id": "org_000",
+      "user_id": "user_000",
+      "role": "owner",
+      "status": "active"
+    },
+    "membership_000_user_005": {
+      "id": "membership_000_user_005",
+      "org_id": "org_000",
+      "user_id": "user_005",
+      "role": "billing_admin",
+      "status": "active"
+    },
+    "membership_000_user_007": {
+      "id": "membership_000_user_007",
+      "org_id": "org_000",
+      "user_id": "user_007",
+      "role": "member",
+      "status": "active"
+    },
+    "membership_000_user_006": {
+      "id": "membership_000_user_006",
+      "org_id": "org_000",
+      "user_id": "user_006",
+      "role": "billing_admin",
+      "status": "active"
+    },
+    "membership_001_user_001": {
+      "id": "membership_001_user_001",
+      "org_id": "org_001",
+      "user_id": "user_001",
+      "role": "owner",
+      "status": "active"
+    },
+    "membership_001_user_002": {
+      "id": "membership_001_user_002",
+      "org_id": "org_001",
+      "user_id": "user_002",
+      "role": "billing_admin",
+      "status": "active"
+    },
+    "membership_001_user_005": {
+      "id": "membership_001_user_005",
+      "org_id": "org_001",
+      "user_id": "user_005",
+      "role": "billing_admin",
+      "status": "active"
+    },
+    "membership_001_user_003": {
+      "id": "membership_001_user_003",
+      "org_id": "org_001",
+      "user_id": "user_003",
+      "role": "member",
+      "status": "inactive"
+    },
+    "membership_002_user_002": {
+      "id": "membership_002_user_002",
+      "org_id": "org_002",
+      "user_id": "user_002",
+      "role": "owner",
+      "status": "active"
+    },
+    "membership_002_user_006": {
+      "id": "membership_002_user_006",
+      "org_id": "org_002",
+      "user_id": "user_006",
+      "role": "member",
+      "status": "active"
+    },
+    "membership_002_user_000": {
+      "id": "membership_002_user_000",
+      "org_id": "org_002",
+      "user_id": "user_000",
+      "role": "billing_admin",
+      "status": "active"
+    }
+  },
+  "subscriptions": {
+    "sub_000": {
+      "id": "sub_000",
+      "org_id": "org_000",
+      "plan_id": "team",
+      "seats": 9,
+      "auto_renew": false,
+      "period_start": "2025-11-20T12:00:00Z",
+      "period_end": "2025-12-20T12:00:00Z",
+      "status": "expired"
+    },
+    "sub_001": {
+      "id": "sub_001",
+      "org_id": "org_001",
+      "plan_id": "starter",
+      "seats": 3,
+      "auto_renew": true,
+      "period_start": "2025-12-25T12:00:00Z",
+      "period_end": "2026-01-24T12:00:00Z",
+      "status": "active"
+    },
+    "sub_002": {
+      "id": "sub_002",
+      "org_id": "org_002",
+      "plan_id": "team",
+      "seats": 3,
+      "auto_renew": false,
+      "period_start": "2025-12-14T12:00:00Z",
+      "period_end": "2026-01-13T12:00:00Z",
+      "status": "expired"
+    }
+  },
+  "invoices": {
+    "invoice_000_recent": {
+      "id": "invoice_000_recent",
+      "org_id": "org_000",
+      "amount_cents": 5400,
+      "refundable_amount_cents": 5400,
+      "status": "paid",
+      "paid_at": "2026-01-08T10:48:46Z",
+      "payment_method": "card_visa",
+      "refunds": []
+    },
+    "invoice_000_stale": {
+      "id": "invoice_000_stale",
+      "org_id": "org_000",
+      "amount_cents": 43700,
+      "refundable_amount_cents": 43700,
+      "status": "paid",
+      "paid_at": "2025-11-17T14:23:10Z",
+      "payment_method": "bank_transfer",
+      "refunds": []
+    },
+    "invoice_000_unpaid": {
+      "id": "invoice_000_unpaid",
+      "org_id": "org_000",
+      "amount_cents": 18200,
+      "refundable_amount_cents": 18200,
+      "status": "unpaid",
+      "paid_at": null,
+      "payment_method": null,
+      "refunds": []
+    },
+    "invoice_000_refunded": {
+      "id": "invoice_000_refunded",
+      "org_id": "org_000",
+      "amount_cents": 1700,
+      "refundable_amount_cents": 1700,
+      "status": "refunded",
+      "paid_at": "2026-01-08T06:42:49Z",
+      "payment_method": "card_visa",
+      "refunds": [
+        {
+          "id": "historical_invoice_000_refunded",
+          "amount_cents": 1700,
+          "payment_method": "card_visa",
+          "refunded_at": "2026-01-11T21:21:24Z"
+        }
+      ]
+    },
+    "invoice_001_recent": {
+      "id": "invoice_001_recent",
+      "org_id": "org_001",
+      "amount_cents": 48300,
+      "refundable_amount_cents": 48300,
+      "status": "paid",
+      "paid_at": "2026-01-11T01:48:19Z",
+      "payment_method": "card_mastercard",
+      "refunds": []
+    },
+    "invoice_001_stale": {
+      "id": "invoice_001_stale",
+      "org_id": "org_001",
+      "amount_cents": 43800,
+      "refundable_amount_cents": 43800,
+      "status": "paid",
+      "paid_at": "2025-12-16T15:23:32Z",
+      "payment_method": "card_mastercard",
+      "refunds": []
+    },
+    "invoice_001_unpaid": {
+      "id": "invoice_001_unpaid",
+      "org_id": "org_001",
+      "amount_cents": 16700,
+      "refundable_amount_cents": 16700,
+      "status": "unpaid",
+      "paid_at": null,
+      "payment_method": null,
+      "refunds": []
+    },
+    "invoice_001_refunded": {
+      "id": "invoice_001_refunded",
+      "org_id": "org_001",
+      "amount_cents": 30300,
+      "refundable_amount_cents": 30300,
+      "status": "refunded",
+      "paid_at": "2026-01-02T01:32:15Z",
+      "payment_method": "card_visa",
+      "refunds": [
+        {
+          "id": "historical_invoice_001_refunded",
+          "amount_cents": 30300,
+          "payment_method": "card_visa",
+          "refunded_at": "2026-01-08T18:46:07Z"
+        }
+      ]
+    },
+    "invoice_002_recent": {
+      "id": "invoice_002_recent",
+      "org_id": "org_002",
+      "amount_cents": 17000,
+      "refundable_amount_cents": 17000,
+      "status": "paid",
+      "paid_at": "2026-01-06T04:14:44Z",
+      "payment_method": "card_visa",
+      "refunds": []
+    },
+    "invoice_002_stale": {
+      "id": "invoice_002_stale",
+      "org_id": "org_002",
+      "amount_cents": 17700,
+      "refundable_amount_cents": 17700,
+      "status": "paid",
+      "paid_at": "2025-12-29T20:50:41Z",
+      "payment_method": "bank_transfer",
+      "refunds": []
+    },
+    "invoice_002_unpaid": {
+      "id": "invoice_002_unpaid",
+      "org_id": "org_002",
+      "amount_cents": 40800,
+      "refundable_amount_cents": 40800,
+      "status": "unpaid",
+      "paid_at": null,
+      "payment_method": null,
+      "refunds": []
+    },
+    "invoice_002_refunded": {
+      "id": "invoice_002_refunded",
+      "org_id": "org_002",
+      "amount_cents": 1900,
+      "refundable_amount_cents": 1900,
+      "status": "refunded",
+      "paid_at": "2026-01-09T23:56:24Z",
+      "payment_method": "bank_transfer",
+      "refunds": [
+        {
+          "id": "historical_invoice_002_refunded",
+          "amount_cents": 1900,
+          "payment_method": "bank_transfer",
+          "refunded_at": "2026-01-12T17:58:12Z"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "version": "saas-scenarios-0.1.0",
+  "scenario_id": "scenario_0dacd2a851022c6c932a",
+  "category": "multi_step_plan",
+  "world_id": "world_d7b758c82586402e848a",
+  "initial_state_hash": "cbdc43984d682555281707a7431c7ed702f0c9bc4a3ebb3346b614f10936e0ec",
+  "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+  "operation_budget": 20,
+  "steps": [
+    {
+      "request": {
+        "request_id": "org_001_downgrade_dependencies_request_000",
+        "requester_id": "user_001",
+        "org_id": "org_001",
+        "resource_id": "sub_001",
+        "kind": "operation",
+        "operation": {
+          "name": "change_plan",
+          "org_id": "org_001",
+          "resource_id": "sub_001",
+          "params": {
+            "plan_id": "business"
+          }
+        },
+        "authorized_operations": [
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "business"
+            }
+          }
+        ]
+      },
+      "expected_allowed": true,
+      "expected_error_code": null,
+      "expected_state_hash": "210e446f4405c47b4a724062747532b2edb9457b4ead2806e882d89b7e4d0bda"
+    },
+    {
+      "request": {
+        "request_id": "org_001_downgrade_dependencies_request_001",
+        "requester_id": "user_001",
+        "org_id": "org_001",
+        "resource_id": "sub_001",
+        "kind": "operation",
+        "operation": {
+          "name": "change_seats",
+          "org_id": "org_001",
+          "resource_id": "sub_001",
+          "params": {
+            "seats": 6
+          }
+        },
+        "authorized_operations": [
+          {
+            "name": "change_seats",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "seats": 6
+            }
+          }
+        ]
+      },
+      "expected_allowed": true,
+      "expected_error_code": null,
+      "expected_state_hash": "6064caa7aae4d6806fdce905d3b211090aca5ac77ac0dd1dc8ffa88f40c75bf5"
+    },
+    {
+      "request": {
+        "request_id": "org_001_downgrade_dependencies_request_002",
+        "requester_id": "user_001",
+        "org_id": "org_001",
+        "resource_id": "sub_001",
+        "kind": "operation",
+        "operation": {
+          "name": "change_plan",
+          "org_id": "org_001",
+          "resource_id": "sub_001",
+          "params": {
+            "plan_id": "starter"
+          }
+        },
+        "authorized_operations": [
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ]
+      },
+      "expected_allowed": false,
+      "expected_error_code": "SEAT_LIMIT_EXCEEDED",
+      "expected_state_hash": "6064caa7aae4d6806fdce905d3b211090aca5ac77ac0dd1dc8ffa88f40c75bf5"
+    },
+    {
+      "request": {
+        "request_id": "org_001_downgrade_dependencies_request_003",
+        "requester_id": "user_001",
+        "org_id": "org_001",
+        "resource_id": "sub_001",
+        "kind": "operation",
+        "operation": {
+          "name": "change_seats",
+          "org_id": "org_001",
+          "resource_id": "sub_001",
+          "params": {
+            "seats": 3
+          }
+        },
+        "authorized_operations": [
+          {
+            "name": "change_seats",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "seats": 3
+            }
+          }
+        ]
+      },
+      "expected_allowed": true,
+      "expected_error_code": null,
+      "expected_state_hash": "210e446f4405c47b4a724062747532b2edb9457b4ead2806e882d89b7e4d0bda"
+    },
+    {
+      "request": {
+        "request_id": "org_001_downgrade_dependencies_request_004",
+        "requester_id": "user_001",
+        "org_id": "org_001",
+        "resource_id": "sub_001",
+        "kind": "operation",
+        "operation": {
+          "name": "change_plan",
+          "org_id": "org_001",
+          "resource_id": "sub_001",
+          "params": {
+            "plan_id": "starter"
+          }
+        },
+        "authorized_operations": [
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ]
+      },
+      "expected_allowed": true,
+      "expected_error_code": null,
+      "expected_state_hash": "cbdc43984d682555281707a7431c7ed702f0c9bc4a3ebb3346b614f10936e0ec"
+    }
+  ]
+}

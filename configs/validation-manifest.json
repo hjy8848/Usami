@@ -1,0 +1,1544 @@
+{
+  "version": "usami-manifest-0.1.0",
+  "split": "validation",
+  "visibility": "public",
+  "generator_version": "saas-generator-0.1.0",
+  "scenario_version": "saas-scenarios-0.1.0",
+  "config": {
+    "version": "saas-generator-0.1.0",
+    "user_count": 8,
+    "organization_count": 3,
+    "clock": "2026-01-15T12:00:00Z",
+    "profile": "standard",
+    "rules": {
+      "version": "saas-rules-0.1.0",
+      "refund_window_days": 14,
+      "plans": {
+        "starter": {
+          "id": "starter",
+          "name": "Starter",
+          "rank": 0,
+          "max_seats": 5
+        },
+        "team": {
+          "id": "team",
+          "name": "Team",
+          "rank": 1,
+          "max_seats": 20
+        },
+        "business": {
+          "id": "business",
+          "name": "Business",
+          "rank": 2,
+          "max_seats": 100
+        }
+      }
+    }
+  },
+  "config_hash": "47f34c4a7c19d4ea8ddac5c81d2d79a927b0322f76c1d42419d099267705753a",
+  "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+  "operation_budget": 20,
+  "entries": [
+    {
+      "seed": 1000000,
+      "world_id": "world_c47aae0d0e949d42959d",
+      "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+      "business_fingerprint": "222d8b18b506ed8c3c3c798e8c1e91241ca7ed84704a24f28ae1cb68f71ebdbe",
+      "scenarios": [
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_d17aafef75cbf2e47d6d",
+          "category": "refund",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "invoice_002_stale_refund_request_000",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "invoice_002_stale",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_002",
+                  "resource_id": "invoice_002_stale",
+                  "params": {
+                    "amount_cents": 5700,
+                    "payment_method": "bank_transfer"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_002",
+                    "resource_id": "invoice_002_stale",
+                    "params": {
+                      "amount_cents": 5700,
+                      "payment_method": "bank_transfer"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "REFUND_WINDOW_EXPIRED",
+              "expected_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_d0c9bbbabb283b706847",
+          "category": "constraint",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_001_plan_request_000",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_plan",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {
+                    "plan_id": "starter"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_plan",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {
+                      "plan_id": "starter"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "SEAT_LIMIT_EXCEEDED",
+              "expected_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_703fa6d47c3f01f00520",
+          "category": "permission",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_002_member_denied_membership_002_user_005_request_000",
+                "requester_id": "user_005",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "kind": "operation",
+                "operation": {
+                  "name": "cancel_renewal",
+                  "org_id": "org_002",
+                  "resource_id": "sub_002",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "cancel_renewal",
+                    "org_id": "org_002",
+                    "resource_id": "sub_002",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "PERMISSION_DENIED",
+              "expected_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_bbf00229dbe28d7c49a4",
+          "category": "multi_entity",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_001_request_000",
+                "requester_id": "user_000",
+                "org_id": "org_000",
+                "resource_id": "membership_000_user_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_member_role",
+                  "org_id": "org_000",
+                  "resource_id": "membership_000_user_001",
+                  "params": {
+                    "role": "member"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_member_role",
+                    "org_id": "org_000",
+                    "resource_id": "membership_000_user_001",
+                    "params": {
+                      "role": "member"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "b5e9e46ece8ed50b4031436de11e66b6043200148d42de727719047d01c0aad4"
+            },
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_001_request_001",
+                "requester_id": "user_001",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "kind": "operation",
+                "operation": {
+                  "name": "cancel_renewal",
+                  "org_id": "org_000",
+                  "resource_id": "sub_000",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "cancel_renewal",
+                    "org_id": "org_000",
+                    "resource_id": "sub_000",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "PERMISSION_DENIED",
+              "expected_state_hash": "b5e9e46ece8ed50b4031436de11e66b6043200148d42de727719047d01c0aad4"
+            },
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_001_request_002",
+                "requester_id": "user_000",
+                "org_id": "org_000",
+                "resource_id": "membership_000_user_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_member_role",
+                  "org_id": "org_000",
+                  "resource_id": "membership_000_user_001",
+                  "params": {
+                    "role": "billing_admin"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_member_role",
+                    "org_id": "org_000",
+                    "resource_id": "membership_000_user_001",
+                    "params": {
+                      "role": "billing_admin"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd"
+            },
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_001_request_003",
+                "requester_id": "user_001",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "kind": "operation",
+                "operation": {
+                  "name": "cancel_renewal",
+                  "org_id": "org_000",
+                  "resource_id": "sub_000",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "cancel_renewal",
+                    "org_id": "org_000",
+                    "resource_id": "sub_000",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "ec4422cdb2bca51432abad13a462bda738ad0f88604b0f994c7e9d2330d22ebc"
+            },
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_001_request_004",
+                "requester_id": "user_001",
+                "org_id": "org_000",
+                "resource_id": "invoice_000_recent",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_000",
+                  "resource_id": "invoice_000_recent",
+                  "params": {
+                    "amount_cents": 23300,
+                    "payment_method": "card_mastercard"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_000",
+                    "resource_id": "invoice_000_recent",
+                    "params": {
+                      "amount_cents": 23300,
+                      "payment_method": "card_mastercard"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "ba6f3bee236e914215cec2bf6cc3f9ad3bb425a809426ce24183eca4fb70f09a"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_b03dee62dd089a992296",
+          "category": "cross_organization",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_000_outsider_org_001_request_000",
+                "requester_id": "user_000",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "query",
+                "operation": {
+                  "name": "get_subscription",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "get_subscription",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "CROSS_ORG_ACCESS",
+              "expected_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_42f83718fa6e2c934704",
+          "category": "query",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_000_member_query_membership_000_user_007_request_000",
+                "requester_id": "user_007",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "kind": "query",
+                "operation": {
+                  "name": "get_subscription",
+                  "org_id": "org_000",
+                  "resource_id": "sub_000",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "get_subscription",
+                    "org_id": "org_000",
+                    "resource_id": "sub_000",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_8a0b78415601e757b83e",
+          "category": "single",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_001_seats_min_request_000",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_seats",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {
+                    "seats": 3
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_seats",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {
+                      "seats": 3
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "c30a6499bf6939b1b761d713ce3ed30c8b7a7eab0823a44c9da855ab7692f0dd"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_d8f59175ef006013f445",
+          "category": "multi_step_refund",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "invoice_002_recent_repeat_request_000",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "invoice_002_recent",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_002",
+                  "resource_id": "invoice_002_recent",
+                  "params": {
+                    "amount_cents": 21700,
+                    "payment_method": "card_mastercard"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_002",
+                    "resource_id": "invoice_002_recent",
+                    "params": {
+                      "amount_cents": 21700,
+                      "payment_method": "card_mastercard"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "fa07e0e8a76ef716922555978dfe035d3481d03643cdae34ff819b10d352b75b"
+            },
+            {
+              "request": {
+                "request_id": "invoice_002_recent_repeat_request_001",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "invoice_002_recent",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_002",
+                  "resource_id": "invoice_002_recent",
+                  "params": {
+                    "amount_cents": 21700,
+                    "payment_method": "card_mastercard"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_002",
+                    "resource_id": "invoice_002_recent",
+                    "params": {
+                      "amount_cents": 21700,
+                      "payment_method": "card_mastercard"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "DUPLICATE_REFUND",
+              "expected_state_hash": "fa07e0e8a76ef716922555978dfe035d3481d03643cdae34ff819b10d352b75b"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_17bd10c5dae2ddc0ca1b",
+          "category": "refund_constraint",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "invoice_001_recent_wrong_method_request_000",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "invoice_001_recent",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_001",
+                  "resource_id": "invoice_001_recent",
+                  "params": {
+                    "amount_cents": 27400,
+                    "payment_method": "different_channel"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_001",
+                    "resource_id": "invoice_001_recent",
+                    "params": {
+                      "amount_cents": 27400,
+                      "payment_method": "different_channel"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "REFUND_METHOD_MISMATCH",
+              "expected_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_91c0d8bb8a587b94e64d",
+          "category": "authorization",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_000_no_authorization_request_000",
+                "requester_id": "user_000",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "kind": "operation",
+                "operation": {
+                  "name": "cancel_renewal",
+                  "org_id": "org_000",
+                  "resource_id": "sub_000",
+                  "params": {}
+                },
+                "authorized_operations": []
+              },
+              "expected_allowed": false,
+              "expected_error_code": "UNAUTHORIZED_OPERATION",
+              "expected_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_75c6165951e307fb425f",
+          "category": "multi_step_plan",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_001_downgrade_dependencies_request_000",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_plan",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {
+                    "plan_id": "business"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_plan",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {
+                      "plan_id": "business"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "87618f97138a4c3bb837a59a71cba191d2dc3d37c8c599028c52fb4ea0565963"
+            },
+            {
+              "request": {
+                "request_id": "org_001_downgrade_dependencies_request_001",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_seats",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {
+                    "seats": 6
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_seats",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {
+                      "seats": 6
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "231a59646adcc8175a526e62c1cf63b52a965e4e1a3bc2fbc8e2a8d3f8e39c5b"
+            },
+            {
+              "request": {
+                "request_id": "org_001_downgrade_dependencies_request_002",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_plan",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {
+                    "plan_id": "starter"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_plan",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {
+                      "plan_id": "starter"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "SEAT_LIMIT_EXCEEDED",
+              "expected_state_hash": "231a59646adcc8175a526e62c1cf63b52a965e4e1a3bc2fbc8e2a8d3f8e39c5b"
+            },
+            {
+              "request": {
+                "request_id": "org_001_downgrade_dependencies_request_003",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_seats",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {
+                    "seats": 3
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_seats",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {
+                      "seats": 3
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "528075b0edcbccb6c14afc9f7960adcad288be2c53c59b2221eece26440d7471"
+            },
+            {
+              "request": {
+                "request_id": "org_001_downgrade_dependencies_request_004",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_plan",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {
+                    "plan_id": "starter"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_plan",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {
+                      "plan_id": "starter"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "7a8d5f8a908a078c7a1ad155a5cbad408a8d83c1755b00b5dc9af180561a6130"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_e67521a61d502bd437b1",
+          "category": "constraint",
+          "world_id": "world_c47aae0d0e949d42959d",
+          "initial_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_001_seats_over_request_000",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_seats",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {
+                    "seats": 21
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_seats",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {
+                      "seats": 21
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "SEAT_LIMIT_EXCEEDED",
+              "expected_state_hash": "e81ccf95a8f4d6b28a32d18042425e33018bcf1ce94692486dce4c0c5e753fbd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 1000001,
+      "world_id": "world_ee1c0cd94d3c948c5c54",
+      "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+      "business_fingerprint": "49750b2ca4d34de546888458a68149e3f9c1b930f4267beeed964a37cea1a602",
+      "scenarios": [
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_464792a3293458179b81",
+          "category": "refund",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "invoice_000_stale_refund_request_000",
+                "requester_id": "user_000",
+                "org_id": "org_000",
+                "resource_id": "invoice_000_stale",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_000",
+                  "resource_id": "invoice_000_stale",
+                  "params": {
+                    "amount_cents": 26600,
+                    "payment_method": "bank_transfer"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_000",
+                    "resource_id": "invoice_000_stale",
+                    "params": {
+                      "amount_cents": 26600,
+                      "payment_method": "bank_transfer"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "REFUND_WINDOW_EXPIRED",
+              "expected_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_c2de6b5d156e28c3ce27",
+          "category": "constraint",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_002_plan_request_000",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_plan",
+                  "org_id": "org_002",
+                  "resource_id": "sub_002",
+                  "params": {
+                    "plan_id": "starter"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_plan",
+                    "org_id": "org_002",
+                    "resource_id": "sub_002",
+                    "params": {
+                      "plan_id": "starter"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_abc66d2d377dd17bee66",
+          "category": "refund_constraint",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "invoice_001_recent_wrong_amount_request_000",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "invoice_001_recent",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_001",
+                  "resource_id": "invoice_001_recent",
+                  "params": {
+                    "amount_cents": 32599,
+                    "payment_method": "bank_transfer"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_001",
+                    "resource_id": "invoice_001_recent",
+                    "params": {
+                      "amount_cents": 32599,
+                      "payment_method": "bank_transfer"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "REFUND_AMOUNT_MISMATCH",
+              "expected_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_036332f8cc9f71ed9001",
+          "category": "multi_step_refund",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "invoice_001_recent_repeat_request_000",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "invoice_001_recent",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_001",
+                  "resource_id": "invoice_001_recent",
+                  "params": {
+                    "amount_cents": 32600,
+                    "payment_method": "bank_transfer"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_001",
+                    "resource_id": "invoice_001_recent",
+                    "params": {
+                      "amount_cents": 32600,
+                      "payment_method": "bank_transfer"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "1a3e6554490bbd86dd93006b9f2cafde173c5de1931728e3a2391b8883675e7a"
+            },
+            {
+              "request": {
+                "request_id": "invoice_001_recent_repeat_request_001",
+                "requester_id": "user_001",
+                "org_id": "org_001",
+                "resource_id": "invoice_001_recent",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_001",
+                  "resource_id": "invoice_001_recent",
+                  "params": {
+                    "amount_cents": 32600,
+                    "payment_method": "bank_transfer"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_001",
+                    "resource_id": "invoice_001_recent",
+                    "params": {
+                      "amount_cents": 32600,
+                      "payment_method": "bank_transfer"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "DUPLICATE_REFUND",
+              "expected_state_hash": "1a3e6554490bbd86dd93006b9f2cafde173c5de1931728e3a2391b8883675e7a"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_74c63c6e2a8f56620edc",
+          "category": "single",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_000_cancel_request_000",
+                "requester_id": "user_000",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "kind": "operation",
+                "operation": {
+                  "name": "cancel_renewal",
+                  "org_id": "org_000",
+                  "resource_id": "sub_000",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "cancel_renewal",
+                    "org_id": "org_000",
+                    "resource_id": "sub_000",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "33a7a530a77e1bebbc985fbaf401f55c41ff6b13d5cd1b3a8c9f37ab3f16885f"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_ad59e7453ca6a27b04b3",
+          "category": "permission",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_000_role_membership_000_user_004_request_000",
+                "requester_id": "user_000",
+                "org_id": "org_000",
+                "resource_id": "membership_000_user_004",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_member_role",
+                  "org_id": "org_000",
+                  "resource_id": "membership_000_user_004",
+                  "params": {
+                    "role": "billing_admin"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_member_role",
+                    "org_id": "org_000",
+                    "resource_id": "membership_000_user_004",
+                    "params": {
+                      "role": "billing_admin"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_1d9c5a1f6e6751fdab2a",
+          "category": "multi_step_plan",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_002_downgrade_dependencies_request_000",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_plan",
+                  "org_id": "org_002",
+                  "resource_id": "sub_002",
+                  "params": {
+                    "plan_id": "business"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_plan",
+                    "org_id": "org_002",
+                    "resource_id": "sub_002",
+                    "params": {
+                      "plan_id": "business"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "d3ba0421d59663244a55f45767761723bd2fae6f6584d4ba837c1b5ced13be09"
+            },
+            {
+              "request": {
+                "request_id": "org_002_downgrade_dependencies_request_001",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_seats",
+                  "org_id": "org_002",
+                  "resource_id": "sub_002",
+                  "params": {
+                    "seats": 6
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_seats",
+                    "org_id": "org_002",
+                    "resource_id": "sub_002",
+                    "params": {
+                      "seats": 6
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "a82ad15ba8bdf04554441861243748569843940a97a20cef358db282b17975f5"
+            },
+            {
+              "request": {
+                "request_id": "org_002_downgrade_dependencies_request_002",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_plan",
+                  "org_id": "org_002",
+                  "resource_id": "sub_002",
+                  "params": {
+                    "plan_id": "starter"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_plan",
+                    "org_id": "org_002",
+                    "resource_id": "sub_002",
+                    "params": {
+                      "plan_id": "starter"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "SEAT_LIMIT_EXCEEDED",
+              "expected_state_hash": "a82ad15ba8bdf04554441861243748569843940a97a20cef358db282b17975f5"
+            },
+            {
+              "request": {
+                "request_id": "org_002_downgrade_dependencies_request_003",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_seats",
+                  "org_id": "org_002",
+                  "resource_id": "sub_002",
+                  "params": {
+                    "seats": 5
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_seats",
+                    "org_id": "org_002",
+                    "resource_id": "sub_002",
+                    "params": {
+                      "seats": 5
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "d3ba0421d59663244a55f45767761723bd2fae6f6584d4ba837c1b5ced13be09"
+            },
+            {
+              "request": {
+                "request_id": "org_002_downgrade_dependencies_request_004",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_plan",
+                  "org_id": "org_002",
+                  "resource_id": "sub_002",
+                  "params": {
+                    "plan_id": "starter"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_plan",
+                    "org_id": "org_002",
+                    "resource_id": "sub_002",
+                    "params": {
+                      "plan_id": "starter"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_b42f5b5045b4b674c45e",
+          "category": "query",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_002_query_request_000",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "kind": "query",
+                "operation": {
+                  "name": "get_subscription",
+                  "org_id": "org_002",
+                  "resource_id": "sub_002",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "get_subscription",
+                    "org_id": "org_002",
+                    "resource_id": "sub_002",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_3a5f5ba9c5ccfed7af7b",
+          "category": "multi_entity",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_006_request_000",
+                "requester_id": "user_000",
+                "org_id": "org_000",
+                "resource_id": "membership_000_user_006",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_member_role",
+                  "org_id": "org_000",
+                  "resource_id": "membership_000_user_006",
+                  "params": {
+                    "role": "member"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_member_role",
+                    "org_id": "org_000",
+                    "resource_id": "membership_000_user_006",
+                    "params": {
+                      "role": "member"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "3ec74ca30f777dce27c42fa117d04f801904a45cf79642919416087b47576435"
+            },
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_006_request_001",
+                "requester_id": "user_006",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "kind": "operation",
+                "operation": {
+                  "name": "cancel_renewal",
+                  "org_id": "org_000",
+                  "resource_id": "sub_000",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "cancel_renewal",
+                    "org_id": "org_000",
+                    "resource_id": "sub_000",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "PERMISSION_DENIED",
+              "expected_state_hash": "3ec74ca30f777dce27c42fa117d04f801904a45cf79642919416087b47576435"
+            },
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_006_request_002",
+                "requester_id": "user_000",
+                "org_id": "org_000",
+                "resource_id": "membership_000_user_006",
+                "kind": "operation",
+                "operation": {
+                  "name": "change_member_role",
+                  "org_id": "org_000",
+                  "resource_id": "membership_000_user_006",
+                  "params": {
+                    "role": "billing_admin"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "change_member_role",
+                    "org_id": "org_000",
+                    "resource_id": "membership_000_user_006",
+                    "params": {
+                      "role": "billing_admin"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629"
+            },
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_006_request_003",
+                "requester_id": "user_006",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "kind": "operation",
+                "operation": {
+                  "name": "cancel_renewal",
+                  "org_id": "org_000",
+                  "resource_id": "sub_000",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "cancel_renewal",
+                    "org_id": "org_000",
+                    "resource_id": "sub_000",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "33a7a530a77e1bebbc985fbaf401f55c41ff6b13d5cd1b3a8c9f37ab3f16885f"
+            },
+            {
+              "request": {
+                "request_id": "org_000_role_then_billing_membership_000_user_006_request_004",
+                "requester_id": "user_006",
+                "org_id": "org_000",
+                "resource_id": "invoice_000_recent",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_000",
+                  "resource_id": "invoice_000_recent",
+                  "params": {
+                    "amount_cents": 9600,
+                    "payment_method": "card_mastercard"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_000",
+                    "resource_id": "invoice_000_recent",
+                    "params": {
+                      "amount_cents": 9600,
+                      "payment_method": "card_mastercard"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "c27af6be7084f5e1cf7e07c277f1eb5d3a5947c4e2d3d92f7bce3d7461f44789"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_75eb83e9750c120c146d",
+          "category": "cross_organization",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_000_outsider_org_001_request_000",
+                "requester_id": "user_000",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "kind": "query",
+                "operation": {
+                  "name": "get_subscription",
+                  "org_id": "org_001",
+                  "resource_id": "sub_001",
+                  "params": {}
+                },
+                "authorized_operations": [
+                  {
+                    "name": "get_subscription",
+                    "org_id": "org_001",
+                    "resource_id": "sub_001",
+                    "params": {}
+                  }
+                ]
+              },
+              "expected_allowed": false,
+              "expected_error_code": "CROSS_ORG_ACCESS",
+              "expected_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_42c35edbabd9f37a70b9",
+          "category": "authorization",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "org_002_no_authorization_request_000",
+                "requester_id": "user_002",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "kind": "operation",
+                "operation": {
+                  "name": "cancel_renewal",
+                  "org_id": "org_002",
+                  "resource_id": "sub_002",
+                  "params": {}
+                },
+                "authorized_operations": []
+              },
+              "expected_allowed": false,
+              "expected_error_code": "UNAUTHORIZED_OPERATION",
+              "expected_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629"
+            }
+          ]
+        },
+        {
+          "version": "saas-scenarios-0.1.0",
+          "scenario_id": "scenario_e1a9371b0026182408c7",
+          "category": "refund",
+          "world_id": "world_ee1c0cd94d3c948c5c54",
+          "initial_state_hash": "65374b45164b832029f910eed78c07127ed88ba04e93de858b4c4c6598473629",
+          "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+          "operation_budget": 20,
+          "steps": [
+            {
+              "request": {
+                "request_id": "invoice_000_recent_refund_request_000",
+                "requester_id": "user_000",
+                "org_id": "org_000",
+                "resource_id": "invoice_000_recent",
+                "kind": "operation",
+                "operation": {
+                  "name": "refund_invoice",
+                  "org_id": "org_000",
+                  "resource_id": "invoice_000_recent",
+                  "params": {
+                    "amount_cents": 9600,
+                    "payment_method": "card_mastercard"
+                  }
+                },
+                "authorized_operations": [
+                  {
+                    "name": "refund_invoice",
+                    "org_id": "org_000",
+                    "resource_id": "invoice_000_recent",
+                    "params": {
+                      "amount_cents": 9600,
+                      "payment_method": "card_mastercard"
+                    }
+                  }
+                ]
+              },
+              "expected_allowed": true,
+              "expected_error_code": null,
+              "expected_state_hash": "f54c87c5cde13264c354423e111586f8189305e31365070b3bd56d70316e3f75"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "manifest_hash": "810a668b341815cc5d23000c076b513e9ba3d08acb99e5458ce771fa1bc864f5"
+}

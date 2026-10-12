@@ -1,0 +1,31 @@
+{
+  "version": "saas-generator-0.1.0",
+  "user_count": 8,
+  "organization_count": 3,
+  "clock": "2026-01-15T12:00:00Z",
+  "profile": "train_single",
+  "rules": {
+    "version": "saas-rules-0.1.0",
+    "refund_window_days": 14,
+    "plans": {
+      "starter": {
+        "id": "starter",
+        "name": "Starter",
+        "rank": 0,
+        "max_seats": 5
+      },
+      "team": {
+        "id": "team",
+        "name": "Team",
+        "rank": 1,
+        "max_seats": 20
+      },
+      "business": {
+        "id": "business",
+        "name": "Business",
+        "rank": 2,
+        "max_seats": 100
+      }
+    }
+  }
+}

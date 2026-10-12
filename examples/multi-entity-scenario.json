@@ -1,0 +1,155 @@
+{
+  "version": "saas-scenarios-0.1.0",
+  "scenario_id": "scenario_66cd4ecd1d560aafb365",
+  "category": "multi_entity",
+  "world_id": "world_d7b758c82586402e848a",
+  "initial_state_hash": "cbdc43984d682555281707a7431c7ed702f0c9bc4a3ebb3346b614f10936e0ec",
+  "rules_hash": "57edc676aa4ffc9d49529dd4c839aa36efa4201851990dd43fa535aff4e24912",
+  "operation_budget": 20,
+  "steps": [
+    {
+      "request": {
+        "request_id": "org_001_role_then_billing_membership_001_user_002_request_000",
+        "requester_id": "user_001",
+        "org_id": "org_001",
+        "resource_id": "membership_001_user_002",
+        "kind": "operation",
+        "operation": {
+          "name": "change_member_role",
+          "org_id": "org_001",
+          "resource_id": "membership_001_user_002",
+          "params": {
+            "role": "member"
+          }
+        },
+        "authorized_operations": [
+          {
+            "name": "change_member_role",
+            "org_id": "org_001",
+            "resource_id": "membership_001_user_002",
+            "params": {
+              "role": "member"
+            }
+          }
+        ]
+      },
+      "expected_allowed": true,
+      "expected_error_code": null,
+      "expected_state_hash": "4f6c95eedbe90fd853ededbfad1dc3909e7c8600f49900e38bdfe04a064cc222"
+    },
+    {
+      "request": {
+        "request_id": "org_001_role_then_billing_membership_001_user_002_request_001",
+        "requester_id": "user_002",
+        "org_id": "org_001",
+        "resource_id": "sub_001",
+        "kind": "operation",
+        "operation": {
+          "name": "cancel_renewal",
+          "org_id": "org_001",
+          "resource_id": "sub_001",
+          "params": {}
+        },
+        "authorized_operations": [
+          {
+            "name": "cancel_renewal",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {}
+          }
+        ]
+      },
+      "expected_allowed": false,
+      "expected_error_code": "PERMISSION_DENIED",
+      "expected_state_hash": "4f6c95eedbe90fd853ededbfad1dc3909e7c8600f49900e38bdfe04a064cc222"
+    },
+    {
+      "request": {
+        "request_id": "org_001_role_then_billing_membership_001_user_002_request_002",
+        "requester_id": "user_001",
+        "org_id": "org_001",
+        "resource_id": "membership_001_user_002",
+        "kind": "operation",
+        "operation": {
+          "name": "change_member_role",
+          "org_id": "org_001",
+          "resource_id": "membership_001_user_002",
+          "params": {
+            "role": "billing_admin"
+          }
+        },
+        "authorized_operations": [
+          {
+            "name": "change_member_role",
+            "org_id": "org_001",
+            "resource_id": "membership_001_user_002",
+            "params": {
+              "role": "billing_admin"
+            }
+          }
+        ]
+      },
+      "expected_allowed": true,
+      "expected_error_code": null,
+      "expected_state_hash": "cbdc43984d682555281707a7431c7ed702f0c9bc4a3ebb3346b614f10936e0ec"
+    },
+    {
+      "request": {
+        "request_id": "org_001_role_then_billing_membership_001_user_002_request_003",
+        "requester_id": "user_002",
+        "org_id": "org_001",
+        "resource_id": "sub_001",
+        "kind": "operation",
+        "operation": {
+          "name": "cancel_renewal",
+          "org_id": "org_001",
+          "resource_id": "sub_001",
+          "params": {}
+        },
+        "authorized_operations": [
+          {
+            "name": "cancel_renewal",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {}
+          }
+        ]
+      },
+      "expected_allowed": true,
+      "expected_error_code": null,
+      "expected_state_hash": "185aab0605c14e1d88cb4b29e0ed26de57b5f121544c9d4c247b047ace6cf7ca"
+    },
+    {
+      "request": {
+        "request_id": "org_001_role_then_billing_membership_001_user_002_request_004",
+        "requester_id": "user_002",
+        "org_id": "org_001",
+        "resource_id": "invoice_001_recent",
+        "kind": "operation",
+        "operation": {
+          "name": "refund_invoice",
+          "org_id": "org_001",
+          "resource_id": "invoice_001_recent",
+          "params": {
+            "amount_cents": 48300,
+            "payment_method": "card_mastercard"
+          }
+        },
+        "authorized_operations": [
+          {
+            "name": "refund_invoice",
+            "org_id": "org_001",
+            "resource_id": "invoice_001_recent",
+            "params": {
+              "amount_cents": 48300,
+              "payment_method": "card_mastercard"
+            }
+          }
+        ]
+      },
+      "expected_allowed": true,
+      "expected_error_code": null,
+      "expected_state_hash": "07cb35d13d32b6ac9257f8994ef3cf0a4eca1cc41fb9674727f938a87d2047ea"
+    }
+  ]
+}

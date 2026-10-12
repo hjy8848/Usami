@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "usami"
+version = "0.1.0"
+description = "A Compositional Business World Benchmark for Interactive AI Agents"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["pydantic>=2.10,<3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9"]
+
+[project.urls]
+Repository = "https://github.com/hjy8848/Usami"
+
+[project.scripts]
+usami = "usami.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["usami*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

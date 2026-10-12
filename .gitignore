@@ -6,3 +6,8 @@ build/
 dist/
 outputs/
 private/
+node_modules/
+playwright-report/
+test-results/
+.DS_Store
+*.tsbuildinfo

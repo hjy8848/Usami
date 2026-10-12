@@ -4,7 +4,21 @@
 
 Usami 是可执行的虚构 SaaS 业务世界：组织、成员权限、订阅、席位和账单通过明确 ID 关联，操作能够组合并改变后续操作的可行性。研究者先生成世界，再从实际状态派生结构化请求。评测依据是请求授权、业务规则和实际事件，而不是预先写死的唯一最终答案。
 
-v0.1 只实现业务环境和评测基础设施。没有 LLM、Customer/Service Agent、LLM Judge、进化、攻击搜索、强化学习、支付接口、数据库或 Web 服务。所有数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
+v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer** 网页。没有 LLM、Customer/Service Agent、LLM Judge、进化、攻击搜索、强化学习、真实支付接口或数据库。所有数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
+
+## World Explorer 网页
+
+通过六个交互页面探索真实世界：实体与组织详情、关系图、五种业务写操作、Reference / Sandbox、独立 Oracle、组合场景、事件历史与确定性重放。默认加载真实 Seed 42，前端调用现有 Python 引擎。
+
+```bash
+# 仓库根目录，激活 .venv 后
+python -m pip install -e '.[web,dev]' -c constraints-tested.txt
+cd web/frontend && npm ci
+cd ../..
+python web/run.py
+```
+
+打开 <http://127.0.0.1:5173>。详细安装、双终端启动和交互说明见 [web/README.md](web/README.md)，实际验收见 [web/VERIFICATION.md](web/VERIFICATION.md)。
 
 ## 从零运行
 
@@ -214,6 +228,8 @@ usami/__main__.py  CLI
 configs/          公开配置和冻结 Validation Manifest
 examples/         世界、组合场景和完整 Python 示例
 tests/            生成一致性、业务转换、Oracle 故障样例、复现、划分和 CLI
+web/backend/      可选 FastAPI 内存会话与可信请求 harness
+web/frontend/     React + TypeScript + Vite World Explorer
 ```
 
 只有一个 SaaS 领域、固定模拟时钟、五个写操作、四个查询；没有邀请/删除成员、owner 转让、周期自动推进、按比例收费、部分退款、真实支付、自然语言或任何 Agent。一般不处理某个未知/已非法 pre-state 的后续业务语义，此时 Oracle 返回 unknown，同时保留已确定的不变量违规。哈希提供完整性，不提供敌手环境的签名认证；最终私有 Test 的保密性由独立托管方负责。

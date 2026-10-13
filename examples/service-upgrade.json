@@ -1,0 +1,14 @@
+{
+  "seed": 42,
+  "customer": {
+    "identity": "user_001",
+    "message": "请查看我在 Workspace 1 的身份、订阅和当前成员，把订阅升级到 Team，再把席位调整为 6。完成后请查询订阅确认结果，并用中文告诉我改了哪些字段。",
+    "authorizations": [
+      {"name": "change_plan", "org_id": "org_001", "resource_id": "sub_001", "params": {"plan_id": "team"}},
+      {"name": "change_seats", "org_id": "org_001", "resource_id": "sub_001", "params": {"seats": 6}}
+    ]
+  },
+  "mode": "reference",
+  "max_llm_calls": 8,
+  "max_tool_calls": 16
+}

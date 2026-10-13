@@ -4,7 +4,20 @@
 
 Usami 是可执行的虚构 SaaS 业务世界：组织、成员权限、订阅、席位和账单通过明确 ID 关联，操作能够组合并改变后续操作的可行性。研究者先生成世界，再从实际状态派生结构化请求。评测依据是请求授权、业务规则和实际事件，而不是预先写死的唯一最终答案。
 
-v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer** 网页。没有 LLM、Customer/Service Agent、LLM Judge、进化、攻击搜索、强化学习、真实支付接口或数据库。所有数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
+v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer** 网页与 **Service LLM** 运行模块。Benchmark 核心不依赖 LLM；可选 Service 使用真实兼容 API 自主选择工具。没有 Customer Agent、Evolver、LLM Judge、训练、Service 自动修复、真实支付接口或数据库。业务数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
+
+## Service LLM 执行闭环
+
+固定世界与顾客身份，输入自然语言，真实模型自主查询／执行，原有 Oracle 独立审查。Customer 精确授权由运行前的受信清单提供，不能从 Service 工具参数反向构造。
+
+```bash
+python -m pip install -e '.[service,dev]' -c constraints-tested.txt
+# 通过环境配置 USAMI_LLM_BASE_URL、USAMI_LLM_MODEL 和 USAMI_LLM_API_KEY 或 Keychain 条目
+python -m usami.service run --experiment examples/service-upgrade.json --out outputs/service/execution.json
+python -m usami.service replay outputs/service/execution.json --experiment examples/service-upgrade.json
+```
+
+完整运行、Keychain 配置、Python API 与 Customer 接口说明见 [usami/service/README.md](usami/service/README.md)，真实 LLM 验收见 [usami/service/VERIFICATION.md](usami/service/VERIFICATION.md)。
 
 ## World Explorer 网页
 
@@ -214,13 +227,14 @@ scenarios = generate_scenarios(world)
 
 添加业务操作时：在 `protocol.py` 增加严格参数 schema 和操作名；在 `world/rules.py` 定义纯前置条件、权限、预期转换和新不变量；在 `world/engine.py` 独立实现实际沙盒转换；在 `evaluation/scenario.py` 从已有世界关系派生相关场景。加入合法、非法、状态组合和故意错误记录测试；语义发生变化时更新 rules/generator/scenario 版本，再冻结新的 Manifest。
 
-未来接入 Customer/Service 时，保留 Benchmark 核心：Customer 的真实交互由受信 harness 转成 RequestContext；Service 通过结构化 Operation 调用执行器；轨迹交给独立 Oracle。Service 不能生成权威授权，也不能更改规则、时钟、初始世界或正式预算。v0.1 没有实现对自然语言授权的解释或 Agent 框架。
+可选 Service 已通过结构化 Operation 调用执行器，轨迹交给独立 Oracle。Service 不能生成权威授权，也不能更改规则、时钟、初始世界或正式预算。未来 Customer 的自然语言与精确授权应由独立受信适配器准备；当前未实现通用自然语言授权解释、Customer LLM 或 Evolver。
 
 ## 目录与当前限制
 
 ```text
 usami/world/       数据模型、ReferenceRules、受约束生成器、执行器
 usami/evaluation/  Dynamic Oracle、派生 Scenario、split 与 Manifest
+usami/service/     可选真实 Service LLM、独立顾客授权、工具循环与 Execution Replay
 usami/protocol.py  请求、精确授权、操作参数和执行结果
 usami/events.py    事件链、完整 Trace、完整性校验
 usami/randomness.py  版本化确定性采样

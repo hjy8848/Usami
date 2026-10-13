@@ -1,0 +1,12 @@
+{
+  "canonical_parsed_values_equal": {
+    "service-train.json": true,
+    "service-validation.json": true,
+    "service-test-demo.json": true,
+    "discovery-demo.json": true,
+    "coverage.json": true,
+    "review-examples.json": true,
+    "review-sample-55.json": true
+  },
+  "raw_presentation_byte_stability_claimed": false
+}

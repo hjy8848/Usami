@@ -1,0 +1,1462 @@
+{
+  "domain": "stayops",
+  "domain_version": "stayops-0.1.0",
+  "version": "business-harness-0.1.0",
+  "suite_id": "stayops-v0.1-validation",
+  "track": "service_task",
+  "split": "validation",
+  "mode": "reference",
+  "tools": [
+    "create_hold",
+    "capture_payment",
+    "confirm_reservation",
+    "release_hold",
+    "expire_hold",
+    "change_dates",
+    "change_room_type",
+    "assign_room",
+    "unassign_room",
+    "cancel_reservation",
+    "refund_reservation",
+    "mark_room_clean",
+    "set_room_maintenance",
+    "check_in",
+    "swap_room",
+    "check_out",
+    "change_calendar_limit",
+    "set_calendar_closed",
+    "verify_guest",
+    "get_property",
+    "get_availability",
+    "get_room",
+    "get_reservation",
+    "get_guest",
+    "get_payment_ledger",
+    "get_calendar_day",
+    "get_rate_plan",
+    "get_customer_context"
+  ],
+  "budget": {
+    "max_customer_turns": 1,
+    "max_customer_llm_calls": 0,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 48,
+    "max_format_recoveries": 1
+  },
+  "service_model": {
+    "model": "offline-contract",
+    "base_url": "https://example.invalid/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0
+    },
+    "trust_env": false
+  },
+  "customer_model": null,
+  "customer_method": "",
+  "trials": [
+    "r0"
+  ],
+  "instances": [
+    {
+      "id": "stayops_task_d2290dc52e767ff10ef4674a",
+      "world": {
+        "seed": 51001,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "stayops",
+        "version": "stayops-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Property owner"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Front desk"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Housekeeping"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Guest"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Finance"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Partner owner"
+          }
+        },
+        "properties": {
+          "p0": {
+            "id": "p0",
+            "name": "City Hotel 888",
+            "owner_id": "u0",
+            "timezone": "UTC",
+            "max_stay_nights": 14
+          },
+          "p1": {
+            "id": "p1",
+            "name": "Partner Hotel 113",
+            "owner_id": "u5",
+            "timezone": "UTC",
+            "max_stay_nights": 14
+          },
+          "p2": {
+            "id": "p2",
+            "name": "Airport Hotel 575",
+            "owner_id": "u0",
+            "timezone": "UTC",
+            "max_stay_nights": 14
+          }
+        },
+        "access": {
+          "p0_u1": {
+            "id": "p0_u1",
+            "property_id": "p0",
+            "user_id": "u1",
+            "role": "frontdesk"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "property_id": "p0",
+            "user_id": "u2",
+            "role": "housekeeping"
+          },
+          "p0_u4": {
+            "id": "p0_u4",
+            "property_id": "p0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "p2_u1": {
+            "id": "p2_u1",
+            "property_id": "p2",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "guests": {
+          "g0": {
+            "id": "g0",
+            "user_id": "u3",
+            "name": "Guest",
+            "simulated_identity_result": "verified"
+          },
+          "g1": {
+            "id": "g1",
+            "user_id": "u5",
+            "name": "Partner guest",
+            "simulated_identity_result": "verified"
+          }
+        },
+        "room_types": {
+          "p0_standard": {
+            "id": "p0_standard",
+            "property_id": "p0",
+            "name": "standard",
+            "nightly_cents": 6000,
+            "max_occupants": 2
+          },
+          "p0_suite": {
+            "id": "p0_suite",
+            "property_id": "p0",
+            "name": "suite",
+            "nightly_cents": 10000,
+            "max_occupants": 4
+          },
+          "p1_standard": {
+            "id": "p1_standard",
+            "property_id": "p1",
+            "name": "standard",
+            "nightly_cents": 6000,
+            "max_occupants": 2
+          },
+          "p1_suite": {
+            "id": "p1_suite",
+            "property_id": "p1",
+            "name": "suite",
+            "nightly_cents": 10000,
+            "max_occupants": 4
+          },
+          "p2_standard": {
+            "id": "p2_standard",
+            "property_id": "p2",
+            "name": "standard",
+            "nightly_cents": 6000,
+            "max_occupants": 2
+          },
+          "p2_suite": {
+            "id": "p2_suite",
+            "property_id": "p2",
+            "name": "suite",
+            "nightly_cents": 10000,
+            "max_occupants": 4
+          }
+        },
+        "rooms": {
+          "p0_standard_0": {
+            "id": "p0_standard_0",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "number": "100",
+            "housekeeping": "dirty",
+            "maintenance": false,
+            "current_stay_id": null
+          },
+          "p0_standard_1": {
+            "id": "p0_standard_1",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "number": "101",
+            "housekeeping": "clean",
+            "maintenance": false,
+            "current_stay_id": null
+          },
+          "p0_suite_0": {
+            "id": "p0_suite_0",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "number": "200",
+            "housekeeping": "clean",
+            "maintenance": true,
+            "current_stay_id": null
+          },
+          "p0_suite_1": {
+            "id": "p0_suite_1",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "number": "201",
+            "housekeeping": "clean",
+            "maintenance": false,
+            "current_stay_id": null
+          },
+          "p1_standard_0": {
+            "id": "p1_standard_0",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "number": "100",
+            "housekeeping": "dirty",
+            "maintenance": false,
+            "current_stay_id": null
+          },
+          "p1_standard_1": {
+            "id": "p1_standard_1",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "number": "101",
+            "housekeeping": "clean",
+            "maintenance": false,
+            "current_stay_id": null
+          },
+          "p1_suite_0": {
+            "id": "p1_suite_0",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "number": "200",
+            "housekeeping": "clean",
+            "maintenance": true,
+            "current_stay_id": null
+          },
+          "p1_suite_1": {
+            "id": "p1_suite_1",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "number": "201",
+            "housekeeping": "clean",
+            "maintenance": false,
+            "current_stay_id": null
+          },
+          "p2_standard_0": {
+            "id": "p2_standard_0",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "number": "100",
+            "housekeeping": "dirty",
+            "maintenance": false,
+            "current_stay_id": null
+          },
+          "p2_standard_1": {
+            "id": "p2_standard_1",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "number": "101",
+            "housekeeping": "clean",
+            "maintenance": false,
+            "current_stay_id": null
+          },
+          "p2_suite_0": {
+            "id": "p2_suite_0",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "number": "200",
+            "housekeeping": "clean",
+            "maintenance": true,
+            "current_stay_id": null
+          },
+          "p2_suite_1": {
+            "id": "p2_suite_1",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "number": "201",
+            "housekeeping": "clean",
+            "maintenance": false,
+            "current_stay_id": null
+          }
+        },
+        "calendar": {
+          "p0_standard_2026-01-15": {
+            "id": "p0_standard_2026-01-15",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-15",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-16": {
+            "id": "p0_standard_2026-01-16",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-16",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-17": {
+            "id": "p0_standard_2026-01-17",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-17",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-18": {
+            "id": "p0_standard_2026-01-18",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-18",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-19": {
+            "id": "p0_standard_2026-01-19",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-19",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-20": {
+            "id": "p0_standard_2026-01-20",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-20",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-21": {
+            "id": "p0_standard_2026-01-21",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-21",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-22": {
+            "id": "p0_standard_2026-01-22",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-22",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-23": {
+            "id": "p0_standard_2026-01-23",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-23",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-24": {
+            "id": "p0_standard_2026-01-24",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-24",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-25": {
+            "id": "p0_standard_2026-01-25",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-25",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-26": {
+            "id": "p0_standard_2026-01-26",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-26",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-27": {
+            "id": "p0_standard_2026-01-27",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-27",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-28": {
+            "id": "p0_standard_2026-01-28",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-28",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-29": {
+            "id": "p0_standard_2026-01-29",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-29",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-30": {
+            "id": "p0_standard_2026-01-30",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-30",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_standard_2026-01-31": {
+            "id": "p0_standard_2026-01-31",
+            "property_id": "p0",
+            "room_type_id": "p0_standard",
+            "day": "2026-01-31",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-15": {
+            "id": "p0_suite_2026-01-15",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-15",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-16": {
+            "id": "p0_suite_2026-01-16",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-16",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-17": {
+            "id": "p0_suite_2026-01-17",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-17",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-18": {
+            "id": "p0_suite_2026-01-18",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-18",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-19": {
+            "id": "p0_suite_2026-01-19",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-19",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-20": {
+            "id": "p0_suite_2026-01-20",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-20",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-21": {
+            "id": "p0_suite_2026-01-21",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-21",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-22": {
+            "id": "p0_suite_2026-01-22",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-22",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-23": {
+            "id": "p0_suite_2026-01-23",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-23",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-24": {
+            "id": "p0_suite_2026-01-24",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-24",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-25": {
+            "id": "p0_suite_2026-01-25",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-25",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-26": {
+            "id": "p0_suite_2026-01-26",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-26",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-27": {
+            "id": "p0_suite_2026-01-27",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-27",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-28": {
+            "id": "p0_suite_2026-01-28",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-28",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-29": {
+            "id": "p0_suite_2026-01-29",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-29",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-30": {
+            "id": "p0_suite_2026-01-30",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-30",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p0_suite_2026-01-31": {
+            "id": "p0_suite_2026-01-31",
+            "property_id": "p0",
+            "room_type_id": "p0_suite",
+            "day": "2026-01-31",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-15": {
+            "id": "p1_standard_2026-01-15",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-15",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-16": {
+            "id": "p1_standard_2026-01-16",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-16",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-17": {
+            "id": "p1_standard_2026-01-17",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-17",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-18": {
+            "id": "p1_standard_2026-01-18",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-18",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-19": {
+            "id": "p1_standard_2026-01-19",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-19",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-20": {
+            "id": "p1_standard_2026-01-20",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-20",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-21": {
+            "id": "p1_standard_2026-01-21",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-21",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-22": {
+            "id": "p1_standard_2026-01-22",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-22",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-23": {
+            "id": "p1_standard_2026-01-23",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-23",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-24": {
+            "id": "p1_standard_2026-01-24",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-24",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-25": {
+            "id": "p1_standard_2026-01-25",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-25",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-26": {
+            "id": "p1_standard_2026-01-26",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-26",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-27": {
+            "id": "p1_standard_2026-01-27",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-27",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-28": {
+            "id": "p1_standard_2026-01-28",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-28",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-29": {
+            "id": "p1_standard_2026-01-29",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-29",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-30": {
+            "id": "p1_standard_2026-01-30",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-30",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_standard_2026-01-31": {
+            "id": "p1_standard_2026-01-31",
+            "property_id": "p1",
+            "room_type_id": "p1_standard",
+            "day": "2026-01-31",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-15": {
+            "id": "p1_suite_2026-01-15",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-15",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-16": {
+            "id": "p1_suite_2026-01-16",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-16",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-17": {
+            "id": "p1_suite_2026-01-17",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-17",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-18": {
+            "id": "p1_suite_2026-01-18",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-18",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-19": {
+            "id": "p1_suite_2026-01-19",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-19",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-20": {
+            "id": "p1_suite_2026-01-20",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-20",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-21": {
+            "id": "p1_suite_2026-01-21",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-21",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-22": {
+            "id": "p1_suite_2026-01-22",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-22",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-23": {
+            "id": "p1_suite_2026-01-23",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-23",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-24": {
+            "id": "p1_suite_2026-01-24",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-24",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-25": {
+            "id": "p1_suite_2026-01-25",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-25",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-26": {
+            "id": "p1_suite_2026-01-26",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-26",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-27": {
+            "id": "p1_suite_2026-01-27",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-27",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-28": {
+            "id": "p1_suite_2026-01-28",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-28",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-29": {
+            "id": "p1_suite_2026-01-29",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-29",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-30": {
+            "id": "p1_suite_2026-01-30",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-30",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p1_suite_2026-01-31": {
+            "id": "p1_suite_2026-01-31",
+            "property_id": "p1",
+            "room_type_id": "p1_suite",
+            "day": "2026-01-31",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-15": {
+            "id": "p2_standard_2026-01-15",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-15",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-16": {
+            "id": "p2_standard_2026-01-16",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-16",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-17": {
+            "id": "p2_standard_2026-01-17",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-17",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-18": {
+            "id": "p2_standard_2026-01-18",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-18",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-19": {
+            "id": "p2_standard_2026-01-19",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-19",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-20": {
+            "id": "p2_standard_2026-01-20",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-20",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-21": {
+            "id": "p2_standard_2026-01-21",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-21",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-22": {
+            "id": "p2_standard_2026-01-22",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-22",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-23": {
+            "id": "p2_standard_2026-01-23",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-23",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-24": {
+            "id": "p2_standard_2026-01-24",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-24",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-25": {
+            "id": "p2_standard_2026-01-25",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-25",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-26": {
+            "id": "p2_standard_2026-01-26",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-26",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-27": {
+            "id": "p2_standard_2026-01-27",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-27",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-28": {
+            "id": "p2_standard_2026-01-28",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-28",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-29": {
+            "id": "p2_standard_2026-01-29",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-29",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-30": {
+            "id": "p2_standard_2026-01-30",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-30",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_standard_2026-01-31": {
+            "id": "p2_standard_2026-01-31",
+            "property_id": "p2",
+            "room_type_id": "p2_standard",
+            "day": "2026-01-31",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-15": {
+            "id": "p2_suite_2026-01-15",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-15",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-16": {
+            "id": "p2_suite_2026-01-16",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-16",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-17": {
+            "id": "p2_suite_2026-01-17",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-17",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-18": {
+            "id": "p2_suite_2026-01-18",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-18",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-19": {
+            "id": "p2_suite_2026-01-19",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-19",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-20": {
+            "id": "p2_suite_2026-01-20",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-20",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-21": {
+            "id": "p2_suite_2026-01-21",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-21",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-22": {
+            "id": "p2_suite_2026-01-22",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-22",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-23": {
+            "id": "p2_suite_2026-01-23",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-23",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-24": {
+            "id": "p2_suite_2026-01-24",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-24",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-25": {
+            "id": "p2_suite_2026-01-25",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-25",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-26": {
+            "id": "p2_suite_2026-01-26",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-26",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-27": {
+            "id": "p2_suite_2026-01-27",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-27",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-28": {
+            "id": "p2_suite_2026-01-28",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-28",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-29": {
+            "id": "p2_suite_2026-01-29",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-29",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-30": {
+            "id": "p2_suite_2026-01-30",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-30",
+            "sale_limit": 2,
+            "closed": false
+          },
+          "p2_suite_2026-01-31": {
+            "id": "p2_suite_2026-01-31",
+            "property_id": "p2",
+            "room_type_id": "p2_suite",
+            "day": "2026-01-31",
+            "sale_limit": 2,
+            "closed": false
+          }
+        },
+        "rate_plans": {
+          "p0_flex": {
+            "id": "p0_flex",
+            "property_id": "p0",
+            "name": "flex",
+            "room_type_ids": [
+              "p0_standard",
+              "p0_suite"
+            ],
+            "weekend_surcharge_cents": 1000,
+            "deposit_bps": 2000,
+            "free_cancel_hours": 48,
+            "late_fee": "first_night"
+          },
+          "p0_prepaid": {
+            "id": "p0_prepaid",
+            "property_id": "p0",
+            "name": "prepaid",
+            "room_type_ids": [
+              "p0_standard",
+              "p0_suite"
+            ],
+            "weekend_surcharge_cents": 1000,
+            "deposit_bps": 10000,
+            "free_cancel_hours": 168,
+            "late_fee": "full_stay"
+          },
+          "p1_flex": {
+            "id": "p1_flex",
+            "property_id": "p1",
+            "name": "flex",
+            "room_type_ids": [
+              "p1_standard",
+              "p1_suite"
+            ],
+            "weekend_surcharge_cents": 1000,
+            "deposit_bps": 2000,
+            "free_cancel_hours": 48,
+            "late_fee": "first_night"
+          },
+          "p1_prepaid": {
+            "id": "p1_prepaid",
+            "property_id": "p1",
+            "name": "prepaid",
+            "room_type_ids": [
+              "p1_standard",
+              "p1_suite"
+            ],
+            "weekend_surcharge_cents": 1000,
+            "deposit_bps": 10000,
+            "free_cancel_hours": 168,
+            "late_fee": "full_stay"
+          },
+          "p2_flex": {
+            "id": "p2_flex",
+            "property_id": "p2",
+            "name": "flex",
+            "room_type_ids": [
+              "p2_standard",
+              "p2_suite"
+            ],
+            "weekend_surcharge_cents": 1000,
+            "deposit_bps": 2000,
+            "free_cancel_hours": 48,
+            "late_fee": "first_night"
+          },
+          "p2_prepaid": {
+            "id": "p2_prepaid",
+            "property_id": "p2",
+            "name": "prepaid",
+            "room_type_ids": [
+              "p2_standard",
+              "p2_suite"
+            ],
+            "weekend_surcharge_cents": 1000,
+            "deposit_bps": 10000,
+            "free_cancel_hours": 168,
+            "late_fee": "full_stay"
+          }
+        },
+        "reservations": {},
+        "assignments": {},
+        "payments": {},
+        "cancellations": {},
+        "identity_checks": {},
+        "stays": {}
+      },
+      "initial_hash": "ac2e4a4bb1d64ac390eb6c0cd09556dc6f7252521a8f12e28c49aaa172a34bab",
+      "identity": "u0",
+      "task": {
+        "domain": "stayops",
+        "version": "stayops-0.1.0",
+        "id": "stayops_task_d2290dc52e767ff10ef4674a",
+        "family": "booking_confirmation",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Book b0 for g0, two occupants, p0_suite/p0_flex, January 20–22, 30-minute hold. Pay the required deposit with card_approved/deposit and confirm. Preserve unrelated entities and immutable guest/property bindings.",
+        "initial_state_hash": "ac2e4a4bb1d64ac390eb6c0cd09556dc6f7252521a8f12e28c49aaa172a34bab",
+        "goal": {
+          "atoms": [
+            {
+              "collection": "reservations",
+              "entity": "b0",
+              "field": "status",
+              "comparison": "eq",
+              "value": "confirmed"
+            }
+          ],
+          "allowed_changes": {
+            "reservations/b0": [
+              "*"
+            ],
+            "payments/payment_7c153be431d606fa": [
+              "*"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "create_hold",
+            "scope_id": "p0",
+            "resource_id": "p0",
+            "params": {
+              "arrival": "2026-01-20",
+              "departure": "2026-01-22",
+              "reservation_id": "b0",
+              "guest_id": "g0",
+              "room_type_id": "p0_suite",
+              "rate_plan_id": "p0_flex",
+              "occupants": 2,
+              "hold_minutes": 30
+            }
+          },
+          {
+            "name": "capture_payment",
+            "scope_id": "p0",
+            "resource_id": "b0",
+            "params": {
+              "amount_cents": 4000,
+              "key": "deposit",
+              "token": "card_approved"
+            }
+          },
+          {
+            "name": "confirm_reservation",
+            "scope_id": "p0",
+            "resource_id": "b0",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "create_hold",
+                "scope_id": "p0",
+                "resource_id": "p0",
+                "params": {
+                  "arrival": "2026-01-20",
+                  "departure": "2026-01-22",
+                  "reservation_id": "b0",
+                  "guest_id": "g0",
+                  "room_type_id": "p0_suite",
+                  "rate_plan_id": "p0_flex",
+                  "occupants": 2,
+                  "hold_minutes": 30
+                }
+              },
+              {
+                "name": "capture_payment",
+                "scope_id": "p0",
+                "resource_id": "b0",
+                "params": {
+                  "amount_cents": 4000,
+                  "key": "deposit",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "confirm_reservation",
+                "scope_id": "p0",
+                "resource_id": "b0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "DEPOSIT_REQUIRED"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "DEPOSIT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 2,
+            "final_state_hash": "99b12aa1f2c24e2816cc6cd909058073e41c371e5d51589ed1551a64d61e782d",
+            "trace_hash": "526c7283e9853bf748acc134cc6b01fa1db1c8728ec763a8b21f966a54791526"
+          }
+        ],
+        "refusal_code": null,
+        "search_nodes": 4,
+        "search_exhausted": true,
+        "max_search_depth": 18,
+        "max_search_nodes": 8192,
+        "structure_signature": "0dd2fc8e795721303b0061ba6b807a229efcd98ad804f107f9d865cd2d1476a6",
+        "semantic_signature": "392ce106f12d5869ecb727fc4615fe36bb5838e0650f99f1b29a21f0864293dd"
+      },
+      "generation_recipe": "booking_confirmation:suite"
+    }
+  ],
+  "source_hashes": {
+    "usami/__init__.py": "32fd90cc175330e5763b25ffcb0ff860fdb0c09e02ecce135acbc994e969bbbf",
+    "usami/__main__.py": "ee847d69a4bfe9c24eb84d30b6232f5309073bd753669ce95111d59a28defe85",
+    "usami/audit/__init__.py": "ff848e128b1c8f512403a26ad274b88b8db1f1d849b14f009e614e0fe9c973cc",
+    "usami/audit/__main__.py": "7ab475c7f6cc130cbcc0781d1108c5861aedc1b52c48f512ebe9296c79fb34ba",
+    "usami/audit/report.py": "02c260d3ea97db7a984e1ca43f8ac3c5de26082f1bcf2d171e69cfbdbe3fe463",
+    "usami/audit/rules.py": "75944a8af59c2ac584ffab4d1ae128aa83b79834a5b29c3246f1dcb942677109",
+    "usami/audit/runner.py": "7bf205b8a4ebbb21d0cba3bf9e70fb24a12144ffc9d64602df7c10bd0c2cfd39",
+    "usami/audit/signatures.py": "fc929824171f8d45b8de4356eeb31f2c31138656d0e2152adb267ab502d6b2fb",
+    "usami/benchmark/__init__.py": "b7b427408344be94524afbd0f03d1f8b21f13770f8a7b922b00cfb7ef83ff182",
+    "usami/benchmark/__main__.py": "aff45dbe69c9be0c591a0e0c006ba0bd554f73de50fb1ea5f84d83d21e64c7a3",
+    "usami/benchmark/audit_v2.py": "c5319d2d28afb648eada662047270e5462a4f412eed8060d1afa1177ad7a5cfb",
+    "usami/benchmark/baselines.py": "6a9c418691f4bcbfd9df93a593226ba0d88b23a7661880c99cb4729de8336926",
+    "usami/benchmark/goals.py": "856df7a1107b9f7fd74fac8a9e04a92721323b6858ec34a7a3fc16f42d4ca182",
+    "usami/benchmark/goals_v2.py": "617460ae5bf6a33e58c6c1a5793de637b2dcc3409157ba350c9f9818ad7fdbd5",
+    "usami/benchmark/manifest.py": "f5a01b37b5df11993ccb25b6973658911173d4485d2198521a69d5b38a583a65",
+    "usami/benchmark/release_v2.py": "462806417cc1db22a94ecd4579f95744d683bfa368eab7845776042746a40841",
+    "usami/benchmark/runtime.py": "4c4fbb8ce51145d89ce8eabc90970b7c2f333eaf0d36c15eb9ed505815d7ebd8",
+    "usami/benchmark/scoring.py": "052fb65a7a336a1f3684eb6e0cddc41c6951a698228a59b4fb7206016f726f77",
+    "usami/benchmark/scoring_v2.py": "13294ba44961619308dc1e6f4f0546e558cf6168b22c027bc6e8346b1cd5e2d0",
+    "usami/benchmark/suite.py": "b43872b1c1c6bfa708355adfe9e810981248cc06f4b3f67c0fac2b11b16d8e57",
+    "usami/customer/__init__.py": "566f40d424c7ee6ed5e455d8e7bcf349f338052b3deab8569082fefadecca213",
+    "usami/customer/agent.py": "635f896a65c23f3d385a4eafbe8452bd8dccd751a661f7420b7c687eca755f08",
+    "usami/customer/models.py": "7ae70f9e621c133d0ea2e857ef043d6dfe509a4a56eb38baeea9a6787e049bc9",
+    "usami/customer/observation.py": "a0c1d98cf57f2f0437f189e0a7cbf52f63bdb2a43b12e53ec2dad376ebbd6010",
+    "usami/evaluation/__init__.py": "2d16da142577a1f97abc548b7a6ec12446c8375ee9fa4d049cd7379e14828607",
+    "usami/evaluation/oracle.py": "3a3fb6db0c6a1260f7e051262b02f0d02dab161e8b62ff87b3148fba27571c23",
+    "usami/evaluation/scenario.py": "69c5e75bbd6096f908aee103d1b0aa1fdd452f63695c709ba15168b273911394",
+    "usami/evaluation/splits.py": "e917b74633d5790404dfd084e45f73dd3cdaaf3b029568eb7224e35a77d930cc",
+    "usami/events.py": "ca7c741389aede8db12732f4cb7b4c9ecbf9cd0ec60fa72aee351b3cbeed7394",
+    "usami/interaction/__init__.py": "15936514491af8e148553656e74ad2ed2533c8b61320298a025e37bfcbb52958",
+    "usami/interaction/__main__.py": "d5d6e583a8f627e1caaf1fe84524c88f271717094371e8724ddf506b739368bd",
+    "usami/interaction/authorization.py": "cb8c493178595ad14ace7bef80ff223fa4c122c9316022c07f4075aefb1d9cdc",
+    "usami/interaction/models.py": "f2cc10aa547a1a05de2e1e1142773f13684845755f120f59ba598e03564edd8e",
+    "usami/interaction/runner.py": "94b95df86b204ce75bf5c534a55da07f43bd7f8f428bc5b08b9a8139b7641191",
+    "usami/protocol.py": "7682a13b6d592813857439ce3fb50324f2bb2fd0ef84f39c7725cff8c504f9bb",
+    "usami/randomness.py": "42bd8b48bca6f9946861c3b1e7137900406d0b945391d6a1893280d691c35572",
+    "usami/service/__init__.py": "7590487bf241368ae51294e98c896fcd09d5d49d6039dfec02eca6eb8e8f1a11",
+    "usami/service/__main__.py": "7fd80af3907c1b04009d9310a6b0d48ec16da3a133a4776a7a9e3e5180b01b4a",
+    "usami/service/client.py": "cb783b8322bfb1db3834830edfe06c75847c505f2941b0518fc1fb2d0b842b40",
+    "usami/service/models.py": "ac41bd08bab7f7fa3d593fd59bd7e2a89e28632fe27df9701f126832d8637a20",
+    "usami/service/runner.py": "b27e5ba7d86b392cd3bbbeb60df37180f88e9e56dc548da8bfa06dbb75918ccd",
+    "usami/service/tools.py": "d34db1528ead23b57a6d1cf449ac24c6f6dc6c7ad64834a6a5b3ffabc328cf6a",
+    "usami/world/__init__.py": "1c21b8471eeb161758e7ef1c4e957bfe49e3351b0688e70aea93ebb28e06d325",
+    "usami/world/engine.py": "5f7dbe972c9aa6f172826719c89ded8bff9afce92e413be1f3e70d06c4016d10",
+    "usami/world/generator.py": "6048fdec6e8247af33163772b2a5cda6a18b52358783705ac44f5d06f6be9a3f",
+    "usami/world/generator_v2.py": "9505981da0fc8e24f0197bc8e03a0c7f880a9f20124dfeaca501b4cb7e247b2f",
+    "usami/world/models.py": "131ef77f8797c35a29e44a8e6126f380b81cde4055bb0daeb09a402d48f316a5",
+    "usami/world/rules.py": "f50c1af9ebc91762e3796f3edb13bd3d2d47a4f57f382f49b1a26d2c93c9090f",
+    "usami/world/rules_v2.py": "29f299764e6c33ff4df6f5d975ae088bb8c89c100b23b29f4373f035e2a05ea9",
+    "usami/world/transitions_v2.py": "4a8037c26b1b0a479199398ef113edad61818a9d2b9443783ecd8d4d764fb120",
+    "usami_harness/__init__.py": "04572c66218ab3426caeffc1511ea055db934b3521de3f5a2e2f1ae3c82dd6e8",
+    "usami_harness/benchmark.py": "9d090be4e2ff326a2cf328d8a058a14c07a06517e446719c612425f566fa0ae3",
+    "usami_harness/cli.py": "75fbbe15567c352df0a45c1c9307a23ced669415bea2463d94d96ecec23a70c2",
+    "usami_harness/customer.py": "921f048f8ee88fa849c3d6ca3bf847073ecdfd300323afa23627eef52fdba708",
+    "usami_harness/engine.py": "a799db86ed144b90f05c6d0c522ca0d6552abedba7b2fc56697286ad834f85b7",
+    "usami_harness/goals.py": "1ba28058e6be1668a6c8088e4b042801eaa2e56c79f67722e608d242fe2ae5c8",
+    "usami_harness/models.py": "4b573db862bccdb49c01b7e1e2c416bc0ae99bf5ee59ea71a4c00facd5dc35ac",
+    "usami_harness/oracle.py": "2c458aa72366dbc75acb342c7834fed829400183dc336f10de540f3aaf128161",
+    "usami_harness/provider.py": "33ac2d232848d6ea4093ea5ac69e7d21014cb7f3f30632c6cbdf2ebfd21ea728",
+    "usami_harness/service.py": "9fd5da1f90540432bc6d193a819d8ddad9abfa4ceb42dd771394f4539a6d4a16",
+    "usami_harness/suite.py": "70fa83c17ee79ddbadf470759feca621e443f8fa34de479574b93f9beb0dcbc3",
+    "usami_harness/tools.py": "8c66160f58ee3a032dbc706dd0688c17dd0d8944e2787383a0826a10519886a6",
+    "usami_stayops/__init__.py": "6091c86b861a5b42690def3a749a487b2bd448e0a357db546df9abf6fb97d303",
+    "usami_stayops/__main__.py": "493a598507d30487c7c53da6813f4f80a13b12f5e9a976ab4b2f1fa0d8aee08c",
+    "usami_stayops/adapter.py": "34ca0f376a0e9aef873b037978dfa85e8a517bf2ba41b857817a25ec7a9c54fe",
+    "usami_stayops/benchmark.py": "06a99440ea363446e1aece8315d5719370ab721df7536ba17d5cf381bdae8cbc",
+    "usami_stayops/customer.py": "ca856db8b0f838d1b7098245e7ede331155bf22c027f97c8abc38faf40adb001",
+    "usami_stayops/engine.py": "b26db7546a783cb3c5e65b3884e7b5e22e47ea90092c265c1ab5d14370b43947",
+    "usami_stayops/generator.py": "0059529947abcc3888b62758c390863bfc0dc559e0e226a9a55846735695e59c",
+    "usami_stayops/goals.py": "69bc250e9841695a5fb933d0f64a8994c5b02f62e13804454626d5db9fea894b",
+    "usami_stayops/models.py": "318ac105debcafc938371b5e4e8f610f4f93098c8a15648f85d638d0cd6caac3",
+    "usami_stayops/observations.py": "8a067fcb72291702cddb2d6c23084d50f328e91269f29baf67610317b12a8d46",
+    "usami_stayops/oracle.py": "5b6f13ef8ae16fc868397803d338cecc68bc0fb48c6ad94c3a3417592248534f",
+    "usami_stayops/release.py": "e81ab6cbc6bb28f7be65890fcbe5deda7228d8e44a9afd1b6a35a1bd83e671f1",
+    "usami_stayops/rules.py": "62a1226b883eab60891d8e366bbff3c9af91c6f50d6552e0ce77f783ea22d807",
+    "usami_stayops/service.py": "1784150074afbc118f0bce6a4793e7d8cc8293ee1d63a5cf9dd14eeffe9db1c4",
+    "usami_stayops/signatures.py": "9b93dbe7f36965fd92f4658375b81b38bdc92dd35ee450b8e9eb948a60d90fa3",
+    "usami_stayops/suite.py": "4e814da71aa6c939144e30a8d9935167e533630f2964afdd1953d4931557817c",
+    "usami_stayops/tools.py": "01569dea6f1269330bbf30a6e7e646dc2393d81d6e7e79d707877fc02265fd1c",
+    "usami_stayops/transitions.py": "4175df09e7b8928d082aecb0eb6a316e458ab5b8b1bfdbb9e12fbd4b26d7be45"
+  },
+  "dataset_hash": "ddc7dffdb062c49c2981daf2703ed2f047267de9c479d64d26a6ac2aea4b37c8",
+  "manifest_hash": "bd9514408c5c87cd5fc1be38faa98b6b5dd119ed2cbaad7d09fe3e7d3782458c"
+}

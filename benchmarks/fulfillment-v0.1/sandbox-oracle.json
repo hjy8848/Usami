@@ -1,0 +1,34 @@
+{
+  "domain": "fulfillment",
+  "version": "fulfillment-0.1.0",
+  "trace_valid": true,
+  "status": "fail",
+  "operations": [
+    {
+      "event_id": "event_000002",
+      "operation": "confirm_order",
+      "authorized": true,
+      "reference_allowed": false,
+      "reference_error_code": "PAYMENT_REQUIRED",
+      "success": true,
+      "classification": "successful_business_violation",
+      "operation_correct": false,
+      "violations": [
+        "ORDER_PAYMENT_REQUIRED",
+        "PAYMENT_REQUIRED"
+      ],
+      "before_hash": "a0378578282d378ddfe5b221fccd4e339a7f3432828be4627c663373fe714b3f",
+      "after_hash": "057e7e11415d44a2cd37fbeec88178c3e519d78b7f5b9a15ed39d366f24fab9f"
+    }
+  ],
+  "violations": [],
+  "metrics": {
+    "legal_execution": 0,
+    "rejected_invalid_attempt": 0,
+    "successful_business_violation": 1,
+    "authorization_only": 0,
+    "false_rejection": 0,
+    "unscored": 0
+  },
+  "final_state_hash": "057e7e11415d44a2cd37fbeec88178c3e519d78b7f5b9a15ed39d366f24fab9f"
+}

@@ -1,0 +1,5 @@
+{
+  "error_type": "ValueError",
+  "message": "Attempt interrupted or could not initialize; original registration retained. No automatic retry.",
+  "manifest_hash": "290a0321a1f375e62eebf57cd346f326ea1b0f4b335486c5cbee2aca2ec4b2b1"
+}

@@ -1,0 +1,2 @@
+service: 6 exact archived-source real attempts replayed, including failures; no provider calls
+discovery: 3 exact archived-source real attempts replayed, including failures; no provider calls

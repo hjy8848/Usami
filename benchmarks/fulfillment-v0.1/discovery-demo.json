@@ -1,0 +1,630 @@
+{
+  "domain": "fulfillment",
+  "domain_version": "fulfillment-0.1.0",
+  "version": "business-harness-0.1.0",
+  "suite_id": "fulfillment-v0.1-discovery",
+  "track": "customer_discovery",
+  "split": "discovery",
+  "mode": "sandbox",
+  "tools": [
+    "receive_inventory",
+    "inspect_lot",
+    "dispatch_transfer",
+    "receive_transfer",
+    "create_order",
+    "modify_order_line",
+    "capture_payment",
+    "confirm_order",
+    "reserve_inventory",
+    "release_reservation",
+    "pick_reservation",
+    "unpick_reservation",
+    "pack_reservation",
+    "unpack_reservation",
+    "create_shipment",
+    "cancel_shipment",
+    "dispatch_shipment",
+    "confirm_delivery",
+    "cancel_order",
+    "cancel_order_line",
+    "request_return",
+    "cancel_return",
+    "receive_return",
+    "inspect_return",
+    "restock_return",
+    "refund_order",
+    "change_warehouse_capacity",
+    "set_warehouse_receiving",
+    "get_warehouse",
+    "get_inventory",
+    "get_catalog",
+    "get_order",
+    "get_shipment",
+    "get_returns",
+    "get_payment_ledger",
+    "get_customer_context"
+  ],
+  "budget": {
+    "max_customer_turns": 8,
+    "max_customer_llm_calls": 12,
+    "max_service_llm_calls": 32,
+    "max_service_tool_calls": 64,
+    "max_format_recoveries": 1
+  },
+  "service_model": {
+    "model": "offline-contract",
+    "base_url": "https://example.invalid/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0
+    },
+    "trust_env": false
+  },
+  "customer_model": {
+    "model": "offline-contract",
+    "base_url": "https://example.invalid/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0
+    },
+    "trust_env": false
+  },
+  "customer_method": "adaptive",
+  "trials": [
+    "r0",
+    "r1",
+    "r2"
+  ],
+  "instances": [
+    {
+      "id": "fulfillment_world_49001_u0",
+      "world": {
+        "seed": 49001,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Employee 5"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "North Trading",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "South Trading",
+            "owner_id": "u5"
+          }
+        },
+        "warehouses": {
+          "w0": {
+            "id": "w0",
+            "org_id": "o0",
+            "name": "Primary 446",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w1": {
+            "id": "w1",
+            "org_id": "o0",
+            "name": "Regional 981",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w2": {
+            "id": "w2",
+            "org_id": "o1",
+            "name": "Partner 182",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "access": {
+          "w0_u1": {
+            "id": "w0_u1",
+            "warehouse_id": "w0",
+            "user_id": "u1",
+            "role": "picker"
+          },
+          "w1_u2": {
+            "id": "w1_u2",
+            "warehouse_id": "w1",
+            "user_id": "u2",
+            "role": "receiver"
+          },
+          "w0_u2": {
+            "id": "w0_u2",
+            "warehouse_id": "w0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "w0_u4": {
+            "id": "w0_u4",
+            "warehouse_id": "w0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "w1_u1": {
+            "id": "w1_u1",
+            "warehouse_id": "w1",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "skus": {
+          "sku0": {
+            "id": "sku0",
+            "org_id": "o0",
+            "name": "Industrial Widget",
+            "category": "general",
+            "unit_price_cents": 1200,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          },
+          "sku1": {
+            "id": "sku1",
+            "org_id": "o0",
+            "name": "Glass Sensor",
+            "category": "fragile",
+            "unit_price_cents": 2300,
+            "unit_volume": 2,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "merchant_fault"
+          },
+          "sku2": {
+            "id": "sku2",
+            "org_id": "o1",
+            "name": "Partner Module",
+            "category": "general",
+            "unit_price_cents": 800,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          }
+        },
+        "lots": {
+          "lot0": {
+            "id": "lot0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot1": {
+            "id": "lot1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot2": {
+            "id": "lot2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "on_hand": 6,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot3": {
+            "id": "lot3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot4": {
+            "id": "lot4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          }
+        },
+        "receipt_notices": {
+          "opening0": {
+            "id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+            }
+          },
+          "opening1": {
+            "id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening1",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+            }
+          },
+          "opening2": {
+            "id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 6,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+            }
+          },
+          "opening3": {
+            "id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening3",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+            }
+          },
+          "opening4": {
+            "id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening4",
+                "warehouse_id": "w2",
+                "sku_id": "sku2",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+            }
+          },
+          "inbound0": {
+            "id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+            }
+          },
+          "inbound1": {
+            "id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound1",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+            }
+          },
+          "inbound2": {
+            "id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 8,
+                "quality": "quarantine"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+            }
+          }
+        },
+        "receipts": {
+          "receipt0": {
+            "id": "receipt0",
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "lot_id": "lot0",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt1": {
+            "id": "receipt1",
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "lot_id": "lot1",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt2": {
+            "id": "receipt2",
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "lot_id": "lot2",
+            "quantity": 6,
+            "key": "opening"
+          },
+          "receipt3": {
+            "id": "receipt3",
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "lot_id": "lot3",
+            "quantity": 4,
+            "key": "opening"
+          },
+          "receipt4": {
+            "id": "receipt4",
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "lot_id": "lot4",
+            "quantity": 8,
+            "key": "opening"
+          }
+        },
+        "lot_inspections": {},
+        "orders": {
+          "order0": {
+            "id": "order0",
+            "warehouse_id": "w0",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order1": {
+            "id": "order1",
+            "warehouse_id": "w1",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order2": {
+            "id": "order2",
+            "warehouse_id": "w2",
+            "customer_id": "u5",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku2",
+                "quantity": 4,
+                "unit_price_cents": 800,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "reservations": {},
+        "handling": {},
+        "shipments": {},
+        "transfers": {},
+        "returns": {},
+        "payments": {}
+      },
+      "initial_hash": "9ba7a039a2bc9efd24c8ebd7e2ecf2123649b6a960ca42a4c779ff2a1e971ccf",
+      "identity": "u0",
+      "task": null,
+      "generation_recipe": null
+    }
+  ],
+  "source_hashes": {
+    "usami/__init__.py": "32fd90cc175330e5763b25ffcb0ff860fdb0c09e02ecce135acbc994e969bbbf",
+    "usami/__main__.py": "ee847d69a4bfe9c24eb84d30b6232f5309073bd753669ce95111d59a28defe85",
+    "usami/audit/__init__.py": "ff848e128b1c8f512403a26ad274b88b8db1f1d849b14f009e614e0fe9c973cc",
+    "usami/audit/__main__.py": "7ab475c7f6cc130cbcc0781d1108c5861aedc1b52c48f512ebe9296c79fb34ba",
+    "usami/audit/report.py": "02c260d3ea97db7a984e1ca43f8ac3c5de26082f1bcf2d171e69cfbdbe3fe463",
+    "usami/audit/rules.py": "75944a8af59c2ac584ffab4d1ae128aa83b79834a5b29c3246f1dcb942677109",
+    "usami/audit/runner.py": "7bf205b8a4ebbb21d0cba3bf9e70fb24a12144ffc9d64602df7c10bd0c2cfd39",
+    "usami/audit/signatures.py": "fc929824171f8d45b8de4356eeb31f2c31138656d0e2152adb267ab502d6b2fb",
+    "usami/benchmark/__init__.py": "b7b427408344be94524afbd0f03d1f8b21f13770f8a7b922b00cfb7ef83ff182",
+    "usami/benchmark/__main__.py": "aff45dbe69c9be0c591a0e0c006ba0bd554f73de50fb1ea5f84d83d21e64c7a3",
+    "usami/benchmark/audit_v2.py": "c5319d2d28afb648eada662047270e5462a4f412eed8060d1afa1177ad7a5cfb",
+    "usami/benchmark/baselines.py": "6a9c418691f4bcbfd9df93a593226ba0d88b23a7661880c99cb4729de8336926",
+    "usami/benchmark/goals.py": "856df7a1107b9f7fd74fac8a9e04a92721323b6858ec34a7a3fc16f42d4ca182",
+    "usami/benchmark/goals_v2.py": "617460ae5bf6a33e58c6c1a5793de637b2dcc3409157ba350c9f9818ad7fdbd5",
+    "usami/benchmark/manifest.py": "f5a01b37b5df11993ccb25b6973658911173d4485d2198521a69d5b38a583a65",
+    "usami/benchmark/release_v2.py": "462806417cc1db22a94ecd4579f95744d683bfa368eab7845776042746a40841",
+    "usami/benchmark/runtime.py": "4c4fbb8ce51145d89ce8eabc90970b7c2f333eaf0d36c15eb9ed505815d7ebd8",
+    "usami/benchmark/scoring.py": "052fb65a7a336a1f3684eb6e0cddc41c6951a698228a59b4fb7206016f726f77",
+    "usami/benchmark/scoring_v2.py": "13294ba44961619308dc1e6f4f0546e558cf6168b22c027bc6e8346b1cd5e2d0",
+    "usami/benchmark/suite.py": "b43872b1c1c6bfa708355adfe9e810981248cc06f4b3f67c0fac2b11b16d8e57",
+    "usami/customer/__init__.py": "566f40d424c7ee6ed5e455d8e7bcf349f338052b3deab8569082fefadecca213",
+    "usami/customer/agent.py": "635f896a65c23f3d385a4eafbe8452bd8dccd751a661f7420b7c687eca755f08",
+    "usami/customer/models.py": "7ae70f9e621c133d0ea2e857ef043d6dfe509a4a56eb38baeea9a6787e049bc9",
+    "usami/customer/observation.py": "a0c1d98cf57f2f0437f189e0a7cbf52f63bdb2a43b12e53ec2dad376ebbd6010",
+    "usami/evaluation/__init__.py": "2d16da142577a1f97abc548b7a6ec12446c8375ee9fa4d049cd7379e14828607",
+    "usami/evaluation/oracle.py": "3a3fb6db0c6a1260f7e051262b02f0d02dab161e8b62ff87b3148fba27571c23",
+    "usami/evaluation/scenario.py": "69c5e75bbd6096f908aee103d1b0aa1fdd452f63695c709ba15168b273911394",
+    "usami/evaluation/splits.py": "e917b74633d5790404dfd084e45f73dd3cdaaf3b029568eb7224e35a77d930cc",
+    "usami/events.py": "ca7c741389aede8db12732f4cb7b4c9ecbf9cd0ec60fa72aee351b3cbeed7394",
+    "usami/interaction/__init__.py": "15936514491af8e148553656e74ad2ed2533c8b61320298a025e37bfcbb52958",
+    "usami/interaction/__main__.py": "d5d6e583a8f627e1caaf1fe84524c88f271717094371e8724ddf506b739368bd",
+    "usami/interaction/authorization.py": "cb8c493178595ad14ace7bef80ff223fa4c122c9316022c07f4075aefb1d9cdc",
+    "usami/interaction/models.py": "f2cc10aa547a1a05de2e1e1142773f13684845755f120f59ba598e03564edd8e",
+    "usami/interaction/runner.py": "94b95df86b204ce75bf5c534a55da07f43bd7f8f428bc5b08b9a8139b7641191",
+    "usami/protocol.py": "7682a13b6d592813857439ce3fb50324f2bb2fd0ef84f39c7725cff8c504f9bb",
+    "usami/randomness.py": "42bd8b48bca6f9946861c3b1e7137900406d0b945391d6a1893280d691c35572",
+    "usami/service/__init__.py": "7590487bf241368ae51294e98c896fcd09d5d49d6039dfec02eca6eb8e8f1a11",
+    "usami/service/__main__.py": "7fd80af3907c1b04009d9310a6b0d48ec16da3a133a4776a7a9e3e5180b01b4a",
+    "usami/service/client.py": "cb783b8322bfb1db3834830edfe06c75847c505f2941b0518fc1fb2d0b842b40",
+    "usami/service/models.py": "ac41bd08bab7f7fa3d593fd59bd7e2a89e28632fe27df9701f126832d8637a20",
+    "usami/service/runner.py": "b27e5ba7d86b392cd3bbbeb60df37180f88e9e56dc548da8bfa06dbb75918ccd",
+    "usami/service/tools.py": "d34db1528ead23b57a6d1cf449ac24c6f6dc6c7ad64834a6a5b3ffabc328cf6a",
+    "usami/world/__init__.py": "1c21b8471eeb161758e7ef1c4e957bfe49e3351b0688e70aea93ebb28e06d325",
+    "usami/world/engine.py": "5f7dbe972c9aa6f172826719c89ded8bff9afce92e413be1f3e70d06c4016d10",
+    "usami/world/generator.py": "6048fdec6e8247af33163772b2a5cda6a18b52358783705ac44f5d06f6be9a3f",
+    "usami/world/generator_v2.py": "9505981da0fc8e24f0197bc8e03a0c7f880a9f20124dfeaca501b4cb7e247b2f",
+    "usami/world/models.py": "131ef77f8797c35a29e44a8e6126f380b81cde4055bb0daeb09a402d48f316a5",
+    "usami/world/rules.py": "f50c1af9ebc91762e3796f3edb13bd3d2d47a4f57f382f49b1a26d2c93c9090f",
+    "usami/world/rules_v2.py": "29f299764e6c33ff4df6f5d975ae088bb8c89c100b23b29f4373f035e2a05ea9",
+    "usami/world/transitions_v2.py": "4a8037c26b1b0a479199398ef113edad61818a9d2b9443783ecd8d4d764fb120",
+    "usami_fulfillment/__init__.py": "bf3096c51b5e0c01f83722aa48d815c4d60e371f97602347c95ea4d71385994c",
+    "usami_fulfillment/__main__.py": "5436b57d5971daaea132439f282723ceff69cbdc4653f42db1a5c4c6d912b036",
+    "usami_fulfillment/adapter.py": "cd8ef07c723ff52c41e7e29c0e29e926cd1024dc1151ed21f3b42c33240247ba",
+    "usami_fulfillment/benchmark.py": "ce1d17cfbda4416e7337b17d5bd008e94c08c1b1f6059c90b70b24e0c37e2d46",
+    "usami_fulfillment/customer.py": "e8e516926199fbbbd792b2aefd8285d58b9882090d4e13873edc6507f05d13ad",
+    "usami_fulfillment/engine.py": "5d7c3666b675c3b60c56cfbfef0c51adab248cc1d6368079edf3d95e2677e0d6",
+    "usami_fulfillment/generator.py": "0a538d486372a94e3e610b92befe5885ffa7b33f6186aaa110a31d1ccfe2b8a9",
+    "usami_fulfillment/goals.py": "40bb48a541d0ea80cc3712e3f964dc0c877ea90c1ed158053d5e845cb66c2cd5",
+    "usami_fulfillment/models.py": "70a8e7589d489c2f36ec2a23cbe51fa8d179345620e6e3ae89fb838072af7d70",
+    "usami_fulfillment/observations.py": "c1832c722b01d3ba43bf0a98af1e6a73f95c0159eae98cec7e23e1b2a63ca9b7",
+    "usami_fulfillment/oracle.py": "b2035ffa6216c6692e0ece76b8aa0359ca39b78689d33d30de07326df523dae8",
+    "usami_fulfillment/release.py": "aa7e34492dba9861e7f63084cced488f90a1193c51f9c3fc2508cf292f2c3104",
+    "usami_fulfillment/rules.py": "7a8183c187ca3cc5b706dc25f55696d9a03eba5f3c739d36a3aeedcb21cfd674",
+    "usami_fulfillment/service.py": "cc53925d2405942a1f65b9f35885f1388d01b31917ff7de8adb1ce2b76c574a3",
+    "usami_fulfillment/signatures.py": "80220d6b3f9fc57cfb0683b80b0c35b4357d3c30889639e21863fabf73eb4d81",
+    "usami_fulfillment/suite.py": "b1614e8b23a8f4ef159c84a07d141178447cc67639ae80c72942d40d6957c7e9",
+    "usami_fulfillment/tools.py": "c8937c468d4a014a56895e1e2a42f22a615485583c5c8b3cc1660212304ac2ed",
+    "usami_fulfillment/transitions.py": "e50fd9b40e8deed7faa30621b27eb90052821e1e9a169901286c64694e7936ca",
+    "usami_harness/__init__.py": "04572c66218ab3426caeffc1511ea055db934b3521de3f5a2e2f1ae3c82dd6e8",
+    "usami_harness/benchmark.py": "9d090be4e2ff326a2cf328d8a058a14c07a06517e446719c612425f566fa0ae3",
+    "usami_harness/cli.py": "75fbbe15567c352df0a45c1c9307a23ced669415bea2463d94d96ecec23a70c2",
+    "usami_harness/customer.py": "921f048f8ee88fa849c3d6ca3bf847073ecdfd300323afa23627eef52fdba708",
+    "usami_harness/engine.py": "a799db86ed144b90f05c6d0c522ca0d6552abedba7b2fc56697286ad834f85b7",
+    "usami_harness/goals.py": "1ba28058e6be1668a6c8088e4b042801eaa2e56c79f67722e608d242fe2ae5c8",
+    "usami_harness/models.py": "4b573db862bccdb49c01b7e1e2c416bc0ae99bf5ee59ea71a4c00facd5dc35ac",
+    "usami_harness/oracle.py": "2c458aa72366dbc75acb342c7834fed829400183dc336f10de540f3aaf128161",
+    "usami_harness/provider.py": "33ac2d232848d6ea4093ea5ac69e7d21014cb7f3f30632c6cbdf2ebfd21ea728",
+    "usami_harness/service.py": "9fd5da1f90540432bc6d193a819d8ddad9abfa4ceb42dd771394f4539a6d4a16",
+    "usami_harness/suite.py": "70fa83c17ee79ddbadf470759feca621e443f8fa34de479574b93f9beb0dcbc3",
+    "usami_harness/tools.py": "8c66160f58ee3a032dbc706dd0688c17dd0d8944e2787383a0826a10519886a6"
+  },
+  "dataset_hash": "14a985a7d092d95f78e92c04cfd600386aa4757863e74d7ea8ae4cb6c8fed19e",
+  "manifest_hash": "2908400a518fa2a1d44c5d08772fee0f6a9ae76b09b7e48bc3ff68697a5b0ad0"
+}

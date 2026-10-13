@@ -1,0 +1,20 @@
+saas service-train.json verified 170
+saas service-validation.json verified 68
+saas service-test-demo.json verified 40
+saas discovery-demo.json verified 6
+saas exact real pilot replays 9
+cloudops service-train.json verified 27
+cloudops service-validation.json verified 9
+cloudops service-test-demo.json verified 9
+cloudops discovery-demo.json verified 2
+cloudops exact real pilot replays 6
+fulfillment service-train.json verified 265
+fulfillment service-validation.json verified 27
+fulfillment service-test-demo.json verified 46
+fulfillment discovery-demo.json verified 1
+fulfillment exact real pilot replays 9
+stayops service-train.json verified 234
+stayops service-validation.json verified 1
+stayops service-test-demo.json verified 67
+stayops discovery-demo.json verified 1
+stayops exact real pilot replays 9

@@ -1,0 +1,291 @@
+{
+  "kind": "ACTUAL LIVE LLM PILOT",
+  "service_model": {
+    "model": "dashscope/qwen3.6-plus",
+    "base_url": "http://10.130.138.46:8010/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0
+    },
+    "trust_env": false
+  },
+  "customer_model": {
+    "model": "dashscope/qwen3.6-plus",
+    "base_url": "http://10.130.138.46:8010/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0
+    },
+    "trust_env": false
+  },
+  "service_report": {
+    "domain": "fulfillment",
+    "track": "service_task",
+    "manifest_hash": "fc56c8a7feacfbe4300e9a6d9fb7d66e64418f1a2673779a133a88f9b1add7a6",
+    "dataset_hash": "de9f47961051245e55882f989867df805959fad4e1061e7bd244fd8fa83189c5",
+    "complete": true,
+    "expected_runs": 6,
+    "received_runs": 6,
+    "missing": [],
+    "success_rate": 0.8333333333333334,
+    "rows": [
+      {
+        "instance_id": "fulfillment_task_d7d6dc442aec7c7e92c1310d",
+        "trial": "r0",
+        "run_hash": "fc251681260b0628da81b8726122e67ef5449e6060959f4335a7f68d9a9f30c8",
+        "status": "completed",
+        "oracle_status": "pass",
+        "replay_verified": true,
+        "service_llm_calls": 10,
+        "service_tool_calls": 12,
+        "operation_counts": {
+          "legal_execution": 11,
+          "rejected_invalid_attempt": 0,
+          "successful_business_violation": 0,
+          "authorization_only": 0,
+          "false_rejection": 0,
+          "unscored": 0
+        },
+        "within_budget": true,
+        "family": "paid_fulfillment",
+        "kind": "completion",
+        "goal_satisfied": true,
+        "frame_preserved": true,
+        "policy_code_reported": false,
+        "structure_signature": "9878bc7eace7cea761d7380afbf73cf3069a979c3c18fee7ae36cde30ca6375a",
+        "task_success": true
+      },
+      {
+        "instance_id": "fulfillment_task_4bb1da41be13d1259e2c87a6",
+        "trial": "r0",
+        "run_hash": "dcf4123e41a618127855b61a9f536439450dc75b1fbf4eef31a92c98bd6784b9",
+        "status": "completed",
+        "oracle_status": "pass",
+        "replay_verified": true,
+        "service_llm_calls": 20,
+        "service_tool_calls": 19,
+        "operation_counts": {
+          "legal_execution": 17,
+          "rejected_invalid_attempt": 0,
+          "successful_business_violation": 0,
+          "authorization_only": 1,
+          "false_rejection": 0,
+          "unscored": 0
+        },
+        "within_budget": true,
+        "family": "regional_transfer",
+        "kind": "completion",
+        "goal_satisfied": true,
+        "frame_preserved": true,
+        "policy_code_reported": false,
+        "structure_signature": "2c28bdb03186b80d20619da3ea50707c9391685cab74ba6ef99b01b8bfd4bbda",
+        "task_success": true
+      },
+      {
+        "instance_id": "fulfillment_task_a814ed0bbd81166a115effde",
+        "trial": "r0",
+        "run_hash": "a9a17391511128ab32ceaa691387e8b759d394cc3859e19eb762315f75c5451b",
+        "status": "llm_budget_exhausted",
+        "oracle_status": "pass",
+        "replay_verified": true,
+        "service_llm_calls": 24,
+        "service_tool_calls": 25,
+        "operation_counts": {
+          "legal_execution": 8,
+          "rejected_invalid_attempt": 5,
+          "successful_business_violation": 0,
+          "authorization_only": 11,
+          "false_rejection": 0,
+          "unscored": 0
+        },
+        "within_budget": true,
+        "family": "packed_cancellation",
+        "kind": "completion",
+        "goal_satisfied": false,
+        "frame_preserved": true,
+        "policy_code_reported": false,
+        "structure_signature": "f250f327d88764fbeab97a87fe743aab98273ab253f512a877ce9fa623d8a323",
+        "task_success": false
+      },
+      {
+        "instance_id": "fulfillment_task_6d009c92490f9d216787e66c",
+        "trial": "r0",
+        "run_hash": "a84246da28716ba99249aef762bee6dbba05f106b3afb0c4108be4a6eebfec1f",
+        "status": "completed",
+        "oracle_status": "pass",
+        "replay_verified": true,
+        "service_llm_calls": 9,
+        "service_tool_calls": 8,
+        "operation_counts": {
+          "legal_execution": 6,
+          "rejected_invalid_attempt": 1,
+          "successful_business_violation": 0,
+          "authorization_only": 0,
+          "false_rejection": 0,
+          "unscored": 0
+        },
+        "within_budget": true,
+        "family": "return_restock",
+        "kind": "completion",
+        "goal_satisfied": true,
+        "frame_preserved": true,
+        "policy_code_reported": false,
+        "structure_signature": "9cc993f35e466bb76beafb5d215dc60244cf7b3b05c1fa988551ee48c78b086b",
+        "task_success": true
+      },
+      {
+        "instance_id": "fulfillment_task_021a14a281ace1ba7eaaed98",
+        "trial": "r0",
+        "run_hash": "cd73cc1e5186df6d9775688e5810c8f9573f394cf1dc28e0f92f77e594009392",
+        "status": "completed",
+        "oracle_status": "pass",
+        "replay_verified": true,
+        "service_llm_calls": 5,
+        "service_tool_calls": 4,
+        "operation_counts": {
+          "legal_execution": 4,
+          "rejected_invalid_attempt": 0,
+          "successful_business_violation": 0,
+          "authorization_only": 0,
+          "false_rejection": 0,
+          "unscored": 0
+        },
+        "within_budget": true,
+        "family": "draft_amendment",
+        "kind": "completion",
+        "goal_satisfied": true,
+        "frame_preserved": true,
+        "policy_code_reported": false,
+        "structure_signature": "c60383d4e0dda232777d6c316d3f235107641dc99f78ac3bb536ae5acf74e78c",
+        "task_success": true
+      },
+      {
+        "instance_id": "fulfillment_task_2e1771026e5a51ffd72f0d44",
+        "trial": "r0",
+        "run_hash": "13eaef936985c57d6bccd31a02634582021318f38be3c68a495c0f9e1a13f149",
+        "status": "completed",
+        "oracle_status": "pass",
+        "replay_verified": true,
+        "service_llm_calls": 8,
+        "service_tool_calls": 7,
+        "operation_counts": {
+          "legal_execution": 4,
+          "rejected_invalid_attempt": 2,
+          "successful_business_violation": 0,
+          "authorization_only": 0,
+          "false_rejection": 0,
+          "unscored": 0
+        },
+        "within_budget": true,
+        "family": "inventory_allocation",
+        "kind": "policy_refusal",
+        "goal_satisfied": true,
+        "frame_preserved": true,
+        "policy_code_reported": true,
+        "structure_signature": "5750dbcd24d752e78dfa604d24ebc63d2edf7b114c10dccb42cd08be22141b3a",
+        "task_success": true
+      }
+    ]
+  },
+  "discovery_report": {
+    "domain": "fulfillment",
+    "track": "customer_discovery",
+    "manifest_hash": "067a0d08fbdd0f6a4867d572ba290c7b0a67d58fb962a7b53ceb712173f4b373",
+    "dataset_hash": "a1f207ce1f89ac161123172e1fa8d3739591fe57ba937ab5afa7a6014a172cfd",
+    "complete": true,
+    "expected_runs": 3,
+    "received_runs": 3,
+    "missing": [],
+    "success_rate": 0.0,
+    "rows": [
+      {
+        "instance_id": "fulfillment_world_49001_u0",
+        "trial": "r0",
+        "run_hash": "6d41bdd72d1a951e7023bc4baae3c6d4550dfb6dc7ea92151e8e6b3053343f70",
+        "status": "customer_turn_budget_exhausted",
+        "oracle_status": "fail",
+        "replay_verified": true,
+        "service_llm_calls": 19,
+        "service_tool_calls": 14,
+        "operation_counts": {
+          "legal_execution": 10,
+          "rejected_invalid_attempt": 0,
+          "successful_business_violation": 0,
+          "authorization_only": 3,
+          "false_rejection": 0,
+          "unscored": 0
+        },
+        "within_budget": true,
+        "customer_turns": 8,
+        "customer_llm_calls": 8,
+        "format_recoveries": 0,
+        "discovery_success": false,
+        "verified_business_violation_events": 0,
+        "findings": []
+      },
+      {
+        "instance_id": "fulfillment_world_49001_u0",
+        "trial": "r1",
+        "run_hash": "d780d024c49d765f07118a6e841e72958cb809c637e94c2ec5dcf4ae93b9d734",
+        "status": "customer_turn_budget_exhausted",
+        "oracle_status": "fail",
+        "replay_verified": true,
+        "service_llm_calls": 23,
+        "service_tool_calls": 20,
+        "operation_counts": {
+          "legal_execution": 16,
+          "rejected_invalid_attempt": 0,
+          "successful_business_violation": 0,
+          "authorization_only": 3,
+          "false_rejection": 0,
+          "unscored": 0
+        },
+        "within_budget": true,
+        "customer_turns": 8,
+        "customer_llm_calls": 8,
+        "format_recoveries": 0,
+        "discovery_success": false,
+        "verified_business_violation_events": 0,
+        "findings": []
+      },
+      {
+        "instance_id": "fulfillment_world_49001_u0",
+        "trial": "r2",
+        "run_hash": "aa756a18b46c73ad7eeca19059eda450074522e0894fbe2f02a63fe908c73db3",
+        "status": "customer_turn_budget_exhausted",
+        "oracle_status": "fail",
+        "replay_verified": true,
+        "service_llm_calls": 19,
+        "service_tool_calls": 15,
+        "operation_counts": {
+          "legal_execution": 11,
+          "rejected_invalid_attempt": 0,
+          "successful_business_violation": 0,
+          "authorization_only": 3,
+          "false_rejection": 0,
+          "unscored": 0
+        },
+        "within_budget": true,
+        "customer_turns": 8,
+        "customer_llm_calls": 8,
+        "format_recoveries": 0,
+        "discovery_success": false,
+        "verified_business_violation_events": 0,
+        "findings": []
+      }
+    ]
+  },
+  "official_full_release_score": false,
+  "interpretation": "Six selected Service families; one unconditioned Discovery world x three preregistered trials. No fixed Customer goal, family, script or witness. Every failure and real call budget is retained.",
+  "preflight_attempts": [
+    {
+      "path": "pilot/",
+      "classification": "SOURCE_PIN_INVALIDATED_BEFORE_MODEL_CALL",
+      "actual_llm_calls": 0,
+      "retained": true,
+      "reason": "Development source changed while a preflight certificate check was running. Started/failure/profile journals are preserved; no automatic retry."
+    }
+  ]
+}

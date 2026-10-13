@@ -1,0 +1,2448 @@
+{
+  "kind": "OFFLINE SOFTWARE VERIFICATION, NOT REAL LLM PERFORMANCE",
+  "instances_verified": 338,
+  "witnesses_verified": 665,
+  "certified_refusals_verified": 26,
+  "discovery_unconditioned_worlds": 1,
+  "independent_rebuild_exact": {
+    "service-train.json": {
+      "data_equal": true,
+      "canonical_hash": "6fb68666c9f081a6552e42d8c1854be767058c4000b760bef69721692e71e92e",
+      "raw_bytes_equal": false
+    },
+    "service-validation.json": {
+      "data_equal": true,
+      "canonical_hash": "b424bdd72709f6b53ff57cd51091443be3eb490af6f14cd9c35b7177886ddbe5",
+      "raw_bytes_equal": false
+    },
+    "service-test-demo.json": {
+      "data_equal": true,
+      "canonical_hash": "f7ae8c5ee4eea2796946caa636646901c4a8a949933440bc6f643df588c9c221",
+      "raw_bytes_equal": false
+    },
+    "discovery-demo.json": {
+      "data_equal": true,
+      "canonical_hash": "075928694e7af145c8b02460b45933dce8ebec697a531d9d3e0657317b8882e7",
+      "raw_bytes_equal": true
+    },
+    "coverage.json": {
+      "data_equal": true,
+      "canonical_hash": "19a928f873d0353fb28e09e6711f3e5b1a7b6d01225f63efa1c136e2233df0b2",
+      "raw_bytes_equal": true
+    },
+    "review-examples.json": {
+      "data_equal": true,
+      "canonical_hash": "bc1e5d4eab715541613c13e5cf5c9b068b3bf0149b88c6d4fea1f4cf6e92b91d",
+      "raw_bytes_equal": false
+    },
+    "review-sample-55.json": {
+      "data_equal": true,
+      "canonical_hash": "98642df140eb299f0a88bfd79b7736f3242801c48051fb83e8f6d3e93bdde8a7",
+      "raw_bytes_equal": false
+    }
+  },
+  "records": [
+    {
+      "instance": "fulfillment_task_00548ff5c2354368a8ec9864",
+      "recipe": "capacity_turnover@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_011cca5b1fe10deb44c850b0",
+      "recipe": "label_reallocation@0@2",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_01ddfd0d1b2baeaa0bb87070",
+      "recipe": "draft_amendment:fulfill@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_021a14a281ace1ba7eaaed98",
+      "recipe": "draft_amendment",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_03163ecebb3ef179cc9cf9d0",
+      "recipe": "quality_release@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0341b3a257e3f2f449d96282",
+      "recipe": "return_refund:merchant_fault@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_04ae0989c8355812692e42a9",
+      "recipe": "label_reallocation@2@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0521c9f7399ef26022ab8679",
+      "recipe": "partial_cancel_fulfillment@2@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_07aadd392b5c0314cd4c9573",
+      "recipe": "paid_fulfillment@0@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0a562d7697e2350062b09c30",
+      "recipe": "reservation_reallocation@0@1",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0b4348cbc99c0feb5d411312",
+      "recipe": "draft_amendment:fulfill@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0bc852b4b9211d50a08edf11",
+      "recipe": "supply_replenishment@3@9",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0bd0d30d2348392c9aee52c6",
+      "recipe": "label_reallocation@0@1",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0c3a73495aff3a4fa42491c1",
+      "recipe": "paid_fulfillment:delivered@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0c514c2e888268672fbbdc05",
+      "recipe": "draft_amendment:fulfill@3@4",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0ca2aa970bb4168995ca81a7",
+      "recipe": "paid_fulfillment:picker@0@2",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0d22dc33567f24cab95f93b1",
+      "recipe": "return_restock@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0f88b379d0112585bb5dd187",
+      "recipe": "payment_completion@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0fbee1cf0a23e2f81fd738e4",
+      "recipe": "return_withdrawal@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_10fc4adeaad33601da6e94d1",
+      "recipe": "multi_line_fulfillment@1@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_128e4b5c483f8952cc275111",
+      "recipe": "undelivered_return_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_12ebc43849ad1a2001e51641",
+      "recipe": "return_restock:receiving@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_140c810f8a97656658c064e0",
+      "recipe": "paid_fulfillment:picker@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_156198c1242279ed21f10260",
+      "recipe": "paid_fulfillment:delivered@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_1578c80645b451c636f2d9d9",
+      "recipe": "return_restock:receiving@1@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_15bf031d4bcceae1b8f043a4",
+      "recipe": "paid_fulfillment:created@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_16331fe892e87c2d19065c86",
+      "recipe": "shipped_cancel_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_16e08307a8b8bd2adf31a5a0",
+      "recipe": "regional_transfer:closed@0@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_174f68ae8448fe39815b5635",
+      "recipe": "packing_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_17ced7a0529d0e2a35f1f510",
+      "recipe": "split_fulfillment@0@7",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_1827c7343c27ad5b778cfec1",
+      "recipe": "regional_transfer:closed@3@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_19dbb8816d1f991bb8b6a6b4",
+      "recipe": "return_withdrawal",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_1aeec263aa80eef45107567d",
+      "recipe": "supply_replenishment@0@13",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_1d7fc046793e85f40efdd16e",
+      "recipe": "split_fulfillment@0@8",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_1e649f0b044231158fc21b81",
+      "recipe": "draft_amendment@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_1edc13dc329369e9718151b8",
+      "recipe": "capacity_turnover@0@1",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_1f461ad2d8b6e851f9247f6f",
+      "recipe": "paid_fulfillment:created@1@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_212cb8157c1629ee51d52224",
+      "recipe": "supply_replenishment@0@12",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_214882b0db1b2fa713e6bd59",
+      "recipe": "packed_cancellation@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_23cae3d8a8316bb6ddbea085",
+      "recipe": "reservation_reallocation@2@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_23f01840459633c4a386ed06",
+      "recipe": "label_reallocation",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_2463d97c5ff0a95487828425",
+      "recipe": "regional_transfer:closed@0@7",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_26b7d58eb0510db8e916e21f",
+      "recipe": "draft_amendment:fulfill@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_272761b38972fae38cbac5a2",
+      "recipe": "supply_replenishment@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_27b2a851d61369b7ebe3ac5a",
+      "recipe": "multi_line_fulfillment@0@6",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_2858606c1a4665204cdc091a",
+      "recipe": "return_restock:capacity@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_28c2665a1fea27b4c12be700",
+      "recipe": "paid_fulfillment@3@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_2ba5e6d85e8a5cfc7365e9f9",
+      "recipe": "capacity_turnover@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_2dff8add44e55d9cae794e4e",
+      "recipe": "receiving_recovery",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_2e1771026e5a51ffd72f0d44",
+      "recipe": "stock_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_301fcc873bfaacae6e372cbb",
+      "recipe": "cancel_reallocation",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_33a760f64502f38862c39e74",
+      "recipe": "return_window_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_348f8c41056adba3e0b1b6f9",
+      "recipe": "paid_fulfillment@3@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_38ad5f802d238f3c5cf33763",
+      "recipe": "supply_replenishment@0@11",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3af741144dafaec4127d5129",
+      "recipe": "paid_fulfillment:created@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3b0a039882181661b5462e78",
+      "recipe": "paid_fulfillment:picker",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3b41b332a8a9acfc57b4ea2d",
+      "recipe": "split_fulfillment@0@9",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3c01b630423941d964cbd8da",
+      "recipe": "capacity_turnover@1@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3c8669bbf8325fa0f205487a",
+      "recipe": "return_restock:refund@0@1",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3ca46ea587fc94afaefe636d",
+      "recipe": "partial_fulfillment@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3e04674779ed8d14c501f15b",
+      "recipe": "regional_transfer:closed@2@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3fa039f4698411d762621543",
+      "recipe": "paid_fulfillment:created@2@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3ff9f4661d134c53fd0b6235",
+      "recipe": "transfer_scope_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_41354c8e5290c606f65415b4",
+      "recipe": "supply_replenishment@0@10",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_45499c03d90f4b0c75dd4616",
+      "recipe": "paid_fulfillment:picker@2@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_46acd3ca43c2b5b32d608fa4",
+      "recipe": "paid_fulfillment:delivered",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_479f76cfac01eaaa1b247ced",
+      "recipe": "transfer_access_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_47ae035e444e345e53e61327",
+      "recipe": "partial_fulfillment@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_47b8c3a4d4aecea3501234cb",
+      "recipe": "order_cancellation",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_48799917e6b78b5ef5436adc",
+      "recipe": "return_restock:receiving@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_48e0f6d876569932bb31c96f",
+      "recipe": "paid_fulfillment:delivered@1@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_48f106514f2c1680b2de98a9",
+      "recipe": "regional_transfer:capacity@0@5",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_497a210000d7b9233f968011",
+      "recipe": "paid_fulfillment:created@3@4",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_4bb1da41be13d1259e2c87a6",
+      "recipe": "regional_transfer",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_4e5c5cb7ba2fe896b74e53dc",
+      "recipe": "nonreturnable_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_4e6ba154a0a9a47be8314d43",
+      "recipe": "split_fulfillment@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_4ee9289bdc423c61480ed43a",
+      "recipe": "regional_transfer:capacity@0@9",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_50260f0cc13e5c41cccd49e8",
+      "recipe": "partial_fulfillment@1@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_509ea7a54d15e0def6494438",
+      "recipe": "return_restock:refund",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_50de76c3addd615bd514e646",
+      "recipe": "regional_transfer@0@5",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_51c08e0765390d815de21f79",
+      "recipe": "paid_fulfillment:created@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_522f4093fe8416cd134a451d",
+      "recipe": "return_restock:capacity@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_526291e78a9681af814f6913",
+      "recipe": "payment_completion",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_52d12ad55226a4750249e5a4",
+      "recipe": "paid_fulfillment:delivered@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_537e14ff944599742b375419",
+      "recipe": "regional_transfer:closed@0@4",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_53b978d7489089477e1d6719",
+      "recipe": "regional_transfer:closed@0@6",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_53c381fd8018bda060a97a66",
+      "recipe": "cancel_reallocation@0@2",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_53f6c42c72da38c3096c5613",
+      "recipe": "split_fulfillment@0@5",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_562a7b44e7b3fecc180b917d",
+      "recipe": "regional_transfer:closed@1@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_56670def8d495438edfb5e01",
+      "recipe": "paid_fulfillment:created@0@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_56751ee5b15081c0f63c8df5",
+      "recipe": "regional_transfer@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_56934e4cb973b90d0d2c0cc1",
+      "recipe": "quality_release@0@2",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_5706808ae5679124296c361d",
+      "recipe": "partial_cancel_fulfillment@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_57cac4c0b0ddcd365e45d567",
+      "recipe": "draft_amendment:fulfill@3@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_57e0574df7bb2e9b0b5ff5a2",
+      "recipe": "capacity_turnover@2@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_5855031d79d5eec0abd6af30",
+      "recipe": "multi_line_fulfillment@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_58c46fc02537581e9708e2c1",
+      "recipe": "order_cancellation:refund",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_5a59bac783636df96e9965fa",
+      "recipe": "paid_fulfillment:delivered@0@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_5a6d479ecc1c38d7298d86a7",
+      "recipe": "quality_release@0@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_5e5953d1e24aa6bd363c11e1",
+      "recipe": "paid_fulfillment@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_61102cc0c4ca7e3e15d8fe05",
+      "recipe": "label_reallocation@0@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_611703a63a13d33d2a7b2c45",
+      "recipe": "regional_transfer:closed@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_61b2b77663dc5081d9e6d065",
+      "recipe": "return_restock:capacity@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6259147fdbaabd408c4a7fbe",
+      "recipe": "return_restock@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6376831112ce851b8ac4f7db",
+      "recipe": "reservation_reallocation@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_63cc3b427ce3039881c012e3",
+      "recipe": "multi_line_fulfillment",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_658942c72cecbc12cd0605a6",
+      "recipe": "draft_amendment:fulfill@3@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_65f02b577bb07333eb2d2cc1",
+      "recipe": "return_restock@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_664b0fb0434e7f9d393b3826",
+      "recipe": "paid_fulfillment@3@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_67c9d5a1377cc1e2b10e3036",
+      "recipe": "damaged_refund_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_6911c7b236a4a6e9eb570be7",
+      "recipe": "multi_line_fulfillment@3@5",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_696559aca5f0888e8535b6d7",
+      "recipe": "cancel_reallocation@1@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_69d29a0b1a72f918d8845944",
+      "recipe": "return_restock:receiving",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6a9a74d0ecb64ad3876b518e",
+      "recipe": "return_refund:merchant_fault@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6cf55c77beeb94ce0c1d022a",
+      "recipe": "paid_fulfillment:created@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6d009c92490f9d216787e66c",
+      "recipe": "return_restock",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6e471f622a252e2c752ec4b4",
+      "recipe": "quality_release@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6ec31dcd8040027360cecf90",
+      "recipe": "paid_fulfillment:created",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6ed97c8300a10e86d77a249a",
+      "recipe": "staff_role_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_70997abcbf1396b93024a014",
+      "recipe": "paid_fulfillment:picker@1@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_717e4e7f95df5efdb33586e0",
+      "recipe": "multi_line_fulfillment@0@7",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_71b619977a132c4196ffbe5a",
+      "recipe": "supply_replenishment@0@6",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_71c2279ae1af807f7104aedb",
+      "recipe": "receiving_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_725d9e9944dfa5f3d91ec573",
+      "recipe": "partial_fulfillment@3@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_72704081764498afa132ac36",
+      "recipe": "regional_transfer:closed@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_728243271c17e50ea2cec7a9",
+      "recipe": "supply_replenishment@0@9",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_77b8d8d4e801c8d4ea1c8e66",
+      "recipe": "regional_transfer:capacity@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_77ff485094d228978cd10ef2",
+      "recipe": "reservation_reallocation@0@2",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_788888031dca7bff114ecc2e",
+      "recipe": "split_fulfillment@3@7",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_7a513e06aca0041ff6a9ecfb",
+      "recipe": "partial_cancel_fulfillment@0@2",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_7baa2865d932da03e9fcd2ec",
+      "recipe": "regional_transfer@3@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_7ce331be014192f50dc6dd53",
+      "recipe": "multi_line_fulfillment@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_7e8327eeb333e1da127fbcc3",
+      "recipe": "inbound_recovery@1@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_7f6522d1aeceb2cdfb1fcd75",
+      "recipe": "payment_key_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_80c178287ec85cf60cd40558",
+      "recipe": "inbound_recovery@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_81426513385e93b911c77c03",
+      "recipe": "capacity_recovery@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8217f816eb20207589603433",
+      "recipe": "return_refund@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_821ce7bef561f3d241e9ab02",
+      "recipe": "multi_line_fulfillment@0@9",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8236adb2b2eec344dbdbb592",
+      "recipe": "return_refund",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_829fa58cf7474fe1847d1146",
+      "recipe": "supply_replenishment",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_83071e0e24567b2f777addc0",
+      "recipe": "capacity_recovery",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_832d2d1f68f11f9f7955fac0",
+      "recipe": "supply_replenishment@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_836ae24d4ddca9f8c553e8a8",
+      "recipe": "delivery_confirmation",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_85cc90a51bec3bd75c442b9d",
+      "recipe": "closed_charge_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_86779ab0ea2b90a59009f277",
+      "recipe": "split_fulfillment@0@10",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_870bc79369bda84ff0717967",
+      "recipe": "return_restock:receiving@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_87e46d37e38e62cb3e04a863",
+      "recipe": "regional_transfer:capacity@3@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_88de24d29517ad0dcf2291c8",
+      "recipe": "quality_release@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8af1c7292ad548636b02a03c",
+      "recipe": "split_fulfillment@0@6",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8b1bbadcb42c5484411a1d82",
+      "recipe": "partial_fulfillment",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8b86c6cac9f67fa649f4a64c",
+      "recipe": "regional_transfer:capacity@0@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8d9313afde77a60d9e0028ba",
+      "recipe": "partial_fulfillment@3@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8e42ebc22a4fa1b975176448",
+      "recipe": "regional_transfer:closed@0@5",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8ecd13804ce851a6d7d53e03",
+      "recipe": "paid_fulfillment:picker@3@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8ee30310e808e0113ae04e18",
+      "recipe": "paid_fulfillment:delivered@2@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_91f41aa503b8ad6ba49f86c7",
+      "recipe": "supply_replenishment@1@12",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_946637354cca1a0a3ad31c62",
+      "recipe": "partial_fulfillment@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9627e29f7aa2ff69d64e891a",
+      "recipe": "regional_transfer@1@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_96f127c8de0c093dd6601de0",
+      "recipe": "packed_cancellation@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_98d3d170802ad604e3b49492",
+      "recipe": "return_restock:capacity@1@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_99d9591578eb3c1ef1c812d8",
+      "recipe": "regional_transfer:capacity@0@7",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9abd6ff0c9537afb04a8da87",
+      "recipe": "regional_transfer@0@4",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9b11a746f27d45b7c54e06bf",
+      "recipe": "regional_transfer:capacity@1@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9b349fdf6ea058ff27309156",
+      "recipe": "multi_line_fulfillment@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9bbfb19bda0014f2a6702ce1",
+      "recipe": "paid_fulfillment:delivered@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9d2f39ea32ce9438bcf0136e",
+      "recipe": "label_reallocation@0@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9d360c2a497f02c827d1745f",
+      "recipe": "return_restock:refund@1@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9e737e6a8e62efcd4c765697",
+      "recipe": "multi_line_fulfillment@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9ed5747728fbe5c8038191bd",
+      "recipe": "cancel_reallocation@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9ede752ec331530defe75b54",
+      "recipe": "warehouse_scope_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_a02dc28f51c0588a9dbae2f1",
+      "recipe": "paid_fulfillment:created@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a0522e532f71266139f98698",
+      "recipe": "split_fulfillment@2@9",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a0535f6c14f4a31f37c2b9ec",
+      "recipe": "quality_release@2@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a104d87c04062d201649b4b3",
+      "recipe": "reservation_reallocation",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a120df0f7a240c78020e1c98",
+      "recipe": "order_cancellation:refund@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a15da2d57e9ecef0789b9699",
+      "recipe": "return_refund:merchant_fault@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a2895703e11927c613981491",
+      "recipe": "shipped_cancel_refusal:delivered",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_a56ba044bd5dcaafdca3c6f0",
+      "recipe": "reservation_reallocation@1@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a7855b0ce6a41080dd8f4954",
+      "recipe": "draft_amendment:fulfill@2@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a78877e26c96b4e79eb08c71",
+      "recipe": "quality_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_a7dfc21c1aae993799f2913e",
+      "recipe": "regional_transfer:capacity@0@6",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a814ed0bbd81166a115effde",
+      "recipe": "packed_cancellation",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a8d72a4e97dbbda025408542",
+      "recipe": "regional_transfer@0@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_aa6261c12b46e63718a79429",
+      "recipe": "cancel_reallocation@2@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_aaa2aa50193f568273d030ea",
+      "recipe": "label_reallocation@1@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ab1cfffa3ed6444a8cc8388a",
+      "recipe": "committed_edit_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_ab71028721e6c2b22b3488e4",
+      "recipe": "label_reallocation@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ad48c26c5cfdc62321d3710b",
+      "recipe": "capacity_reduction_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_adc9c95c56d133f1a54c7765",
+      "recipe": "quality_release",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ae64d380f85ec455a5da5ad6",
+      "recipe": "partial_cancel_fulfillment@1@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_afeaa0f767d9b7a1cada56e0",
+      "recipe": "return_restock:receiving@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b0f4da77d5887e8952a44916",
+      "recipe": "split_fulfillment@1@10",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b15636a1711963a0d7ef0e25",
+      "recipe": "multi_line_fulfillment@0@5",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b218b33b98a31d049f355630",
+      "recipe": "paid_fulfillment:picker@0@1",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b3816ab94f85ddc0bcd91414",
+      "recipe": "paid_fulfillment@1@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b490d5231975e2204082645d",
+      "recipe": "product_admission_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_b7195129de606e7a88636336",
+      "recipe": "return_restock:refund@0@2",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b7361d60275623dd69fb195e",
+      "recipe": "partial_fulfillment@2@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b766c68edbe071ca1d38c39d",
+      "recipe": "regional_transfer@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b9ac20aa6cc19d0455a6577c",
+      "recipe": "capacity_turnover",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b9b36e0c43a9365b812bc313",
+      "recipe": "supply_replenishment@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ba116c2244acf13eb7878a80",
+      "recipe": "split_fulfillment@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_badffcafd713748bad39394a",
+      "recipe": "partial_fulfillment@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_bcf38abd44ba2acae6fd00b4",
+      "recipe": "supply_replenishment@0@5",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_bf74ada8e47df69f4cf0a255",
+      "recipe": "draft_amendment@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c0ba2da43fc04ffeeb6aff66",
+      "recipe": "order_cancellation:paid",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c0c362c9760fabfb24a9a638",
+      "recipe": "capacity_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_c1fc9f61c1f83da5731b4afb",
+      "recipe": "unearned_refund_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_c32a16b8d940fc2674866211",
+      "recipe": "unearned_refund_refusal:paid",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_c397cc62d10eefb1d2161c13",
+      "recipe": "allocation_release",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c4f673961ed05ab2f1654e9c",
+      "recipe": "regional_transfer:capacity@2@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c5426bebeb2fc0f541143dfb",
+      "recipe": "regional_transfer:capacity@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c67cd16cf1417b0e25e7b3e5",
+      "recipe": "partial_cancel_fulfillment@0@1",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c68bfa07bb4eafb96b7e55af",
+      "recipe": "regional_transfer@0@6",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c856ec3529ba1fdf51ee27e9",
+      "recipe": "quality_release@1@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c88c02e84906e17a5ad1a028",
+      "recipe": "regional_transfer:closed@0@9",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c88df8d53b55e9501399d308",
+      "recipe": "paid_fulfillment:delivered@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c8e1eb5c75b9c725536285b7",
+      "recipe": "return_refund@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c93689b2b020411b11df2613",
+      "recipe": "split_fulfillment@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c94efe5b4050d495f5c38056",
+      "recipe": "partial_cancel_fulfillment@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_cb715743c20f263be4e00d37",
+      "recipe": "split_fulfillment",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_cb853f7aba631ae6a2341252",
+      "recipe": "return_restock:refund@0@3",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_cbbc7b75212fb6ddaa400027",
+      "recipe": "supply_replenishment@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_cd60ddf8241833ec1d9b76f1",
+      "recipe": "quality_release@0@6",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ceba8f143a0d30edc1951742",
+      "recipe": "inbound_recovery@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_cef9ed4dc93a446258c56c5c",
+      "recipe": "supply_replenishment@0@7",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_cf35ac67931ffdd715eb23a0",
+      "recipe": "regional_transfer:capacity@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d0d4893d4976cbb0232fd91e",
+      "recipe": "cancel_reallocation@0@3",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d23a18ab61b232143ba20591",
+      "recipe": "label_reallocation@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d7d6dc442aec7c7e92c1310d",
+      "recipe": "paid_fulfillment",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d913448d4f6daf35aac96f3a",
+      "recipe": "packed_cancellation:refund@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d9215e33924f45544baef5b8",
+      "recipe": "regional_transfer@0@2",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d9940f7a105458b89e79ee78",
+      "recipe": "quality_release@0@5",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_da720adc27e99b017045a7db",
+      "recipe": "return_refund:merchant_fault",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_dc55be5a4f26f6b29f66616c",
+      "recipe": "cancel_reallocation@0@1",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_dcafab60b9ceb77fdc2031e3",
+      "recipe": "paid_fulfillment:delivered@0@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_dd5b9b7656369c3d80a3b7f8",
+      "recipe": "draft_amendment:fulfill@3@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_de22020b48ffa0bc3389bb4f",
+      "recipe": "packed_cancellation@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_deb1fa1bfdcaabe26c5b546e",
+      "recipe": "split_fulfillment@0@11",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_dfc0aae6ed81424d1eab27a6",
+      "recipe": "capacity_turnover@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_e029e0480dc94bab6dd4585d",
+      "recipe": "quality_release@3@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_e2e1df49c5660e72c0ce2065",
+      "recipe": "multi_line_fulfillment@2@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_e4ed8aa99cea894f6fb616fc",
+      "recipe": "return_quantity_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_e4fa9a2117b79b0abf2d90b1",
+      "recipe": "reservation_reallocation@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_e55bd8a1f6211d01e5c538e2",
+      "recipe": "regional_transfer@2@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_e59a066230a6711bc0186e6a",
+      "recipe": "quality_release@0@4",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ef77b254168b9e6f98728818",
+      "recipe": "split_fulfillment@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f2d432b962b87a7d25f7763f",
+      "recipe": "supply_replenishment@0@8",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f2e56f719f2a8d94c06f51f0",
+      "recipe": "picked_release_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_f32709dbf94d5222df23774e",
+      "recipe": "return_restock:refund@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f3d2dd4afcff76dcd6dfeda2",
+      "recipe": "partial_cancel_fulfillment",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f5fa84ab43c86a13a6e3fb0b",
+      "recipe": "receiving_recovery@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f6172b729943498d1200f384",
+      "recipe": "draft_amendment:fulfill@1@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f804a48ce0e4f8e65a11cefa",
+      "recipe": "packed_cancellation:refund@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f81b01f9676a1a2c1d0c7b0f",
+      "recipe": "supply_replenishment@2@11",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f83c410d83d2f98b52ad040e",
+      "recipe": "multi_line_fulfillment@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f8ae011d4ad6bdee47ffc9f3",
+      "recipe": "staff_role_refusal:buyer",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_f9adbb15bf27e0387d492487",
+      "recipe": "paid_fulfillment@2@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_fa40e43c7478e316e87d8006",
+      "recipe": "regional_transfer:capacity@0@4",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_fb18e6a0f71b3c2c13c9a493",
+      "recipe": "reservation_reallocation@0@3",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_fbc2a8938a08c3a6ec389d61",
+      "recipe": "regional_transfer@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_fe2b62dd157eb161b0ca024b",
+      "recipe": "paid_fulfillment@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_fe32b7cb7ddd12e941245907",
+      "recipe": "cancel_reallocation@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_fe8827afe5b893bd14d4b0cc",
+      "recipe": "return_refund@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ff4b16f822cba3aa3b5d1c8b",
+      "recipe": "regional_transfer:closed@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_40fbf480ccaaad203a541e5f",
+      "recipe": "draft_amendment:fulfill@0@4",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_547b48bb2cb5157778bd4ea0",
+      "recipe": "paid_fulfillment@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_5d9e9756f8f8b596497c7fd5",
+      "recipe": "paid_fulfillment@0@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6a7748131e1b016b465fd7a0",
+      "recipe": "paid_fulfillment:delivered@3@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_6b140f0c3625448902183dec",
+      "recipe": "draft_amendment:fulfill@0@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_7050c4dfa6d6e21e444bd0b3",
+      "recipe": "paid_fulfillment@3@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_7ae2630f644c3c5bc00956c0",
+      "recipe": "paid_fulfillment:created@3@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8dde49159992d3e61c22555f",
+      "recipe": "paid_fulfillment:picker@3@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_92c0d35a33f2910211ee8940",
+      "recipe": "partial_fulfillment@0@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_93c77f67e6f7de838da69039",
+      "recipe": "partial_fulfillment@0@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_96f02d16718c0fcd341916ee",
+      "recipe": "paid_fulfillment:picker@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_9a841c6747ef94f950fb1402",
+      "recipe": "paid_fulfillment:delivered@3@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a3c0c4c7f7a48d2f9a1077d2",
+      "recipe": "draft_amendment:fulfill@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b1172a80a6e361f6f487b0f4",
+      "recipe": "packing_refusal:picked",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "fulfillment_task_b8268409272e26cba975f119",
+      "recipe": "partial_fulfillment@3@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_bee5297377d00d3e56603a60",
+      "recipe": "paid_fulfillment:delivered@3@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c8dfaa1a548ee4870aa21dd9",
+      "recipe": "paid_fulfillment:picker@3@1",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d0584ac9ee7fa4f36ce7586d",
+      "recipe": "paid_fulfillment:created@3@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d3a9f241caf040dbf70cfb46",
+      "recipe": "order_cancellation:allocated",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d702ab37fad2cd2a6ebfe492",
+      "recipe": "paid_fulfillment@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d8d8052f9ea0b084c80d9b3c",
+      "recipe": "paid_fulfillment:created@0@4",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_deef36f5322afe8040ecd23c",
+      "recipe": "draft_amendment:fulfill@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_e6469f0e62ade4c5d0dae98c",
+      "recipe": "partial_fulfillment@3@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f13767f4ee2eb2ffdc14cf2c",
+      "recipe": "paid_fulfillment:delivered@3@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f3a45eedaa2d7798adf50114",
+      "recipe": "paid_fulfillment:picker@3@2",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_fdf9e2ec083cab5ff6570684",
+      "recipe": "paid_fulfillment:created@3@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_fec6bd14e13be12353405d5f",
+      "recipe": "paid_fulfillment:delivered@3@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0247cbfa68fc3d67ca4bb791",
+      "recipe": "draft_amendment:fulfill",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_0e78995a6d334dae8e6f99bb",
+      "recipe": "fulfillment_return@0@8",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_11d4d3c0b921b0cc3d8a36cf",
+      "recipe": "packed_cancellation:refund@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_17b92af090bcb63fa8539b42",
+      "recipe": "packed_cancellation:refund",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_1861b8fdea1f01cd5beb3917",
+      "recipe": "fulfillment_return@0@7",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_1f1e114e76147fe430789ab6",
+      "recipe": "partial_cancel_fulfillment:refund@3@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_2c7b2aba54c321962ba8b659",
+      "recipe": "fulfillment_return@2@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_3de403926cf8a53233b1a035",
+      "recipe": "return_replacement@0@5",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_45646d2c8b1758b6f96b29e2",
+      "recipe": "fulfillment_return@0@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_4b872892b1e2f46da305a396",
+      "recipe": "fulfillment_return@0@9",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_4cf1c8bb276f690ba47c5922",
+      "recipe": "fulfillment_return",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_4d40523e5b8e64e681f1b315",
+      "recipe": "partial_cancel_fulfillment:refund@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_5380ed7fc848b26f4dbe1e26",
+      "recipe": "partial_cancel_fulfillment:refund@0@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_560824da698a1f0fa845db07",
+      "recipe": "return_replacement@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_5748137dcea9e36962cf0565",
+      "recipe": "return_replacement@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_672a953abd4fd77c72381877",
+      "recipe": "return_replacement@2@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_678556a21919d5402a8ca403",
+      "recipe": "return_replacement",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_73058840d56afb8662fdfdee",
+      "recipe": "inbound_recovery",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_78dff35cde11cde8a8a2036b",
+      "recipe": "partial_cancel_fulfillment:refund@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_7bda4cb48d87b05d5334b6e5",
+      "recipe": "regional_transfer:capacity",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_7e09cf4174aa78452e87f532",
+      "recipe": "fulfillment_return@1@12",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_8d295cc205004591b9080c81",
+      "recipe": "return_restock:capacity",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_908fbb82576cfcb090a62c24",
+      "recipe": "fulfillment_return@0@12",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_98f0aa1fad10396d58149af3",
+      "recipe": "partial_cancel_fulfillment:refund@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_999e024a05beecec2bfb5380",
+      "recipe": "fulfillment_return@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a1df04d141fe4fb7b945ece1",
+      "recipe": "return_restock:capacity@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_a7c749eb65ed1428d332e8e9",
+      "recipe": "fulfillment_return@0@11",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ad1b1fe2b631e3baa30612e6",
+      "recipe": "return_replacement@0@7",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b01bff43b63671ee61c36a25",
+      "recipe": "fulfillment_return@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_b9b4bec014ae62d994811beb",
+      "recipe": "partial_cancel_fulfillment:refund",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_bc05e45d5c3d206958c1cd26",
+      "recipe": "packed_cancellation:refund@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c2b590e0a129646263a5e53c",
+      "recipe": "fulfillment_return@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c4d6550b74db70c0996c38fa",
+      "recipe": "return_replacement@0@6",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_c94da72cc9f60814743f8d4b",
+      "recipe": "return_replacement@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ce77386335a14ad0c67a3418",
+      "recipe": "regional_transfer:closed",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d3b8e37c74250ae22b1f3f72",
+      "recipe": "return_replacement@3@5",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d602e0d86a36da62e88b6878",
+      "recipe": "return_replacement@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_d7ac51774d1549b3da614ea0",
+      "recipe": "partial_cancel_fulfillment:refund@0@3",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_dc108cbe32ecfcbb852d00bf",
+      "recipe": "return_replacement@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_de60451676ffb91440090f54",
+      "recipe": "partial_cancel_fulfillment:refund@1@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_e11a759996b40aab5ffd94b2",
+      "recipe": "fulfillment_return@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_e7fd5b46377d8f234ed2f509",
+      "recipe": "return_replacement@0@9",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_e8c63877dafba209e5a3dffc",
+      "recipe": "return_replacement@1@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_eea77d82f58ff9103357b0b5",
+      "recipe": "partial_cancel_fulfillment:refund@2@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_f1c214bee968bff434111e1f",
+      "recipe": "fulfillment_return@0@10",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "fulfillment_task_ffa5a578400f73292ff4054c",
+      "recipe": "fulfillment_return@0@6",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    }
+  ],
+  "sandbox_oracle": {
+    "domain": "fulfillment",
+    "version": "fulfillment-0.1.0",
+    "trace_valid": true,
+    "status": "fail",
+    "operations": [
+      {
+        "event_id": "event_000002",
+        "operation": "confirm_order",
+        "authorized": true,
+        "reference_allowed": false,
+        "reference_error_code": "PAYMENT_REQUIRED",
+        "success": true,
+        "classification": "successful_business_violation",
+        "operation_correct": false,
+        "violations": [
+          "ORDER_PAYMENT_REQUIRED",
+          "PAYMENT_REQUIRED"
+        ],
+        "before_hash": "a0378578282d378ddfe5b221fccd4e339a7f3432828be4627c663373fe714b3f",
+        "after_hash": "057e7e11415d44a2cd37fbeec88178c3e519d78b7f5b9a15ed39d366f24fab9f"
+      }
+    ],
+    "violations": [],
+    "metrics": {
+      "legal_execution": 0,
+      "rejected_invalid_attempt": 0,
+      "successful_business_violation": 1,
+      "authorization_only": 0,
+      "false_rejection": 0,
+      "unscored": 0
+    },
+    "final_state_hash": "057e7e11415d44a2cd37fbeec88178c3e519d78b7f5b9a15ed39d366f24fab9f"
+  },
+  "rebuild_comparison": "Exact parsed values and canonical hashes. Some raw file bytes differ only in dictionary key presentation order.",
+  "test_terminal_atoms_unseen_in_train": []
+}

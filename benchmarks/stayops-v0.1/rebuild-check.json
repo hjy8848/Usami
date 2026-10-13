@@ -1,0 +1,33 @@
+{
+  "service-train.json": {
+    "parsed_equal": true,
+    "canonical_hash": "58c913a1631eaf044bd32cb443b245035f0b6b7d592362b91e4294fca0067d35",
+    "raw_bytes_equal": true
+  },
+  "service-validation.json": {
+    "parsed_equal": true,
+    "canonical_hash": "8f5491c7886a7ae5f736a8ef299868e7a22d4d0c6f9e88e6f882737d4b2a9018",
+    "raw_bytes_equal": true
+  },
+  "service-test-demo.json": {
+    "parsed_equal": true,
+    "canonical_hash": "915d4ac20f7934ab32f720e2dc8754d67e805bfd2db22b8cff08702b356b53c1",
+    "raw_bytes_equal": true
+  },
+  "discovery-demo.json": {
+    "parsed_equal": true,
+    "canonical_hash": "e821cc2e4d3d53dcabc9de82356b8929234735a8d14673a563653c0a02852cf3",
+    "raw_bytes_equal": true
+  },
+  "coverage.json": {
+    "parsed_equal": true,
+    "canonical_hash": "d77572631af5911721fc53a0169dc475529c3ebf36016be9fc0fdd5d221078d4",
+    "raw_bytes_equal": true
+  },
+  "review-examples.json": {
+    "parsed_equal": true,
+    "canonical_hash": "5f4cd9e9fbf254d2df7999dcf1c922abbb08a5fe9d5d999be1ece458f011c736",
+    "raw_bytes_equal": true
+  },
+  "markdown_raw_bytes_equal": true
+}

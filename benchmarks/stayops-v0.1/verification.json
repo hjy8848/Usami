@@ -1,0 +1,2199 @@
+{
+  "kind": "OFFLINE SOFTWARE VERIFICATION, NOT REAL LLM PERFORMANCE",
+  "instances_verified": 302,
+  "witnesses_verified": 569,
+  "certified_refusals_verified": 29,
+  "discovery_unconditioned_worlds": 1,
+  "independent_rebuild_exact": null,
+  "records": [
+    {
+      "instance": "stayops_task_0096a7455dbc00b5ece44174",
+      "recipe": "booking_upgrade@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_01de49d304069ad0471306c6",
+      "recipe": "departure_turnover@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_024a4634c7cf6bbf316093fc",
+      "recipe": "booking_upgrade",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_04119e108ef613503cef4c5a",
+      "recipe": "guest_check_in:choice@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_04ebbe74478dac51e2515341",
+      "recipe": "booking_reallocation:arrival@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_04fbf80c2f98a91ea7db5956",
+      "recipe": "calendar_reopening@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_0507c801d48a4fce58950f9d",
+      "recipe": "maintenance_scheduling",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_05974277a38d830bf6ab0a7a",
+      "recipe": "room_reassignment@1@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_05b35f1d8a7e711b8319c4fd",
+      "recipe": "calendar_reopening:arrival@0@6",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_0705ff81d7d8ee8ab09567e1",
+      "recipe": "maintenance_recovery:arrival@0@6",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_0b9a3d394e41a7a3908ba3a8",
+      "recipe": "booking_confirmation:assigned@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_0d1aae448b5a4a9c8058ecc6",
+      "recipe": "guest_check_in:frontdesk@0@1",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_0edbfe40f68f588ec60c1943",
+      "recipe": "booking_date_change:arrival@3@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_0f14adf1e405a68686632431",
+      "recipe": "booking_confirmation",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1238191312ac0b905aa6c7a8",
+      "recipe": "booking_downgrade@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1366964d8c67bdf9ad4a6120",
+      "recipe": "hold_reallocation@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_14f89ab7b035acff43518640",
+      "recipe": "calendar_reduction_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_1550a2358c1ccc658558af16",
+      "recipe": "booking_date_change:arrival",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_163c3bcb7baa915476487433",
+      "recipe": "expired_hold_reallocation@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1681077f62587e360021b63d",
+      "recipe": "booking_reallocation:arrival@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_170f0f7233a055d66da53321",
+      "recipe": "calendar_capacity",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_17502edf3dae3f2070495b0a",
+      "recipe": "checkout",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_178ae2ffcd7fd4491fb83a2e",
+      "recipe": "guest_check_in:frontdesk@3@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_17fff17045f2b2b732f08bfa",
+      "recipe": "expired_hold_reallocation:arrival@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_18963825a409c8e7a9061ff0",
+      "recipe": "calendar_capacity:arrival@1@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_18b06917ee746c287721fbbb",
+      "recipe": "guest_check_in:frontdesk@1@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_18df3f6e446652a4089339eb",
+      "recipe": "calendar_capacity@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1a22250fc2755e9142ad84e9",
+      "recipe": "booking_reallocation@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1bb3428525cba4bfaca5e317",
+      "recipe": "calendar_capacity:arrival@0@5",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1bb8759ef8dfa962960dd5cf",
+      "recipe": "booking_confirmation:guest",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1d98809e7fb1010b0030d225",
+      "recipe": "booking_reallocation:arrival@1@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1d990e6ddfc9be7add23d0ff",
+      "recipe": "room_swap",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1dfe5269e1522a7eefb3ed33",
+      "recipe": "booking_date_change",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1e4dd79d945f0c6fe7842a22",
+      "recipe": "hold_expiration",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1f4e43d68833455b59bdcd5f",
+      "recipe": "overlap_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_1ff07ca3861f376ea575d8e0",
+      "recipe": "calendar_reopening:arrival@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_22473a294b82fa0b8bad4152",
+      "recipe": "deposit_completion",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_22a1d3a2f15ffd2ddc2cdc01",
+      "recipe": "occupied_clean_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_22b88c3a688b26e2dc5970e6",
+      "recipe": "expired_hold_reallocation:arrival@1@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_2304435f1a17d188db7648a2",
+      "recipe": "calendar_reopening:arrival@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_2448e24f0ab60c5a62160723",
+      "recipe": "booking_cancellation:late",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_24f825f1941e68780d3d2405",
+      "recipe": "expired_hold_reallocation:arrival@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_25d5e9d3a5f2b74c0de1943a",
+      "recipe": "rate_date_requote@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_2644b2761eaa17d5f96bb390",
+      "recipe": "expired_hold_reallocation:arrival@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_2850b4983a8e8fae5578d187",
+      "recipe": "calendar_reopening:arrival@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_289759251b01363b9df879fd",
+      "recipe": "booking_downgrade:arrival@0@2",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_28b05ada619c1f3bacd1a204",
+      "recipe": "occupancy_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_297a56046570ef14ba9380f5",
+      "recipe": "booking_reallocation:arrival@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_2efd4a2624f26b4760a1422d",
+      "recipe": "booking_downgrade:arrival@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_2fd1759516a8f64e5223c636",
+      "recipe": "date_conflict_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_300d2c2a477e71df6f73d222",
+      "recipe": "calendar_capacity:arrival@0@7",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_32cac0ed89d100946cb390bd",
+      "recipe": "rate_date_requote@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_33010cd4da4881e8ad0e5891",
+      "recipe": "maintenance_recovery:arrival@1@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_3409461f4c039f518323298e",
+      "recipe": "guest_check_in:choice@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_35b3877eb03682300d55914c",
+      "recipe": "booking_downgrade@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_35f2723c949eef43deedc4fb",
+      "recipe": "balance_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_361bae915d07f4d12b5f7d27",
+      "recipe": "calendar_reopening@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_36bcb15b5bd7fb0b1379b4e9",
+      "recipe": "guest_check_in:choice@3@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_3736cd2e39e9eeac019a09cf",
+      "recipe": "payment_key_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_3881e90af711859825a1c5c7",
+      "recipe": "calendar_capacity:arrival@0@9",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_394ca39f43175b873488b0f2",
+      "recipe": "booking_downgrade:arrival@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_3960f88d1175badfae60aeb6",
+      "recipe": "cancellation_refund",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_39d2895af97a36366e9363bb",
+      "recipe": "booking_downgrade@0@1",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_3a36fef2c149e450aebd7701",
+      "recipe": "booking_downgrade:arrival@1@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_3ce084404af30446bf48505a",
+      "recipe": "guest_check_in:choice@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_3dc2f52222f57cdc0e1d2df6",
+      "recipe": "booking_downgrade:arrival@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_3f99aa840a51f289f73d4fac",
+      "recipe": "room_cleaning",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_40550b11491ed2ab487e5320",
+      "recipe": "expired_hold_reallocation:arrival@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_438ac96bf1ae267a0b83c178",
+      "recipe": "booking_downgrade:arrival",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_443600bf97783331d4a37378",
+      "recipe": "deposit_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_44d9c16ffd365d873f2a8cf6",
+      "recipe": "booking_confirmation:assigned",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_4517f392d9bf9a0f303ad791",
+      "recipe": "booking_cancellation:prepaid",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_452bc7f7754f73ea5d7e93ee",
+      "recipe": "booking_date_change:arrival@2@3",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_472c11ba954c18a726238777",
+      "recipe": "booking_reallocation",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_481f0eceb63bea643db0f0a7",
+      "recipe": "guest_check_in:choice@2@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_49c5cbeea3ea1679705d10f5",
+      "recipe": "identity_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_5170547a0c871237bb6ea184",
+      "recipe": "booking_reallocation:arrival@2@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_52dbbe1f33c07796df0bba28",
+      "recipe": "guest_check_in@2@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_5300c19e3ac0a66f12fb192c",
+      "recipe": "booking_confirmation:assigned@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_53fcb246363a9f67eebe5107",
+      "recipe": "booking_reallocation:arrival@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_5485a50a245bb180ca0d7c0c",
+      "recipe": "occupied_room_link",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_54ca87312b688a64201f0ec2",
+      "recipe": "expired_hold_reallocation@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_559330f790416ecbb2c0a330",
+      "recipe": "room_reassignment@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_5598cf5235e82a817322b57c",
+      "recipe": "rate_date_requote@2@1",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_55ab837530f8e23a1eb9a308",
+      "recipe": "staff_role_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_55fafe2d1991811780df4a26",
+      "recipe": "rate_date_requote@1@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_563167b182d4e712939bf13c",
+      "recipe": "expired_hold_reallocation:arrival@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_565b15124474f7a61017c643",
+      "recipe": "calendar_capacity@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_5784f0ad9ad8ee16296df721",
+      "recipe": "calendar_reopening:arrival@0@7",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_57ef22a9175fb3df992ea406",
+      "recipe": "early_expiration_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_58542a93cc03c706b3ecedec",
+      "recipe": "hold_reallocation@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_58a0b2bf7a3e003730f15ceb",
+      "recipe": "room_reassignment@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_59487ace960398ae8b8de04f",
+      "recipe": "rate_date_requote",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_59f59fdf7a22d2a3741a5f67",
+      "recipe": "hold_release:refund",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_5a10f9344cfba072ebe4fb37",
+      "recipe": "booking_date_change@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_5bd3a0333bb2b6e3ba89f95b",
+      "recipe": "balance_payment",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_5df8ce96a8453b96f5c24e4d",
+      "recipe": "early_checkin_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_5fb1727228f26ca12711b282",
+      "recipe": "maintenance_recovery@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_6003c5bcf8976f290b136ead",
+      "recipe": "booking_upgrade@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_608453063728c2a9ab8c2d50",
+      "recipe": "calendar_reopening:arrival@0@5",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_6126281a8fdb5efd33028330",
+      "recipe": "guest_check_in:choice@0@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_62dbcd71e49620df440bb189",
+      "recipe": "expired_confirmation_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_64b600a337ca5d78e98abab0",
+      "recipe": "calendar_capacity:arrival@2@7",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_660d8b144a628e9ddcd09d39",
+      "recipe": "calendar_capacity:arrival@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_66921b126813f8e5f6cb0275",
+      "recipe": "guest_check_in@1@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_67c009f2c5a6fa13381f5503",
+      "recipe": "hold_reallocation@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_680e9419a9e3d6ef54775ee4",
+      "recipe": "cross_type_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_694a543391b194a04e228155",
+      "recipe": "guest_check_in:frontdesk@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_6a3affcb1970f9cae39ab7ac",
+      "recipe": "guest_check_in:frontdesk@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_6c87a1f13826c6e97609d726",
+      "recipe": "guest_check_in@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_6ebbcca82f491b2bbdf06f51",
+      "recipe": "expired_hold_reallocation:arrival@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_71d6c9ecd09c1310201e6ed9",
+      "recipe": "dirty_assignment_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_7372da7214fcb2f68c5db419",
+      "recipe": "guest_check_in@0@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_751d2212b8e0879a9b408381",
+      "recipe": "booking_upgrade@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_7646fa9da9db5724ac5c78db",
+      "recipe": "booking_downgrade",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_7680f66e6742fe1f7cde9a30",
+      "recipe": "room_swap@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_78e1207288df7f181583cab3",
+      "recipe": "calendar_capacity:arrival@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_794447921c5a3911a2547710",
+      "recipe": "calendar_reopening",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_7a383fc97c12211f925e2795",
+      "recipe": "booking_downgrade@2@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_7bf07b33acf7a0ca1bbe1754",
+      "recipe": "calendar_capacity:arrival@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_7cc3bfddaba6be7945b3f84f",
+      "recipe": "rate_date_requote@3@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_7f2c0936bcb736e2f62337ce",
+      "recipe": "booking_confirmation:prepaid@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_806f7c1874cd21d4bd40ce76",
+      "recipe": "booking_date_change:arrival@0@3",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_8206a8dbe48c2d2c72451f5f",
+      "recipe": "rate_date_requote@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_822416f4eeee1438099e9ed7",
+      "recipe": "refund_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_8437f7fb4cbd46bb074ad892",
+      "recipe": "booking_reallocation:arrival@0@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_86c7dc36efda20660d0e215e",
+      "recipe": "booking_confirmation:suite@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_893019fa2c26db613a15867b",
+      "recipe": "arrival_preparation@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_898ece3be8ffc4a861f36517",
+      "recipe": "room_unassignment",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_8b3196526c0f557113b08f4d",
+      "recipe": "cancel_stay_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_8e38457d1f7412378bc5cd86",
+      "recipe": "expired_hold_reallocation",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_8e7dbcced7695c8ab275ca33",
+      "recipe": "booking_date_change@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_8e9637de06c9ea3127a989ab",
+      "recipe": "staff_role_refusal:housekeeping",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_8f6ad5c2d7fd8682f9fc1df0",
+      "recipe": "expired_hold_reallocation:arrival@3@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_90b26b50ccbc122985273824",
+      "recipe": "booking_date_change@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_91413a2349e70d30f47a61ea",
+      "recipe": "maintenance_recovery@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_91cca4003445b79470c8a1f1",
+      "recipe": "booking_date_change:arrival@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_98195c3fcb5273a9c8e6ba9a",
+      "recipe": "arrival_preparation",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_9942e17bcacc2be84223c261",
+      "recipe": "expired_hold_reallocation:arrival",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_99c04cb59bdfae4947bd6723",
+      "recipe": "maintenance_recovery:arrival@3@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_99e33bc921439b38a6efb35b",
+      "recipe": "guest_check_in:frontdesk",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_9ab6f18a2d49a76102039ee6",
+      "recipe": "calendar_reopening:arrival@1@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_9ae8d6635ee51e039517b336",
+      "recipe": "booking_downgrade:arrival@0@3",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_9e13ed8d74785a4628b2e096",
+      "recipe": "calendar_reopening:arrival@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_9ead9bc5c078371a97e11548",
+      "recipe": "expired_hold_reallocation@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_9ef46668c719223ffb204321",
+      "recipe": "maintenance_recovery:arrival@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_a0afc461ae08f91d3b0364b8",
+      "recipe": "overpay_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_a0bc7440376ef2d356481dbf",
+      "recipe": "maintenance_lock_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_a2312c0bbd8b47ad129fd1c9",
+      "recipe": "booking_confirmation:suite@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_a3e53394da497fb8b669cb07",
+      "recipe": "calendar_capacity:arrival@0@6",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_a55e279dbced2d9b86075c6d",
+      "recipe": "calendar_closure_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_a6b4941bcb81450e67ad1f7c",
+      "recipe": "maintenance_recovery:arrival",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_a943b98a468b9762d0893d2a",
+      "recipe": "scope_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_aaef38c1ff9047c2b4feea38",
+      "recipe": "expired_hold_reallocation:arrival@0@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ab11eadc0f49b216bb771d2a",
+      "recipe": "booking_reallocation@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ab33ec70799a3a5a6309f0ce",
+      "recipe": "maintenance_assignment_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_adbddf32b99d6119686e95ed",
+      "recipe": "calendar_reopening@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ae1c50ae6b8d15a603d39af4",
+      "recipe": "guest_check_in@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ae3968b3d6ef2852fa044056",
+      "recipe": "room_cleaning:housekeeping",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ae52c729a605bd80618e87a5",
+      "recipe": "calendar_reopening@1@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b034cb1784cd6bd5d2e2fb47",
+      "recipe": "maintenance_recovery:arrival@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b04421287cda421e1d7183a1",
+      "recipe": "guest_check_in@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b0546aa7ea37bcd503ffaaab",
+      "recipe": "hold_release:guest_refund",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b0845b2d12d7223855e0f94e",
+      "recipe": "cancellation_refund@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b088107386582f130cab7c49",
+      "recipe": "guest_check_in@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b0b163259293a996d0878e17",
+      "recipe": "deposit_completion@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b135ab7c070995ad3b733116",
+      "recipe": "cancellation_refund:late",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b54b9e84357229ee2b01dc5c",
+      "recipe": "guest_check_in:choice",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b67f22cdabea618a54548999",
+      "recipe": "hold_release:guest_refund@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b784e3bbc4c8ab1ab5803bc4",
+      "recipe": "hold_reallocation",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ba37031c50670fb63d776a46",
+      "recipe": "calendar_capacity:arrival@3@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ba5a5a3d320f9da3768b7d53",
+      "recipe": "booking_date_change:arrival@1@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_bccef0a181334a907aa80ee8",
+      "recipe": "booking_reallocation:arrival",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_c32aafe26e878f40f85bc53b",
+      "recipe": "booking_confirmation:prepaid@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_c35b3af1920872806d11545d",
+      "recipe": "booking_confirmation:guest@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_c42826323922b051e8c255af",
+      "recipe": "booking_reallocation:arrival@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_c61f5aae52454aec1917a53b",
+      "recipe": "overbooking_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_cafd808e96aed898dd210271",
+      "recipe": "booking_confirmation:assigned@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ce589f8e5a26bdb0ca38b80a",
+      "recipe": "guest_check_in:choice@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ce8d9c38a9546085fde8dafe",
+      "recipe": "maintenance_recovery",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_cea0cd5c603f26e60e3717e1",
+      "recipe": "booking_upgrade@1@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_cea29b50620f32cdc8c80449",
+      "recipe": "booking_date_change:arrival@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_cef9f40a2a8cb5a9f49ed371",
+      "recipe": "guest_check_in@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_cf6d27953563680ad35dd2a9",
+      "recipe": "departure_turnover",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_cfd27522dea6b27f6270adb7",
+      "recipe": "guest_check_in@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d0f8037e113c672291087d7c",
+      "recipe": "hold_release:refund@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d128676c2d4c10faa9748024",
+      "recipe": "booking_reallocation:arrival@3@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d333e69f2ed1c4bd7e1edb95",
+      "recipe": "guest_staff_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_d3d2a7d63e7c4724d8e730f4",
+      "recipe": "maintenance_recovery:arrival@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d41cc98cbb90dafb8c6cceb2",
+      "recipe": "booking_downgrade:arrival@3@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d5c3a32c09174db5c57cee30",
+      "recipe": "booking_downgrade@1@2",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d5ccddc35192fb4ac8e6f15d",
+      "recipe": "booking_reallocation@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d64d238df9ef18aa82bc96c0",
+      "recipe": "maintenance_recovery:arrival@0@5",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d66ceaf27cbf5349ff3c624d",
+      "recipe": "unassign_stay_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_d6e2761525e3af9aedc3458b",
+      "recipe": "calendar_reopening:arrival@2@7",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d6eade24a41881aade43dc3a",
+      "recipe": "swap_conflict_refusal",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_d7d7ded5ae4cce9cc286b832",
+      "recipe": "maintenance_recovery:arrival@2@6",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d8d46e5e0ac7d0b8a7a7752f",
+      "recipe": "booking_reallocation:arrival@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_da43b232b1c316f9edb9336c",
+      "recipe": "guest_check_in@3@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_dbc4cf8d908ab1c25ea8a184",
+      "recipe": "calendar_capacity:arrival@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_dd13abc1f3806e2f37117e8b",
+      "recipe": "guest_check_in:choice@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_dd1560fe0ae2540fc1248b16",
+      "recipe": "booking_date_change:arrival@0@4",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_dd77aea00dc4d7292d3d9ba1",
+      "recipe": "calendar_capacity@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_df262357516fad327adb8a04",
+      "recipe": "booking_date_change:arrival@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_df6fa0edb4153c0b2fd8ca87",
+      "recipe": "calendar_capacity@1@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e0dceee9449d519d6c553a18",
+      "recipe": "room_assignment",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e28ed99be3f8cdcd22231b9b",
+      "recipe": "calendar_reopening:arrival@0@9",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e5a596163f45644f187217c0",
+      "recipe": "calendar_reopening:arrival@3@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e5ad39e11f013f890579b085",
+      "recipe": "maintenance_recovery:arrival@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e5f2546e3038016bfca6b980",
+      "recipe": "booking_confirmation@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e6712313664904b294ffbe04",
+      "recipe": "calendar_reopening@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e98bc3b7003ccc320ed5db5f",
+      "recipe": "expired_hold_reallocation:arrival@2@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_eb9b9957e70035f125a79562",
+      "recipe": "maintenance_recovery:arrival@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ed1f6b31e7c74c0a971cf01c",
+      "recipe": "maintenance_recovery@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ed8eab068c2ff57d07850c6f",
+      "recipe": "guest_check_in",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_edba0831b5955080af915759",
+      "recipe": "identity_refusal:declined",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_eddd69667f08fc5356f73290",
+      "recipe": "booking_confirmation:prepaid",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f0014bfefef95bb237adfdb6",
+      "recipe": "booking_date_change@1@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f038fb674fd73f993dc85bd4",
+      "recipe": "maintenance_recovery@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f06910d0bb850187ca1249db",
+      "recipe": "maintenance_recovery:arrival@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f0d86e9b053437e29ecdc949",
+      "recipe": "guest_check_in:frontdesk@2@1",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f1b4ee63348c7909cd367023",
+      "recipe": "calendar_capacity@0@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f37bfb7766630e45cdd47eda",
+      "recipe": "booking_confirmation:guest@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f406ec47ce140323dd8dac5f",
+      "recipe": "room_reassignment",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f4272dc0430f6018d3b51589",
+      "recipe": "sales_restriction",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f6005ac699afbe886c9a7a71",
+      "recipe": "hold_release",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f7a4d39e509e1bb4bd77e7e3",
+      "recipe": "guest_check_in:choice@1@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f96f17dbb9e19d5e49d97a7c",
+      "recipe": "deposit_refusal:prepaid",
+      "witnesses": 0,
+      "oracle_replay_verified": true,
+      "refusal_verified": true
+    },
+    {
+      "instance": "stayops_task_f9fd8a0e131f18cd23a1b0c7",
+      "recipe": "booking_downgrade:arrival@2@3",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_fa55f9f34b16f883372ad0e6",
+      "recipe": "cancellation_refund:late@0@1",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_fb107b14dd82b1b1944f635a",
+      "recipe": "rate_date_requote@0@1",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_fbb28f9892c325b58bccac76",
+      "recipe": "booking_cancellation",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_fbff90eecca92db92da40f9c",
+      "recipe": "booking_confirmation@0@2",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_fcf21765f64f6d2d933c8c59",
+      "recipe": "guest_identity",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d2290dc52e767ff10ef4674a",
+      "recipe": "booking_confirmation:suite",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_05ca093ea27549de433ba4e2",
+      "recipe": "rate_date_requote:capacity@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_0de6fd92fe0bf85a5e043ef0",
+      "recipe": "rate_date_requote:capacity@0@4",
+      "witnesses": 3,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_107c96ea90dd5c48bf48493a",
+      "recipe": "complete_stay@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_145d0f62df1164f52db41efb",
+      "recipe": "arrival_turnover_rebooking@0@14",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_14becd6ef0b3d2cc1064af50",
+      "recipe": "arrival_turnover_rebooking@0@7",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_14f7fc5112b7d11861560cc3",
+      "recipe": "complete_stay@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_16b127dec171fbea8e625ebc",
+      "recipe": "complete_stay",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1b50805211a97e6f153dd4f2",
+      "recipe": "rate_date_requote:capacity",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_1f893af5c0cfd699ee8bc38d",
+      "recipe": "arrival_turnover_rebooking@0@6",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_21c5474fe80cb6cb35f93f05",
+      "recipe": "booking_reallocation:refund_arrival@1@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_255b0710d8016ae8126c640b",
+      "recipe": "rate_date_requote:capacity@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_275f098b096e61b67de4f692",
+      "recipe": "booking_reallocation:refund_arrival@0@8",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_28de49b25c8ba3132247b716",
+      "recipe": "booking_reallocation:refund_arrival@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_2a3fd73fc4ef2e0f4052e141",
+      "recipe": "arrival_turnover_rebooking@2@13",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_2c696bab3aa1c4539f5cf9bb",
+      "recipe": "complete_stay@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_3213f2cf4678c0d0e16c204b",
+      "recipe": "arrival_turnover_rebooking@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_332de3041f98491cdfb4f2ae",
+      "recipe": "complete_stay@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_36f8c25e0b97343a558a81c3",
+      "recipe": "arrival_turnover_rebooking@0@5",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_40f75aee4a5952e4dd8ce025",
+      "recipe": "arrival_turnover_rebooking@0@9",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_453ab1f034b0ff1361804f99",
+      "recipe": "calendar_capacity:arrival@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_4ac552fba8ab3219b92f7971",
+      "recipe": "complete_stay@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_5a370f157841e321d8a67a51",
+      "recipe": "arrival_turnover_rebooking@0@13",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_5ec4d35f5a7e211d787da5e4",
+      "recipe": "complete_stay:choice@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_60c720795198eff78496da6c",
+      "recipe": "complete_stay:choice@0@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_649c527bf9df3af9b8834ec6",
+      "recipe": "complete_stay:choice@2@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_65bbd0f9284a402e24b7a223",
+      "recipe": "booking_reallocation:refund_arrival@2@6",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_7625452e45aec61b5362419f",
+      "recipe": "arrival_turnover_rebooking@0@10",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_7d3be289b181e6edb2a8c63b",
+      "recipe": "rate_date_requote:capacity@1@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_81d09fe875370dfe6bd77757",
+      "recipe": "calendar_reopening:arrival@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_82be4e86441e10b67a505746",
+      "recipe": "booking_reallocation:refund_arrival@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_86eb83dfbfdd241d09ae488b",
+      "recipe": "arrival_turnover_rebooking@0@15",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_86fe838d7c42090e0e548b55",
+      "recipe": "booking_reallocation:refund_arrival@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_8863e6d843c1f502f6862ca1",
+      "recipe": "booking_reallocation:refund_arrival@0@4",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_94092e9dc9e67cbf540e756b",
+      "recipe": "rate_date_requote:capacity@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_99eb9b878720316573005d37",
+      "recipe": "arrival_turnover_rebooking",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_a3716fa6f84c29bb7ad74f21",
+      "recipe": "complete_stay:choice@0@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_a598d68d9b9296667122b3e2",
+      "recipe": "calendar_capacity:arrival",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_a8574cea7b58662d3fc420fb",
+      "recipe": "rate_date_requote:capacity@0@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b2ee33b4e7bb0ed5c591dbc6",
+      "recipe": "arrival_turnover_rebooking@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_b777848840de3b233d1bf6c5",
+      "recipe": "complete_stay@0@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_c0653fa9dce8b4ac01249e74",
+      "recipe": "complete_stay:choice@0@4",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_c1f6272ac9f07319995a64c8",
+      "recipe": "arrival_turnover_rebooking@0@12",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_c42cd0934215eacad10ba793",
+      "recipe": "complete_stay:choice@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_c5447a424a8454eb3735dc93",
+      "recipe": "calendar_reopening:arrival",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ca3c8545a57014a3e20ab88b",
+      "recipe": "complete_stay@3@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ccb9f1b763f6eb24a5a8e463",
+      "recipe": "booking_reallocation:refund_arrival@3@7",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_cfd70362dfaec0fdd5138c3d",
+      "recipe": "complete_stay:choice@1@5",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_d9d72b679db0a9012653b818",
+      "recipe": "arrival_turnover_rebooking@0@8",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_dc2ccec7de57bf785082c019",
+      "recipe": "arrival_turnover_rebooking@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_dc3bb027e3a8149979d55473",
+      "recipe": "complete_stay@0@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_dd1ceb039ad2ac1714867c70",
+      "recipe": "rate_date_requote:capacity@2@2",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_ddbe6e8c4d9c2a09b0baa028",
+      "recipe": "arrival_turnover_rebooking@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_de675a603ae3403d533da14b",
+      "recipe": "complete_stay:choice@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_dea453675673977b7f10bc17",
+      "recipe": "complete_stay@1@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e29c3b0615d1b81953ebb759",
+      "recipe": "complete_stay:choice@3@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e5bdf60fddda199f5612f923",
+      "recipe": "complete_stay@2@5",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e6f7fb12028394b38385af82",
+      "recipe": "rate_date_requote:capacity@3@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e74cf132fd1d37f861c71db8",
+      "recipe": "booking_reallocation:refund_arrival@0@6",
+      "witnesses": 2,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_e7da37f14d5b99dc622734ca",
+      "recipe": "booking_reallocation:refund_arrival@0@1",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f039f7ac64d00374d0d5a525",
+      "recipe": "arrival_turnover_rebooking@1@14",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f2489530d726ec948bd4d2b7",
+      "recipe": "booking_reallocation:refund_arrival@0@5",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f4ba983fd2c1456eb7fc06f7",
+      "recipe": "arrival_turnover_rebooking@3@14",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f7ae7cc51c8a338973878cde",
+      "recipe": "complete_stay@0@6",
+      "witnesses": 1,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f8a94fd6483eb06bbd519f37",
+      "recipe": "booking_reallocation:refund_arrival",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f8e2d13a7401e631de43364c",
+      "recipe": "complete_stay:choice@0@3",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f963f6f40d130fc8b84579f3",
+      "recipe": "arrival_turnover_rebooking@0@11",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    },
+    {
+      "instance": "stayops_task_f982280a47b985c779490857",
+      "recipe": "complete_stay:choice",
+      "witnesses": 4,
+      "oracle_replay_verified": true,
+      "refusal_verified": false
+    }
+  ],
+  "sandbox_oracle": {
+    "domain": "stayops",
+    "version": "stayops-0.1.0",
+    "trace_valid": true,
+    "status": "fail",
+    "operations": [
+      {
+        "event_id": "event_000002",
+        "operation": "confirm_reservation",
+        "authorized": true,
+        "reference_allowed": false,
+        "reference_error_code": "DEPOSIT_REQUIRED",
+        "success": true,
+        "classification": "successful_business_violation",
+        "operation_correct": false,
+        "violations": [
+          "DEPOSIT_REQUIRED",
+          "RESERVATION_DEPOSIT_REQUIRED"
+        ],
+        "before_hash": "08dc3f242598a484240071b5a60eff0d40e029af31b3f0a7801dc3ba3df1391d",
+        "after_hash": "f9df3d05518d0d68af63bea00ff9ae2b0c68470a2a96b3969246501d571c10a0"
+      }
+    ],
+    "violations": [],
+    "metrics": {
+      "legal_execution": 0,
+      "rejected_invalid_attempt": 0,
+      "successful_business_violation": 1,
+      "authorization_only": 0,
+      "false_rejection": 0,
+      "unscored": 0
+    },
+    "final_state_hash": "f9df3d05518d0d68af63bea00ff9ae2b0c68470a2a96b3969246501d571c10a0"
+  },
+  "independent_rebuild_comparison": {
+    "service-train.json": {
+      "parsed_equal": true,
+      "canonical_hash": "58c913a1631eaf044bd32cb443b245035f0b6b7d592362b91e4294fca0067d35",
+      "raw_bytes_equal": true
+    },
+    "service-validation.json": {
+      "parsed_equal": true,
+      "canonical_hash": "8f5491c7886a7ae5f736a8ef299868e7a22d4d0c6f9e88e6f882737d4b2a9018",
+      "raw_bytes_equal": true
+    },
+    "service-test-demo.json": {
+      "parsed_equal": true,
+      "canonical_hash": "915d4ac20f7934ab32f720e2dc8754d67e805bfd2db22b8cff08702b356b53c1",
+      "raw_bytes_equal": true
+    },
+    "discovery-demo.json": {
+      "parsed_equal": true,
+      "canonical_hash": "e821cc2e4d3d53dcabc9de82356b8929234735a8d14673a563653c0a02852cf3",
+      "raw_bytes_equal": true
+    },
+    "coverage.json": {
+      "parsed_equal": true,
+      "canonical_hash": "d77572631af5911721fc53a0169dc475529c3ebf36016be9fc0fdd5d221078d4",
+      "raw_bytes_equal": true
+    },
+    "review-examples.json": {
+      "parsed_equal": true,
+      "canonical_hash": "5f4cd9e9fbf254d2df7999dcf1c922abbb08a5fe9d5d999be1ece458f011c736",
+      "raw_bytes_equal": true
+    },
+    "markdown_raw_bytes_equal": true
+  },
+  "full_repository_tests": {
+    "passed": 605,
+    "log": "../four-domain-verification/full-pytest.txt"
+  },
+  "domain_tests": {
+    "passed": 55,
+    "log": "domain-pytest.txt"
+  }
+}

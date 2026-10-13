@@ -1,4 +1,4 @@
-# Usami — SaaS v0.2 and CloudOps v0.1
+# Usami — Four Executable Business Domains
 
 **Usami — A Compositional Business World Benchmark for Interactive AI Agents**
 
@@ -6,7 +6,21 @@ Usami 是可执行的虚构 SaaS 业务世界：组织、成员权限、订阅�
 
 v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer**、**Service LLM** 和 **Customer–Service 多轮交互**模块。Benchmark 核心不依赖 LLM；可选 Customer 自主选择业务请求，Service 使用真实兼容 API 自主选择工具。没有 Evolver、LLM Judge、训练、Service 自动修复、真实支付接口或数据库。业务数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
 
-## CloudOps v0.1 第二业务领域
+## FulfillmentOps v0.1 与 StayOps v0.1
+
+独立的仓储履约与酒店运营世界，分别提供真实 World、Reference Rules、Engine、Oracle、Service/Customer 会话、冻结双 Track、全事件回放及真实模型 Pilot。FulfillmentOps 已冻结 338 个任务；StayOps 已冻结 302 个任务。库存守恒与运输生命周期、按日期房型库存与物理房间分配具有不同业务语义。开放 Customer 自主探索，不读取固定任务或参考解法。核心运行无需网页。
+
+```bash
+python -m pip install -e '.[service,dev]' -c constraints-tested.txt
+python -m usami_fulfillment world --seed 42
+python -m usami_stayops world --seed 42
+python -m usami_fulfillment verify benchmarks/fulfillment-v0.1/service-test-demo.json
+python -m usami_stayops verify benchmarks/stayops-v0.1/service-test-demo.json
+```
+
+分别阅读 [FulfillmentOps 发布说明](benchmarks/fulfillment-v0.1/README.md) 与 [StayOps 发布说明](benchmarks/stayops-v0.1/README.md)。真实模型结果与离线证书分开报告，人工业务真实性审核为 `AWAITING HUMAN REVIEW`，公开 Test 为 Demo。
+
+## CloudOps v0.1
 
 新增独立的企业云资源世界：项目级角色、计算实例依赖 DAG、三维配额、确定性账单与支付恢复。提供 11 项真实写操作、独立 Reference / Engine / Oracle、固定身份 Service 和无预设题目的多轮 Customer Discovery；无需网页。已冻结 45 个 Service 任务、12 种结构及 2 个开放探索世界 × 3 次试验。SaaS 规则和历史 Manifest 保持原样。
 

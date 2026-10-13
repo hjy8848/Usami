@@ -1,0 +1,1907 @@
+{
+  "domain": "fulfillment",
+  "version": "fulfillment-0.1.0",
+  "initial_state": {
+    "seed": 42,
+    "clock": "2026-01-15T12:00:00Z",
+    "domain": "fulfillment",
+    "version": "fulfillment-0.1.0",
+    "users": {
+      "u0": {
+        "id": "u0",
+        "name": "Employee 0"
+      },
+      "u1": {
+        "id": "u1",
+        "name": "Employee 1"
+      },
+      "u2": {
+        "id": "u2",
+        "name": "Employee 2"
+      },
+      "u3": {
+        "id": "u3",
+        "name": "Employee 3"
+      },
+      "u4": {
+        "id": "u4",
+        "name": "Employee 4"
+      },
+      "u5": {
+        "id": "u5",
+        "name": "Employee 5"
+      }
+    },
+    "organizations": {
+      "o0": {
+        "id": "o0",
+        "name": "North Trading",
+        "owner_id": "u0"
+      },
+      "o1": {
+        "id": "o1",
+        "name": "South Trading",
+        "owner_id": "u5"
+      }
+    },
+    "warehouses": {
+      "w0": {
+        "id": "w0",
+        "org_id": "o0",
+        "name": "Primary 591",
+        "receiving_enabled": true,
+        "capacity_volume": 1000,
+        "allowed_categories": [
+          "general",
+          "fragile"
+        ],
+        "shipping_cents": 500
+      },
+      "w1": {
+        "id": "w1",
+        "org_id": "o0",
+        "name": "Regional 177",
+        "receiving_enabled": true,
+        "capacity_volume": 1000,
+        "allowed_categories": [
+          "general",
+          "fragile"
+        ],
+        "shipping_cents": 500
+      },
+      "w2": {
+        "id": "w2",
+        "org_id": "o1",
+        "name": "Partner 215",
+        "receiving_enabled": true,
+        "capacity_volume": 1000,
+        "allowed_categories": [
+          "general",
+          "fragile"
+        ],
+        "shipping_cents": 500
+      }
+    },
+    "access": {
+      "w0_u1": {
+        "id": "w0_u1",
+        "warehouse_id": "w0",
+        "user_id": "u1",
+        "role": "picker"
+      },
+      "w1_u2": {
+        "id": "w1_u2",
+        "warehouse_id": "w1",
+        "user_id": "u2",
+        "role": "receiver"
+      },
+      "w0_u2": {
+        "id": "w0_u2",
+        "warehouse_id": "w0",
+        "user_id": "u2",
+        "role": "viewer"
+      },
+      "w0_u4": {
+        "id": "w0_u4",
+        "warehouse_id": "w0",
+        "user_id": "u4",
+        "role": "finance"
+      },
+      "w1_u1": {
+        "id": "w1_u1",
+        "warehouse_id": "w1",
+        "user_id": "u1",
+        "role": "viewer"
+      }
+    },
+    "skus": {
+      "sku0": {
+        "id": "sku0",
+        "org_id": "o0",
+        "name": "Industrial Widget",
+        "category": "general",
+        "unit_price_cents": 1200,
+        "unit_volume": 1,
+        "returnable": true,
+        "return_window_days": 30,
+        "simulated_return_condition": "resalable"
+      },
+      "sku1": {
+        "id": "sku1",
+        "org_id": "o0",
+        "name": "Glass Sensor",
+        "category": "fragile",
+        "unit_price_cents": 2300,
+        "unit_volume": 2,
+        "returnable": true,
+        "return_window_days": 30,
+        "simulated_return_condition": "merchant_fault"
+      },
+      "sku2": {
+        "id": "sku2",
+        "org_id": "o1",
+        "name": "Partner Module",
+        "category": "general",
+        "unit_price_cents": 800,
+        "unit_volume": 1,
+        "returnable": true,
+        "return_window_days": 30,
+        "simulated_return_condition": "resalable"
+      }
+    },
+    "lots": {
+      "lot0": {
+        "id": "lot0",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "on_hand": 8,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      },
+      "lot1": {
+        "id": "lot1",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "on_hand": 8,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      },
+      "lot2": {
+        "id": "lot2",
+        "warehouse_id": "w0",
+        "sku_id": "sku1",
+        "on_hand": 6,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      },
+      "lot3": {
+        "id": "lot3",
+        "warehouse_id": "w1",
+        "sku_id": "sku0",
+        "on_hand": 4,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      },
+      "lot4": {
+        "id": "lot4",
+        "warehouse_id": "w2",
+        "sku_id": "sku2",
+        "on_hand": 8,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      }
+    },
+    "receipt_notices": {
+      "opening0": {
+        "id": "opening0",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+        }
+      },
+      "opening1": {
+        "id": "opening1",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+        }
+      },
+      "opening2": {
+        "id": "opening2",
+        "warehouse_id": "w0",
+        "sku_id": "sku1",
+        "quantity": 6,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+        }
+      },
+      "opening3": {
+        "id": "opening3",
+        "warehouse_id": "w1",
+        "sku_id": "sku0",
+        "quantity": 4,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+        }
+      },
+      "opening4": {
+        "id": "opening4",
+        "warehouse_id": "w2",
+        "sku_id": "sku2",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+        }
+      },
+      "inbound0": {
+        "id": "inbound0",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+        }
+      },
+      "inbound1": {
+        "id": "inbound1",
+        "warehouse_id": "w1",
+        "sku_id": "sku0",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+        }
+      },
+      "inbound2": {
+        "id": "inbound2",
+        "warehouse_id": "w0",
+        "sku_id": "sku1",
+        "quantity": 8,
+        "quality": "quarantine",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+        }
+      }
+    },
+    "receipts": {
+      "receipt0": {
+        "id": "receipt0",
+        "notice_id": "opening0",
+        "warehouse_id": "w0",
+        "lot_id": "lot0",
+        "quantity": 8,
+        "key": "opening"
+      },
+      "receipt1": {
+        "id": "receipt1",
+        "notice_id": "opening1",
+        "warehouse_id": "w0",
+        "lot_id": "lot1",
+        "quantity": 8,
+        "key": "opening"
+      },
+      "receipt2": {
+        "id": "receipt2",
+        "notice_id": "opening2",
+        "warehouse_id": "w0",
+        "lot_id": "lot2",
+        "quantity": 6,
+        "key": "opening"
+      },
+      "receipt3": {
+        "id": "receipt3",
+        "notice_id": "opening3",
+        "warehouse_id": "w1",
+        "lot_id": "lot3",
+        "quantity": 4,
+        "key": "opening"
+      },
+      "receipt4": {
+        "id": "receipt4",
+        "notice_id": "opening4",
+        "warehouse_id": "w2",
+        "lot_id": "lot4",
+        "quantity": 8,
+        "key": "opening"
+      }
+    },
+    "lot_inspections": {},
+    "orders": {
+      "order0": {
+        "id": "order0",
+        "warehouse_id": "w0",
+        "customer_id": "u3",
+        "status": "draft",
+        "lines": [
+          {
+            "id": "line0",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "unit_price_cents": 1200,
+            "canceled": 0
+          }
+        ],
+        "shipping_cents": 500
+      },
+      "order1": {
+        "id": "order1",
+        "warehouse_id": "w1",
+        "customer_id": "u3",
+        "status": "draft",
+        "lines": [
+          {
+            "id": "line0",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "unit_price_cents": 1200,
+            "canceled": 0
+          }
+        ],
+        "shipping_cents": 500
+      },
+      "order2": {
+        "id": "order2",
+        "warehouse_id": "w2",
+        "customer_id": "u5",
+        "status": "draft",
+        "lines": [
+          {
+            "id": "line0",
+            "sku_id": "sku2",
+            "quantity": 4,
+            "unit_price_cents": 800,
+            "canceled": 0
+          }
+        ],
+        "shipping_cents": 500
+      }
+    },
+    "reservations": {},
+    "handling": {},
+    "shipments": {},
+    "transfers": {},
+    "returns": {},
+    "payments": {}
+  },
+  "operation_budget": 100,
+  "events": [
+    {
+      "id": "event_000000",
+      "kind": "generation",
+      "payload": {
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "seed": 42,
+        "initial_hash": "a0378578282d378ddfe5b221fccd4e339a7f3432828be4627c663373fe714b3f"
+      },
+      "before": null,
+      "after": null,
+      "previous_hash": "",
+      "event_hash": "59c0e9142b75a853034c4e988533bd38d7647dc5d282df7bf22463b5af0fda1c"
+    },
+    {
+      "id": "event_000001",
+      "kind": "request",
+      "payload": {
+        "request": {
+          "id": "sandbox",
+          "identity": "u0",
+          "operation": {
+            "name": "confirm_order",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {}
+          },
+          "granted": true
+        }
+      },
+      "before": null,
+      "after": null,
+      "previous_hash": "59c0e9142b75a853034c4e988533bd38d7647dc5d282df7bf22463b5af0fda1c",
+      "event_hash": "8e025b1062496815a039e1205b66a951dd6615ec7ca91202e85942d63d0cb752"
+    },
+    {
+      "id": "event_000002",
+      "kind": "operation",
+      "payload": {
+        "actor": "u0",
+        "operation": {
+          "name": "confirm_order",
+          "scope_id": "w0",
+          "resource_id": "order0",
+          "params": {}
+        },
+        "request_id": "sandbox",
+        "mode": "sandbox",
+        "result": {
+          "success": true,
+          "error_code": null,
+          "data": {
+            "order_id": "order0",
+            "status": "confirmed"
+          }
+        }
+      },
+      "before": {
+        "seed": 42,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Employee 5"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "North Trading",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "South Trading",
+            "owner_id": "u5"
+          }
+        },
+        "warehouses": {
+          "w0": {
+            "id": "w0",
+            "org_id": "o0",
+            "name": "Primary 591",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w1": {
+            "id": "w1",
+            "org_id": "o0",
+            "name": "Regional 177",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w2": {
+            "id": "w2",
+            "org_id": "o1",
+            "name": "Partner 215",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "access": {
+          "w0_u1": {
+            "id": "w0_u1",
+            "warehouse_id": "w0",
+            "user_id": "u1",
+            "role": "picker"
+          },
+          "w1_u2": {
+            "id": "w1_u2",
+            "warehouse_id": "w1",
+            "user_id": "u2",
+            "role": "receiver"
+          },
+          "w0_u2": {
+            "id": "w0_u2",
+            "warehouse_id": "w0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "w0_u4": {
+            "id": "w0_u4",
+            "warehouse_id": "w0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "w1_u1": {
+            "id": "w1_u1",
+            "warehouse_id": "w1",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "skus": {
+          "sku0": {
+            "id": "sku0",
+            "org_id": "o0",
+            "name": "Industrial Widget",
+            "category": "general",
+            "unit_price_cents": 1200,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          },
+          "sku1": {
+            "id": "sku1",
+            "org_id": "o0",
+            "name": "Glass Sensor",
+            "category": "fragile",
+            "unit_price_cents": 2300,
+            "unit_volume": 2,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "merchant_fault"
+          },
+          "sku2": {
+            "id": "sku2",
+            "org_id": "o1",
+            "name": "Partner Module",
+            "category": "general",
+            "unit_price_cents": 800,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          }
+        },
+        "lots": {
+          "lot0": {
+            "id": "lot0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot1": {
+            "id": "lot1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot2": {
+            "id": "lot2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "on_hand": 6,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot3": {
+            "id": "lot3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot4": {
+            "id": "lot4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          }
+        },
+        "receipt_notices": {
+          "opening0": {
+            "id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+            }
+          },
+          "opening1": {
+            "id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening1",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+            }
+          },
+          "opening2": {
+            "id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 6,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+            }
+          },
+          "opening3": {
+            "id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening3",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+            }
+          },
+          "opening4": {
+            "id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening4",
+                "warehouse_id": "w2",
+                "sku_id": "sku2",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+            }
+          },
+          "inbound0": {
+            "id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+            }
+          },
+          "inbound1": {
+            "id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound1",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+            }
+          },
+          "inbound2": {
+            "id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 8,
+                "quality": "quarantine"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+            }
+          }
+        },
+        "receipts": {
+          "receipt0": {
+            "id": "receipt0",
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "lot_id": "lot0",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt1": {
+            "id": "receipt1",
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "lot_id": "lot1",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt2": {
+            "id": "receipt2",
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "lot_id": "lot2",
+            "quantity": 6,
+            "key": "opening"
+          },
+          "receipt3": {
+            "id": "receipt3",
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "lot_id": "lot3",
+            "quantity": 4,
+            "key": "opening"
+          },
+          "receipt4": {
+            "id": "receipt4",
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "lot_id": "lot4",
+            "quantity": 8,
+            "key": "opening"
+          }
+        },
+        "lot_inspections": {},
+        "orders": {
+          "order0": {
+            "id": "order0",
+            "warehouse_id": "w0",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order1": {
+            "id": "order1",
+            "warehouse_id": "w1",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order2": {
+            "id": "order2",
+            "warehouse_id": "w2",
+            "customer_id": "u5",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku2",
+                "quantity": 4,
+                "unit_price_cents": 800,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "reservations": {},
+        "handling": {},
+        "shipments": {},
+        "transfers": {},
+        "returns": {},
+        "payments": {}
+      },
+      "after": {
+        "seed": 42,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Employee 5"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "North Trading",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "South Trading",
+            "owner_id": "u5"
+          }
+        },
+        "warehouses": {
+          "w0": {
+            "id": "w0",
+            "org_id": "o0",
+            "name": "Primary 591",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w1": {
+            "id": "w1",
+            "org_id": "o0",
+            "name": "Regional 177",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w2": {
+            "id": "w2",
+            "org_id": "o1",
+            "name": "Partner 215",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "access": {
+          "w0_u1": {
+            "id": "w0_u1",
+            "warehouse_id": "w0",
+            "user_id": "u1",
+            "role": "picker"
+          },
+          "w1_u2": {
+            "id": "w1_u2",
+            "warehouse_id": "w1",
+            "user_id": "u2",
+            "role": "receiver"
+          },
+          "w0_u2": {
+            "id": "w0_u2",
+            "warehouse_id": "w0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "w0_u4": {
+            "id": "w0_u4",
+            "warehouse_id": "w0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "w1_u1": {
+            "id": "w1_u1",
+            "warehouse_id": "w1",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "skus": {
+          "sku0": {
+            "id": "sku0",
+            "org_id": "o0",
+            "name": "Industrial Widget",
+            "category": "general",
+            "unit_price_cents": 1200,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          },
+          "sku1": {
+            "id": "sku1",
+            "org_id": "o0",
+            "name": "Glass Sensor",
+            "category": "fragile",
+            "unit_price_cents": 2300,
+            "unit_volume": 2,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "merchant_fault"
+          },
+          "sku2": {
+            "id": "sku2",
+            "org_id": "o1",
+            "name": "Partner Module",
+            "category": "general",
+            "unit_price_cents": 800,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          }
+        },
+        "lots": {
+          "lot0": {
+            "id": "lot0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot1": {
+            "id": "lot1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot2": {
+            "id": "lot2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "on_hand": 6,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot3": {
+            "id": "lot3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot4": {
+            "id": "lot4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          }
+        },
+        "receipt_notices": {
+          "opening0": {
+            "id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+            }
+          },
+          "opening1": {
+            "id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening1",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+            }
+          },
+          "opening2": {
+            "id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 6,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+            }
+          },
+          "opening3": {
+            "id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening3",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+            }
+          },
+          "opening4": {
+            "id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening4",
+                "warehouse_id": "w2",
+                "sku_id": "sku2",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+            }
+          },
+          "inbound0": {
+            "id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+            }
+          },
+          "inbound1": {
+            "id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound1",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+            }
+          },
+          "inbound2": {
+            "id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 8,
+                "quality": "quarantine"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+            }
+          }
+        },
+        "receipts": {
+          "receipt0": {
+            "id": "receipt0",
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "lot_id": "lot0",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt1": {
+            "id": "receipt1",
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "lot_id": "lot1",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt2": {
+            "id": "receipt2",
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "lot_id": "lot2",
+            "quantity": 6,
+            "key": "opening"
+          },
+          "receipt3": {
+            "id": "receipt3",
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "lot_id": "lot3",
+            "quantity": 4,
+            "key": "opening"
+          },
+          "receipt4": {
+            "id": "receipt4",
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "lot_id": "lot4",
+            "quantity": 8,
+            "key": "opening"
+          }
+        },
+        "lot_inspections": {},
+        "orders": {
+          "order0": {
+            "id": "order0",
+            "warehouse_id": "w0",
+            "customer_id": "u3",
+            "status": "confirmed",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order1": {
+            "id": "order1",
+            "warehouse_id": "w1",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order2": {
+            "id": "order2",
+            "warehouse_id": "w2",
+            "customer_id": "u5",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku2",
+                "quantity": 4,
+                "unit_price_cents": 800,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "reservations": {},
+        "handling": {},
+        "shipments": {},
+        "transfers": {},
+        "returns": {},
+        "payments": {}
+      },
+      "previous_hash": "8e025b1062496815a039e1205b66a951dd6615ec7ca91202e85942d63d0cb752",
+      "event_hash": "dcce3a2d5d2f3fbdc768ac957c857cfc53e9035ae10bce1cc920d1d079f4ca87"
+    },
+    {
+      "id": "event_000003",
+      "kind": "final",
+      "payload": {
+        "state_hash": "057e7e11415d44a2cd37fbeec88178c3e519d78b7f5b9a15ed39d366f24fab9f"
+      },
+      "before": null,
+      "after": null,
+      "previous_hash": "dcce3a2d5d2f3fbdc768ac957c857cfc53e9035ae10bce1cc920d1d079f4ca87",
+      "event_hash": "157798bbeea32151f01f7f25c5bfd69f21a17313920bca261747d1c922843996"
+    }
+  ],
+  "final_state": {
+    "seed": 42,
+    "clock": "2026-01-15T12:00:00Z",
+    "domain": "fulfillment",
+    "version": "fulfillment-0.1.0",
+    "users": {
+      "u0": {
+        "id": "u0",
+        "name": "Employee 0"
+      },
+      "u1": {
+        "id": "u1",
+        "name": "Employee 1"
+      },
+      "u2": {
+        "id": "u2",
+        "name": "Employee 2"
+      },
+      "u3": {
+        "id": "u3",
+        "name": "Employee 3"
+      },
+      "u4": {
+        "id": "u4",
+        "name": "Employee 4"
+      },
+      "u5": {
+        "id": "u5",
+        "name": "Employee 5"
+      }
+    },
+    "organizations": {
+      "o0": {
+        "id": "o0",
+        "name": "North Trading",
+        "owner_id": "u0"
+      },
+      "o1": {
+        "id": "o1",
+        "name": "South Trading",
+        "owner_id": "u5"
+      }
+    },
+    "warehouses": {
+      "w0": {
+        "id": "w0",
+        "org_id": "o0",
+        "name": "Primary 591",
+        "receiving_enabled": true,
+        "capacity_volume": 1000,
+        "allowed_categories": [
+          "general",
+          "fragile"
+        ],
+        "shipping_cents": 500
+      },
+      "w1": {
+        "id": "w1",
+        "org_id": "o0",
+        "name": "Regional 177",
+        "receiving_enabled": true,
+        "capacity_volume": 1000,
+        "allowed_categories": [
+          "general",
+          "fragile"
+        ],
+        "shipping_cents": 500
+      },
+      "w2": {
+        "id": "w2",
+        "org_id": "o1",
+        "name": "Partner 215",
+        "receiving_enabled": true,
+        "capacity_volume": 1000,
+        "allowed_categories": [
+          "general",
+          "fragile"
+        ],
+        "shipping_cents": 500
+      }
+    },
+    "access": {
+      "w0_u1": {
+        "id": "w0_u1",
+        "warehouse_id": "w0",
+        "user_id": "u1",
+        "role": "picker"
+      },
+      "w1_u2": {
+        "id": "w1_u2",
+        "warehouse_id": "w1",
+        "user_id": "u2",
+        "role": "receiver"
+      },
+      "w0_u2": {
+        "id": "w0_u2",
+        "warehouse_id": "w0",
+        "user_id": "u2",
+        "role": "viewer"
+      },
+      "w0_u4": {
+        "id": "w0_u4",
+        "warehouse_id": "w0",
+        "user_id": "u4",
+        "role": "finance"
+      },
+      "w1_u1": {
+        "id": "w1_u1",
+        "warehouse_id": "w1",
+        "user_id": "u1",
+        "role": "viewer"
+      }
+    },
+    "skus": {
+      "sku0": {
+        "id": "sku0",
+        "org_id": "o0",
+        "name": "Industrial Widget",
+        "category": "general",
+        "unit_price_cents": 1200,
+        "unit_volume": 1,
+        "returnable": true,
+        "return_window_days": 30,
+        "simulated_return_condition": "resalable"
+      },
+      "sku1": {
+        "id": "sku1",
+        "org_id": "o0",
+        "name": "Glass Sensor",
+        "category": "fragile",
+        "unit_price_cents": 2300,
+        "unit_volume": 2,
+        "returnable": true,
+        "return_window_days": 30,
+        "simulated_return_condition": "merchant_fault"
+      },
+      "sku2": {
+        "id": "sku2",
+        "org_id": "o1",
+        "name": "Partner Module",
+        "category": "general",
+        "unit_price_cents": 800,
+        "unit_volume": 1,
+        "returnable": true,
+        "return_window_days": 30,
+        "simulated_return_condition": "resalable"
+      }
+    },
+    "lots": {
+      "lot0": {
+        "id": "lot0",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "on_hand": 8,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      },
+      "lot1": {
+        "id": "lot1",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "on_hand": 8,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      },
+      "lot2": {
+        "id": "lot2",
+        "warehouse_id": "w0",
+        "sku_id": "sku1",
+        "on_hand": 6,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      },
+      "lot3": {
+        "id": "lot3",
+        "warehouse_id": "w1",
+        "sku_id": "sku0",
+        "on_hand": 4,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      },
+      "lot4": {
+        "id": "lot4",
+        "warehouse_id": "w2",
+        "sku_id": "sku2",
+        "on_hand": 8,
+        "reserved": 0,
+        "picked": 0,
+        "quality": "available"
+      }
+    },
+    "receipt_notices": {
+      "opening0": {
+        "id": "opening0",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+        }
+      },
+      "opening1": {
+        "id": "opening1",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+        }
+      },
+      "opening2": {
+        "id": "opening2",
+        "warehouse_id": "w0",
+        "sku_id": "sku1",
+        "quantity": 6,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+        }
+      },
+      "opening3": {
+        "id": "opening3",
+        "warehouse_id": "w1",
+        "sku_id": "sku0",
+        "quantity": 4,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+        }
+      },
+      "opening4": {
+        "id": "opening4",
+        "warehouse_id": "w2",
+        "sku_id": "sku2",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+        }
+      },
+      "inbound0": {
+        "id": "inbound0",
+        "warehouse_id": "w0",
+        "sku_id": "sku0",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+        }
+      },
+      "inbound1": {
+        "id": "inbound1",
+        "warehouse_id": "w1",
+        "sku_id": "sku0",
+        "quantity": 8,
+        "quality": "available",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+        }
+      },
+      "inbound2": {
+        "id": "inbound2",
+        "warehouse_id": "w0",
+        "sku_id": "sku1",
+        "quantity": 8,
+        "quality": "quarantine",
+        "attestation": {
+          "domain": "fulfillment",
+          "source": "supplier-simulator-v0.1",
+          "binding": {
+            "notice_id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine"
+          },
+          "at": "2026-01-15T12:00:00+00:00",
+          "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+        }
+      }
+    },
+    "receipts": {
+      "receipt0": {
+        "id": "receipt0",
+        "notice_id": "opening0",
+        "warehouse_id": "w0",
+        "lot_id": "lot0",
+        "quantity": 8,
+        "key": "opening"
+      },
+      "receipt1": {
+        "id": "receipt1",
+        "notice_id": "opening1",
+        "warehouse_id": "w0",
+        "lot_id": "lot1",
+        "quantity": 8,
+        "key": "opening"
+      },
+      "receipt2": {
+        "id": "receipt2",
+        "notice_id": "opening2",
+        "warehouse_id": "w0",
+        "lot_id": "lot2",
+        "quantity": 6,
+        "key": "opening"
+      },
+      "receipt3": {
+        "id": "receipt3",
+        "notice_id": "opening3",
+        "warehouse_id": "w1",
+        "lot_id": "lot3",
+        "quantity": 4,
+        "key": "opening"
+      },
+      "receipt4": {
+        "id": "receipt4",
+        "notice_id": "opening4",
+        "warehouse_id": "w2",
+        "lot_id": "lot4",
+        "quantity": 8,
+        "key": "opening"
+      }
+    },
+    "lot_inspections": {},
+    "orders": {
+      "order0": {
+        "id": "order0",
+        "warehouse_id": "w0",
+        "customer_id": "u3",
+        "status": "confirmed",
+        "lines": [
+          {
+            "id": "line0",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "unit_price_cents": 1200,
+            "canceled": 0
+          }
+        ],
+        "shipping_cents": 500
+      },
+      "order1": {
+        "id": "order1",
+        "warehouse_id": "w1",
+        "customer_id": "u3",
+        "status": "draft",
+        "lines": [
+          {
+            "id": "line0",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "unit_price_cents": 1200,
+            "canceled": 0
+          }
+        ],
+        "shipping_cents": 500
+      },
+      "order2": {
+        "id": "order2",
+        "warehouse_id": "w2",
+        "customer_id": "u5",
+        "status": "draft",
+        "lines": [
+          {
+            "id": "line0",
+            "sku_id": "sku2",
+            "quantity": 4,
+            "unit_price_cents": 800,
+            "canceled": 0
+          }
+        ],
+        "shipping_cents": 500
+      }
+    },
+    "reservations": {},
+    "handling": {},
+    "shipments": {},
+    "transfers": {},
+    "returns": {},
+    "payments": {}
+  },
+  "trace_hash": "9e6bb29244ef5d3fef9d5794b3a3cc04022848409902a1409261727a92b072ae"
+}

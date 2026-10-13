@@ -1,0 +1,6151 @@
+{
+  "domain": "fulfillment",
+  "domain_version": "fulfillment-0.1.0",
+  "version": "business-harness-0.1.0",
+  "suite_id": "fulfillment-v0.1-service-pilot",
+  "track": "service_task",
+  "split": "train",
+  "mode": "reference",
+  "tools": [
+    "receive_inventory",
+    "inspect_lot",
+    "dispatch_transfer",
+    "receive_transfer",
+    "create_order",
+    "modify_order_line",
+    "capture_payment",
+    "confirm_order",
+    "reserve_inventory",
+    "release_reservation",
+    "pick_reservation",
+    "unpick_reservation",
+    "pack_reservation",
+    "unpack_reservation",
+    "create_shipment",
+    "cancel_shipment",
+    "dispatch_shipment",
+    "confirm_delivery",
+    "cancel_order",
+    "cancel_order_line",
+    "request_return",
+    "cancel_return",
+    "receive_return",
+    "inspect_return",
+    "restock_return",
+    "refund_order",
+    "change_warehouse_capacity",
+    "set_warehouse_receiving",
+    "get_warehouse",
+    "get_inventory",
+    "get_catalog",
+    "get_order",
+    "get_shipment",
+    "get_returns",
+    "get_payment_ledger",
+    "get_customer_context"
+  ],
+  "budget": {
+    "max_customer_turns": 1,
+    "max_customer_llm_calls": 0,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 48,
+    "max_format_recoveries": 1
+  },
+  "service_model": {
+    "model": "dashscope/qwen3.6-plus",
+    "base_url": "http://10.130.138.46:8010/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0
+    },
+    "trust_env": false
+  },
+  "customer_model": null,
+  "customer_method": "",
+  "trials": [
+    "r0"
+  ],
+  "instances": [
+    {
+      "id": "fulfillment_task_d7d6dc442aec7c7e92c1310d",
+      "world": {
+        "seed": 41001,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Employee 5"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "North Trading",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "South Trading",
+            "owner_id": "u5"
+          }
+        },
+        "warehouses": {
+          "w0": {
+            "id": "w0",
+            "org_id": "o0",
+            "name": "Primary 969",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w1": {
+            "id": "w1",
+            "org_id": "o0",
+            "name": "Regional 510",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w2": {
+            "id": "w2",
+            "org_id": "o1",
+            "name": "Partner 221",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "access": {
+          "w0_u1": {
+            "id": "w0_u1",
+            "warehouse_id": "w0",
+            "user_id": "u1",
+            "role": "picker"
+          },
+          "w1_u2": {
+            "id": "w1_u2",
+            "warehouse_id": "w1",
+            "user_id": "u2",
+            "role": "receiver"
+          },
+          "w0_u2": {
+            "id": "w0_u2",
+            "warehouse_id": "w0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "w0_u4": {
+            "id": "w0_u4",
+            "warehouse_id": "w0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "w1_u1": {
+            "id": "w1_u1",
+            "warehouse_id": "w1",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "skus": {
+          "sku0": {
+            "id": "sku0",
+            "org_id": "o0",
+            "name": "Industrial Widget",
+            "category": "general",
+            "unit_price_cents": 1200,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          },
+          "sku1": {
+            "id": "sku1",
+            "org_id": "o0",
+            "name": "Glass Sensor",
+            "category": "fragile",
+            "unit_price_cents": 2300,
+            "unit_volume": 2,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "merchant_fault"
+          },
+          "sku2": {
+            "id": "sku2",
+            "org_id": "o1",
+            "name": "Partner Module",
+            "category": "general",
+            "unit_price_cents": 800,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          }
+        },
+        "lots": {
+          "lot0": {
+            "id": "lot0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot1": {
+            "id": "lot1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot2": {
+            "id": "lot2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "on_hand": 6,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot3": {
+            "id": "lot3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot4": {
+            "id": "lot4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          }
+        },
+        "receipt_notices": {
+          "opening0": {
+            "id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+            }
+          },
+          "opening1": {
+            "id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening1",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+            }
+          },
+          "opening2": {
+            "id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 6,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+            }
+          },
+          "opening3": {
+            "id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening3",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+            }
+          },
+          "opening4": {
+            "id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening4",
+                "warehouse_id": "w2",
+                "sku_id": "sku2",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+            }
+          },
+          "inbound0": {
+            "id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+            }
+          },
+          "inbound1": {
+            "id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound1",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+            }
+          },
+          "inbound2": {
+            "id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 8,
+                "quality": "quarantine"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+            }
+          }
+        },
+        "receipts": {
+          "receipt0": {
+            "id": "receipt0",
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "lot_id": "lot0",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt1": {
+            "id": "receipt1",
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "lot_id": "lot1",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt2": {
+            "id": "receipt2",
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "lot_id": "lot2",
+            "quantity": 6,
+            "key": "opening"
+          },
+          "receipt3": {
+            "id": "receipt3",
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "lot_id": "lot3",
+            "quantity": 4,
+            "key": "opening"
+          },
+          "receipt4": {
+            "id": "receipt4",
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "lot_id": "lot4",
+            "quantity": 8,
+            "key": "opening"
+          }
+        },
+        "lot_inspections": {},
+        "orders": {
+          "order0": {
+            "id": "order0",
+            "warehouse_id": "w0",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order1": {
+            "id": "order1",
+            "warehouse_id": "w1",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order2": {
+            "id": "order2",
+            "warehouse_id": "w2",
+            "customer_id": "u5",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku2",
+                "quantity": 4,
+                "unit_price_cents": 800,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "reservations": {},
+        "handling": {},
+        "shipments": {},
+        "transfers": {},
+        "returns": {},
+        "payments": {}
+      },
+      "initial_hash": "6f8eb384da912ff854eb9024064f8f2045522d2de694f6710df1b5adb54521ae",
+      "identity": "u0",
+      "task": {
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "id": "fulfillment_task_d7d6dc442aec7c7e92c1310d",
+        "family": "paid_fulfillment",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Fulfill order0. Use r0 and s0; pay when needed, use either lot0 or lot1, and dispatch the shipment. Shipping/payment reference is s0/pay. Keep unrelated entities and configuration unchanged.",
+        "initial_state_hash": "6f8eb384da912ff854eb9024064f8f2045522d2de694f6710df1b5adb54521ae",
+        "goal": {
+          "atoms": [
+            {
+              "collection": "shipments",
+              "entity": "s0",
+              "field": "status",
+              "comparison": "eq",
+              "value": "shipped"
+            }
+          ],
+          "allowed_changes": {
+            "payments/payment_09ca944f3fc3bbae": [
+              "*"
+            ],
+            "orders/order0": [
+              "status"
+            ],
+            "reservations/r0": [
+              "*"
+            ],
+            "lots/lot1": [
+              "on_hand",
+              "picked",
+              "reserved"
+            ],
+            "lots/lot0": [
+              "on_hand",
+              "picked",
+              "reserved"
+            ],
+            "handling/pick_r0": [
+              "*"
+            ],
+            "handling/pack_r0": [
+              "*"
+            ],
+            "shipments/s0": [
+              "*"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "capture_payment",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {
+              "amount_cents": 5300,
+              "key": "pay",
+              "token": "card_approved"
+            }
+          },
+          {
+            "name": "confirm_order",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {}
+          },
+          {
+            "name": "reserve_inventory",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {
+              "reservation_id": "r0",
+              "line_id": "line0",
+              "lot_id": "lot0",
+              "quantity": 4
+            }
+          },
+          {
+            "name": "reserve_inventory",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {
+              "reservation_id": "r0",
+              "line_id": "line0",
+              "lot_id": "lot1",
+              "quantity": 4
+            }
+          },
+          {
+            "name": "pick_reservation",
+            "scope_id": "w0",
+            "resource_id": "r0",
+            "params": {}
+          },
+          {
+            "name": "pack_reservation",
+            "scope_id": "w0",
+            "resource_id": "r0",
+            "params": {}
+          },
+          {
+            "name": "create_shipment",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {
+              "shipment_id": "s0",
+              "reservation_ids": [
+                "r0"
+              ],
+              "key": "s0"
+            }
+          },
+          {
+            "name": "dispatch_shipment",
+            "scope_id": "w0",
+            "resource_id": "s0",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "capture_payment",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "amount_cents": 5300,
+                  "key": "pay",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "confirm_order",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {}
+              },
+              {
+                "name": "reserve_inventory",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "reservation_id": "r0",
+                  "line_id": "line0",
+                  "lot_id": "lot0",
+                  "quantity": 4
+                }
+              },
+              {
+                "name": "pick_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "pack_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "create_shipment",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "shipment_id": "s0",
+                  "reservation_ids": [
+                    "r0"
+                  ],
+                  "key": "s0"
+                }
+              },
+              {
+                "name": "dispatch_shipment",
+                "scope_id": "w0",
+                "resource_id": "s0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "PAYMENT_REQUIRED"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 4,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 4,
+                "to": 6,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              },
+              {
+                "from": 5,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 4,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 0,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 4,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 1,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 4,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 2,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 6,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "PAYMENT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "ORDER_NOT_CONFIRMED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": {
+                  "from": 3,
+                  "to": 4,
+                  "error_code": "RESERVATION_STAGE_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 4,
+                "first_failure": {
+                  "from": 4,
+                  "to": 6,
+                  "error_code": "SHIPMENT_NOT_PACKED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 5,
+                "first_failure": {
+                  "from": 5,
+                  "to": 6,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 6,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 5,
+            "final_state_hash": "6dcfefece0d25f95059f1c9e875514cf86bfefeee39231d85b4b83671885fcc6",
+            "trace_hash": "72512be413786ecbb9dcbd677f246f449309770fa9ed7dc2f2b1289c857f7bb4"
+          },
+          {
+            "operations": [
+              {
+                "name": "capture_payment",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "amount_cents": 5300,
+                  "key": "pay",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "confirm_order",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {}
+              },
+              {
+                "name": "reserve_inventory",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "reservation_id": "r0",
+                  "line_id": "line0",
+                  "lot_id": "lot0",
+                  "quantity": 4
+                }
+              },
+              {
+                "name": "pick_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "create_shipment",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "shipment_id": "s0",
+                  "reservation_ids": [
+                    "r0"
+                  ],
+                  "key": "s0"
+                }
+              },
+              {
+                "name": "pack_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "dispatch_shipment",
+                "scope_id": "w0",
+                "resource_id": "s0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "PAYMENT_REQUIRED"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 5,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 4,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 5,
+                "to": 6,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 4,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 0,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 4,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 1,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 4,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 2,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 6,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "PAYMENT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "ORDER_NOT_CONFIRMED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": {
+                  "from": 3,
+                  "to": 5,
+                  "error_code": "RESERVATION_STAGE_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 4,
+                "first_failure": {
+                  "from": 4,
+                  "to": 6,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 5,
+                "first_failure": {
+                  "from": 5,
+                  "to": 6,
+                  "error_code": "SHIPMENT_NOT_PACKED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 6,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 5,
+            "final_state_hash": "6dcfefece0d25f95059f1c9e875514cf86bfefeee39231d85b4b83671885fcc6",
+            "trace_hash": "5b4cb44d53b4a38cd360ea289bc73fa3fe63c2926cb4fe6a132864bbce21634b"
+          },
+          {
+            "operations": [
+              {
+                "name": "capture_payment",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "amount_cents": 5300,
+                  "key": "pay",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "confirm_order",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {}
+              },
+              {
+                "name": "reserve_inventory",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "reservation_id": "r0",
+                  "line_id": "line0",
+                  "lot_id": "lot0",
+                  "quantity": 4
+                }
+              },
+              {
+                "name": "create_shipment",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "shipment_id": "s0",
+                  "reservation_ids": [
+                    "r0"
+                  ],
+                  "key": "s0"
+                }
+              },
+              {
+                "name": "pick_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "pack_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "dispatch_shipment",
+                "scope_id": "w0",
+                "resource_id": "s0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "PAYMENT_REQUIRED"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 3,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 5,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 5,
+                "to": 6,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 0,
+                "to": 4,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 1,
+                "to": 4,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 4,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 6,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "PAYMENT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "ORDER_NOT_CONFIRMED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "SHIPMENT_ALLOCATION_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": {
+                  "from": 3,
+                  "to": 6,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 4,
+                "first_failure": {
+                  "from": 4,
+                  "to": 5,
+                  "error_code": "RESERVATION_STAGE_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 5,
+                "first_failure": {
+                  "from": 5,
+                  "to": 6,
+                  "error_code": "SHIPMENT_NOT_PACKED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 6,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 4,
+            "final_state_hash": "6dcfefece0d25f95059f1c9e875514cf86bfefeee39231d85b4b83671885fcc6",
+            "trace_hash": "7304e43a7287b0e0412bc63c7a4d5ac9be22a74fd0f0a5568dd8a20d0da52745"
+          },
+          {
+            "operations": [
+              {
+                "name": "capture_payment",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "amount_cents": 5300,
+                  "key": "pay",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "confirm_order",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {}
+              },
+              {
+                "name": "reserve_inventory",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "reservation_id": "r0",
+                  "line_id": "line0",
+                  "lot_id": "lot1",
+                  "quantity": 4
+                }
+              },
+              {
+                "name": "pick_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "pack_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "create_shipment",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "shipment_id": "s0",
+                  "reservation_ids": [
+                    "r0"
+                  ],
+                  "key": "s0"
+                }
+              },
+              {
+                "name": "dispatch_shipment",
+                "scope_id": "w0",
+                "resource_id": "s0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "PAYMENT_REQUIRED"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 4,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 4,
+                "to": 6,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              },
+              {
+                "from": 5,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 4,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 0,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 4,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 1,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 4,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 2,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 6,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "PAYMENT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "ORDER_NOT_CONFIRMED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": {
+                  "from": 3,
+                  "to": 4,
+                  "error_code": "RESERVATION_STAGE_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 4,
+                "first_failure": {
+                  "from": 4,
+                  "to": 6,
+                  "error_code": "SHIPMENT_NOT_PACKED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 5,
+                "first_failure": {
+                  "from": 5,
+                  "to": 6,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 6,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 5,
+            "final_state_hash": "1c75aae48858ee64b6b837d6dd9be9a4a8b2a441e2391566af0b61d1f81c002a",
+            "trace_hash": "68724511233e2c240ac5b0cebb81b50f1964051bcd2ebd8ad3cea57087284a7c"
+          }
+        ],
+        "refusal_code": null,
+        "search_nodes": 25,
+        "search_exhausted": false,
+        "max_search_depth": 18,
+        "max_search_nodes": 8192,
+        "structure_signature": "9878bc7eace7cea761d7380afbf73cf3069a979c3c18fee7ae36cde30ca6375a",
+        "semantic_signature": "b65ea4101c6c99aeb2f24b075bcc15fed89ed46895b7b35d7872d34789f9e8da"
+      },
+      "generation_recipe": "paid_fulfillment"
+    },
+    {
+      "id": "fulfillment_task_4bb1da41be13d1259e2c87a6",
+      "world": {
+        "seed": 41001,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Employee 5"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "North Trading",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "South Trading",
+            "owner_id": "u5"
+          }
+        },
+        "warehouses": {
+          "w0": {
+            "id": "w0",
+            "org_id": "o0",
+            "name": "Primary 969",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w1": {
+            "id": "w1",
+            "org_id": "o0",
+            "name": "Regional 510",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w2": {
+            "id": "w2",
+            "org_id": "o1",
+            "name": "Partner 221",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "access": {
+          "w0_u1": {
+            "id": "w0_u1",
+            "warehouse_id": "w0",
+            "user_id": "u1",
+            "role": "picker"
+          },
+          "w1_u2": {
+            "id": "w1_u2",
+            "warehouse_id": "w1",
+            "user_id": "u2",
+            "role": "receiver"
+          },
+          "w0_u2": {
+            "id": "w0_u2",
+            "warehouse_id": "w0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "w0_u4": {
+            "id": "w0_u4",
+            "warehouse_id": "w0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "w1_u1": {
+            "id": "w1_u1",
+            "warehouse_id": "w1",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "skus": {
+          "sku0": {
+            "id": "sku0",
+            "org_id": "o0",
+            "name": "Industrial Widget",
+            "category": "general",
+            "unit_price_cents": 1200,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          },
+          "sku1": {
+            "id": "sku1",
+            "org_id": "o0",
+            "name": "Glass Sensor",
+            "category": "fragile",
+            "unit_price_cents": 2300,
+            "unit_volume": 2,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "merchant_fault"
+          },
+          "sku2": {
+            "id": "sku2",
+            "org_id": "o1",
+            "name": "Partner Module",
+            "category": "general",
+            "unit_price_cents": 800,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          }
+        },
+        "lots": {
+          "lot0": {
+            "id": "lot0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot1": {
+            "id": "lot1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot2": {
+            "id": "lot2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "on_hand": 6,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot3": {
+            "id": "lot3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot4": {
+            "id": "lot4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          }
+        },
+        "receipt_notices": {
+          "opening0": {
+            "id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+            }
+          },
+          "opening1": {
+            "id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening1",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+            }
+          },
+          "opening2": {
+            "id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 6,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+            }
+          },
+          "opening3": {
+            "id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening3",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+            }
+          },
+          "opening4": {
+            "id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening4",
+                "warehouse_id": "w2",
+                "sku_id": "sku2",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+            }
+          },
+          "inbound0": {
+            "id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+            }
+          },
+          "inbound1": {
+            "id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound1",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+            }
+          },
+          "inbound2": {
+            "id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 8,
+                "quality": "quarantine"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+            }
+          }
+        },
+        "receipts": {
+          "receipt0": {
+            "id": "receipt0",
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "lot_id": "lot0",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt1": {
+            "id": "receipt1",
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "lot_id": "lot1",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt2": {
+            "id": "receipt2",
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "lot_id": "lot2",
+            "quantity": 6,
+            "key": "opening"
+          },
+          "receipt3": {
+            "id": "receipt3",
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "lot_id": "lot3",
+            "quantity": 4,
+            "key": "opening"
+          },
+          "receipt4": {
+            "id": "receipt4",
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "lot_id": "lot4",
+            "quantity": 8,
+            "key": "opening"
+          }
+        },
+        "lot_inspections": {},
+        "orders": {
+          "order0": {
+            "id": "order0",
+            "warehouse_id": "w0",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order1": {
+            "id": "order1",
+            "warehouse_id": "w1",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order2": {
+            "id": "order2",
+            "warehouse_id": "w2",
+            "customer_id": "u5",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku2",
+                "quantity": 4,
+                "unit_price_cents": 800,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "reservations": {},
+        "handling": {},
+        "shipments": {},
+        "transfers": {},
+        "returns": {},
+        "payments": {}
+      },
+      "initial_hash": "d8d55699621e5fc6aca724bc45e6585ad080dc3315187fe3ed9ecd7b1ab935bc",
+      "identity": "u0",
+      "task": {
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "id": "fulfillment_task_4bb1da41be13d1259e2c87a6",
+        "family": "regional_transfer",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Transfer eight sku0 units from lot0 to w1 lot arrival (t0/move); restore receiving/capacity to 12 if required. Receive them and fulfill order1 using arrival, r0 and s0/key s0; payment pay. Keep unrelated entities and configuration unchanged.",
+        "initial_state_hash": "d8d55699621e5fc6aca724bc45e6585ad080dc3315187fe3ed9ecd7b1ab935bc",
+        "goal": {
+          "atoms": [
+            {
+              "collection": "shipments",
+              "entity": "s0",
+              "field": "status",
+              "comparison": "eq",
+              "value": "shipped"
+            },
+            {
+              "collection": "transfers",
+              "entity": "t0",
+              "field": "status",
+              "comparison": "eq",
+              "value": "received"
+            }
+          ],
+          "allowed_changes": {
+            "transfers/t0": [
+              "*"
+            ],
+            "lots/lot0": [
+              "on_hand"
+            ],
+            "lots/arrival": [
+              "*"
+            ],
+            "payments/payment_568b83d0f89c3b5e": [
+              "*"
+            ],
+            "orders/order1": [
+              "status"
+            ],
+            "reservations/r0": [
+              "*"
+            ],
+            "handling/pick_r0": [
+              "*"
+            ],
+            "handling/pack_r0": [
+              "*"
+            ],
+            "shipments/s0": [
+              "*"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "dispatch_transfer",
+            "scope_id": "w0",
+            "resource_id": "lot0",
+            "params": {
+              "transfer_id": "t0",
+              "target_warehouse_id": "w1",
+              "target_lot_id": "arrival",
+              "quantity": 8,
+              "key": "move"
+            }
+          },
+          {
+            "name": "receive_transfer",
+            "scope_id": "w1",
+            "resource_id": "t0",
+            "params": {}
+          },
+          {
+            "name": "capture_payment",
+            "scope_id": "w1",
+            "resource_id": "order1",
+            "params": {
+              "amount_cents": 10100,
+              "key": "pay",
+              "token": "card_approved"
+            }
+          },
+          {
+            "name": "confirm_order",
+            "scope_id": "w1",
+            "resource_id": "order1",
+            "params": {}
+          },
+          {
+            "name": "reserve_inventory",
+            "scope_id": "w1",
+            "resource_id": "order1",
+            "params": {
+              "reservation_id": "r0",
+              "line_id": "line0",
+              "lot_id": "arrival",
+              "quantity": 8
+            }
+          },
+          {
+            "name": "pick_reservation",
+            "scope_id": "w1",
+            "resource_id": "r0",
+            "params": {}
+          },
+          {
+            "name": "pack_reservation",
+            "scope_id": "w1",
+            "resource_id": "r0",
+            "params": {}
+          },
+          {
+            "name": "create_shipment",
+            "scope_id": "w1",
+            "resource_id": "order1",
+            "params": {
+              "shipment_id": "s0",
+              "reservation_ids": [
+                "r0"
+              ],
+              "key": "s0"
+            }
+          },
+          {
+            "name": "dispatch_shipment",
+            "scope_id": "w1",
+            "resource_id": "s0",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "dispatch_transfer",
+                "scope_id": "w0",
+                "resource_id": "lot0",
+                "params": {
+                  "transfer_id": "t0",
+                  "target_warehouse_id": "w1",
+                  "target_lot_id": "arrival",
+                  "quantity": 8,
+                  "key": "move"
+                }
+              },
+              {
+                "name": "receive_transfer",
+                "scope_id": "w1",
+                "resource_id": "t0",
+                "params": {}
+              },
+              {
+                "name": "capture_payment",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "amount_cents": 10100,
+                  "key": "pay",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "confirm_order",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {}
+              },
+              {
+                "name": "reserve_inventory",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "reservation_id": "r0",
+                  "line_id": "line0",
+                  "lot_id": "arrival",
+                  "quantity": 8
+                }
+              },
+              {
+                "name": "pick_reservation",
+                "scope_id": "w1",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "pack_reservation",
+                "scope_id": "w1",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "create_shipment",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "shipment_id": "s0",
+                  "reservation_ids": [
+                    "r0"
+                  ],
+                  "key": "s0"
+                }
+              },
+              {
+                "name": "dispatch_shipment",
+                "scope_id": "w1",
+                "resource_id": "s0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 4,
+                "error_code": "ALLOCATION_REFERENCE_MISSING"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "PAYMENT_REQUIRED"
+              },
+              {
+                "from": 3,
+                "to": 4,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 4,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 5,
+                "to": 6,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 6,
+                "to": 8,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              },
+              {
+                "from": 7,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 4,
+                "error_code": "ALLOCATION_REFERENCE_MISSING"
+              },
+              {
+                "from": 0,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 0,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 1,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 4,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 2,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 2,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 3,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 4,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 5,
+                "to": 8,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 4,
+                  "error_code": "ALLOCATION_REFERENCE_MISSING"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "PAYMENT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": {
+                  "from": 3,
+                  "to": 4,
+                  "error_code": "ORDER_NOT_CONFIRMED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 4,
+                "first_failure": {
+                  "from": 4,
+                  "to": 5,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 5,
+                "first_failure": {
+                  "from": 5,
+                  "to": 6,
+                  "error_code": "RESERVATION_STAGE_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 6,
+                "first_failure": {
+                  "from": 6,
+                  "to": 8,
+                  "error_code": "SHIPMENT_NOT_PACKED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 7,
+                "first_failure": {
+                  "from": 7,
+                  "to": 8,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 8,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 5,
+            "final_state_hash": "c7d9f6d2e5734bf88c67025ff03900dc8c13759f84f188dd15006680b2c8b7b4",
+            "trace_hash": "ef3cc544bed99a666e58742c728162894bbc7442cc03b660d4e598963b1a32cc"
+          },
+          {
+            "operations": [
+              {
+                "name": "dispatch_transfer",
+                "scope_id": "w0",
+                "resource_id": "lot0",
+                "params": {
+                  "transfer_id": "t0",
+                  "target_warehouse_id": "w1",
+                  "target_lot_id": "arrival",
+                  "quantity": 8,
+                  "key": "move"
+                }
+              },
+              {
+                "name": "receive_transfer",
+                "scope_id": "w1",
+                "resource_id": "t0",
+                "params": {}
+              },
+              {
+                "name": "capture_payment",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "amount_cents": 10100,
+                  "key": "pay",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "confirm_order",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {}
+              },
+              {
+                "name": "reserve_inventory",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "reservation_id": "r0",
+                  "line_id": "line0",
+                  "lot_id": "arrival",
+                  "quantity": 8
+                }
+              },
+              {
+                "name": "pick_reservation",
+                "scope_id": "w1",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "create_shipment",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "shipment_id": "s0",
+                  "reservation_ids": [
+                    "r0"
+                  ],
+                  "key": "s0"
+                }
+              },
+              {
+                "name": "pack_reservation",
+                "scope_id": "w1",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "dispatch_shipment",
+                "scope_id": "w1",
+                "resource_id": "s0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 4,
+                "error_code": "ALLOCATION_REFERENCE_MISSING"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "PAYMENT_REQUIRED"
+              },
+              {
+                "from": 3,
+                "to": 4,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 4,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 5,
+                "to": 7,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 6,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 7,
+                "to": 8,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 4,
+                "error_code": "ALLOCATION_REFERENCE_MISSING"
+              },
+              {
+                "from": 0,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 6,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 0,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 6,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 1,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 4,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 2,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 6,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 2,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 6,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 3,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 6,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 4,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 5,
+                "to": 8,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 4,
+                  "error_code": "ALLOCATION_REFERENCE_MISSING"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "PAYMENT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": {
+                  "from": 3,
+                  "to": 4,
+                  "error_code": "ORDER_NOT_CONFIRMED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 4,
+                "first_failure": {
+                  "from": 4,
+                  "to": 5,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 5,
+                "first_failure": {
+                  "from": 5,
+                  "to": 7,
+                  "error_code": "RESERVATION_STAGE_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 6,
+                "first_failure": {
+                  "from": 6,
+                  "to": 8,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 7,
+                "first_failure": {
+                  "from": 7,
+                  "to": 8,
+                  "error_code": "SHIPMENT_NOT_PACKED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 8,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 5,
+            "final_state_hash": "c7d9f6d2e5734bf88c67025ff03900dc8c13759f84f188dd15006680b2c8b7b4",
+            "trace_hash": "937a077e3edfbab6706b2257f10ded77eb1bea162e627b9124ac00f046ccd2c7"
+          },
+          {
+            "operations": [
+              {
+                "name": "dispatch_transfer",
+                "scope_id": "w0",
+                "resource_id": "lot0",
+                "params": {
+                  "transfer_id": "t0",
+                  "target_warehouse_id": "w1",
+                  "target_lot_id": "arrival",
+                  "quantity": 8,
+                  "key": "move"
+                }
+              },
+              {
+                "name": "receive_transfer",
+                "scope_id": "w1",
+                "resource_id": "t0",
+                "params": {}
+              },
+              {
+                "name": "capture_payment",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "amount_cents": 10100,
+                  "key": "pay",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "confirm_order",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {}
+              },
+              {
+                "name": "reserve_inventory",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "reservation_id": "r0",
+                  "line_id": "line0",
+                  "lot_id": "arrival",
+                  "quantity": 8
+                }
+              },
+              {
+                "name": "create_shipment",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "shipment_id": "s0",
+                  "reservation_ids": [
+                    "r0"
+                  ],
+                  "key": "s0"
+                }
+              },
+              {
+                "name": "pick_reservation",
+                "scope_id": "w1",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "pack_reservation",
+                "scope_id": "w1",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "dispatch_shipment",
+                "scope_id": "w1",
+                "resource_id": "s0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 4,
+                "error_code": "ALLOCATION_REFERENCE_MISSING"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "PAYMENT_REQUIRED"
+              },
+              {
+                "from": 3,
+                "to": 4,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 4,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 5,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 6,
+                "to": 7,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 7,
+                "to": 8,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 4,
+                "error_code": "ALLOCATION_REFERENCE_MISSING"
+              },
+              {
+                "from": 0,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 0,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 1,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 4,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 2,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 2,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 5,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 3,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 7,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 6,
+                "to": 8,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 4,
+                  "error_code": "ALLOCATION_REFERENCE_MISSING"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "PAYMENT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": {
+                  "from": 3,
+                  "to": 4,
+                  "error_code": "ORDER_NOT_CONFIRMED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 4,
+                "first_failure": {
+                  "from": 4,
+                  "to": 5,
+                  "error_code": "SHIPMENT_ALLOCATION_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 5,
+                "first_failure": {
+                  "from": 5,
+                  "to": 8,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 6,
+                "first_failure": {
+                  "from": 6,
+                  "to": 7,
+                  "error_code": "RESERVATION_STAGE_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 7,
+                "first_failure": {
+                  "from": 7,
+                  "to": 8,
+                  "error_code": "SHIPMENT_NOT_PACKED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 8,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 4,
+            "final_state_hash": "c7d9f6d2e5734bf88c67025ff03900dc8c13759f84f188dd15006680b2c8b7b4",
+            "trace_hash": "61a0e56141e36a93af6599263e77b95731539f47ed5107e0fb954cbef81dbb07"
+          },
+          {
+            "operations": [
+              {
+                "name": "dispatch_transfer",
+                "scope_id": "w0",
+                "resource_id": "lot0",
+                "params": {
+                  "transfer_id": "t0",
+                  "target_warehouse_id": "w1",
+                  "target_lot_id": "arrival",
+                  "quantity": 8,
+                  "key": "move"
+                }
+              },
+              {
+                "name": "capture_payment",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "amount_cents": 10100,
+                  "key": "pay",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "receive_transfer",
+                "scope_id": "w1",
+                "resource_id": "t0",
+                "params": {}
+              },
+              {
+                "name": "confirm_order",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {}
+              },
+              {
+                "name": "reserve_inventory",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "reservation_id": "r0",
+                  "line_id": "line0",
+                  "lot_id": "arrival",
+                  "quantity": 8
+                }
+              },
+              {
+                "name": "pick_reservation",
+                "scope_id": "w1",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "pack_reservation",
+                "scope_id": "w1",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "create_shipment",
+                "scope_id": "w1",
+                "resource_id": "order1",
+                "params": {
+                  "shipment_id": "s0",
+                  "reservation_ids": [
+                    "r0"
+                  ],
+                  "key": "s0"
+                }
+              },
+              {
+                "name": "dispatch_shipment",
+                "scope_id": "w1",
+                "resource_id": "s0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "PAYMENT_REQUIRED"
+              },
+              {
+                "from": 2,
+                "to": 4,
+                "error_code": "ALLOCATION_REFERENCE_MISSING"
+              },
+              {
+                "from": 3,
+                "to": 4,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 4,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 5,
+                "to": 6,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 6,
+                "to": 8,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              },
+              {
+                "from": 7,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 4,
+                "error_code": "ALLOCATION_REFERENCE_MISSING"
+              },
+              {
+                "from": 0,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 0,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 4,
+                "error_code": "ORDER_NOT_CONFIRMED"
+              },
+              {
+                "from": 1,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 1,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 2,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 5,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 3,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 3,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 6,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 4,
+                "to": 7,
+                "error_code": "SHIPMENT_ALLOCATION_INVALID"
+              },
+              {
+                "from": 4,
+                "to": 8,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 5,
+                "to": 8,
+                "error_code": "SHIPMENT_NOT_PACKED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 2,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "PAYMENT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 4,
+                  "error_code": "ALLOCATION_REFERENCE_MISSING"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": {
+                  "from": 3,
+                  "to": 4,
+                  "error_code": "ORDER_NOT_CONFIRMED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 4,
+                "first_failure": {
+                  "from": 4,
+                  "to": 5,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 5,
+                "first_failure": {
+                  "from": 5,
+                  "to": 6,
+                  "error_code": "RESERVATION_STAGE_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 6,
+                "first_failure": {
+                  "from": 6,
+                  "to": 8,
+                  "error_code": "SHIPMENT_NOT_PACKED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 7,
+                "first_failure": {
+                  "from": 7,
+                  "to": 8,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 8,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 5,
+            "final_state_hash": "c7d9f6d2e5734bf88c67025ff03900dc8c13759f84f188dd15006680b2c8b7b4",
+            "trace_hash": "cbc58d01aa98b38e9874d58701cca511f45d5d63ffab78fcdd2416b3368d5dc0"
+          }
+        ],
+        "refusal_code": null,
+        "search_nodes": 45,
+        "search_exhausted": true,
+        "max_search_depth": 18,
+        "max_search_nodes": 8192,
+        "structure_signature": "2c28bdb03186b80d20619da3ea50707c9391685cab74ba6ef99b01b8bfd4bbda",
+        "semantic_signature": "58400e87f9095b9fb8121ad306de02d134f427ad9bbded1807be91bfa2262e7b"
+      },
+      "generation_recipe": "regional_transfer"
+    },
+    {
+      "id": "fulfillment_task_a814ed0bbd81166a115effde",
+      "world": {
+        "seed": 41001,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Employee 5"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "North Trading",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "South Trading",
+            "owner_id": "u5"
+          }
+        },
+        "warehouses": {
+          "w0": {
+            "id": "w0",
+            "org_id": "o0",
+            "name": "Primary 969",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w1": {
+            "id": "w1",
+            "org_id": "o0",
+            "name": "Regional 510",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w2": {
+            "id": "w2",
+            "org_id": "o1",
+            "name": "Partner 221",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "access": {
+          "w0_u1": {
+            "id": "w0_u1",
+            "warehouse_id": "w0",
+            "user_id": "u1",
+            "role": "picker"
+          },
+          "w1_u2": {
+            "id": "w1_u2",
+            "warehouse_id": "w1",
+            "user_id": "u2",
+            "role": "receiver"
+          },
+          "w0_u2": {
+            "id": "w0_u2",
+            "warehouse_id": "w0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "w0_u4": {
+            "id": "w0_u4",
+            "warehouse_id": "w0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "w1_u1": {
+            "id": "w1_u1",
+            "warehouse_id": "w1",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "skus": {
+          "sku0": {
+            "id": "sku0",
+            "org_id": "o0",
+            "name": "Industrial Widget",
+            "category": "general",
+            "unit_price_cents": 1200,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          },
+          "sku1": {
+            "id": "sku1",
+            "org_id": "o0",
+            "name": "Glass Sensor",
+            "category": "fragile",
+            "unit_price_cents": 2300,
+            "unit_volume": 2,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "merchant_fault"
+          },
+          "sku2": {
+            "id": "sku2",
+            "org_id": "o1",
+            "name": "Partner Module",
+            "category": "general",
+            "unit_price_cents": 800,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          }
+        },
+        "lots": {
+          "lot0": {
+            "id": "lot0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 4,
+            "quality": "available"
+          },
+          "lot1": {
+            "id": "lot1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot2": {
+            "id": "lot2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "on_hand": 6,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot3": {
+            "id": "lot3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot4": {
+            "id": "lot4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          }
+        },
+        "receipt_notices": {
+          "opening0": {
+            "id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+            }
+          },
+          "opening1": {
+            "id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening1",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+            }
+          },
+          "opening2": {
+            "id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 6,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+            }
+          },
+          "opening3": {
+            "id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening3",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+            }
+          },
+          "opening4": {
+            "id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening4",
+                "warehouse_id": "w2",
+                "sku_id": "sku2",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+            }
+          },
+          "inbound0": {
+            "id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+            }
+          },
+          "inbound1": {
+            "id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound1",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+            }
+          },
+          "inbound2": {
+            "id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 8,
+                "quality": "quarantine"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+            }
+          }
+        },
+        "receipts": {
+          "receipt0": {
+            "id": "receipt0",
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "lot_id": "lot0",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt1": {
+            "id": "receipt1",
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "lot_id": "lot1",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt2": {
+            "id": "receipt2",
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "lot_id": "lot2",
+            "quantity": 6,
+            "key": "opening"
+          },
+          "receipt3": {
+            "id": "receipt3",
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "lot_id": "lot3",
+            "quantity": 4,
+            "key": "opening"
+          },
+          "receipt4": {
+            "id": "receipt4",
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "lot_id": "lot4",
+            "quantity": 8,
+            "key": "opening"
+          }
+        },
+        "lot_inspections": {},
+        "orders": {
+          "order0": {
+            "id": "order0",
+            "warehouse_id": "w0",
+            "customer_id": "u3",
+            "status": "confirmed",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order1": {
+            "id": "order1",
+            "warehouse_id": "w1",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order2": {
+            "id": "order2",
+            "warehouse_id": "w2",
+            "customer_id": "u5",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku2",
+                "quantity": 4,
+                "unit_price_cents": 800,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "reservations": {
+          "r0": {
+            "id": "r0",
+            "warehouse_id": "w0",
+            "order_id": "order0",
+            "line_id": "line0",
+            "lot_id": "lot0",
+            "quantity": 4,
+            "released_quantity": 0,
+            "status": "packed"
+          }
+        },
+        "handling": {
+          "pick_r0": {
+            "id": "pick_r0",
+            "reservation_id": "r0",
+            "warehouse_id": "w0",
+            "kind": "pick",
+            "quantity": 4
+          },
+          "pack_r0": {
+            "id": "pack_r0",
+            "reservation_id": "r0",
+            "warehouse_id": "w0",
+            "kind": "pack",
+            "quantity": 4
+          }
+        },
+        "shipments": {
+          "s0": {
+            "id": "s0",
+            "warehouse_id": "w0",
+            "order_id": "order0",
+            "reservation_ids": [
+              "r0"
+            ],
+            "status": "label_created",
+            "key": "ship",
+            "carrier_notice": {},
+            "delivered_at": null
+          }
+        },
+        "transfers": {},
+        "returns": {},
+        "payments": {
+          "payment_09ca944f3fc3bbae": {
+            "id": "payment_09ca944f3fc3bbae",
+            "warehouse_id": "w0",
+            "order_id": "order0",
+            "kind": "charge",
+            "amount_cents": 5300,
+            "key": "pay",
+            "token": "card_approved",
+            "outcome": "succeeded",
+            "gateway_notice": {
+              "domain": "fulfillment",
+              "source": "payment-gateway-simulator-v0.1",
+              "binding": {
+                "order_id": "order0",
+                "kind": "charge",
+                "amount_cents": 5300,
+                "key": "pay",
+                "token": "card_approved",
+                "outcome": "succeeded"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "b4fb22859433be013ada8914ce6ac4cafbd9d4ce99dcd9e00a8500ab607fd3b5"
+            }
+          }
+        }
+      },
+      "initial_hash": "42ec745c51e4d93a0b42497436dce9a788381543baacf4f1ca0ae59720eeb737",
+      "identity": "u0",
+      "task": {
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "id": "fulfillment_task_a814ed0bbd81166a115effde",
+        "family": "packed_cancellation",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Cancel packed unshipped order0 safely, voiding s0, reversing r0 handling and freeing stock. Keep unrelated entities and configuration unchanged.",
+        "initial_state_hash": "42ec745c51e4d93a0b42497436dce9a788381543baacf4f1ca0ae59720eeb737",
+        "goal": {
+          "atoms": [
+            {
+              "collection": "orders",
+              "entity": "order0",
+              "field": "status",
+              "comparison": "eq",
+              "value": "canceled"
+            }
+          ],
+          "allowed_changes": {
+            "shipments/s0": [
+              "carrier_notice",
+              "delivered_at",
+              "status"
+            ],
+            "reservations/r0": [
+              "quantity",
+              "released_quantity",
+              "status"
+            ],
+            "lots/lot0": [
+              "on_hand",
+              "picked",
+              "reserved"
+            ],
+            "handling/pack_r0": [
+              "*"
+            ],
+            "handling/pick_r0": [
+              "*"
+            ],
+            "orders/order0": [
+              "lines",
+              "status"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "cancel_shipment",
+            "scope_id": "w0",
+            "resource_id": "s0",
+            "params": {}
+          },
+          {
+            "name": "unpack_reservation",
+            "scope_id": "w0",
+            "resource_id": "r0",
+            "params": {}
+          },
+          {
+            "name": "unpick_reservation",
+            "scope_id": "w0",
+            "resource_id": "r0",
+            "params": {}
+          },
+          {
+            "name": "cancel_order",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "cancel_shipment",
+                "scope_id": "w0",
+                "resource_id": "s0",
+                "params": {}
+              },
+              {
+                "name": "unpack_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "unpick_reservation",
+                "scope_id": "w0",
+                "resource_id": "r0",
+                "params": {}
+              },
+              {
+                "name": "cancel_order",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "SHIPMENT_STILL_ASSIGNED"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "PICKED_CANCEL_REQUIRES_REVERSAL"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "RESERVATION_STAGE_INVALID"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "PICKED_CANCEL_REQUIRES_REVERSAL"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "PICKED_CANCEL_REQUIRES_REVERSAL"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "SHIPMENT_STILL_ASSIGNED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "RESERVATION_STAGE_INVALID"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "PICKED_CANCEL_REQUIRES_REVERSAL"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 3,
+            "final_state_hash": "4b724b409bad8bbd6b0db8209529ef61edd765dac87c66d18f2aedc7e35b5dba",
+            "trace_hash": "9955e30da6dafb4d94b154ad338143a6c6a04c1074b00f7556ec3e32908d6f41"
+          }
+        ],
+        "refusal_code": null,
+        "search_nodes": 5,
+        "search_exhausted": true,
+        "max_search_depth": 18,
+        "max_search_nodes": 8192,
+        "structure_signature": "f250f327d88764fbeab97a87fe743aab98273ab253f512a877ce9fa623d8a323",
+        "semantic_signature": "d3741fd147915b7bf50c5299b516f628baae2d79640daaccdd6904efd74f0b7d"
+      },
+      "generation_recipe": "packed_cancellation"
+    },
+    {
+      "id": "fulfillment_task_6d009c92490f9d216787e66c",
+      "world": {
+        "seed": 41001,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Employee 5"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "North Trading",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "South Trading",
+            "owner_id": "u5"
+          }
+        },
+        "warehouses": {
+          "w0": {
+            "id": "w0",
+            "org_id": "o0",
+            "name": "Primary 969",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w1": {
+            "id": "w1",
+            "org_id": "o0",
+            "name": "Regional 510",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w2": {
+            "id": "w2",
+            "org_id": "o1",
+            "name": "Partner 221",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "access": {
+          "w0_u1": {
+            "id": "w0_u1",
+            "warehouse_id": "w0",
+            "user_id": "u1",
+            "role": "picker"
+          },
+          "w1_u2": {
+            "id": "w1_u2",
+            "warehouse_id": "w1",
+            "user_id": "u2",
+            "role": "receiver"
+          },
+          "w0_u2": {
+            "id": "w0_u2",
+            "warehouse_id": "w0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "w0_u4": {
+            "id": "w0_u4",
+            "warehouse_id": "w0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "w1_u1": {
+            "id": "w1_u1",
+            "warehouse_id": "w1",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "skus": {
+          "sku0": {
+            "id": "sku0",
+            "org_id": "o0",
+            "name": "Industrial Widget",
+            "category": "general",
+            "unit_price_cents": 1200,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          },
+          "sku1": {
+            "id": "sku1",
+            "org_id": "o0",
+            "name": "Glass Sensor",
+            "category": "fragile",
+            "unit_price_cents": 2300,
+            "unit_volume": 2,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "merchant_fault"
+          },
+          "sku2": {
+            "id": "sku2",
+            "org_id": "o1",
+            "name": "Partner Module",
+            "category": "general",
+            "unit_price_cents": 800,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          }
+        },
+        "lots": {
+          "lot0": {
+            "id": "lot0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot1": {
+            "id": "lot1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot2": {
+            "id": "lot2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "on_hand": 6,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot3": {
+            "id": "lot3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot4": {
+            "id": "lot4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          }
+        },
+        "receipt_notices": {
+          "opening0": {
+            "id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+            }
+          },
+          "opening1": {
+            "id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening1",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+            }
+          },
+          "opening2": {
+            "id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 6,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+            }
+          },
+          "opening3": {
+            "id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening3",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+            }
+          },
+          "opening4": {
+            "id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening4",
+                "warehouse_id": "w2",
+                "sku_id": "sku2",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+            }
+          },
+          "inbound0": {
+            "id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+            }
+          },
+          "inbound1": {
+            "id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound1",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+            }
+          },
+          "inbound2": {
+            "id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 8,
+                "quality": "quarantine"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+            }
+          }
+        },
+        "receipts": {
+          "receipt0": {
+            "id": "receipt0",
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "lot_id": "lot0",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt1": {
+            "id": "receipt1",
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "lot_id": "lot1",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt2": {
+            "id": "receipt2",
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "lot_id": "lot2",
+            "quantity": 6,
+            "key": "opening"
+          },
+          "receipt3": {
+            "id": "receipt3",
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "lot_id": "lot3",
+            "quantity": 4,
+            "key": "opening"
+          },
+          "receipt4": {
+            "id": "receipt4",
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "lot_id": "lot4",
+            "quantity": 8,
+            "key": "opening"
+          }
+        },
+        "lot_inspections": {},
+        "orders": {
+          "order0": {
+            "id": "order0",
+            "warehouse_id": "w0",
+            "customer_id": "u3",
+            "status": "delivered",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order1": {
+            "id": "order1",
+            "warehouse_id": "w1",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order2": {
+            "id": "order2",
+            "warehouse_id": "w2",
+            "customer_id": "u5",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku2",
+                "quantity": 4,
+                "unit_price_cents": 800,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "reservations": {
+          "r0": {
+            "id": "r0",
+            "warehouse_id": "w0",
+            "order_id": "order0",
+            "line_id": "line0",
+            "lot_id": "lot0",
+            "quantity": 4,
+            "released_quantity": 0,
+            "status": "shipped"
+          }
+        },
+        "handling": {
+          "pick_r0": {
+            "id": "pick_r0",
+            "reservation_id": "r0",
+            "warehouse_id": "w0",
+            "kind": "pick",
+            "quantity": 4
+          },
+          "pack_r0": {
+            "id": "pack_r0",
+            "reservation_id": "r0",
+            "warehouse_id": "w0",
+            "kind": "pack",
+            "quantity": 4
+          }
+        },
+        "shipments": {
+          "s0": {
+            "id": "s0",
+            "warehouse_id": "w0",
+            "order_id": "order0",
+            "reservation_ids": [
+              "r0"
+            ],
+            "status": "delivered",
+            "key": "ship",
+            "carrier_notice": {
+              "domain": "fulfillment",
+              "source": "carrier-simulator-v0.1",
+              "binding": {
+                "shipment_id": "s0",
+                "warehouse_id": "w0",
+                "order_id": "order0",
+                "reservation_ids": [
+                  "r0"
+                ],
+                "outcome": "delivered"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "88e23e772ee046716d8e56eeeec9131eb95c96f188566db97fa2fdced602dee5"
+            },
+            "delivered_at": "2026-01-15T12:00:00Z"
+          }
+        },
+        "transfers": {},
+        "returns": {},
+        "payments": {
+          "payment_09ca944f3fc3bbae": {
+            "id": "payment_09ca944f3fc3bbae",
+            "warehouse_id": "w0",
+            "order_id": "order0",
+            "kind": "charge",
+            "amount_cents": 5300,
+            "key": "pay",
+            "token": "card_approved",
+            "outcome": "succeeded",
+            "gateway_notice": {
+              "domain": "fulfillment",
+              "source": "payment-gateway-simulator-v0.1",
+              "binding": {
+                "order_id": "order0",
+                "kind": "charge",
+                "amount_cents": 5300,
+                "key": "pay",
+                "token": "card_approved",
+                "outcome": "succeeded"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "b4fb22859433be013ada8914ce6ac4cafbd9d4ce99dcd9e00a8500ab607fd3b5"
+            }
+          }
+        }
+      },
+      "initial_hash": "545889845971651b619bf8f1a75486645bdf83265e6df5573d00cbaa0ff79944",
+      "identity": "u0",
+      "task": {
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "id": "fulfillment_task_6d009c92490f9d216787e66c",
+        "family": "return_restock",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Return two delivered r0 units from s0 as ret0 (customer_remorse), receive and independently inspect them. Restock accepted goods.  Keep unrelated entities and configuration unchanged.",
+        "initial_state_hash": "545889845971651b619bf8f1a75486645bdf83265e6df5573d00cbaa0ff79944",
+        "goal": {
+          "atoms": [
+            {
+              "collection": "returns",
+              "entity": "ret0",
+              "field": "status",
+              "comparison": "eq",
+              "value": "restocked"
+            }
+          ],
+          "allowed_changes": {
+            "returns/ret0": [
+              "*"
+            ],
+            "lots/lot0": [
+              "on_hand"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "request_return",
+            "scope_id": "w0",
+            "resource_id": "s0",
+            "params": {
+              "return_id": "ret0",
+              "reservation_id": "r0",
+              "quantity": 2,
+              "reason": "customer_remorse"
+            }
+          },
+          {
+            "name": "receive_return",
+            "scope_id": "w0",
+            "resource_id": "ret0",
+            "params": {}
+          },
+          {
+            "name": "inspect_return",
+            "scope_id": "w0",
+            "resource_id": "ret0",
+            "params": {}
+          },
+          {
+            "name": "restock_return",
+            "scope_id": "w0",
+            "resource_id": "ret0",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "request_return",
+                "scope_id": "w0",
+                "resource_id": "s0",
+                "params": {
+                  "return_id": "ret0",
+                  "reservation_id": "r0",
+                  "quantity": 2,
+                  "reason": "customer_remorse"
+                }
+              },
+              {
+                "name": "receive_return",
+                "scope_id": "w0",
+                "resource_id": "ret0",
+                "params": {}
+              },
+              {
+                "name": "inspect_return",
+                "scope_id": "w0",
+                "resource_id": "ret0",
+                "params": {}
+              },
+              {
+                "name": "restock_return",
+                "scope_id": "w0",
+                "resource_id": "ret0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "RETURN_RECEIPT_REQUIRED"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "INSPECTION_REQUIRED"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "INSPECTION_REQUIRED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "RETURN_RECEIPT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "INSPECTION_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 3,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 3,
+            "final_state_hash": "570ed797a310295e29ff19b78d653a625fd5b26ed8f79d076455889081cc2f25",
+            "trace_hash": "8af7adb0694346a80c5a8d9df1b692862f8296b155d95d900177645154112f60"
+          }
+        ],
+        "refusal_code": null,
+        "search_nodes": 5,
+        "search_exhausted": true,
+        "max_search_depth": 18,
+        "max_search_nodes": 8192,
+        "structure_signature": "9cc993f35e466bb76beafb5d215dc60244cf7b3b05c1fa988551ee48c78b086b",
+        "semantic_signature": "551772a7135cd149bcda5a0a9cf40e010424479b65f26de832b215090ee19ac2"
+      },
+      "generation_recipe": "return_restock"
+    },
+    {
+      "id": "fulfillment_task_021a14a281ace1ba7eaaed98",
+      "world": {
+        "seed": 41001,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Employee 5"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "North Trading",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "South Trading",
+            "owner_id": "u5"
+          }
+        },
+        "warehouses": {
+          "w0": {
+            "id": "w0",
+            "org_id": "o0",
+            "name": "Primary 969",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w1": {
+            "id": "w1",
+            "org_id": "o0",
+            "name": "Regional 510",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w2": {
+            "id": "w2",
+            "org_id": "o1",
+            "name": "Partner 221",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "access": {
+          "w0_u1": {
+            "id": "w0_u1",
+            "warehouse_id": "w0",
+            "user_id": "u1",
+            "role": "picker"
+          },
+          "w1_u2": {
+            "id": "w1_u2",
+            "warehouse_id": "w1",
+            "user_id": "u2",
+            "role": "receiver"
+          },
+          "w0_u2": {
+            "id": "w0_u2",
+            "warehouse_id": "w0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "w0_u4": {
+            "id": "w0_u4",
+            "warehouse_id": "w0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "w1_u1": {
+            "id": "w1_u1",
+            "warehouse_id": "w1",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "skus": {
+          "sku0": {
+            "id": "sku0",
+            "org_id": "o0",
+            "name": "Industrial Widget",
+            "category": "general",
+            "unit_price_cents": 1200,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          },
+          "sku1": {
+            "id": "sku1",
+            "org_id": "o0",
+            "name": "Glass Sensor",
+            "category": "fragile",
+            "unit_price_cents": 2300,
+            "unit_volume": 2,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "merchant_fault"
+          },
+          "sku2": {
+            "id": "sku2",
+            "org_id": "o1",
+            "name": "Partner Module",
+            "category": "general",
+            "unit_price_cents": 800,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          }
+        },
+        "lots": {
+          "lot0": {
+            "id": "lot0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot1": {
+            "id": "lot1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot2": {
+            "id": "lot2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "on_hand": 6,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot3": {
+            "id": "lot3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot4": {
+            "id": "lot4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          }
+        },
+        "receipt_notices": {
+          "opening0": {
+            "id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+            }
+          },
+          "opening1": {
+            "id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening1",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+            }
+          },
+          "opening2": {
+            "id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 6,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+            }
+          },
+          "opening3": {
+            "id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening3",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+            }
+          },
+          "opening4": {
+            "id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening4",
+                "warehouse_id": "w2",
+                "sku_id": "sku2",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+            }
+          },
+          "inbound0": {
+            "id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+            }
+          },
+          "inbound1": {
+            "id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound1",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+            }
+          },
+          "inbound2": {
+            "id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 8,
+                "quality": "quarantine"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+            }
+          }
+        },
+        "receipts": {
+          "receipt0": {
+            "id": "receipt0",
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "lot_id": "lot0",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt1": {
+            "id": "receipt1",
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "lot_id": "lot1",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt2": {
+            "id": "receipt2",
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "lot_id": "lot2",
+            "quantity": 6,
+            "key": "opening"
+          },
+          "receipt3": {
+            "id": "receipt3",
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "lot_id": "lot3",
+            "quantity": 4,
+            "key": "opening"
+          },
+          "receipt4": {
+            "id": "receipt4",
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "lot_id": "lot4",
+            "quantity": 8,
+            "key": "opening"
+          }
+        },
+        "lot_inspections": {},
+        "orders": {
+          "order0": {
+            "id": "order0",
+            "warehouse_id": "w0",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order1": {
+            "id": "order1",
+            "warehouse_id": "w1",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order2": {
+            "id": "order2",
+            "warehouse_id": "w2",
+            "customer_id": "u5",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku2",
+                "quantity": 4,
+                "unit_price_cents": 800,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "reservations": {},
+        "handling": {},
+        "shipments": {},
+        "transfers": {},
+        "returns": {},
+        "payments": {}
+      },
+      "initial_hash": "6f8eb384da912ff854eb9024064f8f2045522d2de694f6710df1b5adb54521ae",
+      "identity": "u0",
+      "task": {
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "id": "fulfillment_task_021a14a281ace1ba7eaaed98",
+        "family": "draft_amendment",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Change draft order0 line0 to six units, pay 7700 using card_approved/pay and confirm. Keep unrelated entities and configuration unchanged.",
+        "initial_state_hash": "6f8eb384da912ff854eb9024064f8f2045522d2de694f6710df1b5adb54521ae",
+        "goal": {
+          "atoms": [
+            {
+              "collection": "orders",
+              "entity": "order0",
+              "field": "status",
+              "comparison": "eq",
+              "value": "confirmed"
+            },
+            {
+              "collection": "orders",
+              "entity": "order0",
+              "field": "lines.0.quantity",
+              "comparison": "eq",
+              "value": 6
+            }
+          ],
+          "allowed_changes": {
+            "orders/order0": [
+              "lines",
+              "status"
+            ],
+            "payments/payment_09ca944f3fc3bbae": [
+              "*"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "modify_order_line",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {
+              "line_id": "line0",
+              "quantity": 6
+            }
+          },
+          {
+            "name": "capture_payment",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {
+              "amount_cents": 7700,
+              "key": "pay",
+              "token": "card_approved"
+            }
+          },
+          {
+            "name": "confirm_order",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "modify_order_line",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "line_id": "line0",
+                  "quantity": 6
+                }
+              },
+              {
+                "name": "capture_payment",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {
+                  "amount_cents": 7700,
+                  "key": "pay",
+                  "token": "card_approved"
+                }
+              },
+              {
+                "name": "confirm_order",
+                "scope_id": "w0",
+                "resource_id": "order0",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "PAYMENT_EXCEEDS_DUE"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "PAYMENT_REQUIRED"
+              }
+            ],
+            "mediated_failures": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "PAYMENT_REQUIRED"
+              }
+            ],
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "PAYMENT_EXCEEDS_DUE"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 1,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "PAYMENT_REQUIRED"
+                },
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              },
+              {
+                "omitted_step": 2,
+                "first_failure": null,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "frame_preserved_after_remaining_legal_steps": true
+              }
+            ],
+            "causal_depth": 2,
+            "final_state_hash": "bde4bf18545dc04b82a64f721ad662ebf5925a25dae021a49cbe9db058b728a2",
+            "trace_hash": "a52b5d401ce43665ec074454a3db39030c8e7d385e4753a227fde9241644d408"
+          }
+        ],
+        "refusal_code": null,
+        "search_nodes": 4,
+        "search_exhausted": true,
+        "max_search_depth": 18,
+        "max_search_nodes": 8192,
+        "structure_signature": "c60383d4e0dda232777d6c316d3f235107641dc99f78ac3bb536ae5acf74e78c",
+        "semantic_signature": "c9950f870b60c2f729293d08d61abad785fe06db813fa89d11d1003e5415bf29"
+      },
+      "generation_recipe": "draft_amendment"
+    },
+    {
+      "id": "fulfillment_task_2e1771026e5a51ffd72f0d44",
+      "world": {
+        "seed": 41001,
+        "clock": "2026-01-15T12:00:00Z",
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          },
+          "u5": {
+            "id": "u5",
+            "name": "Employee 5"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "North Trading",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "South Trading",
+            "owner_id": "u5"
+          }
+        },
+        "warehouses": {
+          "w0": {
+            "id": "w0",
+            "org_id": "o0",
+            "name": "Primary 969",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w1": {
+            "id": "w1",
+            "org_id": "o0",
+            "name": "Regional 510",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          },
+          "w2": {
+            "id": "w2",
+            "org_id": "o1",
+            "name": "Partner 221",
+            "receiving_enabled": true,
+            "capacity_volume": 1000,
+            "allowed_categories": [
+              "general",
+              "fragile"
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "access": {
+          "w0_u1": {
+            "id": "w0_u1",
+            "warehouse_id": "w0",
+            "user_id": "u1",
+            "role": "picker"
+          },
+          "w1_u2": {
+            "id": "w1_u2",
+            "warehouse_id": "w1",
+            "user_id": "u2",
+            "role": "receiver"
+          },
+          "w0_u2": {
+            "id": "w0_u2",
+            "warehouse_id": "w0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "w0_u4": {
+            "id": "w0_u4",
+            "warehouse_id": "w0",
+            "user_id": "u4",
+            "role": "finance"
+          },
+          "w1_u1": {
+            "id": "w1_u1",
+            "warehouse_id": "w1",
+            "user_id": "u1",
+            "role": "viewer"
+          }
+        },
+        "skus": {
+          "sku0": {
+            "id": "sku0",
+            "org_id": "o0",
+            "name": "Industrial Widget",
+            "category": "general",
+            "unit_price_cents": 1200,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          },
+          "sku1": {
+            "id": "sku1",
+            "org_id": "o0",
+            "name": "Glass Sensor",
+            "category": "fragile",
+            "unit_price_cents": 2300,
+            "unit_volume": 2,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "merchant_fault"
+          },
+          "sku2": {
+            "id": "sku2",
+            "org_id": "o1",
+            "name": "Partner Module",
+            "category": "general",
+            "unit_price_cents": 800,
+            "unit_volume": 1,
+            "returnable": true,
+            "return_window_days": 30,
+            "simulated_return_condition": "resalable"
+          }
+        },
+        "lots": {
+          "lot0": {
+            "id": "lot0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot1": {
+            "id": "lot1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot2": {
+            "id": "lot2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "on_hand": 6,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot3": {
+            "id": "lot3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "on_hand": 4,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          },
+          "lot4": {
+            "id": "lot4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "on_hand": 8,
+            "reserved": 0,
+            "picked": 0,
+            "quality": "available"
+          }
+        },
+        "receipt_notices": {
+          "opening0": {
+            "id": "opening0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ff484837dc9752c46ef9202cb798a84aa6376c340c363fb2552cbf34fd9884d6"
+            }
+          },
+          "opening1": {
+            "id": "opening1",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening1",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "565f587b734f27cdba2788e87329b33429191703ca52525d1a28a249bbb42961"
+            }
+          },
+          "opening2": {
+            "id": "opening2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 6,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 6,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "fbfeb8c52083a02b381f9fb7b97e2853b80017886d81dba9d046c2d452548209"
+            }
+          },
+          "opening3": {
+            "id": "opening3",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 4,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening3",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "14c3b465904eddd7e71dc94519d91ef48f5b8f30b29063f3ccb2678c5b708510"
+            }
+          },
+          "opening4": {
+            "id": "opening4",
+            "warehouse_id": "w2",
+            "sku_id": "sku2",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "opening4",
+                "warehouse_id": "w2",
+                "sku_id": "sku2",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "f05a4e6e53547f367ac41e250286eaea160e331730ef812a101f941965ab92ee"
+            }
+          },
+          "inbound0": {
+            "id": "inbound0",
+            "warehouse_id": "w0",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound0",
+                "warehouse_id": "w0",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "aa4ae74659a0164eb31146f210d9dfdfff8d21d75d324c9d53d9ac411a795181"
+            }
+          },
+          "inbound1": {
+            "id": "inbound1",
+            "warehouse_id": "w1",
+            "sku_id": "sku0",
+            "quantity": 8,
+            "quality": "available",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound1",
+                "warehouse_id": "w1",
+                "sku_id": "sku0",
+                "quantity": 8,
+                "quality": "available"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "0fe78ad7cb92449e4ad75a58631e220904e0c46eee3c41eb0eb4061526625d4b"
+            }
+          },
+          "inbound2": {
+            "id": "inbound2",
+            "warehouse_id": "w0",
+            "sku_id": "sku1",
+            "quantity": 8,
+            "quality": "quarantine",
+            "attestation": {
+              "domain": "fulfillment",
+              "source": "supplier-simulator-v0.1",
+              "binding": {
+                "notice_id": "inbound2",
+                "warehouse_id": "w0",
+                "sku_id": "sku1",
+                "quantity": 8,
+                "quality": "quarantine"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "ae5c59413e609dc0d8e63608fb8eaf4e8fbb6a87ace3af352a36a604e9c733c2"
+            }
+          }
+        },
+        "receipts": {
+          "receipt0": {
+            "id": "receipt0",
+            "notice_id": "opening0",
+            "warehouse_id": "w0",
+            "lot_id": "lot0",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt1": {
+            "id": "receipt1",
+            "notice_id": "opening1",
+            "warehouse_id": "w0",
+            "lot_id": "lot1",
+            "quantity": 8,
+            "key": "opening"
+          },
+          "receipt2": {
+            "id": "receipt2",
+            "notice_id": "opening2",
+            "warehouse_id": "w0",
+            "lot_id": "lot2",
+            "quantity": 6,
+            "key": "opening"
+          },
+          "receipt3": {
+            "id": "receipt3",
+            "notice_id": "opening3",
+            "warehouse_id": "w1",
+            "lot_id": "lot3",
+            "quantity": 4,
+            "key": "opening"
+          },
+          "receipt4": {
+            "id": "receipt4",
+            "notice_id": "opening4",
+            "warehouse_id": "w2",
+            "lot_id": "lot4",
+            "quantity": 8,
+            "key": "opening"
+          }
+        },
+        "lot_inspections": {},
+        "orders": {
+          "order0": {
+            "id": "order0",
+            "warehouse_id": "w0",
+            "customer_id": "u3",
+            "status": "confirmed",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 20,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order1": {
+            "id": "order1",
+            "warehouse_id": "w1",
+            "customer_id": "u3",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku0",
+                "quantity": 4,
+                "unit_price_cents": 1200,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          },
+          "order2": {
+            "id": "order2",
+            "warehouse_id": "w2",
+            "customer_id": "u5",
+            "status": "draft",
+            "lines": [
+              {
+                "id": "line0",
+                "sku_id": "sku2",
+                "quantity": 4,
+                "unit_price_cents": 800,
+                "canceled": 0
+              }
+            ],
+            "shipping_cents": 500
+          }
+        },
+        "reservations": {},
+        "handling": {},
+        "shipments": {},
+        "transfers": {},
+        "returns": {},
+        "payments": {
+          "payment_09ca944f3fc3bbae": {
+            "id": "payment_09ca944f3fc3bbae",
+            "warehouse_id": "w0",
+            "order_id": "order0",
+            "kind": "charge",
+            "amount_cents": 24500,
+            "key": "pay",
+            "token": "card_approved",
+            "outcome": "succeeded",
+            "gateway_notice": {
+              "domain": "fulfillment",
+              "source": "payment-gateway-simulator-v0.1",
+              "binding": {
+                "order_id": "order0",
+                "kind": "charge",
+                "amount_cents": 24500,
+                "key": "pay",
+                "token": "card_approved",
+                "outcome": "succeeded"
+              },
+              "at": "2026-01-15T12:00:00+00:00",
+              "signature": "bb31bf823d0ea937ca4a00d698340916773a8b470273bc2a063d1be3a39295b4"
+            }
+          }
+        }
+      },
+      "initial_hash": "3c242b152d79ee9dac07b70f3a7d329404e15d4316aea2a6202402c5ac0d3426",
+      "identity": "u0",
+      "task": {
+        "domain": "fulfillment",
+        "version": "fulfillment-0.1.0",
+        "id": "fulfillment_task_2e1771026e5a51ffd72f0d44",
+        "family": "inventory_allocation",
+        "identity": "u0",
+        "kind": "policy_refusal",
+        "message": "Allocate all twenty order0 units from lot0 as r0. Refuse with the applicable policy code and preserve all state.",
+        "initial_state_hash": "3c242b152d79ee9dac07b70f3a7d329404e15d4316aea2a6202402c5ac0d3426",
+        "goal": {
+          "atoms": [
+            {
+              "collection": "orders",
+              "entity": "order0",
+              "field": "status",
+              "comparison": "eq",
+              "value": "confirmed"
+            }
+          ],
+          "allowed_changes": {}
+        },
+        "capabilities": [
+          {
+            "name": "reserve_inventory",
+            "scope_id": "w0",
+            "resource_id": "order0",
+            "params": {
+              "reservation_id": "r0",
+              "line_id": "line0",
+              "lot_id": "lot0",
+              "quantity": 20
+            }
+          }
+        ],
+        "witnesses": [],
+        "refusal_code": "STOCK_INSUFFICIENT",
+        "search_nodes": 0,
+        "search_exhausted": true,
+        "max_search_depth": 18,
+        "max_search_nodes": 8192,
+        "structure_signature": "5750dbcd24d752e78dfa604d24ebc63d2edf7b114c10dccb42cd08be22141b3a",
+        "semantic_signature": "05839c073381f343f5685cd76f2e8f3564f8e130b010e375b6ac12a463905b5c"
+      },
+      "generation_recipe": "stock_refusal"
+    }
+  ],
+  "source_hashes": {
+    "usami/__init__.py": "32fd90cc175330e5763b25ffcb0ff860fdb0c09e02ecce135acbc994e969bbbf",
+    "usami/__main__.py": "ee847d69a4bfe9c24eb84d30b6232f5309073bd753669ce95111d59a28defe85",
+    "usami/audit/__init__.py": "ff848e128b1c8f512403a26ad274b88b8db1f1d849b14f009e614e0fe9c973cc",
+    "usami/audit/__main__.py": "7ab475c7f6cc130cbcc0781d1108c5861aedc1b52c48f512ebe9296c79fb34ba",
+    "usami/audit/report.py": "02c260d3ea97db7a984e1ca43f8ac3c5de26082f1bcf2d171e69cfbdbe3fe463",
+    "usami/audit/rules.py": "75944a8af59c2ac584ffab4d1ae128aa83b79834a5b29c3246f1dcb942677109",
+    "usami/audit/runner.py": "7bf205b8a4ebbb21d0cba3bf9e70fb24a12144ffc9d64602df7c10bd0c2cfd39",
+    "usami/audit/signatures.py": "fc929824171f8d45b8de4356eeb31f2c31138656d0e2152adb267ab502d6b2fb",
+    "usami/benchmark/__init__.py": "b7b427408344be94524afbd0f03d1f8b21f13770f8a7b922b00cfb7ef83ff182",
+    "usami/benchmark/__main__.py": "aff45dbe69c9be0c591a0e0c006ba0bd554f73de50fb1ea5f84d83d21e64c7a3",
+    "usami/benchmark/audit_v2.py": "c5319d2d28afb648eada662047270e5462a4f412eed8060d1afa1177ad7a5cfb",
+    "usami/benchmark/baselines.py": "6a9c418691f4bcbfd9df93a593226ba0d88b23a7661880c99cb4729de8336926",
+    "usami/benchmark/goals.py": "856df7a1107b9f7fd74fac8a9e04a92721323b6858ec34a7a3fc16f42d4ca182",
+    "usami/benchmark/goals_v2.py": "617460ae5bf6a33e58c6c1a5793de637b2dcc3409157ba350c9f9818ad7fdbd5",
+    "usami/benchmark/manifest.py": "f5a01b37b5df11993ccb25b6973658911173d4485d2198521a69d5b38a583a65",
+    "usami/benchmark/release_v2.py": "462806417cc1db22a94ecd4579f95744d683bfa368eab7845776042746a40841",
+    "usami/benchmark/runtime.py": "4c4fbb8ce51145d89ce8eabc90970b7c2f333eaf0d36c15eb9ed505815d7ebd8",
+    "usami/benchmark/scoring.py": "052fb65a7a336a1f3684eb6e0cddc41c6951a698228a59b4fb7206016f726f77",
+    "usami/benchmark/scoring_v2.py": "13294ba44961619308dc1e6f4f0546e558cf6168b22c027bc6e8346b1cd5e2d0",
+    "usami/benchmark/suite.py": "b43872b1c1c6bfa708355adfe9e810981248cc06f4b3f67c0fac2b11b16d8e57",
+    "usami/customer/__init__.py": "566f40d424c7ee6ed5e455d8e7bcf349f338052b3deab8569082fefadecca213",
+    "usami/customer/agent.py": "635f896a65c23f3d385a4eafbe8452bd8dccd751a661f7420b7c687eca755f08",
+    "usami/customer/models.py": "7ae70f9e621c133d0ea2e857ef043d6dfe509a4a56eb38baeea9a6787e049bc9",
+    "usami/customer/observation.py": "a0c1d98cf57f2f0437f189e0a7cbf52f63bdb2a43b12e53ec2dad376ebbd6010",
+    "usami/evaluation/__init__.py": "2d16da142577a1f97abc548b7a6ec12446c8375ee9fa4d049cd7379e14828607",
+    "usami/evaluation/oracle.py": "3a3fb6db0c6a1260f7e051262b02f0d02dab161e8b62ff87b3148fba27571c23",
+    "usami/evaluation/scenario.py": "69c5e75bbd6096f908aee103d1b0aa1fdd452f63695c709ba15168b273911394",
+    "usami/evaluation/splits.py": "e917b74633d5790404dfd084e45f73dd3cdaaf3b029568eb7224e35a77d930cc",
+    "usami/events.py": "ca7c741389aede8db12732f4cb7b4c9ecbf9cd0ec60fa72aee351b3cbeed7394",
+    "usami/interaction/__init__.py": "15936514491af8e148553656e74ad2ed2533c8b61320298a025e37bfcbb52958",
+    "usami/interaction/__main__.py": "d5d6e583a8f627e1caaf1fe84524c88f271717094371e8724ddf506b739368bd",
+    "usami/interaction/authorization.py": "cb8c493178595ad14ace7bef80ff223fa4c122c9316022c07f4075aefb1d9cdc",
+    "usami/interaction/models.py": "f2cc10aa547a1a05de2e1e1142773f13684845755f120f59ba598e03564edd8e",
+    "usami/interaction/runner.py": "94b95df86b204ce75bf5c534a55da07f43bd7f8f428bc5b08b9a8139b7641191",
+    "usami/protocol.py": "7682a13b6d592813857439ce3fb50324f2bb2fd0ef84f39c7725cff8c504f9bb",
+    "usami/randomness.py": "42bd8b48bca6f9946861c3b1e7137900406d0b945391d6a1893280d691c35572",
+    "usami/service/__init__.py": "7590487bf241368ae51294e98c896fcd09d5d49d6039dfec02eca6eb8e8f1a11",
+    "usami/service/__main__.py": "7fd80af3907c1b04009d9310a6b0d48ec16da3a133a4776a7a9e3e5180b01b4a",
+    "usami/service/client.py": "cb783b8322bfb1db3834830edfe06c75847c505f2941b0518fc1fb2d0b842b40",
+    "usami/service/models.py": "ac41bd08bab7f7fa3d593fd59bd7e2a89e28632fe27df9701f126832d8637a20",
+    "usami/service/runner.py": "b27e5ba7d86b392cd3bbbeb60df37180f88e9e56dc548da8bfa06dbb75918ccd",
+    "usami/service/tools.py": "d34db1528ead23b57a6d1cf449ac24c6f6dc6c7ad64834a6a5b3ffabc328cf6a",
+    "usami/world/__init__.py": "1c21b8471eeb161758e7ef1c4e957bfe49e3351b0688e70aea93ebb28e06d325",
+    "usami/world/engine.py": "5f7dbe972c9aa6f172826719c89ded8bff9afce92e413be1f3e70d06c4016d10",
+    "usami/world/generator.py": "6048fdec6e8247af33163772b2a5cda6a18b52358783705ac44f5d06f6be9a3f",
+    "usami/world/generator_v2.py": "9505981da0fc8e24f0197bc8e03a0c7f880a9f20124dfeaca501b4cb7e247b2f",
+    "usami/world/models.py": "131ef77f8797c35a29e44a8e6126f380b81cde4055bb0daeb09a402d48f316a5",
+    "usami/world/rules.py": "f50c1af9ebc91762e3796f3edb13bd3d2d47a4f57f382f49b1a26d2c93c9090f",
+    "usami/world/rules_v2.py": "29f299764e6c33ff4df6f5d975ae088bb8c89c100b23b29f4373f035e2a05ea9",
+    "usami/world/transitions_v2.py": "4a8037c26b1b0a479199398ef113edad61818a9d2b9443783ecd8d4d764fb120",
+    "usami_fulfillment/__init__.py": "bf3096c51b5e0c01f83722aa48d815c4d60e371f97602347c95ea4d71385994c",
+    "usami_fulfillment/__main__.py": "5436b57d5971daaea132439f282723ceff69cbdc4653f42db1a5c4c6d912b036",
+    "usami_fulfillment/adapter.py": "cd8ef07c723ff52c41e7e29c0e29e926cd1024dc1151ed21f3b42c33240247ba",
+    "usami_fulfillment/benchmark.py": "ce1d17cfbda4416e7337b17d5bd008e94c08c1b1f6059c90b70b24e0c37e2d46",
+    "usami_fulfillment/customer.py": "e8e516926199fbbbd792b2aefd8285d58b9882090d4e13873edc6507f05d13ad",
+    "usami_fulfillment/engine.py": "5d7c3666b675c3b60c56cfbfef0c51adab248cc1d6368079edf3d95e2677e0d6",
+    "usami_fulfillment/generator.py": "0a538d486372a94e3e610b92befe5885ffa7b33f6186aaa110a31d1ccfe2b8a9",
+    "usami_fulfillment/goals.py": "40bb48a541d0ea80cc3712e3f964dc0c877ea90c1ed158053d5e845cb66c2cd5",
+    "usami_fulfillment/models.py": "70a8e7589d489c2f36ec2a23cbe51fa8d179345620e6e3ae89fb838072af7d70",
+    "usami_fulfillment/observations.py": "c1832c722b01d3ba43bf0a98af1e6a73f95c0159eae98cec7e23e1b2a63ca9b7",
+    "usami_fulfillment/oracle.py": "b2035ffa6216c6692e0ece76b8aa0359ca39b78689d33d30de07326df523dae8",
+    "usami_fulfillment/release.py": "aa7e34492dba9861e7f63084cced488f90a1193c51f9c3fc2508cf292f2c3104",
+    "usami_fulfillment/rules.py": "7a8183c187ca3cc5b706dc25f55696d9a03eba5f3c739d36a3aeedcb21cfd674",
+    "usami_fulfillment/service.py": "cc53925d2405942a1f65b9f35885f1388d01b31917ff7de8adb1ce2b76c574a3",
+    "usami_fulfillment/signatures.py": "80220d6b3f9fc57cfb0683b80b0c35b4357d3c30889639e21863fabf73eb4d81",
+    "usami_fulfillment/suite.py": "b1614e8b23a8f4ef159c84a07d141178447cc67639ae80c72942d40d6957c7e9",
+    "usami_fulfillment/tools.py": "c8937c468d4a014a56895e1e2a42f22a615485583c5c8b3cc1660212304ac2ed",
+    "usami_fulfillment/transitions.py": "e50fd9b40e8deed7faa30621b27eb90052821e1e9a169901286c64694e7936ca",
+    "usami_harness/__init__.py": "04572c66218ab3426caeffc1511ea055db934b3521de3f5a2e2f1ae3c82dd6e8",
+    "usami_harness/benchmark.py": "9d090be4e2ff326a2cf328d8a058a14c07a06517e446719c612425f566fa0ae3",
+    "usami_harness/cli.py": "75fbbe15567c352df0a45c1c9307a23ced669415bea2463d94d96ecec23a70c2",
+    "usami_harness/customer.py": "921f048f8ee88fa849c3d6ca3bf847073ecdfd300323afa23627eef52fdba708",
+    "usami_harness/engine.py": "a799db86ed144b90f05c6d0c522ca0d6552abedba7b2fc56697286ad834f85b7",
+    "usami_harness/goals.py": "1ba28058e6be1668a6c8088e4b042801eaa2e56c79f67722e608d242fe2ae5c8",
+    "usami_harness/models.py": "4b573db862bccdb49c01b7e1e2c416bc0ae99bf5ee59ea71a4c00facd5dc35ac",
+    "usami_harness/oracle.py": "2c458aa72366dbc75acb342c7834fed829400183dc336f10de540f3aaf128161",
+    "usami_harness/provider.py": "33ac2d232848d6ea4093ea5ac69e7d21014cb7f3f30632c6cbdf2ebfd21ea728",
+    "usami_harness/service.py": "9fd5da1f90540432bc6d193a819d8ddad9abfa4ceb42dd771394f4539a6d4a16",
+    "usami_harness/suite.py": "70fa83c17ee79ddbadf470759feca621e443f8fa34de479574b93f9beb0dcbc3",
+    "usami_harness/tools.py": "8c66160f58ee3a032dbc706dd0688c17dd0d8944e2787383a0826a10519886a6"
+  },
+  "dataset_hash": "de9f47961051245e55882f989867df805959fad4e1061e7bd244fd8fa83189c5",
+  "manifest_hash": "fc56c8a7feacfbe4300e9a6d9fb7d66e64418f1a2673779a133a88f9b1add7a6"
+}

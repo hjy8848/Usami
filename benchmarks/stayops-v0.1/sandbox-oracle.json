@@ -1,0 +1,34 @@
+{
+  "domain": "stayops",
+  "version": "stayops-0.1.0",
+  "trace_valid": true,
+  "status": "fail",
+  "operations": [
+    {
+      "event_id": "event_000002",
+      "operation": "confirm_reservation",
+      "authorized": true,
+      "reference_allowed": false,
+      "reference_error_code": "DEPOSIT_REQUIRED",
+      "success": true,
+      "classification": "successful_business_violation",
+      "operation_correct": false,
+      "violations": [
+        "DEPOSIT_REQUIRED",
+        "RESERVATION_DEPOSIT_REQUIRED"
+      ],
+      "before_hash": "08dc3f242598a484240071b5a60eff0d40e029af31b3f0a7801dc3ba3df1391d",
+      "after_hash": "f9df3d05518d0d68af63bea00ff9ae2b0c68470a2a96b3969246501d571c10a0"
+    }
+  ],
+  "violations": [],
+  "metrics": {
+    "legal_execution": 0,
+    "rejected_invalid_attempt": 0,
+    "successful_business_violation": 1,
+    "authorization_only": 0,
+    "false_rejection": 0,
+    "unscored": 0
+  },
+  "final_state_hash": "f9df3d05518d0d68af63bea00ff9ae2b0c68470a2a96b3969246501d571c10a0"
+}

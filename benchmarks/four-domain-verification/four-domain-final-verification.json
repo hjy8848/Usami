@@ -1,0 +1,38 @@
+{
+  "saas": {
+    "manifests": {
+      "service-train.json": 170,
+      "service-validation.json": 68,
+      "service-test-demo.json": 40,
+      "discovery-demo.json": 6
+    },
+    "published_real_pilot_exact_replays": 9
+  },
+  "cloudops": {
+    "manifests": {
+      "service-train.json": 27,
+      "service-validation.json": 9,
+      "service-test-demo.json": 9,
+      "discovery-demo.json": 2
+    },
+    "published_real_pilot_exact_replays": 6
+  },
+  "fulfillment": {
+    "manifests": {
+      "service-train.json": 265,
+      "service-validation.json": 27,
+      "service-test-demo.json": 46,
+      "discovery-demo.json": 1
+    },
+    "published_real_pilot_exact_replays": 9
+  },
+  "stayops": {
+    "manifests": {
+      "service-train.json": 234,
+      "service-validation.json": 1,
+      "service-test-demo.json": 67,
+      "discovery-demo.json": 1
+    },
+    "published_real_pilot_exact_replays": 9
+  }
+}

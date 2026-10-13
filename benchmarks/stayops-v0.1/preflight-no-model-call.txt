@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/spring/RSI/Usami/examples/stayops/pilot.py", line 52, in <module>
+    if __name__=='__main__':main()
+  File "/Users/spring/RSI/Usami/examples/stayops/pilot.py", line 19, in main
+    normal=load(args.release/'service-train.json')
+  File "/Users/spring/RSI/Usami/usami_stayops/benchmark.py", line 8, in load
+    def load(path,**kwargs):return harness.load(adapter,path,**kwargs)
+  File "/Users/spring/RSI/Usami/usami_harness/benchmark.py", line 122, in load
+    return validate(adapter,Manifest.model_validate_json(Path(path).read_text(encoding='utf-8')),**kwargs)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1256, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1242, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1110, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: 'outputs/stayops-independent-rebuild/service-train.json'

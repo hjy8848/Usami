@@ -139,7 +139,9 @@ Replay 同时调用原有 `replay_trace()`，并以记录的模型响应重新�
 4. `ServiceSession.run()/reset()`：独立运行与同配置恢复。
 5. `ServiceExecution` 和 `replay_execution()`：对话／执行证据与离线重新审查接口。
 
-Customer LLM 的自然语言生成和精确授权准备仍应是独立受信输入层；本轮不实现该 LLM、Evolver 或训练。
+可选 Customer LLM 与受信逐轮请求适配已在 [usami/interaction](../interaction/README.md) 中实现；仍然没有 Evolver 或训练。原有单轮 API、CLI 和 ServiceExecution Replay 保持兼容。
+
+多轮底层接口为 `ServiceSession(experiment, client, defer_initial_turn=True)`，然后调用 `respond(customer_input, turn_id)` 和最终的 `finish()`。初始实验必须没有写授权；`respond()` 只接收受信适配器已准备的 CustomerInput，同一世界、模型历史和调用预算持续保留。写授权在回复结束后过期，整个多轮会话内的完全相同操作不自动续授权。只有 `finish()` 生成最终 Oracle / final 事件，多轮轨迹须使用 `replay_interaction()`，不能把它当作单轮 `replay_execution()` 输入。
 
 ## 验证
 

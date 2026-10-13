@@ -1,0 +1,12 @@
+{
+  "seed": 42,
+  "customer_identity": "user_002",
+  "exploration_strategy": null,
+  "mode": "reference",
+  "budget": {
+    "max_customer_turns": 3,
+    "max_customer_llm_calls": 6,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 40
+  }
+}

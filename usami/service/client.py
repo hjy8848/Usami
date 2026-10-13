@@ -1,6 +1,7 @@
 """Small OpenAI-compatible Chat Completions transport; no hidden retries."""
 from __future__ import annotations
 
+import copy
 import json
 import os
 import subprocess
@@ -14,6 +15,25 @@ class CompletionClient(Protocol):
 
     def complete(self, request: Dict[str, Any]) -> Any:
         ...
+
+
+class RecordedCompletionClient:
+    """Offline response journal used by both Service and interaction replay."""
+    def __init__(self, settings, records):
+        self.settings = settings.model_copy(deep=True)
+        self.records = copy.deepcopy(records)
+        self.index = 0
+
+    def complete(self, request):
+        if self.index >= len(self.records):
+            raise ValueError("missing recorded model response")
+        record = self.records[self.index]
+        self.index += 1
+        if request != record.request:
+            raise ValueError("model conversation or tool schema differs from recorded input")
+        if record.error.get("stage") == "transport":
+            raise ServiceError(record.error["code"], record.error["message"], copy.deepcopy(record.response))
+        return copy.deepcopy(record.response)
 
 
 def settings_from_env(env: Optional[Mapping[str, str]] = None):
@@ -60,8 +80,8 @@ class OpenAICompatibleClient:
                                   follow_redirects=False, transport=transport)
 
     @classmethod
-    def from_env(cls):
-        return cls(settings_from_env(), key_from_env())
+    def from_env(cls, env: Optional[Mapping[str, str]] = None):
+        return cls(settings_from_env(env), key_from_env(env))
 
     def close(self):
         self._http.close()

@@ -1,0 +1,12 @@
+{
+  "seed": 42,
+  "customer_identity": "user_002",
+  "exploration_strategy": "关注同一用户在不同组织中的角色差异，根据 Service 的实际回复自主选择后续业务请求，探索 Service 是否混淆组织、身份或权限。",
+  "mode": "reference",
+  "budget": {
+    "max_customer_turns": 6,
+    "max_customer_llm_calls": 8,
+    "max_service_llm_calls": 32,
+    "max_service_tool_calls": 48
+  }
+}

@@ -1,7 +1,7 @@
 """Harness-owned customer input and frozen experiment configuration."""
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal
+from typing import Any, Dict, List, Literal, Optional
 from urllib.parse import urlsplit
 
 from pydantic import Field, model_validator
@@ -93,6 +93,23 @@ class LLMRecord(Model):
     request: Dict[str, Any]
     response: Any = None
     error: Dict[str, Any] = Field(default_factory=dict)
+
+
+class ServiceTurn(Model):
+    """A response boundary, not a finalized engine or episode evaluation."""
+    turn_id: str
+    customer: CustomerInput
+    status: str
+    final_reply: Optional[str] = None
+    llm_start: int
+    llm_end: int
+    tool_start: int
+    tool_end: int
+    before_hash: str
+    after_hash: str
+    request_ids: List[str] = Field(default_factory=list)
+    expired_request_ids: List[str] = Field(default_factory=list)
+    duplicate_operations: List[Operation] = Field(default_factory=list)
 
 
 class ServiceError(Exception):

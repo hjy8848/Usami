@@ -21,6 +21,7 @@ Repository = "https://github.com/hjy8848/Usami"
 [project.scripts]
 usami = "usami.__main__:main"
 usami-service = "usami.service.__main__:main"
+usami-interaction = "usami.interaction.__main__:main"
 
 [tool.setuptools.packages.find]
 include = ["usami*", "web", "web.backend*"]

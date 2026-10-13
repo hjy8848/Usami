@@ -4,7 +4,20 @@
 
 Usami 是可执行的虚构 SaaS 业务世界：组织、成员权限、订阅、席位和账单通过明确 ID 关联，操作能够组合并改变后续操作的可行性。研究者先生成世界，再从实际状态派生结构化请求。评测依据是请求授权、业务规则和实际事件，而不是预先写死的唯一最终答案。
 
-v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer** 网页与 **Service LLM** 运行模块。Benchmark 核心不依赖 LLM；可选 Service 使用真实兼容 API 自主选择工具。没有 Customer Agent、Evolver、LLM Judge、训练、Service 自动修复、真实支付接口或数据库。业务数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
+v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer**、**Service LLM** 和 **Customer–Service 多轮交互**模块。Benchmark 核心不依赖 LLM；可选 Customer 自主选择业务请求，Service 使用真实兼容 API 自主选择工具。没有 Evolver、LLM Judge、训练、Service 自动修复、真实支付接口或数据库。业务数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
+
+## Customer–Service 开放式交互
+
+无需预设任务或消息脚本。Customer 根据权限过滤的初始业务信息和 Service 实际回复动态选择请求；两者共享一个持续变化的世界。Harness 将结构化选择转为明确自然语言，独立管理逐轮请求授权、四项全局预算和离线回放。
+
+```bash
+python -m pip install -e '.[service,dev]' -c constraints-tested.txt
+# 两个角色可共享 USAMI_LLM_*，也可分别配置 USAMI_CUSTOMER_LLM_* / USAMI_SERVICE_LLM_*
+python -m usami.interaction run --config examples/customer-service.json --out outputs/interaction/episode.json
+python -m usami.interaction replay outputs/interaction/episode.json --config examples/customer-service.json
+```
+
+默认配置不带探索策略；可选 [跨组织权限探索配置](examples/customer-service-strategy.json) 只提供自然语言方向。接口、授权边界和指标解释见 [交互说明](usami/interaction/README.md)，真实验收见 [交互验收记录](usami/interaction/VERIFICATION.md)。
 
 ## Service LLM 执行闭环
 
@@ -227,7 +240,7 @@ scenarios = generate_scenarios(world)
 
 添加业务操作时：在 `protocol.py` 增加严格参数 schema 和操作名；在 `world/rules.py` 定义纯前置条件、权限、预期转换和新不变量；在 `world/engine.py` 独立实现实际沙盒转换；在 `evaluation/scenario.py` 从已有世界关系派生相关场景。加入合法、非法、状态组合和故意错误记录测试；语义发生变化时更新 rules/generator/scenario 版本，再冻结新的 Manifest。
 
-可选 Service 已通过结构化 Operation 调用执行器，轨迹交给独立 Oracle。Service 不能生成权威授权，也不能更改规则、时钟、初始世界或正式预算。未来 Customer 的自然语言与精确授权应由独立受信适配器准备；当前未实现通用自然语言授权解释、Customer LLM 或 Evolver。
+可选 Service 通过结构化 Operation 调用执行器，轨迹交给独立 Oracle。Service 不能生成权威授权，也不能更改规则、时钟、初始世界或正式预算。可选 Customer LLM 的结构化选择由独立受信适配器约束，并生成实际业务请求；当前未实现通用自然语言授权解释或 Evolver。
 
 ## 目录与当前限制
 
@@ -235,6 +248,8 @@ scenarios = generate_scenarios(world)
 usami/world/       数据模型、ReferenceRules、受约束生成器、执行器
 usami/evaluation/  Dynamic Oracle、派生 Scenario、split 与 Manifest
 usami/service/     可选真实 Service LLM、独立顾客授权、工具循环与 Execution Replay
+usami/customer/    可选真实 Customer LLM、结构化动作与权限过滤的初始观察
+usami/interaction/ 多轮会话、逐轮请求适配、全局预算、Episode Trace / Replay
 usami/protocol.py  请求、精确授权、操作参数和执行结果
 usami/events.py    事件链、完整 Trace、完整性校验
 usami/randomness.py  版本化确定性采样
@@ -246,6 +261,6 @@ web/backend/      可选 FastAPI 内存会话与可信请求 harness
 web/frontend/     React + TypeScript + Vite World Explorer
 ```
 
-只有一个 SaaS 领域、固定模拟时钟、五个写操作、四个查询；没有邀请/删除成员、owner 转让、周期自动推进、按比例收费、部分退款、真实支付、自然语言或任何 Agent。一般不处理某个未知/已非法 pre-state 的后续业务语义，此时 Oracle 返回 unknown，同时保留已确定的不变量违规。哈希提供完整性，不提供敌手环境的签名认证；最终私有 Test 的保密性由独立托管方负责。
+只有一个 SaaS 领域、固定模拟时钟、五个写操作、四个查询；没有邀请/删除成员、owner 转让、周期自动推进、按比例收费、部分退款、真实支付或通用自然语言授权理解。一般不处理某个未知/已非法 pre-state 的后续业务语义，此时 Oracle 返回 unknown，同时保留已确定的不变量违规。哈希提供完整性，不提供敌手环境的签名认证；最终私有 Test 的保密性由独立托管方负责。
 
 真实验收命令、结果和公开 Manifest hash 见 [VERIFICATION.md](VERIFICATION.md)。

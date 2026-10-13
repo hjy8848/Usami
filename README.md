@@ -6,6 +6,16 @@ Usami 是可执行的虚构 SaaS 业务世界：组织、成员权限、订阅�
 
 v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer**、**Service LLM** 和 **Customer–Service 多轮交互**模块。Benchmark 核心不依赖 LLM；可选 Customer 自主选择业务请求，Service 使用真实兼容 API 自主选择工具。没有 Evolver、LLM Judge、训练、Service 自动修复、真实支付接口或数据库。业务数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
 
+## 多样性与覆盖审计
+
+独立审计模块直接调用现有 Generator、Scenario Generator 和 Reference Rules，统计去除 ID 的关系模板、业务决策结构、真实状态依赖、规则覆盖及 Split 重叠，无需 LLM 或网页。
+
+```bash
+python -m usami.audit --count 1000 --split-worlds 100 --output outputs/audit
+```
+
+已保存的 [审计报告](audits/diversity-v1/REPORT.md)、[JSON 数据](audits/diversity-v1/results.json)、[扩展路线图](audits/diversity-v1/ROADMAP.md) 和 [验收记录](audits/diversity-v1/VERIFICATION.md) 覆盖 1,000 个固定 Seed：82,699 条候选场景归为 24 种关系模板、293 种业务决策结构。这是明确签名定义下的观测数，不是理论上限。审计也确认当前仅发布了小规模 Validation，尚无冻结的标准 Task Train/Test；公开 Demo Split 不应当作盲测集。参数与指标定义见 [审计工具说明](usami/audit/README.md)。
+
 ## Customer–Service 开放式交互
 
 无需预设任务或消息脚本。Customer 根据权限过滤的初始业务信息和 Service 实际回复动态选择请求；两者共享一个持续变化的世界。Harness 将结构化选择转为明确自然语言，独立管理逐轮请求授权、四项全局预算和离线回放。

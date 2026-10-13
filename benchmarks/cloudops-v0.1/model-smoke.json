@@ -1,0 +1,25 @@
+{
+  "kind": "REAL GATEWAY AVAILABILITY CHECKS, NOT BENCHMARK SCORES",
+  "tested_models": [
+    {
+      "model": "dashscope/qwen3.6-plus",
+      "http_status": 200,
+      "content": "OK",
+      "finish_reason": "stop"
+    },
+    {
+      "model": "dashscope/qwen3-coder-plus",
+      "http_status": 404
+    },
+    {
+      "model": "dashscope/qwen-max",
+      "http_status": 200,
+      "content": "OK.",
+      "finish_reason": "stop"
+    },
+    {
+      "model": "dashscope/qwen3-next-80b-a3b-instruct",
+      "http_status": 404
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "domain": "cloudops",
+  "version": "0.1.0",
+  "service_tasks": 45,
+  "split_counts": {
+    "train": 27,
+    "validation": 9,
+    "test-demo": 9
+  },
+  "business_families": {
+    "billing_recovery": 4,
+    "capacity_expand": 4,
+    "dependency_boot": 4,
+    "scoped_onboarding": 4,
+    "quota_reduce": 4,
+    "project_isolation": 4,
+    "viewer_refusal": 4,
+    "cycle_refusal": 4,
+    "doublecharge_refusal": 4,
+    "safe_retirement": 3,
+    "create_stack": 3,
+    "live_reconfigure": 3
+  },
+  "independent_structures": 12,
+  "semantic_decision_signatures": 12,
+  "structure_frequencies": {
+    "da3713fe2223ee563b5d80c4d8fbc6d72331603a975c5eea276a54ce5f5f40ad": 4,
+    "ee85fe0c8ec80c40d27a1b03afb7990d2d7b71bf73c564ee9eccdbc78feb9cdb": 4,
+    "76d8866dc5725f4c84e78e564957509ccb2e01f36e6d1409dc0b0c6058164fae": 4,
+    "d2f26bf526b59701a0e673c4d5f3aac44ea701897e5af1db21df85933de3898b": 4,
+    "f6de1ca0a5cbe35840630c8944ecd5b7e9a96d46b4702c01456928965f6cf341": 4,
+    "a0421341b228886bf0868c68bda43a63599351b1c89d68927d0ac0d14d140e35": 4,
+    "01bc6cf47b879fd0b17e82d4db8909782d4f12149b1bed66b9135b04c978e1f3": 4,
+    "68179d8f47555ae2d086aa88c0c0c0b0675efce15a98ed23a8a57025cabe84ee": 4,
+    "6dbe20512267915b13d8bf1e5ac033eadffc7bdbcae01e86e2ed883f6339f4fe": 4,
+    "9b77bed3494d720befc8831231d050cf7b95b3b0aafede692798791c389ed52c": 3,
+    "fa86be78eb0a33a2f06ed43eddd81649fdd5f6ad820502c3743f9d6eec0291df": 3,
+    "0fd59a8984eee94e54381d1b1996d3b7c8bac35f8b06040cd8a05ff2380b178e": 3
+  },
+  "semantic_frequencies": {
+    "755f155d56e7f1843d869f02e6c8d6de663a00196ab23338d4daa6b3cc3aac0a": 4,
+    "63ac288858e4e495b535833796573786e93da4ff38c88acd8212fe2131d69e74": 4,
+    "d821fac20eab024236639d99f5a77ffc341434a0a5c84142f613f5c227e22a2e": 4,
+    "ebccd5dc8d6eff5a04f72652f2df407a900bb564180e742139cfc83222762b43": 4,
+    "465ffa2bec645cbef8f3c0049fecb06e051ca36a4a228546a5798de956cb73f9": 4,
+    "8229bc5554d8d5ec38df233f277d9a8df3c930b4b76bc9e6187e19950d765eb9": 4,
+    "24d9ea0338ad00db9985ab7702c70d21de7cbd033db820f9f9f45ec1e541cc4c": 4,
+    "c00fd205094afdeb52d16379dcf43d4efa0f9538e777e2399da0ca525321404b": 4,
+    "763ce036621b00a3400aaeebae271868be6b6378adfdd5d0e44828c51b5357cf": 4,
+    "8b86d92ecba032e0135e2385c5abff1f65690a1dcfe995ca5474b9c7053524da": 3,
+    "84fbcc96bc0c4b2a3483b01cee31f9d721b44abe3228281cf84223902896ef45": 3,
+    "d34754ab31e40e63fde1749c845faa94391c930189db1f8f96a533f5e3aa91a9": 3
+  },
+  "operation_coverage": {
+    "pay_invoice": 8,
+    "resume_project": 4,
+    "start_instance": 37,
+    "change_project_quota": 16,
+    "grant_project_access": 4,
+    "stop_instance": 13,
+    "attach_dependency": 10,
+    "detach_dependency": 3,
+    "delete_instance": 3,
+    "create_instance": 3
+  },
+  "actual_initial_decision_coverage": {
+    "pay_invoice/ALLOWED": 4,
+    "resume_project/INVOICE_NOT_PAID": 4,
+    "start_instance/PROJECT_SUSPENDED": 4,
+    "change_project_quota/ALLOWED": 8,
+    "start_instance/QUOTA_EXCEEDED": 4,
+    "start_instance/ALLOWED": 10,
+    "start_instance/DEPENDENCY_NOT_RUNNING": 8,
+    "grant_project_access/ALLOWED": 4,
+    "start_instance/PROJECT_ACCESS_REQUIRED": 4,
+    "stop_instance/ALLOWED": 10,
+    "change_project_quota/QUOTA_BELOW_USAGE": 4,
+    "start_instance/CROSS_PROJECT_RESOURCE": 4,
+    "change_project_quota/PERMISSION_DENIED": 4,
+    "attach_dependency/DEPENDENCY_CYCLE": 4,
+    "pay_invoice/ALREADY_PAID": 4,
+    "stop_instance/DEPENDENTS_RUNNING": 3,
+    "detach_dependency/DEPENDENT_MUST_BE_STOPPED": 3,
+    "delete_instance/INSTANCE_RUNNING": 3,
+    "create_instance/ALLOWED": 3,
+    "attach_dependency/RESOURCE_NOT_FOUND": 3,
+    "start_instance/RESOURCE_NOT_FOUND": 3,
+    "attach_dependency/DEPENDENT_MUST_BE_STOPPED": 3
+  },
+  "policy_refusal_tasks": 16,
+  "cross_project_tasks": 4,
+  "cross_project_ratio": 0.08888888888888889,
+  "cross_subsystem_tasks": 16,
+  "cross_subsystem_ratio": 0.35555555555555557,
+  "causal_depth_distribution": {
+    "0": 16,
+    "1": 18,
+    "2": 11
+  },
+  "multi_path_tasks": 10,
+  "verified_witnesses": 42,
+  "direct_first_failure_edges": {
+    "pay_invoice->resume_project": 4,
+    "resume_project->start_instance": 4,
+    "change_project_quota->start_instance": 8,
+    "start_instance->start_instance": 17,
+    "grant_project_access->start_instance": 4,
+    "stop_instance->change_project_quota": 4,
+    "stop_instance->stop_instance": 3,
+    "stop_instance->delete_instance": 6,
+    "detach_dependency->delete_instance": 6,
+    "stop_instance->detach_dependency": 3,
+    "create_instance->attach_dependency": 9,
+    "stop_instance->attach_dependency": 3
+  },
+  "indirect_after_failed_intervening_step_edges": {
+    "pay_invoice->start_instance": 4,
+    "start_instance->start_instance": 4,
+    "stop_instance->detach_dependency": 3,
+    "stop_instance->delete_instance": 6,
+    "stop_instance->stop_instance": 3,
+    "create_instance->start_instance": 9
+  },
+  "split_overlap": {
+    "train/validation": {
+      "structures": 9,
+      "semantics": 9
+    },
+    "train/test-demo": {
+      "structures": 0,
+      "semantics": 0
+    },
+    "validation/test-demo": {
+      "structures": 0,
+      "semantics": 0
+    }
+  },
+  "human_review": "AWAITING EXTERNAL REVIEW",
+  "limitations": [
+    "Numeric sizing variants and reordered legal witnesses are not independent task structures.",
+    "Train/validation are in-distribution; public test is a three-family composition demo, never a blind/private test.",
+    "Omission depth describes the verified bounded witnesses, not exhaustive all-plan causal depth.",
+    "Operation rule coverage must be supplemented with boundary tests; initial first-error guards are not exhaustive predicate coverage."
+  ]
+}

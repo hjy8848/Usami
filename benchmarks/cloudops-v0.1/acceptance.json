@@ -1,0 +1,36 @@
+{
+  "domain": "cloudops",
+  "release": "0.1.0",
+  "software_tests": {
+    "passed": 477,
+    "previous_saas_tests": 420,
+    "cloudops_tests": 57
+  },
+  "service_tasks": 45,
+  "structures": 12,
+  "semantic_signatures": 12,
+  "verified_witnesses": 42,
+  "fresh_builds_identical": true,
+  "saas_sources_and_manifests_byte_unchanged": true,
+  "saas_pilot_replays": 9,
+  "published_live_attempts": 21,
+  "final_service_pilot_passes": 3,
+  "final_service_pilot_cases": 3,
+  "final_customer_turns": [
+    0,
+    4,
+    2
+  ],
+  "final_customer_terminations": [
+    "CUSTOMER_OUTPUT_INVALID",
+    "CUSTOMER_OUTPUT_INVALID",
+    "CUSTOMER_OUTPUT_INVALID"
+  ],
+  "error_free_live_customer_episode": false,
+  "final_live_customer_successful_writes": 0,
+  "final_live_customer_business_findings": 0,
+  "external_human_review": "pending",
+  "full_45_task_live_model_evaluation": "not_run",
+  "revoke_access_fixed_task": "not_in_corpus; implemented and unit tested",
+  "evidence": "VERIFICATION.md"
+}

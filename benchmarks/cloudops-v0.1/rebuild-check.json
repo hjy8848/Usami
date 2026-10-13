@@ -1,0 +1,9 @@
+{
+  "service-train.json": true,
+  "service-validation.json": true,
+  "service-test-demo.json": true,
+  "discovery-demo.json": true,
+  "coverage.json": true,
+  "review-examples.json": true,
+  "TASK_EXAMPLES.md": true
+}

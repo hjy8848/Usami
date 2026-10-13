@@ -1,0 +1,62 @@
+{
+  "manifests": {
+    "service-train": {
+      "valid": true,
+      "instances": 170,
+      "manifest_hash": "f0cbd91fd3026acb35043d59b3580f70f63aedff6e8e32e30dece636341474b6"
+    },
+    "service-validation": {
+      "valid": true,
+      "instances": 68,
+      "manifest_hash": "599d0497b685fcc7c035afbee65843fe757f305c7100e164961a0f00f8b9909c"
+    },
+    "service-test-demo": {
+      "valid": true,
+      "instances": 40,
+      "manifest_hash": "764bc6a260223ec597044ad007ff69cfc516c175f8cf5d0826cc820ba0c6be71"
+    },
+    "discovery-demo": {
+      "valid": true,
+      "instances": 6,
+      "manifest_hash": "164044f4f79798fdbda11a034c73d5d40fb35db9ccb31b5f8e6068dfc34881c9"
+    }
+  },
+  "published_pilots": [
+    {
+      "file": "benchmarks/v0.2.0/pilot/service/business_2002ad5d16c4caabd66f38ce.r0.run.json",
+      "replay_verified": true
+    },
+    {
+      "file": "benchmarks/v0.2.0/pilot/service/business_50a07f256b97394b64bd8b88.r0.run.json",
+      "replay_verified": true
+    },
+    {
+      "file": "benchmarks/v0.2.0/pilot/service/business_5a8a950a59328c5abfe312f1.r0.run.json",
+      "replay_verified": true
+    },
+    {
+      "file": "benchmarks/v0.2.0/pilot/service/business_7e6db8cb1ae024ac2ce3ad7d.r0.run.json",
+      "replay_verified": true
+    },
+    {
+      "file": "benchmarks/v0.2.0/pilot/service/business_c88bb5a5a34be38fa070b15c.r0.run.json",
+      "replay_verified": true
+    },
+    {
+      "file": "benchmarks/v0.2.0/pilot/service/business_ffac9f101e23014d6bf5304e.r0.run.json",
+      "replay_verified": true
+    },
+    {
+      "file": "benchmarks/v0.2.0/pilot/discovery/discovery_ad9f367f71cbef26ab94007d.r0.run.json",
+      "replay_verified": true
+    },
+    {
+      "file": "benchmarks/v0.2.0/pilot/discovery/discovery_ad9f367f71cbef26ab94007d.r1.run.json",
+      "replay_verified": true
+    },
+    {
+      "file": "benchmarks/v0.2.0/pilot/discovery/discovery_ad9f367f71cbef26ab94007d.r2.run.json",
+      "replay_verified": true
+    }
+  ]
+}

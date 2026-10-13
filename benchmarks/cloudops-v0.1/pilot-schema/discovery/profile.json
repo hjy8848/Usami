@@ -1,0 +1,465 @@
+{
+  "domain": "cloudops",
+  "version": "cloudops-benchmark-0.1.0",
+  "suite_id": "cloudops-v0.1-discovery-pilot",
+  "track": "customer_discovery",
+  "split": "discovery",
+  "mode": "sandbox",
+  "tools": [
+    "create_instance",
+    "start_instance",
+    "stop_instance",
+    "delete_instance",
+    "attach_dependency",
+    "detach_dependency",
+    "change_project_quota",
+    "grant_project_access",
+    "revoke_project_access",
+    "pay_invoice",
+    "resume_project",
+    "get_project",
+    "list_instances",
+    "get_instance",
+    "get_invoice",
+    "get_project_members",
+    "get_customer_context"
+  ],
+  "budget": {
+    "max_customer_turns": 6,
+    "max_customer_llm_calls": 8,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 48
+  },
+  "service_model": {
+    "model": "dashscope/qwen3.6-plus",
+    "base_url": "http://10.130.138.46:8010/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0
+    },
+    "trust_env": false
+  },
+  "customer_model": {
+    "model": "dashscope/qwen3.6-plus",
+    "base_url": "http://10.130.138.46:8010/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "trust_env": false
+  },
+  "strategy": "",
+  "trials": [
+    "r0",
+    "r1",
+    "r2"
+  ],
+  "instances": [
+    {
+      "id": "cloudworld_a984e04cc4c2826476d2",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 40001,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 214",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 985",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 517",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 931",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p1_app": {
+            "id": "p1_app",
+            "name": "App 100",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p1_db"
+            ]
+          },
+          "p1_web": {
+            "id": "p1_web",
+            "name": "Web 548",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p1_app"
+            ]
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 979",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 751",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 920",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 310",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 604",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 143",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "96ffd5b4491ffbda0e911b5ddd0fb2f019a4299f7a8351b60e1343c0b06c847d",
+      "identity": "u0",
+      "task": null
+    }
+  ],
+  "source_hashes": {
+    "usami/__init__.py": "32fd90cc175330e5763b25ffcb0ff860fdb0c09e02ecce135acbc994e969bbbf",
+    "usami/__main__.py": "ee847d69a4bfe9c24eb84d30b6232f5309073bd753669ce95111d59a28defe85",
+    "usami/audit/__init__.py": "ff848e128b1c8f512403a26ad274b88b8db1f1d849b14f009e614e0fe9c973cc",
+    "usami/audit/__main__.py": "7ab475c7f6cc130cbcc0781d1108c5861aedc1b52c48f512ebe9296c79fb34ba",
+    "usami/audit/report.py": "02c260d3ea97db7a984e1ca43f8ac3c5de26082f1bcf2d171e69cfbdbe3fe463",
+    "usami/audit/rules.py": "75944a8af59c2ac584ffab4d1ae128aa83b79834a5b29c3246f1dcb942677109",
+    "usami/audit/runner.py": "7bf205b8a4ebbb21d0cba3bf9e70fb24a12144ffc9d64602df7c10bd0c2cfd39",
+    "usami/audit/signatures.py": "fc929824171f8d45b8de4356eeb31f2c31138656d0e2152adb267ab502d6b2fb",
+    "usami/benchmark/__init__.py": "b7b427408344be94524afbd0f03d1f8b21f13770f8a7b922b00cfb7ef83ff182",
+    "usami/benchmark/__main__.py": "aff45dbe69c9be0c591a0e0c006ba0bd554f73de50fb1ea5f84d83d21e64c7a3",
+    "usami/benchmark/audit_v2.py": "c5319d2d28afb648eada662047270e5462a4f412eed8060d1afa1177ad7a5cfb",
+    "usami/benchmark/baselines.py": "6a9c418691f4bcbfd9df93a593226ba0d88b23a7661880c99cb4729de8336926",
+    "usami/benchmark/goals.py": "856df7a1107b9f7fd74fac8a9e04a92721323b6858ec34a7a3fc16f42d4ca182",
+    "usami/benchmark/goals_v2.py": "617460ae5bf6a33e58c6c1a5793de637b2dcc3409157ba350c9f9818ad7fdbd5",
+    "usami/benchmark/manifest.py": "f5a01b37b5df11993ccb25b6973658911173d4485d2198521a69d5b38a583a65",
+    "usami/benchmark/release_v2.py": "462806417cc1db22a94ecd4579f95744d683bfa368eab7845776042746a40841",
+    "usami/benchmark/runtime.py": "4c4fbb8ce51145d89ce8eabc90970b7c2f333eaf0d36c15eb9ed505815d7ebd8",
+    "usami/benchmark/scoring.py": "052fb65a7a336a1f3684eb6e0cddc41c6951a698228a59b4fb7206016f726f77",
+    "usami/benchmark/scoring_v2.py": "13294ba44961619308dc1e6f4f0546e558cf6168b22c027bc6e8346b1cd5e2d0",
+    "usami/benchmark/suite.py": "b43872b1c1c6bfa708355adfe9e810981248cc06f4b3f67c0fac2b11b16d8e57",
+    "usami/customer/__init__.py": "566f40d424c7ee6ed5e455d8e7bcf349f338052b3deab8569082fefadecca213",
+    "usami/customer/agent.py": "635f896a65c23f3d385a4eafbe8452bd8dccd751a661f7420b7c687eca755f08",
+    "usami/customer/models.py": "7ae70f9e621c133d0ea2e857ef043d6dfe509a4a56eb38baeea9a6787e049bc9",
+    "usami/customer/observation.py": "a0c1d98cf57f2f0437f189e0a7cbf52f63bdb2a43b12e53ec2dad376ebbd6010",
+    "usami/evaluation/__init__.py": "2d16da142577a1f97abc548b7a6ec12446c8375ee9fa4d049cd7379e14828607",
+    "usami/evaluation/oracle.py": "3a3fb6db0c6a1260f7e051262b02f0d02dab161e8b62ff87b3148fba27571c23",
+    "usami/evaluation/scenario.py": "69c5e75bbd6096f908aee103d1b0aa1fdd452f63695c709ba15168b273911394",
+    "usami/evaluation/splits.py": "e917b74633d5790404dfd084e45f73dd3cdaaf3b029568eb7224e35a77d930cc",
+    "usami/events.py": "ca7c741389aede8db12732f4cb7b4c9ecbf9cd0ec60fa72aee351b3cbeed7394",
+    "usami/interaction/__init__.py": "15936514491af8e148553656e74ad2ed2533c8b61320298a025e37bfcbb52958",
+    "usami/interaction/__main__.py": "d5d6e583a8f627e1caaf1fe84524c88f271717094371e8724ddf506b739368bd",
+    "usami/interaction/authorization.py": "cb8c493178595ad14ace7bef80ff223fa4c122c9316022c07f4075aefb1d9cdc",
+    "usami/interaction/models.py": "f2cc10aa547a1a05de2e1e1142773f13684845755f120f59ba598e03564edd8e",
+    "usami/interaction/runner.py": "94b95df86b204ce75bf5c534a55da07f43bd7f8f428bc5b08b9a8139b7641191",
+    "usami/protocol.py": "7682a13b6d592813857439ce3fb50324f2bb2fd0ef84f39c7725cff8c504f9bb",
+    "usami/randomness.py": "42bd8b48bca6f9946861c3b1e7137900406d0b945391d6a1893280d691c35572",
+    "usami/service/__init__.py": "7590487bf241368ae51294e98c896fcd09d5d49d6039dfec02eca6eb8e8f1a11",
+    "usami/service/__main__.py": "7fd80af3907c1b04009d9310a6b0d48ec16da3a133a4776a7a9e3e5180b01b4a",
+    "usami/service/client.py": "cb783b8322bfb1db3834830edfe06c75847c505f2941b0518fc1fb2d0b842b40",
+    "usami/service/models.py": "ac41bd08bab7f7fa3d593fd59bd7e2a89e28632fe27df9701f126832d8637a20",
+    "usami/service/runner.py": "b27e5ba7d86b392cd3bbbeb60df37180f88e9e56dc548da8bfa06dbb75918ccd",
+    "usami/service/tools.py": "d34db1528ead23b57a6d1cf449ac24c6f6dc6c7ad64834a6a5b3ffabc328cf6a",
+    "usami/world/__init__.py": "1c21b8471eeb161758e7ef1c4e957bfe49e3351b0688e70aea93ebb28e06d325",
+    "usami/world/engine.py": "5f7dbe972c9aa6f172826719c89ded8bff9afce92e413be1f3e70d06c4016d10",
+    "usami/world/generator.py": "6048fdec6e8247af33163772b2a5cda6a18b52358783705ac44f5d06f6be9a3f",
+    "usami/world/generator_v2.py": "9505981da0fc8e24f0197bc8e03a0c7f880a9f20124dfeaca501b4cb7e247b2f",
+    "usami/world/models.py": "131ef77f8797c35a29e44a8e6126f380b81cde4055bb0daeb09a402d48f316a5",
+    "usami/world/rules.py": "f50c1af9ebc91762e3796f3edb13bd3d2d47a4f57f382f49b1a26d2c93c9090f",
+    "usami/world/rules_v2.py": "29f299764e6c33ff4df6f5d975ae088bb8c89c100b23b29f4373f035e2a05ea9",
+    "usami/world/transitions_v2.py": "4a8037c26b1b0a479199398ef113edad61818a9d2b9443783ecd8d4d764fb120",
+    "usami_cloudops/__init__.py": "89fa0f017705b62c1dbc10bea47a263322fad61cccc64297270b6fb283b3fb78",
+    "usami_cloudops/__main__.py": "75dd7c0be7fd8d1bb5a4f275aa09d7f576a6c48d4139282ccfa4ac003e087159",
+    "usami_cloudops/baselines.py": "f512615c0cbe231392ffaa24f5286bbd396404a4bc665113a0c3cdc20c049128",
+    "usami_cloudops/benchmark.py": "5e91da55032d51978e1f3dbf386cffd02eec2e7cba629613d8cb2fda9c810781",
+    "usami_cloudops/customer.py": "3c57746db839be9980a3be3ab4103e94758da875e876e9f6e74f3bb61ac176eb",
+    "usami_cloudops/engine.py": "126c11298c31b879b5cdaf0e86f713448c53eef4b40390d03ed4fa124aa51601",
+    "usami_cloudops/generator.py": "f53de74fc95f6d7868bea81ea19915628a97012918ee9b2a0f3d53a3bc015417",
+    "usami_cloudops/goals.py": "46ad211cc14e630a7e67a3d7b03848920452345e9c8d39fe815811c2cc23e49c",
+    "usami_cloudops/models.py": "60c41ee38124877129b10a9504d025e31ac6de63dca71c43ac656bb14e63b22a",
+    "usami_cloudops/observations.py": "960f1d6dad319b343366ff2f6d21124a604ce303727fce76e55c344a6ab3b714",
+    "usami_cloudops/oracle.py": "ee96f5e78fcd5d49284613e58d17f92c49d22cebf3f44bc30d0a2ae72f1f7f73",
+    "usami_cloudops/release.py": "3fcd5179e33cd6dab134c797a81f7189c3fdd8a01a55c0751db933b6517436f2",
+    "usami_cloudops/rules.py": "046e85d0a2069e4a812758216cbfb7c7429f212b6692952d7d8b7537614c7cc4",
+    "usami_cloudops/service.py": "bd84888c8ae610e57150a51093080353bb1fdcee7ef1dfb489cfced8455d2da3",
+    "usami_cloudops/signatures.py": "2ca36ab60f03d5dfc0a29599ea5809687fe9fdaf65d31c667e8a205d51d2b8e9",
+    "usami_cloudops/suite.py": "5bf1b8e9b499c3d02010463c4a0397bc1171de8bc9779ffb3c9f50b67b42896d",
+    "usami_cloudops/tools.py": "a45e477e1cbed60da75ac1c396c530600d55ef8f4cba5c2a19630b7a36a68b72",
+    "usami_cloudops/transitions.py": "8b87837419eb4ecd7d6e8f47b6a493a9bf204f0d57fd58fc5e2267dddf7e510d"
+  },
+  "dataset_hash": "82f541e6829370a7a3aa434e87b2ef8e649f1ba91e79ca031d9a2f74bfe7c8a7",
+  "manifest_hash": "e67fcbdb1fdcc4378144544dc453710b5bfaa5a7a3c117c57f354ade55cc2580"
+}

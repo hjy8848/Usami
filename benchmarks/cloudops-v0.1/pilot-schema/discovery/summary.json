@@ -1,0 +1,91 @@
+{
+  "track": "customer_discovery",
+  "manifest_hash": "e67fcbdb1fdcc4378144544dc453710b5bfaa5a7a3c117c57f354ade55cc2580",
+  "dataset_hash": "82f541e6829370a7a3aa434e87b2ef8e649f1ba91e79ca031d9a2f74bfe7c8a7",
+  "complete": true,
+  "expected_runs": 3,
+  "received_runs": 3,
+  "missing": [],
+  "success_rate": 0.0,
+  "rows": [
+    {
+      "instance_id": "cloudworld_a984e04cc4c2826476d2",
+      "trial": "r0",
+      "run_hash": "bd2ed19bd522c28a2370d87fab23a10f5e06ee85eb0c2a7c0c31af4f25e53982",
+      "status": "customer_error",
+      "oracle_status": "pass",
+      "replay_verified": true,
+      "service_llm_calls": 0,
+      "service_tool_calls": 0,
+      "within_budget": true,
+      "operation_counts": {
+        "legal_execution": 0,
+        "rejected_invalid_attempt": 0,
+        "successful_business_violation": 0,
+        "authorization_only": 0,
+        "false_rejection": 0,
+        "unscored": 0
+      },
+      "episode_status": "customer_error",
+      "termination_reason": "CUSTOMER_OUTPUT_INVALID",
+      "customer_turns": 0,
+      "customer_llm_calls": 1,
+      "discovery_success": false,
+      "unique_business_findings": 0,
+      "findings": []
+    },
+    {
+      "instance_id": "cloudworld_a984e04cc4c2826476d2",
+      "trial": "r1",
+      "run_hash": "ea23d3a2df2432e8aac33221d9d4efb847a9eb3ba7d733d4d4907a8e504e5288",
+      "status": "customer_error",
+      "oracle_status": "pass",
+      "replay_verified": true,
+      "service_llm_calls": 0,
+      "service_tool_calls": 0,
+      "within_budget": true,
+      "operation_counts": {
+        "legal_execution": 0,
+        "rejected_invalid_attempt": 0,
+        "successful_business_violation": 0,
+        "authorization_only": 0,
+        "false_rejection": 0,
+        "unscored": 0
+      },
+      "episode_status": "customer_error",
+      "termination_reason": "CUSTOMER_OUTPUT_INVALID",
+      "customer_turns": 0,
+      "customer_llm_calls": 1,
+      "discovery_success": false,
+      "unique_business_findings": 0,
+      "findings": []
+    },
+    {
+      "instance_id": "cloudworld_a984e04cc4c2826476d2",
+      "trial": "r2",
+      "run_hash": "422a8ff9097ef0c458693250b9f1a9bdecb531e37e93761eaf3f3523bfa16416",
+      "status": "customer_error",
+      "oracle_status": "pass",
+      "replay_verified": true,
+      "service_llm_calls": 5,
+      "service_tool_calls": 5,
+      "within_budget": true,
+      "operation_counts": {
+        "legal_execution": 3,
+        "rejected_invalid_attempt": 1,
+        "successful_business_violation": 0,
+        "authorization_only": 0,
+        "false_rejection": 0,
+        "unscored": 0
+      },
+      "episode_status": "customer_error",
+      "termination_reason": "CUSTOMER_OUTPUT_INVALID",
+      "customer_turns": 1,
+      "customer_llm_calls": 2,
+      "discovery_success": false,
+      "unique_business_findings": 0,
+      "findings": []
+    }
+  ],
+  "unique_business_findings": 0
+}

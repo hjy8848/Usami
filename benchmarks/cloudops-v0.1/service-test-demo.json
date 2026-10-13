@@ -1,0 +1,5198 @@
+{
+  "domain": "cloudops",
+  "version": "cloudops-benchmark-0.1.0",
+  "suite_id": "cloudops-v0.1-test-demo",
+  "track": "service_task",
+  "split": "test-demo",
+  "mode": "reference",
+  "tools": [
+    "create_instance",
+    "start_instance",
+    "stop_instance",
+    "delete_instance",
+    "attach_dependency",
+    "detach_dependency",
+    "change_project_quota",
+    "grant_project_access",
+    "revoke_project_access",
+    "pay_invoice",
+    "resume_project",
+    "get_project",
+    "list_instances",
+    "get_instance",
+    "get_invoice",
+    "get_project_members",
+    "get_customer_context"
+  ],
+  "budget": {
+    "max_customer_turns": 1,
+    "max_customer_llm_calls": 0,
+    "max_service_llm_calls": 16,
+    "max_service_tool_calls": 32
+  },
+  "service_model": {
+    "model": "offline-contract",
+    "base_url": "https://example.invalid/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0
+    },
+    "trust_env": false
+  },
+  "customer_model": null,
+  "strategy": "",
+  "trials": [
+    "r0"
+  ],
+  "instances": [
+    {
+      "id": "cloudtask_a5b724b3e838e1cf97af8eff",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 30000,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 888",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "running",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 875",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "running",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 122",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 726",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p1_app": {
+            "id": "p1_app",
+            "name": "App 307",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p1_db"
+            ]
+          },
+          "p1_web": {
+            "id": "p1_web",
+            "name": "Web 398",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p1_app"
+            ]
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 664",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 190",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 851",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 441",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 245",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 297",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "3719c6c59080f5165d68986f41f54cab5109f30f53918d18e80e664a0814023a",
+      "identity": "u0",
+      "task": {
+        "version": "cloudops-goals-0.1.0",
+        "id": "cloudtask_a5b724b3e838e1cf97af8eff",
+        "initial_state_hash": "3719c6c59080f5165d68986f41f54cab5109f30f53918d18e80e664a0814023a",
+        "family": "safe_retirement",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Retire and delete p0_db safely: take p0_app offline and remove its database dependency. Keep p0_web and every other resource, access, quota and bill unchanged.",
+        "goal": {
+          "predicates": [
+            {
+              "collection": "instances",
+              "entity": "p0_db",
+              "field": "",
+              "comparison": "absent",
+              "value": null
+            },
+            {
+              "collection": "instances",
+              "entity": "p0_app",
+              "field": "status",
+              "comparison": "eq",
+              "value": "stopped"
+            },
+            {
+              "collection": "instances",
+              "entity": "p0_app",
+              "field": "dependencies",
+              "comparison": "eq",
+              "value": []
+            }
+          ],
+          "allowed_changes": {
+            "instances/p0_db": [
+              "*"
+            ],
+            "instances/p0_app": [
+              "status",
+              "dependencies"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "stop_instance",
+            "project_id": "p0",
+            "resource_id": "p0_app",
+            "params": {}
+          },
+          {
+            "name": "stop_instance",
+            "project_id": "p0",
+            "resource_id": "p0_db",
+            "params": {}
+          },
+          {
+            "name": "detach_dependency",
+            "project_id": "p0",
+            "resource_id": "p0_app",
+            "params": {
+              "dependency_id": "p0_db"
+            }
+          },
+          {
+            "name": "delete_instance",
+            "project_id": "p0",
+            "resource_id": "p0_db",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {}
+              },
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              },
+              {
+                "name": "detach_dependency",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {
+                  "dependency_id": "p0_db"
+                }
+              },
+              {
+                "name": "delete_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "DEPENDENTS_RUNNING"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "DEPENDENCY_STILL_ATTACHED"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "DEPENDENT_MUST_BE_STOPPED"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              }
+            ],
+            "depth": 2,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "DEPENDENTS_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "INSTANCE_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_STILL_ATTACHED"
+                }
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "09edfc9fd2681fe85cc9374cd63ab1d5786bdc9ab9f6979e0d15eccbab237fd7"
+          },
+          {
+            "operations": [
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {}
+              },
+              {
+                "name": "detach_dependency",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {
+                  "dependency_id": "p0_db"
+                }
+              },
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              },
+              {
+                "name": "delete_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "DEPENDENT_MUST_BE_STOPPED"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "DEPENDENCY_STILL_ATTACHED"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "DEPENDENTS_RUNNING"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              }
+            ],
+            "depth": 2,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "DEPENDENT_MUST_BE_STOPPED"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_STILL_ATTACHED"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "INSTANCE_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "09edfc9fd2681fe85cc9374cd63ab1d5786bdc9ab9f6979e0d15eccbab237fd7"
+          }
+        ],
+        "refusal_code": null,
+        "structure_signature": "9b77bed3494d720befc8831231d050cf7b95b3b0aafede692798791c389ed52c",
+        "semantic_signature": "8b86d92ecba032e0135e2385c5abff1f65690a1dcfe995ca5474b9c7053524da",
+        "search_complete": true,
+        "search_nodes": 8
+      }
+    },
+    {
+      "id": "cloudtask_b665ef84612c6ff575154350",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 30001,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 950",
+            "project_id": "p0",
+            "cpu": 4,
+            "memory": 8,
+            "status": "running",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 384",
+            "project_id": "p0",
+            "cpu": 4,
+            "memory": 8,
+            "status": "running",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 544",
+            "project_id": "p0",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 428",
+            "project_id": "p1",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p1_app": {
+            "id": "p1_app",
+            "name": "App 847",
+            "project_id": "p1",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p1_db"
+            ]
+          },
+          "p1_web": {
+            "id": "p1_web",
+            "name": "Web 575",
+            "project_id": "p1",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p1_app"
+            ]
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 219",
+            "project_id": "p2",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 492",
+            "project_id": "p2",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 426",
+            "project_id": "p2",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 967",
+            "project_id": "p3",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 572",
+            "project_id": "p3",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 586",
+            "project_id": "p3",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "dd2fb0862ec8e2fdfbba31810f3364859e3e44d32e48514ee371de8127b3fa67",
+      "identity": "u0",
+      "task": {
+        "version": "cloudops-goals-0.1.0",
+        "id": "cloudtask_b665ef84612c6ff575154350",
+        "initial_state_hash": "dd2fb0862ec8e2fdfbba31810f3364859e3e44d32e48514ee371de8127b3fa67",
+        "family": "safe_retirement",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Retire and delete p0_db safely: take p0_app offline and remove its database dependency. Keep p0_web and every other resource, access, quota and bill unchanged.",
+        "goal": {
+          "predicates": [
+            {
+              "collection": "instances",
+              "entity": "p0_db",
+              "field": "",
+              "comparison": "absent",
+              "value": null
+            },
+            {
+              "collection": "instances",
+              "entity": "p0_app",
+              "field": "status",
+              "comparison": "eq",
+              "value": "stopped"
+            },
+            {
+              "collection": "instances",
+              "entity": "p0_app",
+              "field": "dependencies",
+              "comparison": "eq",
+              "value": []
+            }
+          ],
+          "allowed_changes": {
+            "instances/p0_db": [
+              "*"
+            ],
+            "instances/p0_app": [
+              "status",
+              "dependencies"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "stop_instance",
+            "project_id": "p0",
+            "resource_id": "p0_app",
+            "params": {}
+          },
+          {
+            "name": "stop_instance",
+            "project_id": "p0",
+            "resource_id": "p0_db",
+            "params": {}
+          },
+          {
+            "name": "detach_dependency",
+            "project_id": "p0",
+            "resource_id": "p0_app",
+            "params": {
+              "dependency_id": "p0_db"
+            }
+          },
+          {
+            "name": "delete_instance",
+            "project_id": "p0",
+            "resource_id": "p0_db",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {}
+              },
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              },
+              {
+                "name": "detach_dependency",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {
+                  "dependency_id": "p0_db"
+                }
+              },
+              {
+                "name": "delete_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "DEPENDENTS_RUNNING"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "DEPENDENCY_STILL_ATTACHED"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "DEPENDENT_MUST_BE_STOPPED"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              }
+            ],
+            "depth": 2,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "DEPENDENTS_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "INSTANCE_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_STILL_ATTACHED"
+                }
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "b596e4a4a7f8cdc7cf98075c94174d50fdbe03520b5eb1a18403498594b560ec"
+          },
+          {
+            "operations": [
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {}
+              },
+              {
+                "name": "detach_dependency",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {
+                  "dependency_id": "p0_db"
+                }
+              },
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              },
+              {
+                "name": "delete_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "DEPENDENT_MUST_BE_STOPPED"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "DEPENDENCY_STILL_ATTACHED"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "DEPENDENTS_RUNNING"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              }
+            ],
+            "depth": 2,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "DEPENDENT_MUST_BE_STOPPED"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_STILL_ATTACHED"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "INSTANCE_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "b596e4a4a7f8cdc7cf98075c94174d50fdbe03520b5eb1a18403498594b560ec"
+          }
+        ],
+        "refusal_code": null,
+        "structure_signature": "9b77bed3494d720befc8831231d050cf7b95b3b0aafede692798791c389ed52c",
+        "semantic_signature": "8b86d92ecba032e0135e2385c5abff1f65690a1dcfe995ca5474b9c7053524da",
+        "search_complete": true,
+        "search_nodes": 8
+      }
+    },
+    {
+      "id": "cloudtask_a7248296aeeaf7de5f293815",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 30002,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 972",
+            "project_id": "p0",
+            "cpu": 6,
+            "memory": 12,
+            "status": "running",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 951",
+            "project_id": "p0",
+            "cpu": 6,
+            "memory": 12,
+            "status": "running",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 510",
+            "project_id": "p0",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 285",
+            "project_id": "p1",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p1_app": {
+            "id": "p1_app",
+            "name": "App 390",
+            "project_id": "p1",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p1_db"
+            ]
+          },
+          "p1_web": {
+            "id": "p1_web",
+            "name": "Web 763",
+            "project_id": "p1",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p1_app"
+            ]
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 381",
+            "project_id": "p2",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 735",
+            "project_id": "p2",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 165",
+            "project_id": "p2",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 490",
+            "project_id": "p3",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 573",
+            "project_id": "p3",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 366",
+            "project_id": "p3",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "a4d0d9085d731b2c934f2d8077602095703928976461dbe60a2b7708fb194872",
+      "identity": "u0",
+      "task": {
+        "version": "cloudops-goals-0.1.0",
+        "id": "cloudtask_a7248296aeeaf7de5f293815",
+        "initial_state_hash": "a4d0d9085d731b2c934f2d8077602095703928976461dbe60a2b7708fb194872",
+        "family": "safe_retirement",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Retire and delete p0_db safely: take p0_app offline and remove its database dependency. Keep p0_web and every other resource, access, quota and bill unchanged.",
+        "goal": {
+          "predicates": [
+            {
+              "collection": "instances",
+              "entity": "p0_db",
+              "field": "",
+              "comparison": "absent",
+              "value": null
+            },
+            {
+              "collection": "instances",
+              "entity": "p0_app",
+              "field": "status",
+              "comparison": "eq",
+              "value": "stopped"
+            },
+            {
+              "collection": "instances",
+              "entity": "p0_app",
+              "field": "dependencies",
+              "comparison": "eq",
+              "value": []
+            }
+          ],
+          "allowed_changes": {
+            "instances/p0_db": [
+              "*"
+            ],
+            "instances/p0_app": [
+              "status",
+              "dependencies"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "stop_instance",
+            "project_id": "p0",
+            "resource_id": "p0_app",
+            "params": {}
+          },
+          {
+            "name": "stop_instance",
+            "project_id": "p0",
+            "resource_id": "p0_db",
+            "params": {}
+          },
+          {
+            "name": "detach_dependency",
+            "project_id": "p0",
+            "resource_id": "p0_app",
+            "params": {
+              "dependency_id": "p0_db"
+            }
+          },
+          {
+            "name": "delete_instance",
+            "project_id": "p0",
+            "resource_id": "p0_db",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {}
+              },
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              },
+              {
+                "name": "detach_dependency",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {
+                  "dependency_id": "p0_db"
+                }
+              },
+              {
+                "name": "delete_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "DEPENDENTS_RUNNING"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "DEPENDENCY_STILL_ATTACHED"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "DEPENDENT_MUST_BE_STOPPED"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              }
+            ],
+            "depth": 2,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "DEPENDENTS_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "INSTANCE_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_STILL_ATTACHED"
+                }
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "ecfe761b7a009599c0e98558e5d03339f045b041d9b3be04e5bf5a33e4b9a376"
+          },
+          {
+            "operations": [
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {}
+              },
+              {
+                "name": "detach_dependency",
+                "project_id": "p0",
+                "resource_id": "p0_app",
+                "params": {
+                  "dependency_id": "p0_db"
+                }
+              },
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              },
+              {
+                "name": "delete_instance",
+                "project_id": "p0",
+                "resource_id": "p0_db",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "DEPENDENT_MUST_BE_STOPPED"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "DEPENDENCY_STILL_ATTACHED"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "DEPENDENTS_RUNNING"
+              },
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "INSTANCE_RUNNING"
+              }
+            ],
+            "depth": 2,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "DEPENDENT_MUST_BE_STOPPED"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_STILL_ATTACHED"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "INSTANCE_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "ecfe761b7a009599c0e98558e5d03339f045b041d9b3be04e5bf5a33e4b9a376"
+          }
+        ],
+        "refusal_code": null,
+        "structure_signature": "9b77bed3494d720befc8831231d050cf7b95b3b0aafede692798791c389ed52c",
+        "semantic_signature": "8b86d92ecba032e0135e2385c5abff1f65690a1dcfe995ca5474b9c7053524da",
+        "search_complete": true,
+        "search_nodes": 8
+      }
+    },
+    {
+      "id": "cloudtask_ef587f16581d5a56eb1b20bd",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 30100,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 296",
+            "project_id": "p0",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 926",
+            "project_id": "p0",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 594",
+            "project_id": "p0",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 854",
+            "project_id": "p1",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 407",
+            "project_id": "p2",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 453",
+            "project_id": "p2",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 898",
+            "project_id": "p2",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 812",
+            "project_id": "p3",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 436",
+            "project_id": "p3",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 370",
+            "project_id": "p3",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "8d35eab30f3ecd2c6eb44a5eb79845c5fc78f2648afdd65c4d7d19724037b336",
+      "identity": "u0",
+      "task": {
+        "version": "cloudops-goals-0.1.0",
+        "id": "cloudtask_ef587f16581d5a56eb1b20bd",
+        "initial_state_hash": "8d35eab30f3ecd2c6eb44a5eb79845c5fc78f2648afdd65c4d7d19724037b336",
+        "family": "create_stack",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Create replacement_app in p1 named Replacement application with 2 CPU and 4 memory. Connect it to existing p1_db and bring both online; preserve all unrelated state.",
+        "goal": {
+          "predicates": [
+            {
+              "collection": "instances",
+              "entity": "replacement_app",
+              "field": "status",
+              "comparison": "eq",
+              "value": "running"
+            },
+            {
+              "collection": "instances",
+              "entity": "replacement_app",
+              "field": "dependencies",
+              "comparison": "eq",
+              "value": [
+                "p1_db"
+              ]
+            },
+            {
+              "collection": "instances",
+              "entity": "p1_db",
+              "field": "status",
+              "comparison": "eq",
+              "value": "running"
+            }
+          ],
+          "allowed_changes": {
+            "instances/replacement_app": [
+              "*"
+            ],
+            "instances/p1_db": [
+              "status"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "create_instance",
+            "project_id": "p1",
+            "resource_id": "p1",
+            "params": {
+              "instance_id": "replacement_app",
+              "name": "Replacement application",
+              "cpu": 4,
+              "memory": 8
+            }
+          },
+          {
+            "name": "attach_dependency",
+            "project_id": "p1",
+            "resource_id": "replacement_app",
+            "params": {
+              "dependency_id": "p1_db"
+            }
+          },
+          {
+            "name": "start_instance",
+            "project_id": "p1",
+            "resource_id": "p1_db",
+            "params": {}
+          },
+          {
+            "name": "start_instance",
+            "project_id": "p1",
+            "resource_id": "replacement_app",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "create_instance",
+                "project_id": "p1",
+                "resource_id": "p1",
+                "params": {
+                  "instance_id": "replacement_app",
+                  "name": "Replacement application",
+                  "cpu": 4,
+                  "memory": 8
+                }
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {
+                  "dependency_id": "p1_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "p1_db",
+                "params": {}
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "DEPENDENCY_NOT_RUNNING"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_NOT_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "5085cd9cdf714a2ef7bb9a749ff8455831aff0cdb455ba6d66d124769efde0d1"
+          },
+          {
+            "operations": [
+              {
+                "name": "create_instance",
+                "project_id": "p1",
+                "resource_id": "p1",
+                "params": {
+                  "instance_id": "replacement_app",
+                  "name": "Replacement application",
+                  "cpu": 4,
+                  "memory": 8
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "p1_db",
+                "params": {}
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {
+                  "dependency_id": "p1_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "DEPENDENCY_NOT_RUNNING"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 2,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_NOT_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "5085cd9cdf714a2ef7bb9a749ff8455831aff0cdb455ba6d66d124769efde0d1"
+          },
+          {
+            "operations": [
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "p1_db",
+                "params": {}
+              },
+              {
+                "name": "create_instance",
+                "project_id": "p1",
+                "resource_id": "p1",
+                "params": {
+                  "instance_id": "replacement_app",
+                  "name": "Replacement application",
+                  "cpu": 4,
+                  "memory": 8
+                }
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {
+                  "dependency_id": "p1_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "DEPENDENCY_NOT_RUNNING"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_NOT_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "5085cd9cdf714a2ef7bb9a749ff8455831aff0cdb455ba6d66d124769efde0d1"
+          }
+        ],
+        "refusal_code": null,
+        "structure_signature": "fa86be78eb0a33a2f06ed43eddd81649fdd5f6ad820502c3743f9d6eec0291df",
+        "semantic_signature": "84fbcc96bc0c4b2a3483b01cee31f9d721b44abe3228281cf84223902896ef45",
+        "search_complete": true,
+        "search_nodes": 16
+      }
+    },
+    {
+      "id": "cloudtask_9a800f53bdfcf228e180eece",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 30101,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 204",
+            "project_id": "p0",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 527",
+            "project_id": "p0",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 832",
+            "project_id": "p0",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 828",
+            "project_id": "p1",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 905",
+            "project_id": "p2",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 563",
+            "project_id": "p2",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 650",
+            "project_id": "p2",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 546",
+            "project_id": "p3",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 856",
+            "project_id": "p3",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 971",
+            "project_id": "p3",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "5c8cee1a4bad05cb0666b22ea732da496b753b39461aac6defc4dd05106d0e6b",
+      "identity": "u0",
+      "task": {
+        "version": "cloudops-goals-0.1.0",
+        "id": "cloudtask_9a800f53bdfcf228e180eece",
+        "initial_state_hash": "5c8cee1a4bad05cb0666b22ea732da496b753b39461aac6defc4dd05106d0e6b",
+        "family": "create_stack",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Create replacement_app in p1 named Replacement application with 2 CPU and 4 memory. Connect it to existing p1_db and bring both online; preserve all unrelated state.",
+        "goal": {
+          "predicates": [
+            {
+              "collection": "instances",
+              "entity": "replacement_app",
+              "field": "status",
+              "comparison": "eq",
+              "value": "running"
+            },
+            {
+              "collection": "instances",
+              "entity": "replacement_app",
+              "field": "dependencies",
+              "comparison": "eq",
+              "value": [
+                "p1_db"
+              ]
+            },
+            {
+              "collection": "instances",
+              "entity": "p1_db",
+              "field": "status",
+              "comparison": "eq",
+              "value": "running"
+            }
+          ],
+          "allowed_changes": {
+            "instances/replacement_app": [
+              "*"
+            ],
+            "instances/p1_db": [
+              "status"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "create_instance",
+            "project_id": "p1",
+            "resource_id": "p1",
+            "params": {
+              "instance_id": "replacement_app",
+              "name": "Replacement application",
+              "cpu": 6,
+              "memory": 12
+            }
+          },
+          {
+            "name": "attach_dependency",
+            "project_id": "p1",
+            "resource_id": "replacement_app",
+            "params": {
+              "dependency_id": "p1_db"
+            }
+          },
+          {
+            "name": "start_instance",
+            "project_id": "p1",
+            "resource_id": "p1_db",
+            "params": {}
+          },
+          {
+            "name": "start_instance",
+            "project_id": "p1",
+            "resource_id": "replacement_app",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "create_instance",
+                "project_id": "p1",
+                "resource_id": "p1",
+                "params": {
+                  "instance_id": "replacement_app",
+                  "name": "Replacement application",
+                  "cpu": 6,
+                  "memory": 12
+                }
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {
+                  "dependency_id": "p1_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "p1_db",
+                "params": {}
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "DEPENDENCY_NOT_RUNNING"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_NOT_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "b79e8d9c71d1d5c0b3a90c657e25633fea1d69c9e5c8002ddd686b4bd7bc1c43"
+          },
+          {
+            "operations": [
+              {
+                "name": "create_instance",
+                "project_id": "p1",
+                "resource_id": "p1",
+                "params": {
+                  "instance_id": "replacement_app",
+                  "name": "Replacement application",
+                  "cpu": 6,
+                  "memory": 12
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "p1_db",
+                "params": {}
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {
+                  "dependency_id": "p1_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "DEPENDENCY_NOT_RUNNING"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 2,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_NOT_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "b79e8d9c71d1d5c0b3a90c657e25633fea1d69c9e5c8002ddd686b4bd7bc1c43"
+          },
+          {
+            "operations": [
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "p1_db",
+                "params": {}
+              },
+              {
+                "name": "create_instance",
+                "project_id": "p1",
+                "resource_id": "p1",
+                "params": {
+                  "instance_id": "replacement_app",
+                  "name": "Replacement application",
+                  "cpu": 6,
+                  "memory": 12
+                }
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {
+                  "dependency_id": "p1_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "DEPENDENCY_NOT_RUNNING"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_NOT_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "b79e8d9c71d1d5c0b3a90c657e25633fea1d69c9e5c8002ddd686b4bd7bc1c43"
+          }
+        ],
+        "refusal_code": null,
+        "structure_signature": "fa86be78eb0a33a2f06ed43eddd81649fdd5f6ad820502c3743f9d6eec0291df",
+        "semantic_signature": "84fbcc96bc0c4b2a3483b01cee31f9d721b44abe3228281cf84223902896ef45",
+        "search_complete": true,
+        "search_nodes": 16
+      }
+    },
+    {
+      "id": "cloudtask_5fc19809e20801a1d8bcc3b0",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 30102,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 389",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 649",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 994",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 250",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 900",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 563",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 330",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 159",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 721",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 276",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "26192b3c0338e1b769518bb82b2b105e142a8302add75e1ba12f0cb873281cb2",
+      "identity": "u0",
+      "task": {
+        "version": "cloudops-goals-0.1.0",
+        "id": "cloudtask_5fc19809e20801a1d8bcc3b0",
+        "initial_state_hash": "26192b3c0338e1b769518bb82b2b105e142a8302add75e1ba12f0cb873281cb2",
+        "family": "create_stack",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Create replacement_app in p1 named Replacement application with 2 CPU and 4 memory. Connect it to existing p1_db and bring both online; preserve all unrelated state.",
+        "goal": {
+          "predicates": [
+            {
+              "collection": "instances",
+              "entity": "replacement_app",
+              "field": "status",
+              "comparison": "eq",
+              "value": "running"
+            },
+            {
+              "collection": "instances",
+              "entity": "replacement_app",
+              "field": "dependencies",
+              "comparison": "eq",
+              "value": [
+                "p1_db"
+              ]
+            },
+            {
+              "collection": "instances",
+              "entity": "p1_db",
+              "field": "status",
+              "comparison": "eq",
+              "value": "running"
+            }
+          ],
+          "allowed_changes": {
+            "instances/replacement_app": [
+              "*"
+            ],
+            "instances/p1_db": [
+              "status"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "create_instance",
+            "project_id": "p1",
+            "resource_id": "p1",
+            "params": {
+              "instance_id": "replacement_app",
+              "name": "Replacement application",
+              "cpu": 2,
+              "memory": 4
+            }
+          },
+          {
+            "name": "attach_dependency",
+            "project_id": "p1",
+            "resource_id": "replacement_app",
+            "params": {
+              "dependency_id": "p1_db"
+            }
+          },
+          {
+            "name": "start_instance",
+            "project_id": "p1",
+            "resource_id": "p1_db",
+            "params": {}
+          },
+          {
+            "name": "start_instance",
+            "project_id": "p1",
+            "resource_id": "replacement_app",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "create_instance",
+                "project_id": "p1",
+                "resource_id": "p1",
+                "params": {
+                  "instance_id": "replacement_app",
+                  "name": "Replacement application",
+                  "cpu": 2,
+                  "memory": 4
+                }
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {
+                  "dependency_id": "p1_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "p1_db",
+                "params": {}
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 2,
+                "to": 3,
+                "error_code": "DEPENDENCY_NOT_RUNNING"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 2,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_NOT_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "c13ab57d226f0120d4404be00048b2895b09c5827d9509df47a494c502dcee02"
+          },
+          {
+            "operations": [
+              {
+                "name": "create_instance",
+                "project_id": "p1",
+                "resource_id": "p1",
+                "params": {
+                  "instance_id": "replacement_app",
+                  "name": "Replacement application",
+                  "cpu": 2,
+                  "memory": 4
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "p1_db",
+                "params": {}
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {
+                  "dependency_id": "p1_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 2,
+                "error_code": "RESOURCE_NOT_FOUND"
+              },
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "DEPENDENCY_NOT_RUNNING"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 2,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_NOT_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "c13ab57d226f0120d4404be00048b2895b09c5827d9509df47a494c502dcee02"
+          },
+          {
+            "operations": [
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "p1_db",
+                "params": {}
+              },
+              {
+                "name": "create_instance",
+                "project_id": "p1",
+                "resource_id": "p1",
+                "params": {
+                  "instance_id": "replacement_app",
+                  "name": "Replacement application",
+                  "cpu": 2,
+                  "memory": 4
+                }
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {
+                  "dependency_id": "p1_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p1",
+                "resource_id": "replacement_app",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 3,
+                "error_code": "DEPENDENCY_NOT_RUNNING"
+              },
+              {
+                "from": 1,
+                "to": 2,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "indirect_edges": [
+              {
+                "from": 1,
+                "to": 3,
+                "error_code": "RESOURCE_NOT_FOUND"
+              }
+            ],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 3,
+                  "error_code": "DEPENDENCY_NOT_RUNNING"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 1,
+                  "to": 2,
+                  "error_code": "RESOURCE_NOT_FOUND"
+                }
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 3,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "c13ab57d226f0120d4404be00048b2895b09c5827d9509df47a494c502dcee02"
+          }
+        ],
+        "refusal_code": null,
+        "structure_signature": "fa86be78eb0a33a2f06ed43eddd81649fdd5f6ad820502c3743f9d6eec0291df",
+        "semantic_signature": "84fbcc96bc0c4b2a3483b01cee31f9d721b44abe3228281cf84223902896ef45",
+        "search_complete": true,
+        "search_nodes": 16
+      }
+    },
+    {
+      "id": "cloudtask_bcfde18e9dd2e48148c27ef2",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 30200,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 18,
+              "memory": 36,
+              "instances": 3
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 871",
+            "project_id": "p0",
+            "cpu": 6,
+            "memory": 12,
+            "status": "running",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 254",
+            "project_id": "p0",
+            "cpu": 6,
+            "memory": 12,
+            "status": "running",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 936",
+            "project_id": "p0",
+            "cpu": 6,
+            "memory": 12,
+            "status": "running",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 428",
+            "project_id": "p1",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p1_app": {
+            "id": "p1_app",
+            "name": "App 518",
+            "project_id": "p1",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p1_db"
+            ]
+          },
+          "p1_web": {
+            "id": "p1_web",
+            "name": "Web 364",
+            "project_id": "p1",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p1_app"
+            ]
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 668",
+            "project_id": "p2",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 589",
+            "project_id": "p2",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 639",
+            "project_id": "p2",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 865",
+            "project_id": "p3",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 871",
+            "project_id": "p3",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 398",
+            "project_id": "p3",
+            "cpu": 6,
+            "memory": 12,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "4b6da31361622f4a8e763d16a8d83031fd5eac5c0771298fcbd5d2c58e1d5e75",
+      "identity": "u0",
+      "task": {
+        "version": "cloudops-goals-0.1.0",
+        "id": "cloudtask_bcfde18e9dd2e48148c27ef2",
+        "initial_state_hash": "4b6da31361622f4a8e763d16a8d83031fd5eac5c0771298fcbd5d2c58e1d5e75",
+        "family": "live_reconfigure",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Add a direct p0_db dependency to live p0_web and return p0_web to running. Keep its existing p0_app dependency, both backend services, quota, billing and other projects unchanged.",
+        "goal": {
+          "predicates": [
+            {
+              "collection": "instances",
+              "entity": "p0_web",
+              "field": "dependencies",
+              "comparison": "eq",
+              "value": [
+                "p0_app",
+                "p0_db"
+              ]
+            },
+            {
+              "collection": "instances",
+              "entity": "p0_web",
+              "field": "status",
+              "comparison": "eq",
+              "value": "running"
+            }
+          ],
+          "allowed_changes": {
+            "instances/p0_web": [
+              "dependencies",
+              "status"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "stop_instance",
+            "project_id": "p0",
+            "resource_id": "p0_web",
+            "params": {}
+          },
+          {
+            "name": "attach_dependency",
+            "project_id": "p0",
+            "resource_id": "p0_web",
+            "params": {
+              "dependency_id": "p0_db"
+            }
+          },
+          {
+            "name": "start_instance",
+            "project_id": "p0",
+            "resource_id": "p0_web",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_web",
+                "params": {}
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p0",
+                "resource_id": "p0_web",
+                "params": {
+                  "dependency_id": "p0_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p0",
+                "resource_id": "p0_web",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "DEPENDENT_MUST_BE_STOPPED"
+              }
+            ],
+            "indirect_edges": [],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "DEPENDENT_MUST_BE_STOPPED"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "999b3f55915ff0fe305a417d33761b23064a26cde67e0dcd5aa46466c9934d7e"
+          }
+        ],
+        "refusal_code": null,
+        "structure_signature": "0fd59a8984eee94e54381d1b1996d3b7c8bac35f8b06040cd8a05ff2380b178e",
+        "semantic_signature": "d34754ab31e40e63fde1749c845faa94391c930189db1f8f96a533f5e3aa91a9",
+        "search_complete": true,
+        "search_nodes": 5
+      }
+    },
+    {
+      "id": "cloudtask_ed0276d560d6ea70d2bb1727",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 30201,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 6,
+              "memory": 12,
+              "instances": 3
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 4,
+              "memory": 8,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 299",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "running",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 722",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "running",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 251",
+            "project_id": "p0",
+            "cpu": 2,
+            "memory": 4,
+            "status": "running",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 891",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p1_app": {
+            "id": "p1_app",
+            "name": "App 769",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p1_db"
+            ]
+          },
+          "p1_web": {
+            "id": "p1_web",
+            "name": "Web 913",
+            "project_id": "p1",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p1_app"
+            ]
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 750",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 372",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 406",
+            "project_id": "p2",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 728",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 423",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 448",
+            "project_id": "p3",
+            "cpu": 2,
+            "memory": 4,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "9062f659282fbe00ff79a04983d5e5e54b83679f9a2de42423a2e064a74d4ace",
+      "identity": "u0",
+      "task": {
+        "version": "cloudops-goals-0.1.0",
+        "id": "cloudtask_ed0276d560d6ea70d2bb1727",
+        "initial_state_hash": "9062f659282fbe00ff79a04983d5e5e54b83679f9a2de42423a2e064a74d4ace",
+        "family": "live_reconfigure",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Add a direct p0_db dependency to live p0_web and return p0_web to running. Keep its existing p0_app dependency, both backend services, quota, billing and other projects unchanged.",
+        "goal": {
+          "predicates": [
+            {
+              "collection": "instances",
+              "entity": "p0_web",
+              "field": "dependencies",
+              "comparison": "eq",
+              "value": [
+                "p0_app",
+                "p0_db"
+              ]
+            },
+            {
+              "collection": "instances",
+              "entity": "p0_web",
+              "field": "status",
+              "comparison": "eq",
+              "value": "running"
+            }
+          ],
+          "allowed_changes": {
+            "instances/p0_web": [
+              "dependencies",
+              "status"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "stop_instance",
+            "project_id": "p0",
+            "resource_id": "p0_web",
+            "params": {}
+          },
+          {
+            "name": "attach_dependency",
+            "project_id": "p0",
+            "resource_id": "p0_web",
+            "params": {
+              "dependency_id": "p0_db"
+            }
+          },
+          {
+            "name": "start_instance",
+            "project_id": "p0",
+            "resource_id": "p0_web",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_web",
+                "params": {}
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p0",
+                "resource_id": "p0_web",
+                "params": {
+                  "dependency_id": "p0_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p0",
+                "resource_id": "p0_web",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "DEPENDENT_MUST_BE_STOPPED"
+              }
+            ],
+            "indirect_edges": [],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "DEPENDENT_MUST_BE_STOPPED"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "31bd80c114c1687581594baeb4a173a82982a7eac610e37b7a925cfee5476c73"
+          }
+        ],
+        "refusal_code": null,
+        "structure_signature": "0fd59a8984eee94e54381d1b1996d3b7c8bac35f8b06040cd8a05ff2380b178e",
+        "semantic_signature": "d34754ab31e40e63fde1749c845faa94391c930189db1f8f96a533f5e3aa91a9",
+        "search_complete": true,
+        "search_nodes": 5
+      }
+    },
+    {
+      "id": "cloudtask_eaecfa689c1309566abc570c",
+      "world": {
+        "domain": "cloudops",
+        "version": "cloudops-0.1.0",
+        "seed": 30202,
+        "clock": "2026-01-15T12:00:00Z",
+        "users": {
+          "u0": {
+            "id": "u0",
+            "name": "Employee 0"
+          },
+          "u1": {
+            "id": "u1",
+            "name": "Employee 1"
+          },
+          "u2": {
+            "id": "u2",
+            "name": "Employee 2"
+          },
+          "u3": {
+            "id": "u3",
+            "name": "Employee 3"
+          },
+          "u4": {
+            "id": "u4",
+            "name": "Employee 4"
+          }
+        },
+        "organizations": {
+          "o0": {
+            "id": "o0",
+            "name": "Organization 0",
+            "owner_id": "u0"
+          },
+          "o1": {
+            "id": "o1",
+            "name": "Organization 1",
+            "owner_id": "u4"
+          }
+        },
+        "projects": {
+          "p0": {
+            "id": "p0",
+            "name": "production",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill0",
+            "quota": {
+              "cpu": 12,
+              "memory": 24,
+              "instances": 3
+            }
+          },
+          "p1": {
+            "id": "p1",
+            "name": "development",
+            "org_id": "o0",
+            "status": "active",
+            "invoice_id": "bill1",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          },
+          "p2": {
+            "id": "p2",
+            "name": "staging",
+            "org_id": "o0",
+            "status": "suspended",
+            "invoice_id": "bill2",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          },
+          "p3": {
+            "id": "p3",
+            "name": "production",
+            "org_id": "o1",
+            "status": "active",
+            "invoice_id": "bill3",
+            "quota": {
+              "cpu": 8,
+              "memory": 16,
+              "instances": 2
+            }
+          }
+        },
+        "access": {
+          "p0_u0": {
+            "id": "p0_u0",
+            "project_id": "p0",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p1_u0": {
+            "id": "p1_u0",
+            "project_id": "p1",
+            "user_id": "u0",
+            "role": "admin"
+          },
+          "p0_u1": {
+            "id": "p0_u1",
+            "project_id": "p0",
+            "user_id": "u1",
+            "role": "viewer"
+          },
+          "p0_u2": {
+            "id": "p0_u2",
+            "project_id": "p0",
+            "user_id": "u2",
+            "role": "viewer"
+          },
+          "p1_u1": {
+            "id": "p1_u1",
+            "project_id": "p1",
+            "user_id": "u1",
+            "role": "admin"
+          },
+          "p1_u2": {
+            "id": "p1_u2",
+            "project_id": "p1",
+            "user_id": "u2",
+            "role": "operator"
+          },
+          "p1_u3": {
+            "id": "p1_u3",
+            "project_id": "p1",
+            "user_id": "u3",
+            "role": "viewer"
+          },
+          "p2_u2": {
+            "id": "p2_u2",
+            "project_id": "p2",
+            "user_id": "u2",
+            "role": "operator"
+          }
+        },
+        "instances": {
+          "p0_db": {
+            "id": "p0_db",
+            "name": "Db 449",
+            "project_id": "p0",
+            "cpu": 4,
+            "memory": 8,
+            "status": "running",
+            "dependencies": []
+          },
+          "p0_app": {
+            "id": "p0_app",
+            "name": "App 709",
+            "project_id": "p0",
+            "cpu": 4,
+            "memory": 8,
+            "status": "running",
+            "dependencies": [
+              "p0_db"
+            ]
+          },
+          "p0_web": {
+            "id": "p0_web",
+            "name": "Web 988",
+            "project_id": "p0",
+            "cpu": 4,
+            "memory": 8,
+            "status": "running",
+            "dependencies": [
+              "p0_app"
+            ]
+          },
+          "p1_db": {
+            "id": "p1_db",
+            "name": "Db 478",
+            "project_id": "p1",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p1_app": {
+            "id": "p1_app",
+            "name": "App 955",
+            "project_id": "p1",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p1_db"
+            ]
+          },
+          "p1_web": {
+            "id": "p1_web",
+            "name": "Web 679",
+            "project_id": "p1",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p1_app"
+            ]
+          },
+          "p2_db": {
+            "id": "p2_db",
+            "name": "Db 722",
+            "project_id": "p2",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p2_app": {
+            "id": "p2_app",
+            "name": "App 227",
+            "project_id": "p2",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p2_db"
+            ]
+          },
+          "p2_web": {
+            "id": "p2_web",
+            "name": "Web 402",
+            "project_id": "p2",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p2_app"
+            ]
+          },
+          "p3_db": {
+            "id": "p3_db",
+            "name": "Db 338",
+            "project_id": "p3",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": []
+          },
+          "p3_app": {
+            "id": "p3_app",
+            "name": "App 930",
+            "project_id": "p3",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p3_db"
+            ]
+          },
+          "p3_web": {
+            "id": "p3_web",
+            "name": "Web 323",
+            "project_id": "p3",
+            "cpu": 4,
+            "memory": 8,
+            "status": "stopped",
+            "dependencies": [
+              "p3_app"
+            ]
+          }
+        },
+        "invoices": {
+          "bill0": {
+            "id": "bill0",
+            "project_id": "p0",
+            "amount_cents": 1000,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original0",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1000,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill1": {
+            "id": "bill1",
+            "project_id": "p1",
+            "amount_cents": 1100,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original1",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1100,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          },
+          "bill2": {
+            "id": "bill2",
+            "project_id": "p2",
+            "amount_cents": 1200,
+            "status": "unpaid",
+            "payments": []
+          },
+          "bill3": {
+            "id": "bill3",
+            "project_id": "p3",
+            "amount_cents": 1300,
+            "status": "paid",
+            "payments": [
+              {
+                "id": "original3",
+                "key": "original",
+                "method": "card_approved",
+                "amount_cents": 1300,
+                "outcome": "succeeded",
+                "at": "2026-01-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      },
+      "initial_hash": "60f3da02d5e8d4d6137b50d00c90101b9bcdc9536d176dc3b7b186e6a865bb2a",
+      "identity": "u0",
+      "task": {
+        "version": "cloudops-goals-0.1.0",
+        "id": "cloudtask_eaecfa689c1309566abc570c",
+        "initial_state_hash": "60f3da02d5e8d4d6137b50d00c90101b9bcdc9536d176dc3b7b186e6a865bb2a",
+        "family": "live_reconfigure",
+        "identity": "u0",
+        "kind": "completion",
+        "message": "Add a direct p0_db dependency to live p0_web and return p0_web to running. Keep its existing p0_app dependency, both backend services, quota, billing and other projects unchanged.",
+        "goal": {
+          "predicates": [
+            {
+              "collection": "instances",
+              "entity": "p0_web",
+              "field": "dependencies",
+              "comparison": "eq",
+              "value": [
+                "p0_app",
+                "p0_db"
+              ]
+            },
+            {
+              "collection": "instances",
+              "entity": "p0_web",
+              "field": "status",
+              "comparison": "eq",
+              "value": "running"
+            }
+          ],
+          "allowed_changes": {
+            "instances/p0_web": [
+              "dependencies",
+              "status"
+            ]
+          }
+        },
+        "capabilities": [
+          {
+            "name": "stop_instance",
+            "project_id": "p0",
+            "resource_id": "p0_web",
+            "params": {}
+          },
+          {
+            "name": "attach_dependency",
+            "project_id": "p0",
+            "resource_id": "p0_web",
+            "params": {
+              "dependency_id": "p0_db"
+            }
+          },
+          {
+            "name": "start_instance",
+            "project_id": "p0",
+            "resource_id": "p0_web",
+            "params": {}
+          }
+        ],
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "stop_instance",
+                "project_id": "p0",
+                "resource_id": "p0_web",
+                "params": {}
+              },
+              {
+                "name": "attach_dependency",
+                "project_id": "p0",
+                "resource_id": "p0_web",
+                "params": {
+                  "dependency_id": "p0_db"
+                }
+              },
+              {
+                "name": "start_instance",
+                "project_id": "p0",
+                "resource_id": "p0_web",
+                "params": {}
+              }
+            ],
+            "direct_edges": [
+              {
+                "from": 0,
+                "to": 1,
+                "error_code": "DEPENDENT_MUST_BE_STOPPED"
+              }
+            ],
+            "indirect_edges": [],
+            "depth": 1,
+            "omissions": [
+              {
+                "omitted_step": 0,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": {
+                  "from": 0,
+                  "to": 1,
+                  "error_code": "DEPENDENT_MUST_BE_STOPPED"
+                }
+              },
+              {
+                "omitted_step": 1,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              },
+              {
+                "omitted_step": 2,
+                "goal_satisfied_after_remaining_legal_steps": false,
+                "first_failure": null
+              }
+            ],
+            "final_state_hash": "a2fab5e26ccdd3969e7da8738f3218da9e162c07bb7d178d99d3c68d5cd0973f"
+          }
+        ],
+        "refusal_code": null,
+        "structure_signature": "0fd59a8984eee94e54381d1b1996d3b7c8bac35f8b06040cd8a05ff2380b178e",
+        "semantic_signature": "d34754ab31e40e63fde1749c845faa94391c930189db1f8f96a533f5e3aa91a9",
+        "search_complete": true,
+        "search_nodes": 5
+      }
+    }
+  ],
+  "source_hashes": {
+    "usami/__init__.py": "32fd90cc175330e5763b25ffcb0ff860fdb0c09e02ecce135acbc994e969bbbf",
+    "usami/__main__.py": "ee847d69a4bfe9c24eb84d30b6232f5309073bd753669ce95111d59a28defe85",
+    "usami/audit/__init__.py": "ff848e128b1c8f512403a26ad274b88b8db1f1d849b14f009e614e0fe9c973cc",
+    "usami/audit/__main__.py": "7ab475c7f6cc130cbcc0781d1108c5861aedc1b52c48f512ebe9296c79fb34ba",
+    "usami/audit/report.py": "02c260d3ea97db7a984e1ca43f8ac3c5de26082f1bcf2d171e69cfbdbe3fe463",
+    "usami/audit/rules.py": "75944a8af59c2ac584ffab4d1ae128aa83b79834a5b29c3246f1dcb942677109",
+    "usami/audit/runner.py": "7bf205b8a4ebbb21d0cba3bf9e70fb24a12144ffc9d64602df7c10bd0c2cfd39",
+    "usami/audit/signatures.py": "fc929824171f8d45b8de4356eeb31f2c31138656d0e2152adb267ab502d6b2fb",
+    "usami/benchmark/__init__.py": "b7b427408344be94524afbd0f03d1f8b21f13770f8a7b922b00cfb7ef83ff182",
+    "usami/benchmark/__main__.py": "aff45dbe69c9be0c591a0e0c006ba0bd554f73de50fb1ea5f84d83d21e64c7a3",
+    "usami/benchmark/audit_v2.py": "c5319d2d28afb648eada662047270e5462a4f412eed8060d1afa1177ad7a5cfb",
+    "usami/benchmark/baselines.py": "6a9c418691f4bcbfd9df93a593226ba0d88b23a7661880c99cb4729de8336926",
+    "usami/benchmark/goals.py": "856df7a1107b9f7fd74fac8a9e04a92721323b6858ec34a7a3fc16f42d4ca182",
+    "usami/benchmark/goals_v2.py": "617460ae5bf6a33e58c6c1a5793de637b2dcc3409157ba350c9f9818ad7fdbd5",
+    "usami/benchmark/manifest.py": "f5a01b37b5df11993ccb25b6973658911173d4485d2198521a69d5b38a583a65",
+    "usami/benchmark/release_v2.py": "462806417cc1db22a94ecd4579f95744d683bfa368eab7845776042746a40841",
+    "usami/benchmark/runtime.py": "4c4fbb8ce51145d89ce8eabc90970b7c2f333eaf0d36c15eb9ed505815d7ebd8",
+    "usami/benchmark/scoring.py": "052fb65a7a336a1f3684eb6e0cddc41c6951a698228a59b4fb7206016f726f77",
+    "usami/benchmark/scoring_v2.py": "13294ba44961619308dc1e6f4f0546e558cf6168b22c027bc6e8346b1cd5e2d0",
+    "usami/benchmark/suite.py": "b43872b1c1c6bfa708355adfe9e810981248cc06f4b3f67c0fac2b11b16d8e57",
+    "usami/customer/__init__.py": "566f40d424c7ee6ed5e455d8e7bcf349f338052b3deab8569082fefadecca213",
+    "usami/customer/agent.py": "635f896a65c23f3d385a4eafbe8452bd8dccd751a661f7420b7c687eca755f08",
+    "usami/customer/models.py": "7ae70f9e621c133d0ea2e857ef043d6dfe509a4a56eb38baeea9a6787e049bc9",
+    "usami/customer/observation.py": "a0c1d98cf57f2f0437f189e0a7cbf52f63bdb2a43b12e53ec2dad376ebbd6010",
+    "usami/evaluation/__init__.py": "2d16da142577a1f97abc548b7a6ec12446c8375ee9fa4d049cd7379e14828607",
+    "usami/evaluation/oracle.py": "3a3fb6db0c6a1260f7e051262b02f0d02dab161e8b62ff87b3148fba27571c23",
+    "usami/evaluation/scenario.py": "69c5e75bbd6096f908aee103d1b0aa1fdd452f63695c709ba15168b273911394",
+    "usami/evaluation/splits.py": "e917b74633d5790404dfd084e45f73dd3cdaaf3b029568eb7224e35a77d930cc",
+    "usami/events.py": "ca7c741389aede8db12732f4cb7b4c9ecbf9cd0ec60fa72aee351b3cbeed7394",
+    "usami/interaction/__init__.py": "15936514491af8e148553656e74ad2ed2533c8b61320298a025e37bfcbb52958",
+    "usami/interaction/__main__.py": "d5d6e583a8f627e1caaf1fe84524c88f271717094371e8724ddf506b739368bd",
+    "usami/interaction/authorization.py": "cb8c493178595ad14ace7bef80ff223fa4c122c9316022c07f4075aefb1d9cdc",
+    "usami/interaction/models.py": "f2cc10aa547a1a05de2e1e1142773f13684845755f120f59ba598e03564edd8e",
+    "usami/interaction/runner.py": "94b95df86b204ce75bf5c534a55da07f43bd7f8f428bc5b08b9a8139b7641191",
+    "usami/protocol.py": "7682a13b6d592813857439ce3fb50324f2bb2fd0ef84f39c7725cff8c504f9bb",
+    "usami/randomness.py": "42bd8b48bca6f9946861c3b1e7137900406d0b945391d6a1893280d691c35572",
+    "usami/service/__init__.py": "7590487bf241368ae51294e98c896fcd09d5d49d6039dfec02eca6eb8e8f1a11",
+    "usami/service/__main__.py": "7fd80af3907c1b04009d9310a6b0d48ec16da3a133a4776a7a9e3e5180b01b4a",
+    "usami/service/client.py": "cb783b8322bfb1db3834830edfe06c75847c505f2941b0518fc1fb2d0b842b40",
+    "usami/service/models.py": "ac41bd08bab7f7fa3d593fd59bd7e2a89e28632fe27df9701f126832d8637a20",
+    "usami/service/runner.py": "b27e5ba7d86b392cd3bbbeb60df37180f88e9e56dc548da8bfa06dbb75918ccd",
+    "usami/service/tools.py": "d34db1528ead23b57a6d1cf449ac24c6f6dc6c7ad64834a6a5b3ffabc328cf6a",
+    "usami/world/__init__.py": "1c21b8471eeb161758e7ef1c4e957bfe49e3351b0688e70aea93ebb28e06d325",
+    "usami/world/engine.py": "5f7dbe972c9aa6f172826719c89ded8bff9afce92e413be1f3e70d06c4016d10",
+    "usami/world/generator.py": "6048fdec6e8247af33163772b2a5cda6a18b52358783705ac44f5d06f6be9a3f",
+    "usami/world/generator_v2.py": "9505981da0fc8e24f0197bc8e03a0c7f880a9f20124dfeaca501b4cb7e247b2f",
+    "usami/world/models.py": "131ef77f8797c35a29e44a8e6126f380b81cde4055bb0daeb09a402d48f316a5",
+    "usami/world/rules.py": "f50c1af9ebc91762e3796f3edb13bd3d2d47a4f57f382f49b1a26d2c93c9090f",
+    "usami/world/rules_v2.py": "29f299764e6c33ff4df6f5d975ae088bb8c89c100b23b29f4373f035e2a05ea9",
+    "usami/world/transitions_v2.py": "4a8037c26b1b0a479199398ef113edad61818a9d2b9443783ecd8d4d764fb120",
+    "usami_cloudops/__init__.py": "89fa0f017705b62c1dbc10bea47a263322fad61cccc64297270b6fb283b3fb78",
+    "usami_cloudops/__main__.py": "75dd7c0be7fd8d1bb5a4f275aa09d7f576a6c48d4139282ccfa4ac003e087159",
+    "usami_cloudops/baselines.py": "f512615c0cbe231392ffaa24f5286bbd396404a4bc665113a0c3cdc20c049128",
+    "usami_cloudops/benchmark.py": "5e91da55032d51978e1f3dbf386cffd02eec2e7cba629613d8cb2fda9c810781",
+    "usami_cloudops/customer.py": "add2d4601119f3d84eea4589514c47247666e739f8d4ee189ea6225cd3ef8651",
+    "usami_cloudops/engine.py": "126c11298c31b879b5cdaf0e86f713448c53eef4b40390d03ed4fa124aa51601",
+    "usami_cloudops/generator.py": "f53de74fc95f6d7868bea81ea19915628a97012918ee9b2a0f3d53a3bc015417",
+    "usami_cloudops/goals.py": "46ad211cc14e630a7e67a3d7b03848920452345e9c8d39fe815811c2cc23e49c",
+    "usami_cloudops/models.py": "60c41ee38124877129b10a9504d025e31ac6de63dca71c43ac656bb14e63b22a",
+    "usami_cloudops/observations.py": "960f1d6dad319b343366ff2f6d21124a604ce303727fce76e55c344a6ab3b714",
+    "usami_cloudops/oracle.py": "ee96f5e78fcd5d49284613e58d17f92c49d22cebf3f44bc30d0a2ae72f1f7f73",
+    "usami_cloudops/release.py": "3fcd5179e33cd6dab134c797a81f7189c3fdd8a01a55c0751db933b6517436f2",
+    "usami_cloudops/rules.py": "046e85d0a2069e4a812758216cbfb7c7429f212b6692952d7d8b7537614c7cc4",
+    "usami_cloudops/service.py": "bd84888c8ae610e57150a51093080353bb1fdcee7ef1dfb489cfced8455d2da3",
+    "usami_cloudops/signatures.py": "2ca36ab60f03d5dfc0a29599ea5809687fe9fdaf65d31c667e8a205d51d2b8e9",
+    "usami_cloudops/suite.py": "5bf1b8e9b499c3d02010463c4a0397bc1171de8bc9779ffb3c9f50b67b42896d",
+    "usami_cloudops/tools.py": "a45e477e1cbed60da75ac1c396c530600d55ef8f4cba5c2a19630b7a36a68b72",
+    "usami_cloudops/transitions.py": "8b87837419eb4ecd7d6e8f47b6a493a9bf204f0d57fd58fc5e2267dddf7e510d"
+  },
+  "dataset_hash": "f8b4d061789570f82f78f9c02463974fe2a4375bde78f70f7606cdd7b4fe5a1b",
+  "manifest_hash": "d494631d26387a5001a91eb62d1eba1cef0dc3b2006586253372741ccfa07eae"
+}

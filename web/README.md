@@ -46,13 +46,27 @@ uvicorn web.backend.app:app --host 127.0.0.1 --port 8001
 
 此时打开 <http://127.0.0.1:8001>。页面内部导航不依赖 URL 路由。停止再启动后端会清空所有内存会话。
 
+## v0.2 对齐
+
+网页默认创建 v0.2 世界；已有会话保留原版本。Advanced settings 可切换 v0.1 / v0.2，并选择 22 种业务 workflow。v0.2 至少需要 8 名目录用户。API 不带 config 的默认会话仍为 v0.1，兼容原调用方。
+
+- Playground 支持 14 种写操作与 4 种只读查询：成员邀请、激活、停用、移除，模拟支付、开续期账单、续期、恢复和到期。支付和 v0.2 退款提供 idempotency key；返回数据与新账单 ID 在 **Tool / engine return data** 中。
+- Organizations 展示 pending / inactive 成员、服务资金账单、剩余可退金额和支付、退款账本；关系图增加 Payment / Refund 节点和账单周期关联。
+- **Benchmark v0.2** 读取实际发布的四份 Manifest，浏览 278 个 Service Task / 6 个 Discovery 世界，展示固定身份、seed、工具、预算、版本与 hash。Inspect 可查看 evaluator 的目标、frame、依赖证书与合法路径。
+- **Load for manual exploration** 核验冻结初始 hash 后替换当前世界与历史。后续主体可人工选择，页面明确标记为手动探索；不产生 Benchmark 分数，不将 Playground 参数当作真实 Customer 授权。
+- 真实模型证据区展示已发布的 6 次 Service / 3 次 Discovery pilot：Customer 多轮消息、Service LLM 请求响应、工具参数与返回、事件前后状态和 Oracle。**Replay recorded run** 使用冻结 profile、核心 `score_run()` 与记录客户端，完整核验模型请求、Engine、授权与预算，不调用外部模型。新实时实验继续通过 Benchmark CLI 执行。
+- Scenarios 的 **v0.2 Reference Witness** 来自当前 workflow 的真实 goal generator，是人工规则路径演示，不是 Service 自主决策。
+
+完整 release 的模型能力评测和外部人工 review 尚未完成；Pilot 的 100% / 33.3% 仅对应已发布的小规模联调。网页不读取钥匙串，不接收上传的 profile 或授权，私有测试实例不公开。
+
 ## 五分钟探索
 
-1. **World Overview** 默认生成真实 Seed 42 世界：3 个组织、8 个用户、1 个 active 订阅、12 张账单。组织卡片可进入详情；点击成员、账单和规则可查看原始实体。
+1. **World Overview** 默认生成真实 v0.2 Seed 42 世界：3 个组织、8 个用户、1 个 active 订阅、12 张账单。组织卡片可进入详情；点击成员、账单和规则可查看原始实体。
 2. **World Graph** 从当前世界生成节点与 Membership 角色边。可以筛选组织、拖动、缩放、适应画布，以及点击节点或成员关系查看数据。
 3. **Operation Playground** 选择 Workspace 1 / Owner，执行 `change_plan → Team`。查看修改的字段、Before / After 和独立 Oracle。Reset 后执行 `change_seats → 6`，Reference 应拒绝；在 Sandbox 中重复，席位会改变，Oracle 报告违规。也可尝试退款、角色修改和关闭续费。
 4. **Scenarios** 默认显示五步套餐组合：升级 → 增席 → 降级被拒 → 减席 → 再次降级。Run 后点选每一步，比较真实连续状态与由 Reference Rules 推导的预期结果。
 5. **Event Timeline** 查看请求、操作、评分及其完整 JSON；Export Trace JSON 导出完整轨迹，Replay Trace 调用 Python 确定性重放并核对当前状态。
+6. **Benchmark v0.2** 选择公开 suite，浏览冻结目标，载入实例进行手动探索；在真实 pilot 表中打开轨迹并离线重放。
 
 生成器支持 Seed、用户数、组织数和已有 profile。相同 Seed、配置及版本产生相同初始 hash。Generate 会创建新的初始状态并清除操作历史；Reset 恢复本次生成的初始快照。模拟业务时间来自 WorldState 的冻结 UTC 时钟。
 
@@ -77,7 +91,14 @@ uvicorn web.backend.app:app --host 127.0.0.1 --port 8001
 | `GET /api/world` | 状态、组织关系、摘要、事件和 Oracle |
 | `POST /api/world/generate`, `/api/world/reset` | 生成与恢复初始世界 |
 | `GET /api/world/graph?org_id=...` | 真实实体与关系 |
-| `POST /api/operations` | 五种业务写操作，reference / sandbox |
+| `POST /api/operations` | 14 种 v0.2 写操作与 4 种只读查询，reference / sandbox |
+| `GET /api/catalog` | 版本与 workflow 列表 |
+| `GET /api/benchmark` | 实际发布的 suite 摘要、coverage 与 pilot 分数 |
+| `GET /api/benchmark/suites/{key}` | 公开冻结实例列表 |
+| `GET /api/benchmark/suites/{key}/instances/{id}` | 完整目标与 evaluator 证书 |
+| `POST /api/benchmark/load` | 核验初始 hash 后载入手动探索世界 |
+| `GET /api/benchmark/pilots/{hash}` | 公开 run 的完整证据 |
+| `POST /api/benchmark/pilots/{hash}/replay` | 通过当前核心模块离线重放并评分 |
 | `GET /api/scenarios`, `POST /api/scenarios/run` | 派生和执行已有组合场景 |
 | `GET /api/events/{event_id}` | 事件与完整前后快照 |
 | `GET /api/export/world`, `/api/export/trace` | 下载 JSON |

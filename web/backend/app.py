@@ -14,7 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import Field
 
 from usami import WorldEngine, evaluate_trace, generate_scenarios, generate_world, make_request, replay_trace
-from usami.evaluation.scenario import Scenario, validate_scenario
+from usami.evaluation.scenario import Scenario, validate_scenario, derive_scenario
 from usami.protocol import Operation, RequestContext
 from usami.world.generator import GeneratorConfig
 from usami.world.models import Model, WorldState
@@ -30,7 +30,7 @@ REASONS = {
     "SEAT_LIMIT_EXCEEDED": "席位数量超过当前套餐或目标套餐的上限。",
     "SEATS_BELOW_MEMBERS": "席位数量不能少于当前有效成员数量，且至少需要一个席位。",
     "SUBSCRIPTION_NOT_ACTIVE": "当前订阅已经过期，不能变更套餐、席位或续费。",
-    "OWNER_IMMUTABLE": "v0.1 不支持转移、降级 Owner 或创建第二个 Owner。",
+    "OWNER_IMMUTABLE": "当前业务模型 不支持转移、降级 Owner 或创建第二个 Owner。",
     "MEMBERSHIP_NOT_ACTIVE": "只能修改有效成员的角色。",
     "INVOICE_NOT_PAID": "账单尚未支付，不能退款。",
     "REFUND_WINDOW_EXPIRED": "该账单已超过当前规则规定的退款期限。",
@@ -74,6 +74,7 @@ class Session:
     scenarios: Optional[Dict[str, Scenario]] = None
     lock: Any = field(default_factory=threading.RLock)
     touched: float = field(default_factory=time.monotonic)
+    exploration_source: Optional[Dict[str, str]] = None
 
 
 def changes(before: Any, after: Any, path: str = ""):
@@ -114,6 +115,7 @@ def snapshot(session: Session):
     report = evaluate_trace(trace, trusted_requests=session.requests)
     return {"world": world.model_dump(mode="json"), "config": session.config.model_dump(mode="json"),
             "initial_state_hash": session.initial.state_hash, "state_hash": world.state_hash,
+            "exploration_source": session.exploration_source,
             "trace_initial_state_hash": trace.initial_state_hash,
             "summary": {"organizations": len(world.organizations), "users": len(world.users),
                         "active_subscriptions": sum(s.status == "active" for s in world.subscriptions.values()),
@@ -132,23 +134,37 @@ def assert_current(session: Session, expected: str):
 
 def scenario_catalog(session: Session):
     if session.scenarios is None:
-        session.scenarios = {s.scenario_id: s for s in generate_scenarios(session.initial)}
+        items = generate_scenarios(session.initial)
+        if session.config.workflow:
+            from usami.benchmark.goals_v2 import build_task
+            task = build_task(session.initial, session.config.workflow)
+            paths = [w.operations for w in task.witnesses]
+            if task.policy_certificate:
+                paths = [[task.policy_certificate.operation]]
+            for index, path in enumerate(paths):
+                items.append(derive_scenario(session.initial, f"v2_{task.family}_{index}",
+                    [(task.identity, op) for op in path], "business_witness"))
+        session.scenarios = {s.scenario_id: s for s in items}
     return session.scenarios
 
 
 def operation_view(event, report, decision):
     evaluation = next(r for r in report.requests if r.request_id == event.payload["request_id"])
     code = event.payload["result"]["error_code"] or decision.error_code
+    reasons = REASONS
+    if event.before.rules.version == "saas-rules-0.2.0":
+        from usami.world.rules_v2 import public_policy_catalog
+        reasons = {**REASONS, **public_policy_catalog()["policy"]}
     return {"event": event.model_dump(mode="json"),
             "changes": changes(event.before.model_dump(mode="json"), event.after.model_dump(mode="json")),
             "evaluation": evaluation.model_dump(mode="json"),
             "reference_allowed": None if decision.error_code in {"INVALID_WORLD", "UNSUPPORTED_RULES_VERSION"} else decision.allowed,
             "reference_error_code": decision.error_code,
-            "reason": REASONS.get(code, code or "操作满足当前业务规则，已按明确请求完成。")}
+            "reason": reasons.get(code, code or "操作满足当前业务规则，已按明确请求完成。")}
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="Usami World Explorer", version="0.1.0")
+    app = FastAPI(title="Usami World Explorer", version="0.2.0")
     app.state.sessions = {}
     app.state.store_lock = threading.RLock()
 
@@ -198,7 +214,7 @@ def create_app() -> FastAPI:
         with session.lock:
             session.config = command.config.model_copy(deep=True)
             session.initial, session.engine = world.clone(), WorldEngine(world)
-            session.requests, session.scenarios = {}, None
+            session.requests, session.scenarios, session.exploration_source = {}, None, None
             return snapshot(session)
 
     @app.post("/api/world/reset")
@@ -233,9 +249,18 @@ def create_app() -> FastAPI:
             if inv.org_id in org_ids:
                 nodes.append({"id": inv.id, "kind": "invoice", "label": inv.id, "entity": inv.model_dump(mode="json")})
                 edges.append({"id": "invoice_" + inv.id, "source": inv.org_id, "target": inv.id, "label": inv.status, "kind": "invoice"})
+                if inv.subscription_id:
+                    edges.append({"id": "funding_" + inv.id, "source": inv.id, "target": inv.subscription_id,
+                                  "label": inv.purpose or "billing cycle", "kind": "funding"})
+                for kind, records in ((("payment", inv.payments or []), ("refund", inv.refunds)) if world.rules.version == "saas-rules-0.2.0" else ()):
+                    for record in records:
+                        nodes.append({"id": record.id, "kind": kind, "label": record.id,
+                                      "entity": {**record.model_dump(mode="json"), "org_id": inv.org_id, "invoice_id": inv.id}})
+                        edges.append({"id": kind + "_" + record.id, "source": inv.id, "target": record.id,
+                                      "label": kind, "kind": kind})
         for member in memberships:
             edges.append({"id": member.id, "source": member.user_id, "target": member.org_id,
-                          "label": member.role.replace("_", " ") + (" · inactive" if member.status == "inactive" else ""),
+                          "label": member.role.replace("_", " ") + (" · " + member.status if member.status != "active" else ""),
                           "kind": "membership", "entity": member.model_dump(mode="json")})
         return {"nodes": nodes, "edges": edges, "state_hash": world.state_hash}
 
@@ -313,6 +338,9 @@ def create_app() -> FastAPI:
             return {"replayed": True, "event_count": len(trace.events), "final_state_hash": replayed.state.state_hash,
                     "matches_current_state": replayed.state == session.engine.state,
                     "evaluation": report.model_dump(mode="json")}
+
+    from web.backend.release import install_release_routes
+    install_release_routes(app, current, snapshot, assert_current)
 
     # Optional single-origin preview after `npm run build`; API routes take precedence.
     dist = Path(__file__).resolve().parents[1] / "frontend" / "dist"

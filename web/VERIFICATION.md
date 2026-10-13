@@ -1,5 +1,24 @@
 # World Explorer 实际验收
 
+## v0.2 对齐验收 · 2026-10-13
+
+桌面 Chrome 1440 × 1000，继续按用户要求不验收手机端。
+
+| 检查 | 实际结果 |
+| --- | --- |
+| `.venv/bin/python -m pytest -q` | **420 passed**，53.93s，含 25 项 Web 集成测试 |
+| `cd web/frontend && npm run build` | TypeScript 和 Vite 构建成功，1744 modules |
+| `cd web/frontend && npm run test:e2e` | **13 passed**，15.9s，7 项 v0.1 回归 + 6 项 v0.2 桌面流程 |
+| 发布 pilot 的 HTTP 重放 | 全部 6 次 Service / 3 次 Discovery 的当前核心重放分数与发布记录逐项相等 |
+
+新增验证包括默认 v0.2 世界、22 种 workflow 目录、成员席位拒绝与 Sandbox 不变量证据、真实 goal witness 连续执行、冻结世界和事件重放、失败支付恢复、幂等支付重试、部分退款余额、邀请 / 激活 / 停用 / 移除成员，以及新增账单支付后实际续期。关系图包含真实账本记录和账单订阅关联。
+
+Benchmark 页的实例数量为 Train 170 / Validation 68 / Test demo 40 / Discovery 6。测试核验目标证书、预算、初始 hash、加载后的人工探索标记和实际 Discovery 成功违规的离线重放；陈旧 hash 被拒绝，任意 suite / run 文件路径不被接受。公开 pilot 内的 Customer 错误与仅授权异常仍保留；完整 release 能力评分和外部人工 review 未完成。
+
+实际截图在忽略提交的 `outputs/web-v2/`，包含 benchmark-overview、benchmark-pilot、billing-graph、lifecycle-replay 和 frozen-world。人工检查了当前浏览器中的 v0.2 发布页。此次没有改动 `usami/` 核心规则或任何冻结 Manifest，原 source pins 仍有效。
+
+## v0.1 原始验收记录
+
 日期：2026-10-12。环境：macOS，Python 3.9.6，Node 26.8.2，npm 11.19.1，Google Chrome。桌面验收视口 1440 × 1000；按照用户后续要求，不继续验收手机端。
 
 ## 运行结果

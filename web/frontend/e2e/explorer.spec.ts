@@ -8,6 +8,8 @@ const state = async (page: Page) => (await page.request.get('/api/world')).json(
 const result = (page: Page) => page.getByTestId('operation-result');
 
 test.beforeEach(async ({ page }) => {
+  // Legacy regression coverage is explicitly pinned to the v0.1 world.
+  await page.request.post('/api/sessions', { data: { seed: 42 } });
   await page.goto('/');
   await expect(page.getByText('Python engine connected')).toBeVisible();
 });
@@ -75,9 +77,9 @@ test('legal change, rejected change and sandbox invariant violation use actual e
   expect((await state(page)).world.subscriptions.sub_001.seats).toBe(6);
   await page.screenshot({ path: `${screenshots}/sandbox.png`, fullPage: true });
   await result(page).getByRole('tab', { name: 'Before', exact: true }).click();
-  await expect(result(page).locator('.json-view')).toContainText('"seats": 3');
+  await expect(result(page).locator('.json-view:visible')).toContainText('"seats": 3');
   await result(page).getByRole('tab', { name: 'After', exact: true }).click();
-  await expect(result(page).locator('.json-view')).toContainText('"seats": 6');
+  await expect(result(page).locator('.json-view:visible')).toContainText('"seats": 6');
   await page.getByRole('button', { name: 'Reset World', exact: true }).click();
   expect((await state(page)).state_hash).toBe(initial.state_hash);
 });
@@ -156,6 +158,7 @@ test('seed regenerates deterministically and separate browser sessions stay isol
   const initial = await state(page);
   const other = await browser.newContext();
   const second = await other.newPage();
+  await second.request.post('http://127.0.0.1:5173/api/sessions', { data: { seed: 42 } });
   await second.goto('http://127.0.0.1:5173');
   await expect(second.getByText('Python engine connected')).toBeVisible();
   await page.getByLabel('Seed', { exact: true }).fill('71');

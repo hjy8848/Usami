@@ -20,3 +20,31 @@
 .sandbox-note strong,.sandbox-note span,.warning-banner{color:#83612d}.error-code{font-size:11px;color:#9c653c}
 .form-step>label,.operation-form fieldset{min-width:0}.form-step select{min-width:0;max-width:100%}
 .result-empty>div{flex-wrap:wrap;justify-content:center}.evidence button{font-size:10px;color:#5678ae}
+
+.advanced-panel { flex-wrap: wrap; }
+.benchmark-page { display: grid; gap: 24px; }
+.benchmark-intro .intro-copy { max-width: 610px; }
+.track-cards { display: grid; gap: 18px; padding: 24px; min-width: 290px; }
+.track-cards > div { display: grid; gap: 8px; padding: 20px; border: 1px solid #d9e2f3; border-radius: 12px; background: #ffffffb0; }
+.track-cards span { font-size: 12px; color: #637086; }
+.benchmark-library { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; }
+.benchmark-list { padding: 20px; }
+.benchmark-list label { display: grid; gap: 8px; margin-bottom: 16px; font-size: 12px; color: #637086; }
+.benchmark-instance-list { max-height: 620px; overflow-y: auto; }
+.benchmark-instance-list button { display: grid; gap: 6px; width: 100%; text-align: left; padding: 14px 12px; background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
+.benchmark-instance-list button.selected { background: #edf2ff; color: #3159c9; }
+.benchmark-instance-list span, .benchmark-instance-list small { font-size: 11px; color: #637086; }
+.benchmark-detail, .pilot-panel, .benchmark-evidence { padding: 24px; min-width: 0; }
+.benchmark-detail > .button { margin: 8px 8px 12px 0; }
+.benchmark-message { white-space: pre-wrap; line-height: 1.7; padding: 18px; background: #f3f6fc; border-radius: 10px; overflow-wrap: anywhere; }
+.benchmark-budget { display: grid; gap: 10px; margin: 18px 0; }
+.benchmark-budget > div { display: flex; justify-content: space-between; color: #637086; font-size: 12px; }
+.pilot-panel > p, .benchmark-evidence > p { line-height: 1.7; color: #637086; }
+.pilot-panel td code { display: block; font-size: 10px; }
+.pilot-trace { border-top: 1px solid #e5eaf3; margin-top: 22px; padding-top: 22px; }
+.benchmark-page details { padding: 14px 0; }
+.benchmark-page summary { cursor: pointer; color: #536682; font-size: 12px; overflow-wrap: anywhere; }
+.benchmark-page .json-view { max-height: 450px; overflow: auto; }
+.invoice-ledger { font-size: 11px; color: #637086; line-height: 1.7; }
+.entity-payment { border-color: #20a49d !important; }
+.entity-refund { border-color: #d4819e !important; }

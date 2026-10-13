@@ -1,0 +1,2219 @@
+{
+  "version": "usami-benchmark-0.1.0",
+  "suite_id": "usami-goals-v0.1",
+  "release": "0.1.0",
+  "track": "service_task",
+  "split": "test",
+  "visibility": "demo",
+  "generator": {
+    "version": "saas-generator-0.1.0",
+    "user_count": 8,
+    "organization_count": 3,
+    "clock": "2026-01-15T12:00:00Z",
+    "profile": "standard",
+    "rules": {
+      "version": "saas-rules-0.1.0",
+      "refund_window_days": 14,
+      "plans": {
+        "starter": {
+          "id": "starter",
+          "name": "Starter",
+          "rank": 0,
+          "max_seats": 5
+        },
+        "team": {
+          "id": "team",
+          "name": "Team",
+          "rank": 1,
+          "max_seats": 20
+        },
+        "business": {
+          "id": "business",
+          "name": "Business",
+          "rank": 2,
+          "max_seats": 100
+        }
+      }
+    }
+  },
+  "mode": "reference",
+  "tools": [
+    "get_customer_context",
+    "get_organization",
+    "list_members",
+    "get_subscription",
+    "get_invoice",
+    "change_plan",
+    "change_seats",
+    "cancel_renewal",
+    "refund_invoice",
+    "change_member_role"
+  ],
+  "budget": {
+    "max_customer_turns": 1,
+    "max_customer_llm_calls": 0,
+    "max_service_llm_calls": 8,
+    "max_service_tool_calls": 16
+  },
+  "service_model": {
+    "model": "fixture_model",
+    "base_url": "https://example.invalid/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 2048
+    },
+    "trust_env": false
+  },
+  "customer_model": null,
+  "trials": [
+    "r0"
+  ],
+  "instances": [
+    {
+      "instance_id": "goal_4463b3b9e3e0e0c37e656d82",
+      "seed": 2000043,
+      "initial_state_hash": "2a5e19d04dfd895be93d2410504facb660189e513a949242a05c2f8268ad8c85",
+      "customer_identity": "user_001",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_4463b3b9e3e0e0c37e656d82",
+        "initial_state_hash": "2a5e19d04dfd895be93d2410504facb660189e513a949242a05c2f8268ad8c85",
+        "identity": "user_001",
+        "family": "plan_before_seats",
+        "actor_role": "billing_admin",
+        "goal": {
+          "org_id": "org_002",
+          "subscription_id": "sub_002",
+          "plan_id": "team",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_002 in organization org_002 on plan team, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "6139250fb57b26e9f33df9c76ec4cae59c0b709980e4717c57a7c77307d8193a",
+        "semantic_signature": "bce7087ecf9c8633a0bb555f18a18635aed1df0b40e0487c48cc88fd75e4843f",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_1c736d09f9515d99bcd40e83",
+      "seed": 2000043,
+      "initial_state_hash": "2a5e19d04dfd895be93d2410504facb660189e513a949242a05c2f8268ad8c85",
+      "customer_identity": "user_001",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_1c736d09f9515d99bcd40e83",
+        "initial_state_hash": "2a5e19d04dfd895be93d2410504facb660189e513a949242a05c2f8268ad8c85",
+        "identity": "user_001",
+        "family": "plan_before_seats",
+        "actor_role": "billing_admin",
+        "goal": {
+          "org_id": "org_002",
+          "subscription_id": "sub_002",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_002 in organization org_002 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "6139250fb57b26e9f33df9c76ec4cae59c0b709980e4717c57a7c77307d8193a",
+        "semantic_signature": "bce7087ecf9c8633a0bb555f18a18635aed1df0b40e0487c48cc88fd75e4843f",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_baea7b631552605f3c38b51e",
+      "seed": 2000004,
+      "initial_state_hash": "e3ec7754141fdd25b61b4b4f3645b812ad55f57020f7763b00d238688d312b39",
+      "customer_identity": "user_006",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_baea7b631552605f3c38b51e",
+        "initial_state_hash": "e3ec7754141fdd25b61b4b4f3645b812ad55f57020f7763b00d238688d312b39",
+        "identity": "user_006",
+        "family": "plan_before_seats",
+        "actor_role": "billing_admin",
+        "goal": {
+          "org_id": "org_001",
+          "subscription_id": "sub_001",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "starter"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "seats": 6
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_001 in organization org_001 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "6139250fb57b26e9f33df9c76ec4cae59c0b709980e4717c57a7c77307d8193a",
+        "semantic_signature": "2dbeb04f32718ce121269e99110b3bde6876c8ac231d957906501a00647ccaeb",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_7612ed417f3749210309c27a",
+      "seed": 2000040,
+      "initial_state_hash": "e80492e3a3922306d9f7a02e2f18837106fe66a5cb7c34025d22be7c22f7035f",
+      "customer_identity": "user_001",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_7612ed417f3749210309c27a",
+        "initial_state_hash": "e80492e3a3922306d9f7a02e2f18837106fe66a5cb7c34025d22be7c22f7035f",
+        "identity": "user_001",
+        "family": "plan_before_seats",
+        "actor_role": "billing_admin",
+        "goal": {
+          "org_id": "org_000",
+          "subscription_id": "sub_000",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "starter"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "team"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_000 in organization org_000 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "6139250fb57b26e9f33df9c76ec4cae59c0b709980e4717c57a7c77307d8193a",
+        "semantic_signature": "2a4d0db8f197c406c34b3a44b51baaabf6e2cedba691f17e1c501256804b2ce3",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_de88c57a6b87c41349b88392",
+      "seed": 2000053,
+      "initial_state_hash": "fcbd27e947f2e512a38a3caf1b8c65c5a6507bbc21ff31ecdc28ddc306676016",
+      "customer_identity": "user_003",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_de88c57a6b87c41349b88392",
+        "initial_state_hash": "fcbd27e947f2e512a38a3caf1b8c65c5a6507bbc21ff31ecdc28ddc306676016",
+        "identity": "user_003",
+        "family": "plan_before_seats",
+        "actor_role": "billing_admin",
+        "goal": {
+          "org_id": "org_002",
+          "subscription_id": "sub_002",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_002 in organization org_002 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "6139250fb57b26e9f33df9c76ec4cae59c0b709980e4717c57a7c77307d8193a",
+        "semantic_signature": "2dbeb04f32718ce121269e99110b3bde6876c8ac231d957906501a00647ccaeb",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_7047989d9337c96f36c7d3c8",
+      "seed": 2000029,
+      "initial_state_hash": "f35bc49a059a7317aed93e313749603463be9a317abc921e68e85b06bb5334f2",
+      "customer_identity": "user_006",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_7047989d9337c96f36c7d3c8",
+        "initial_state_hash": "f35bc49a059a7317aed93e313749603463be9a317abc921e68e85b06bb5334f2",
+        "identity": "user_006",
+        "family": "plan_before_seats",
+        "actor_role": "billing_admin",
+        "goal": {
+          "org_id": "org_000",
+          "subscription_id": "sub_000",
+          "plan_id": "team",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "starter"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "team"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_000 in organization org_000 on plan team, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "6139250fb57b26e9f33df9c76ec4cae59c0b709980e4717c57a7c77307d8193a",
+        "semantic_signature": "2a4d0db8f197c406c34b3a44b51baaabf6e2cedba691f17e1c501256804b2ce3",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "team"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_26abf9fac53f9737decf7455",
+      "seed": 2000053,
+      "initial_state_hash": "fcbd27e947f2e512a38a3caf1b8c65c5a6507bbc21ff31ecdc28ddc306676016",
+      "customer_identity": "user_006",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_26abf9fac53f9737decf7455",
+        "initial_state_hash": "fcbd27e947f2e512a38a3caf1b8c65c5a6507bbc21ff31ecdc28ddc306676016",
+        "identity": "user_006",
+        "family": "plan_before_seats",
+        "actor_role": "billing_admin",
+        "goal": {
+          "org_id": "org_002",
+          "subscription_id": "sub_002",
+          "plan_id": "team",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_002 in organization org_002 on plan team, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "6139250fb57b26e9f33df9c76ec4cae59c0b709980e4717c57a7c77307d8193a",
+        "semantic_signature": "2dbeb04f32718ce121269e99110b3bde6876c8ac231d957906501a00647ccaeb",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_f8735f5a4dc02dd3a882d368",
+      "seed": 2000053,
+      "initial_state_hash": "fcbd27e947f2e512a38a3caf1b8c65c5a6507bbc21ff31ecdc28ddc306676016",
+      "customer_identity": "user_007",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_f8735f5a4dc02dd3a882d368",
+        "initial_state_hash": "fcbd27e947f2e512a38a3caf1b8c65c5a6507bbc21ff31ecdc28ddc306676016",
+        "identity": "user_007",
+        "family": "plan_before_seats",
+        "actor_role": "billing_admin",
+        "goal": {
+          "org_id": "org_001",
+          "subscription_id": "sub_001",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "starter"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "seats": 6
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_001 in organization org_001 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "6139250fb57b26e9f33df9c76ec4cae59c0b709980e4717c57a7c77307d8193a",
+        "semantic_signature": "76d3c5a6016cfc3772a874a5b8bf47349fb7db7dd018fea1b74bb7a1da206ac6",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_1986340754025be9a55e40dc",
+      "seed": 2000003,
+      "initial_state_hash": "6a17ed99a5e2be41d2090dd00ce4acb1cd3c4eaf52b61ef57c2eb57a7bf603f7",
+      "customer_identity": "user_002",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_1986340754025be9a55e40dc",
+        "initial_state_hash": "6a17ed99a5e2be41d2090dd00ce4acb1cd3c4eaf52b61ef57c2eb57a7bf603f7",
+        "identity": "user_002",
+        "family": "plan_before_seats",
+        "actor_role": "owner",
+        "goal": {
+          "org_id": "org_002",
+          "subscription_id": "sub_002",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_002 in organization org_002 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "98e8a21100759d1734928c8baecab0326de4867dc1a445109a823ca0acf7b8a0",
+        "semantic_signature": "943f5725ccf32d4311d1b045a704d5b4c434e79a6e435af917edda8daf2f9336",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_eb515283fb15546ef31c988b",
+      "seed": 2000028,
+      "initial_state_hash": "35698613230ee9c914503df95fc7e49ba5793b4f23f8d87495e43fda70f59b56",
+      "customer_identity": "user_000",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_eb515283fb15546ef31c988b",
+        "initial_state_hash": "35698613230ee9c914503df95fc7e49ba5793b4f23f8d87495e43fda70f59b56",
+        "identity": "user_000",
+        "family": "plan_before_seats",
+        "actor_role": "owner",
+        "goal": {
+          "org_id": "org_000",
+          "subscription_id": "sub_000",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "starter"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "team"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_000 in organization org_000 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "98e8a21100759d1734928c8baecab0326de4867dc1a445109a823ca0acf7b8a0",
+        "semantic_signature": "87afd1b64cb421c96eaa87223b681369853df076445507c987a1e44c4725dc0d",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_a7ca92530f89a4570a48dd63",
+      "seed": 2000043,
+      "initial_state_hash": "2a5e19d04dfd895be93d2410504facb660189e513a949242a05c2f8268ad8c85",
+      "customer_identity": "user_002",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_a7ca92530f89a4570a48dd63",
+        "initial_state_hash": "2a5e19d04dfd895be93d2410504facb660189e513a949242a05c2f8268ad8c85",
+        "identity": "user_002",
+        "family": "plan_before_seats",
+        "actor_role": "owner",
+        "goal": {
+          "org_id": "org_002",
+          "subscription_id": "sub_002",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_002 in organization org_002 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "98e8a21100759d1734928c8baecab0326de4867dc1a445109a823ca0acf7b8a0",
+        "semantic_signature": "a263095481545f7e50a88cd9c6e8c1c0997f4280bd55f813dd090535e2f76669",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_2815a58771aec530239b88e2",
+      "seed": 2000026,
+      "initial_state_hash": "5940b5967a0d3721ffc619f3b0fb231ba2878fe40346bd636e0d31b6be5f45fe",
+      "customer_identity": "user_002",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_2815a58771aec530239b88e2",
+        "initial_state_hash": "5940b5967a0d3721ffc619f3b0fb231ba2878fe40346bd636e0d31b6be5f45fe",
+        "identity": "user_002",
+        "family": "plan_before_seats",
+        "actor_role": "owner",
+        "goal": {
+          "org_id": "org_002",
+          "subscription_id": "sub_002",
+          "plan_id": "team",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_002 in organization org_002 on plan team, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "98e8a21100759d1734928c8baecab0326de4867dc1a445109a823ca0acf7b8a0",
+        "semantic_signature": "a263095481545f7e50a88cd9c6e8c1c0997f4280bd55f813dd090535e2f76669",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_af9a32f152c56aeb0668d9e5",
+      "seed": 2000050,
+      "initial_state_hash": "8ae464b9d135e7b30b07606e1bb67d0ca5247cc6495afe41f5b360c4f11526cf",
+      "customer_identity": "user_002",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_af9a32f152c56aeb0668d9e5",
+        "initial_state_hash": "8ae464b9d135e7b30b07606e1bb67d0ca5247cc6495afe41f5b360c4f11526cf",
+        "identity": "user_002",
+        "family": "plan_before_seats",
+        "actor_role": "owner",
+        "goal": {
+          "org_id": "org_002",
+          "subscription_id": "sub_002",
+          "plan_id": "team",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_002 in organization org_002 on plan team, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "98e8a21100759d1734928c8baecab0326de4867dc1a445109a823ca0acf7b8a0",
+        "semantic_signature": "3d3bbd8d8380f72ecc0e8c586dd6cf16b1b1d9281616d24da2a7b5e08c1b01b3",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_abc3f1acb310a30cc7a5b938",
+      "seed": 2000053,
+      "initial_state_hash": "fcbd27e947f2e512a38a3caf1b8c65c5a6507bbc21ff31ecdc28ddc306676016",
+      "customer_identity": "user_001",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_abc3f1acb310a30cc7a5b938",
+        "initial_state_hash": "fcbd27e947f2e512a38a3caf1b8c65c5a6507bbc21ff31ecdc28ddc306676016",
+        "identity": "user_001",
+        "family": "plan_before_seats",
+        "actor_role": "owner",
+        "goal": {
+          "org_id": "org_001",
+          "subscription_id": "sub_001",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "starter"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "seats": 6
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_001 in organization org_001 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "98e8a21100759d1734928c8baecab0326de4867dc1a445109a823ca0acf7b8a0",
+        "semantic_signature": "3d3bbd8d8380f72ecc0e8c586dd6cf16b1b1d9281616d24da2a7b5e08c1b01b3",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_c7ea38806af2570054e9f233",
+      "seed": 2000050,
+      "initial_state_hash": "8ae464b9d135e7b30b07606e1bb67d0ca5247cc6495afe41f5b360c4f11526cf",
+      "customer_identity": "user_002",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_c7ea38806af2570054e9f233",
+        "initial_state_hash": "8ae464b9d135e7b30b07606e1bb67d0ca5247cc6495afe41f5b360c4f11526cf",
+        "identity": "user_002",
+        "family": "plan_before_seats",
+        "actor_role": "owner",
+        "goal": {
+          "org_id": "org_002",
+          "subscription_id": "sub_002",
+          "plan_id": "business",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_002",
+            "resource_id": "sub_002",
+            "params": {
+              "plan_id": "starter"
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_002 in organization org_002 on plan business, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "98e8a21100759d1734928c8baecab0326de4867dc1a445109a823ca0acf7b8a0",
+        "semantic_signature": "3d3bbd8d8380f72ecc0e8c586dd6cf16b1b1d9281616d24da2a7b5e08c1b01b3",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_002",
+                "resource_id": "sub_002",
+                "params": {
+                  "plan_id": "business"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "goal_2ecd3a2257d589b6a976f18e",
+      "seed": 2000041,
+      "initial_state_hash": "7893213d8659e84f91ae83ba255b4e3f8933cdb6aa04b1a23b26787ad72bead1",
+      "customer_identity": "user_001",
+      "task": {
+        "version": "usami-goals-0.1.0",
+        "task_id": "goal_2ecd3a2257d589b6a976f18e",
+        "initial_state_hash": "7893213d8659e84f91ae83ba255b4e3f8933cdb6aa04b1a23b26787ad72bead1",
+        "identity": "user_001",
+        "family": "plan_before_seats",
+        "actor_role": "owner",
+        "goal": {
+          "org_id": "org_001",
+          "subscription_id": "sub_001",
+          "plan_id": "team",
+          "acceptable_seats": [
+            6
+          ]
+        },
+        "capabilities": [
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "team"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "starter"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "plan_id": "business"
+            }
+          },
+          {
+            "name": "change_seats",
+            "org_id": "org_001",
+            "resource_id": "sub_001",
+            "params": {
+              "seats": 6
+            }
+          }
+        ],
+        "message": "Please finish with subscription sub_001 in organization org_001 on plan team, with a seat count chosen from [6]. Choose a legal route yourself. For this goal I authorize changing only this subscription's plan to any of ['business', 'starter', 'team'], and its seats to any of [6], each exact write at most once. Leave every other field and resource unchanged. You may query business information. Verify the result and report it.",
+        "structure_signature": "98e8a21100759d1734928c8baecab0326de4867dc1a445109a823ca0acf7b8a0",
+        "semantic_signature": "3d3bbd8d8380f72ecc0e8c586dd6cf16b1b1d9281616d24da2a7b5e08c1b01b3",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "seats": 6
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          },
+          {
+            "operations": [
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "business"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_001",
+                "resource_id": "sub_001",
+                "params": {
+                  "plan_id": "team"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1
+          }
+        ],
+        "search_nodes": 10,
+        "search_complete": true
+      },
+      "exploration_strategy": null
+    }
+  ],
+  "sampling": {
+    "candidate_seeds": [
+      2000000,
+      2000001,
+      2000002,
+      2000003,
+      2000004,
+      2000005,
+      2000006,
+      2000007,
+      2000008,
+      2000009,
+      2000010,
+      2000011,
+      2000012,
+      2000013,
+      2000014,
+      2000015,
+      2000016,
+      2000017,
+      2000018,
+      2000019,
+      2000020,
+      2000021,
+      2000022,
+      2000023,
+      2000024,
+      2000025,
+      2000026,
+      2000027,
+      2000028,
+      2000029,
+      2000030,
+      2000031,
+      2000032,
+      2000033,
+      2000034,
+      2000035,
+      2000036,
+      2000037,
+      2000038,
+      2000039,
+      2000040,
+      2000041,
+      2000042,
+      2000043,
+      2000044,
+      2000045,
+      2000046,
+      2000047,
+      2000048,
+      2000049,
+      2000050,
+      2000051,
+      2000052,
+      2000053,
+      2000054,
+      2000055,
+      2000056,
+      2000057,
+      2000058,
+      2000059,
+      2000060,
+      2000061,
+      2000062,
+      2000063
+    ],
+    "quotas": {
+      "plan_before_seats/owner": 8,
+      "plan_before_seats/billing_admin": 8
+    },
+    "sampling_seed": 0,
+    "candidate_counts": {
+      "seat_before_plan/owner": 71,
+      "seat_before_plan/billing_admin": 90,
+      "plan_before_seats/owner": 82,
+      "plan_before_seats/billing_admin": 65
+    },
+    "search": {
+      "max_depth": 4,
+      "max_nodes": 512,
+      "max_solutions": 4
+    }
+  },
+  "versions": {
+    "protocol": "usami-benchmark-0.1.0",
+    "score": "usami-benchmark-score-0.1.0",
+    "goal": "usami-goals-0.1.0",
+    "generator": "saas-generator-0.1.0",
+    "rules": "saas-rules-0.1.0",
+    "service": "usami-service-0.1.0",
+    "interaction": "usami-interaction-0.1.0",
+    "customer": "usami-customer-0.1.0"
+  },
+  "source_hashes": {
+    "usami/audit/signatures.py": "24760d67737c720e2bc8355c253c019ad72d0be17fc5b5787dbb6c85cbf0f2ca",
+    "usami/benchmark/__init__.py": "b7b427408344be94524afbd0f03d1f8b21f13770f8a7b922b00cfb7ef83ff182",
+    "usami/benchmark/__main__.py": "3add4a8927b6e3a64408922dc2553a8f4496a189430856cbecb34fbd63ae3004",
+    "usami/benchmark/goals.py": "856df7a1107b9f7fd74fac8a9e04a92721323b6858ec34a7a3fc16f42d4ca182",
+    "usami/benchmark/manifest.py": "25d42922a07aa1af555b97b2cf3d8ee6bb1d29b0075c1262da7192e4ebebbe6a",
+    "usami/benchmark/runtime.py": "3e41c610e0ab3b343f2c67f222b57866f148b597b6ce0da6e33a680ff2f6cd3a",
+    "usami/benchmark/scoring.py": "ea8de5906cb6c1b752685de8743eab062b21a29aba69ed919317ad189dc17407",
+    "usami/customer/__init__.py": "566f40d424c7ee6ed5e455d8e7bcf349f338052b3deab8569082fefadecca213",
+    "usami/customer/agent.py": "9ad1860a4b95a3a62002a31fcd3d66f66c92c2d99cf7524e6a5e992745721071",
+    "usami/customer/models.py": "d490c59ca5af63d47479fedf961987224e234afc531d8492f8de26d50b6f3e48",
+    "usami/customer/observation.py": "3726919f2359fafa86b59e1b507ade99287abd58353040544853e111772f7c1e",
+    "usami/evaluation/oracle.py": "27ef0f63701363fc54f205bea2faa0d4a0922efcbd90adfb7a49744df0e90d6b",
+    "usami/evaluation/scenario.py": "69c5e75bbd6096f908aee103d1b0aa1fdd452f63695c709ba15168b273911394",
+    "usami/evaluation/splits.py": "e917b74633d5790404dfd084e45f73dd3cdaaf3b029568eb7224e35a77d930cc",
+    "usami/events.py": "9be6363fa40358bd86f8d15379a1f165b1b938ac4e3830959ae1ff03d18ab1bf",
+    "usami/interaction/__init__.py": "15936514491af8e148553656e74ad2ed2533c8b61320298a025e37bfcbb52958",
+    "usami/interaction/__main__.py": "d5d6e583a8f627e1caaf1fe84524c88f271717094371e8724ddf506b739368bd",
+    "usami/interaction/authorization.py": "2f8f33abdf2eef269414fe9fd097b9a6674f300e10e44cb0e943d0881f10bcfc",
+    "usami/interaction/models.py": "c7a0eaaffbaa9ce1d9e1fcad8b99fbe95c1801f6a4cde3f1ec6ea36a020697a2",
+    "usami/interaction/runner.py": "94b95df86b204ce75bf5c534a55da07f43bd7f8f428bc5b08b9a8139b7641191",
+    "usami/protocol.py": "1f5040c98cfd8579d1f6b52584826fb9e76e0154509ff07770daeab58e6e060d",
+    "usami/randomness.py": "42bd8b48bca6f9946861c3b1e7137900406d0b945391d6a1893280d691c35572",
+    "usami/service/__init__.py": "7590487bf241368ae51294e98c896fcd09d5d49d6039dfec02eca6eb8e8f1a11",
+    "usami/service/__main__.py": "7fd80af3907c1b04009d9310a6b0d48ec16da3a133a4776a7a9e3e5180b01b4a",
+    "usami/service/client.py": "cb783b8322bfb1db3834830edfe06c75847c505f2941b0518fc1fb2d0b842b40",
+    "usami/service/models.py": "114758069bb853cdf23bb0b1fb728b196360d702ff3eedff034e439eea3c69e6",
+    "usami/service/runner.py": "9741dce7d25113fa6dde5cc4ea7acae5fb0b45a324c94c8df2745ae56944d0fb",
+    "usami/service/tools.py": "6c94bdd7365a65987790b68b7ccb3454836b71d6785defff9e145cc0998e54d3",
+    "usami/world/engine.py": "33f01bd224532a5e5826d87ec95a2d3d3e566b415b24babfbe325ad58d06a400",
+    "usami/world/generator.py": "73fa0e63bca9e16ad10e8f8305ede0035f1e6e1316828a1b0431e3349c583120",
+    "usami/world/models.py": "251b404dddc4cc45b4f839f4b7c64b6dbcd2193dcdede6eed78251d996592761",
+    "usami/world/rules.py": "755eddab3252af1cd63ad04e1f60855627c2a4efa78e2b0a5fcac65e5b02b6fc"
+  },
+  "dataset_hash": "c902a93ffff5aa0578bfd20e829b641109fb1e2ff85d691b16a34e3ba94a526a",
+  "manifest_hash": "39e5d920dc359ee224c782fd83af5ebfdb31047c6170bd4cb7cafee8b6fdb35f"
+}

@@ -1,0 +1,25 @@
+{
+  "discovery": {
+    "all_replayed": true,
+    "instances": 2,
+    "replay_checks": 6
+  },
+  "kind": "offline contract fixtures; not LLM performance or discovery results",
+  "service": {
+    "test-demo": {
+      "all_reference_engine_oracle_replay_pass": true,
+      "distinct_route_checks": 32,
+      "instances": 16
+    },
+    "train": {
+      "all_reference_engine_oracle_replay_pass": true,
+      "distinct_route_checks": 32,
+      "instances": 16
+    },
+    "validation": {
+      "all_reference_engine_oracle_replay_pass": true,
+      "distinct_route_checks": 16,
+      "instances": 8
+    }
+  }
+}

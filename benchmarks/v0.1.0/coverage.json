@@ -1,0 +1,87 @@
+{
+  "discovery-demo": {
+    "dataset_hash": "e9584014a716cac160ecd5b31db6d39c382eabf6791e305f81ecec8f3c5e14cf",
+    "instances": 2,
+    "manifest_hash": "603aa92023f49bac7ae9c4e0dbfc8881e0a018189f5ea946b3dd3727eed48fc6",
+    "trials": [
+      "r0",
+      "r1",
+      "r2"
+    ]
+  },
+  "test-demo": {
+    "candidate_counts": {
+      "plan_before_seats/billing_admin": 65,
+      "plan_before_seats/owner": 82,
+      "seat_before_plan/billing_admin": 90,
+      "seat_before_plan/owner": 71
+    },
+    "dataset_hash": "c902a93ffff5aa0578bfd20e829b641109fb1e2ff85d691b16a34e3ba94a526a",
+    "instances": 16,
+    "manifest_hash": "39e5d920dc359ee224c782fd83af5ebfdb31047c6170bd4cb7cafee8b6fdb35f",
+    "quotas": {
+      "plan_before_seats/billing_admin": 8,
+      "plan_before_seats/owner": 8
+    },
+    "semantics": 8,
+    "structures": 2
+  },
+  "train": {
+    "candidate_counts": {
+      "plan_before_seats/billing_admin": 91,
+      "plan_before_seats/owner": 106,
+      "seat_before_plan/billing_admin": 72,
+      "seat_before_plan/owner": 80
+    },
+    "dataset_hash": "e5e2bfa40a6a8ca2b5b78b12c8da233ca9fa8d06c3fd4084a0d6ff1ba3530343",
+    "instances": 16,
+    "manifest_hash": "bd865a4384cf6b7973abf1609cef3f73a5f75bfaaef93548fa0b1cbcfb045082",
+    "quotas": {
+      "seat_before_plan/billing_admin": 8,
+      "seat_before_plan/owner": 8
+    },
+    "semantics": 4,
+    "structures": 2
+  },
+  "train_vs_test": {
+    "common_semantics": 0,
+    "common_structures": 0,
+    "left_only_structures": [
+      "c3df6bf7639ed76ebbbfa41b417752f01b889b3a4c27293ededa0cf59a4da07e",
+      "dd69b6f8b9164d07e73d6035ed2e781b826fdab57a48b71780b359c22158957b"
+    ],
+    "right_only_atomic_operations": [],
+    "right_only_structures": [
+      "6139250fb57b26e9f33df9c76ec4cae59c0b709980e4717c57a7c77307d8193a",
+      "98e8a21100759d1734928c8baecab0326de4867dc1a445109a823ca0acf7b8a0"
+    ],
+    "right_sample_structure_overlap": 0.0,
+    "shared_world_instances": 0
+  },
+  "train_vs_validation": {
+    "common_semantics": 3,
+    "common_structures": 2,
+    "left_only_structures": [],
+    "right_only_atomic_operations": [],
+    "right_only_structures": [],
+    "right_sample_structure_overlap": 1.0,
+    "shared_world_instances": 0
+  },
+  "validation": {
+    "candidate_counts": {
+      "plan_before_seats/billing_admin": 70,
+      "plan_before_seats/owner": 72,
+      "seat_before_plan/billing_admin": 78,
+      "seat_before_plan/owner": 84
+    },
+    "dataset_hash": "a8d29cc199a82ddb7265630ee6246a23d6e0bd318ab40bd25a748bc912ea665c",
+    "instances": 8,
+    "manifest_hash": "eeeddc21b04e9f30a11d1b29f9038d616a1c9c26ff6e4a5a2f8690e3d2224820",
+    "quotas": {
+      "seat_before_plan/billing_admin": 4,
+      "seat_before_plan/owner": 4
+    },
+    "semantics": 3,
+    "structures": 2
+  }
+}

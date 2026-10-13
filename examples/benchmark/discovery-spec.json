@@ -1,0 +1,36 @@
+{
+  "track": "customer_discovery",
+  "seeds": [
+    3000010,
+    3000011
+  ],
+  "identity": "user_002",
+  "generator": {
+    "profile": "test_composed"
+  },
+  "service_model": {
+    "model": "replace-with-service-model",
+    "base_url": "http://127.0.0.1:4000/v1",
+    "options": {
+      "max_tokens": 2048,
+      "temperature": 0
+    }
+  },
+  "customer_model": {
+    "model": "replace-with-customer-model",
+    "base_url": "http://127.0.0.1:4000/v1",
+    "options": {
+      "max_tokens": 2048,
+      "response_format": {
+        "type": "json_object"
+      }
+    }
+  },
+  "split": "test",
+  "visibility": "demo",
+  "trials": [
+    "r0",
+    "r1",
+    "r2"
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "version": "usami-benchmark-0.1.0",
+  "suite_id": "usami-discovery-v0.1",
+  "release": "0.1.0",
+  "track": "customer_discovery",
+  "split": "test",
+  "visibility": "demo",
+  "generator": {
+    "version": "saas-generator-0.1.0",
+    "user_count": 8,
+    "organization_count": 3,
+    "clock": "2026-01-15T12:00:00Z",
+    "profile": "test_composed",
+    "rules": {
+      "version": "saas-rules-0.1.0",
+      "refund_window_days": 14,
+      "plans": {
+        "starter": {
+          "id": "starter",
+          "name": "Starter",
+          "rank": 0,
+          "max_seats": 5
+        },
+        "team": {
+          "id": "team",
+          "name": "Team",
+          "rank": 1,
+          "max_seats": 20
+        },
+        "business": {
+          "id": "business",
+          "name": "Business",
+          "rank": 2,
+          "max_seats": 100
+        }
+      }
+    }
+  },
+  "mode": "sandbox",
+  "tools": [
+    "get_customer_context",
+    "get_organization",
+    "list_members",
+    "get_subscription",
+    "get_invoice",
+    "change_plan",
+    "change_seats",
+    "cancel_renewal",
+    "refund_invoice",
+    "change_member_role"
+  ],
+  "budget": {
+    "max_customer_turns": 6,
+    "max_customer_llm_calls": 8,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 48
+  },
+  "service_model": {
+    "model": "fixture_model",
+    "base_url": "https://example.invalid/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 2048
+    },
+    "trust_env": false
+  },
+  "customer_model": {
+    "model": "fixture_model",
+    "base_url": "https://example.invalid/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 2048
+    },
+    "trust_env": false
+  },
+  "trials": [
+    "r0",
+    "r1",
+    "r2"
+  ],
+  "instances": [
+    {
+      "instance_id": "discovery_e97d12ee0f589929a8a8296f",
+      "seed": 3000000,
+      "initial_state_hash": "ab090a49366459a37e2d9a052436cb1f222bf13512b1a7918ab627f12ca47892",
+      "customer_identity": "user_002",
+      "task": null,
+      "exploration_strategy": null
+    },
+    {
+      "instance_id": "discovery_b4b5710d1bfcf7c8a1af3525",
+      "seed": 3000001,
+      "initial_state_hash": "aacd41094f194664175f97a52ab8c1c5b42729f6e8589e25caa7ae97947d7742",
+      "customer_identity": "user_002",
+      "task": null,
+      "exploration_strategy": null
+    }
+  ],
+  "sampling": {
+    "world_seeds": [
+      3000000,
+      3000001
+    ],
+    "fixed_attack_script": false
+  },
+  "versions": {
+    "protocol": "usami-benchmark-0.1.0",
+    "score": "usami-benchmark-score-0.1.0",
+    "goal": "usami-goals-0.1.0",
+    "generator": "saas-generator-0.1.0",
+    "rules": "saas-rules-0.1.0",
+    "service": "usami-service-0.1.0",
+    "interaction": "usami-interaction-0.1.0",
+    "customer": "usami-customer-0.1.0"
+  },
+  "source_hashes": {
+    "usami/audit/signatures.py": "24760d67737c720e2bc8355c253c019ad72d0be17fc5b5787dbb6c85cbf0f2ca",
+    "usami/benchmark/__init__.py": "b7b427408344be94524afbd0f03d1f8b21f13770f8a7b922b00cfb7ef83ff182",
+    "usami/benchmark/__main__.py": "3add4a8927b6e3a64408922dc2553a8f4496a189430856cbecb34fbd63ae3004",
+    "usami/benchmark/goals.py": "856df7a1107b9f7fd74fac8a9e04a92721323b6858ec34a7a3fc16f42d4ca182",
+    "usami/benchmark/manifest.py": "25d42922a07aa1af555b97b2cf3d8ee6bb1d29b0075c1262da7192e4ebebbe6a",
+    "usami/benchmark/runtime.py": "3e41c610e0ab3b343f2c67f222b57866f148b597b6ce0da6e33a680ff2f6cd3a",
+    "usami/benchmark/scoring.py": "ea8de5906cb6c1b752685de8743eab062b21a29aba69ed919317ad189dc17407",
+    "usami/customer/__init__.py": "566f40d424c7ee6ed5e455d8e7bcf349f338052b3deab8569082fefadecca213",
+    "usami/customer/agent.py": "9ad1860a4b95a3a62002a31fcd3d66f66c92c2d99cf7524e6a5e992745721071",
+    "usami/customer/models.py": "d490c59ca5af63d47479fedf961987224e234afc531d8492f8de26d50b6f3e48",
+    "usami/customer/observation.py": "3726919f2359fafa86b59e1b507ade99287abd58353040544853e111772f7c1e",
+    "usami/evaluation/oracle.py": "27ef0f63701363fc54f205bea2faa0d4a0922efcbd90adfb7a49744df0e90d6b",
+    "usami/evaluation/scenario.py": "69c5e75bbd6096f908aee103d1b0aa1fdd452f63695c709ba15168b273911394",
+    "usami/evaluation/splits.py": "e917b74633d5790404dfd084e45f73dd3cdaaf3b029568eb7224e35a77d930cc",
+    "usami/events.py": "9be6363fa40358bd86f8d15379a1f165b1b938ac4e3830959ae1ff03d18ab1bf",
+    "usami/interaction/__init__.py": "15936514491af8e148553656e74ad2ed2533c8b61320298a025e37bfcbb52958",
+    "usami/interaction/__main__.py": "d5d6e583a8f627e1caaf1fe84524c88f271717094371e8724ddf506b739368bd",
+    "usami/interaction/authorization.py": "2f8f33abdf2eef269414fe9fd097b9a6674f300e10e44cb0e943d0881f10bcfc",
+    "usami/interaction/models.py": "c7a0eaaffbaa9ce1d9e1fcad8b99fbe95c1801f6a4cde3f1ec6ea36a020697a2",
+    "usami/interaction/runner.py": "94b95df86b204ce75bf5c534a55da07f43bd7f8f428bc5b08b9a8139b7641191",
+    "usami/protocol.py": "1f5040c98cfd8579d1f6b52584826fb9e76e0154509ff07770daeab58e6e060d",
+    "usami/randomness.py": "42bd8b48bca6f9946861c3b1e7137900406d0b945391d6a1893280d691c35572",
+    "usami/service/__init__.py": "7590487bf241368ae51294e98c896fcd09d5d49d6039dfec02eca6eb8e8f1a11",
+    "usami/service/__main__.py": "7fd80af3907c1b04009d9310a6b0d48ec16da3a133a4776a7a9e3e5180b01b4a",
+    "usami/service/client.py": "cb783b8322bfb1db3834830edfe06c75847c505f2941b0518fc1fb2d0b842b40",
+    "usami/service/models.py": "114758069bb853cdf23bb0b1fb728b196360d702ff3eedff034e439eea3c69e6",
+    "usami/service/runner.py": "9741dce7d25113fa6dde5cc4ea7acae5fb0b45a324c94c8df2745ae56944d0fb",
+    "usami/service/tools.py": "6c94bdd7365a65987790b68b7ccb3454836b71d6785defff9e145cc0998e54d3",
+    "usami/world/engine.py": "33f01bd224532a5e5826d87ec95a2d3d3e566b415b24babfbe325ad58d06a400",
+    "usami/world/generator.py": "73fa0e63bca9e16ad10e8f8305ede0035f1e6e1316828a1b0431e3349c583120",
+    "usami/world/models.py": "251b404dddc4cc45b4f839f4b7c64b6dbcd2193dcdede6eed78251d996592761",
+    "usami/world/rules.py": "755eddab3252af1cd63ad04e1f60855627c2a4efa78e2b0a5fcac65e5b02b6fc"
+  },
+  "dataset_hash": "e9584014a716cac160ecd5b31db6d39c382eabf6791e305f81ecec8f3c5e14cf",
+  "manifest_hash": "603aa92023f49bac7ae9c4e0dbfc8881e0a018189f5ea946b3dd3727eed48fc6"
+}

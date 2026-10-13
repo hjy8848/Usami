@@ -6,6 +6,21 @@ Usami 是可执行的虚构 SaaS 业务世界：组织、成员权限、订阅�
 
 v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer**、**Service LLM** 和 **Customer–Service 多轮交互**模块。Benchmark 核心不依赖 LLM；可选 Customer 自主选择业务请求，Service 使用真实兼容 API 自主选择工具。没有 Evolver、LLM Judge、训练、Service 自动修复、真实支付接口或数据库。业务数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
 
+## 标准协议与 Goal Task
+
+新增独立 Benchmark 层，将正常 **Service Task** 与开放式 **Customer Discovery** 分成两个 Track，冻结实例、独立身份、预算、工具、模型运行配置、源码与版本化 Manifest。Goal Task 用真实 Reference Rules 搜索至少两条合法路线并验证状态依赖，按实际终态、隔离约束与 Oracle 评分；Service 自主选工具，不执行参考脚本。
+
+已冻结 [v0.1.0 发布样本](benchmarks/v0.1.0/README.md)：16 个 Train、8 个 Validation、16 个 Test Demo，以及 2 个 Discovery 世界 × 3 次重复。Train/Test Demo 留出不同的依赖方向，结构和语义签名重叠均为 0；公开 Demo 不等于私有盲测。
+
+```bash
+# 先用现有环境配置绑定真实模型，再选择 Manifest 中的实例运行
+python -m usami.benchmark profile --manifest benchmarks/v0.1.0/service-validation.json --out outputs/service-profile.json
+python -m usami.benchmark run --manifest outputs/service-profile.json --instance GOAL_ID --out outputs/goal-run.json
+python -m usami.benchmark score --manifest outputs/service-profile.json --run outputs/goal-run.json
+```
+
+协议、配额、可选授权、多路径评分与离线回放见 [Benchmark 说明](usami/benchmark/README.md)；后续业务扩展按 [P1 → P2](benchmarks/v0.1.0/NEXT_PHASE.md) 推进。公开模型配置是离线 fixture，占位验收结果不作为 LLM 能力成绩。
+
 ## 多样性与覆盖审计
 
 独立审计模块直接调用现有 Generator、Scenario Generator 和 Reference Rules，统计去除 ID 的关系模板、业务决策结构、真实状态依赖、规则覆盖及 Split 重叠，无需 LLM 或网页。
@@ -14,7 +29,7 @@ v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World 
 python -m usami.audit --count 1000 --split-worlds 100 --output outputs/audit
 ```
 
-已保存的 [审计报告](audits/diversity-v1/REPORT.md)、[JSON 数据](audits/diversity-v1/results.json)、[扩展路线图](audits/diversity-v1/ROADMAP.md) 和 [验收记录](audits/diversity-v1/VERIFICATION.md) 覆盖 1,000 个固定 Seed：82,699 条候选场景归为 24 种关系模板、293 种业务决策结构。这是明确签名定义下的观测数，不是理论上限。审计也确认当前仅发布了小规模 Validation，尚无冻结的标准 Task Train/Test；公开 Demo Split 不应当作盲测集。参数与指标定义见 [审计工具说明](usami/audit/README.md)。
+已保存的 [审计报告](audits/diversity-v1/REPORT.md)、[JSON 数据](audits/diversity-v1/results.json)、[扩展路线图](audits/diversity-v1/ROADMAP.md) 和 [验收记录](audits/diversity-v1/VERIFICATION.md) 覆盖 1,000 个固定 Seed：82,699 条旧 Scenario 构造器候选归为 24 种关系模板、293 种业务决策结构。这是明确签名定义下的观测数，不是理论上限。审计时只有小规模 Validation；后续 Goal Task 发布见上节，公开 Demo 仍不作为盲测。参数与指标定义见 [审计工具说明](usami/audit/README.md)。
 
 ## Customer–Service 开放式交互
 

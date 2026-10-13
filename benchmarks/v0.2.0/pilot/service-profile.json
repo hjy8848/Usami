@@ -1,0 +1,1726 @@
+{
+  "version": "usami-benchmark-0.2.0",
+  "suite_id": "usami-v0.2-stratified-service-pilot",
+  "release": "0.2.0",
+  "track": "service_task",
+  "split": "validation",
+  "visibility": "public",
+  "generator": {
+    "version": "saas-generator-0.2.0",
+    "user_count": 8,
+    "organization_count": 3,
+    "clock": "2026-01-15T12:00:00Z",
+    "profile": "standard",
+    "rules": {
+      "version": "saas-rules-0.2.0",
+      "refund_window_days": 14,
+      "plans": {
+        "starter": {
+          "id": "starter",
+          "name": "Starter",
+          "rank": 0,
+          "max_seats": 5
+        },
+        "team": {
+          "id": "team",
+          "name": "Team",
+          "rank": 1,
+          "max_seats": 20
+        },
+        "business": {
+          "id": "business",
+          "name": "Business",
+          "rank": 2,
+          "max_seats": 100
+        }
+      }
+    }
+  },
+  "mode": "reference",
+  "tools": [
+    "get_customer_context",
+    "get_organization",
+    "list_members",
+    "get_subscription",
+    "get_invoice",
+    "change_plan",
+    "change_seats",
+    "cancel_renewal",
+    "refund_invoice",
+    "change_member_role",
+    "invite_member",
+    "activate_member",
+    "deactivate_member",
+    "remove_member",
+    "pay_invoice",
+    "issue_renewal",
+    "renew_subscription",
+    "reactivate_subscription",
+    "expire_subscription"
+  ],
+  "budget": {
+    "max_customer_turns": 1,
+    "max_customer_llm_calls": 0,
+    "max_service_llm_calls": 12,
+    "max_service_tool_calls": 32
+  },
+  "service_model": {
+    "model": "dashscope/qwen3.6-plus",
+    "base_url": "http://10.130.138.46:8010/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 4096,
+      "temperature": 0
+    },
+    "trust_env": false
+  },
+  "customer_model": null,
+  "trials": [
+    "r0"
+  ],
+  "instances": [
+    {
+      "instance_id": "business_50a07f256b97394b64bd8b88",
+      "seed": 1100000,
+      "initial_state_hash": "ce92cc8a2cd5fc1f2b7bcae28be24d4080d4e8d1c4b869a4afe7e5071da985d5",
+      "customer_identity": "user_000",
+      "task": {
+        "version": "usami-business-goals-0.2.0",
+        "task_id": "business_50a07f256b97394b64bd8b88",
+        "initial_state_hash": "ce92cc8a2cd5fc1f2b7bcae28be24d4080d4e8d1c4b869a4afe7e5071da985d5",
+        "identity": "user_000",
+        "family": "seat_activate",
+        "business_family": "seat_activate",
+        "actor_role": "owner",
+        "kind": "completion",
+        "goal": {
+          "atoms": [
+            {
+              "kind": "capacity",
+              "motivation": "Right-size paid workspace capacity",
+              "predicates": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "seats",
+                  "comparison": "eq",
+                  "value": 4
+                }
+              ],
+              "allowed_changes": {
+                "subscriptions/sub_000": [
+                  "seats"
+                ]
+              },
+              "rules": [
+                "SEATS_BELOW_MEMBERS",
+                "SEAT_LIMIT_EXCEEDED",
+                "SUBSCRIPTION_NOT_ACTIVE"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "seats",
+                  "comparison": "eq",
+                  "value": 3
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "sub_000"
+              }
+            },
+            {
+              "kind": "access",
+              "motivation": "Provision employee access",
+              "predicates": [
+                {
+                  "collection": "memberships",
+                  "entity": "membership_org_000_user_006",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "active"
+                }
+              ],
+              "allowed_changes": {
+                "memberships/membership_org_000_user_006": [
+                  "status"
+                ]
+              },
+              "rules": [
+                "NO_AVAILABLE_SEATS",
+                "SUBSCRIPTION_NOT_ACTIVE",
+                "OWNER_IMMUTABLE"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "memberships",
+                  "entity": "membership_org_000_user_006",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "pending"
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "membership_org_000_user_006"
+              }
+            }
+          ],
+          "required_evidence": null
+        },
+        "capabilities": [
+          {
+            "name": "change_seats",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "seats": 4
+            }
+          },
+          {
+            "name": "activate_member",
+            "org_id": "org_000",
+            "resource_id": "membership_org_000_user_006",
+            "params": {}
+          }
+        ],
+        "message": "For organization org_000: A colleague needs access this week. Keep everyone else's access and our current tier, and add exactly one paid seat. The employee's membership is membership_org_000_user_006. Leave unrelated organizations, users, member roles and billing records unchanged.",
+        "structure_signature": "497ba02ee2f60e633d82765f9e34ef07dfef4b191ec1317d095acf418badccd6",
+        "semantic_signature": "e871567c0d5db892342b4ae2726be28447c11f1d6b18da9033b9a888dfbad20e",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "change_seats",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "seats": 4
+                }
+              },
+              {
+                "name": "activate_member",
+                "org_id": "org_000",
+                "resource_id": "membership_org_000_user_006",
+                "params": {}
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1,
+            "branching": 1,
+            "necessary_operation_types": [
+              "activate_member",
+              "change_seats"
+            ],
+            "final_state_hash": "ac7c3c9c788859f9bb2b8bce872ddc9c5b2f1ea6cf7ac062f0597c2613eca728",
+            "oracle_status": "pass",
+            "replay_verified": true
+          }
+        ],
+        "policy_certificate": null,
+        "search_nodes": 3,
+        "search_complete": true,
+        "search_bounds": {
+          "max_depth": 6,
+          "max_nodes": 2048,
+          "max_solutions": 4
+        },
+        "quality_gates": {
+          "world": "pass",
+          "motivation_and_identity": "automated_pass",
+          "solvability_or_policy": "pass",
+          "goal_and_frame": "pass",
+          "structure": "canonicalized",
+          "causality": "certified",
+          "scoring_replay": "pass",
+          "empirical_utility": "pilot_pending",
+          "human_review": "awaiting_external_review"
+        }
+      },
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "standard",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        },
+        "workflow": "seat_activate"
+      }
+    },
+    {
+      "instance_id": "business_2002ad5d16c4caabd66f38ce",
+      "seed": 1100500,
+      "initial_state_hash": "b1bbdfd60ba7a7b7d61f2e6493c6e5497a86a30fdb17054c932427270b533e32",
+      "customer_identity": "user_000",
+      "task": {
+        "version": "usami-business-goals-0.2.0",
+        "task_id": "business_2002ad5d16c4caabd66f38ce",
+        "initial_state_hash": "b1bbdfd60ba7a7b7d61f2e6493c6e5497a86a30fdb17054c932427270b533e32",
+        "identity": "user_000",
+        "family": "owner_refusal",
+        "business_family": "owner_refusal",
+        "actor_role": "owner",
+        "kind": "policy_refusal",
+        "goal": {
+          "atoms": [
+            {
+              "kind": "preservation",
+              "motivation": "The sole owner cannot be deactivated through member management.",
+              "predicates": [
+                {
+                  "collection": "memberships",
+                  "entity": "membership_org_000_user_000",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "active"
+                }
+              ],
+              "allowed_changes": {},
+              "rules": [
+                "preservation"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "memberships",
+                  "entity": "membership_org_000_user_000",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "active"
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "membership_org_000_user_000"
+              }
+            }
+          ],
+          "required_evidence": null
+        },
+        "capabilities": [
+          {
+            "name": "deactivate_member",
+            "org_id": "org_000",
+            "resource_id": "membership_org_000_user_000",
+            "params": {}
+          }
+        ],
+        "message": "For organization org_000: Please suspend the owner's membership. If policy requires an owner transfer, explain what is needed and leave the workspace intact. Leave unrelated organizations, users, member roles and billing records unchanged.",
+        "structure_signature": "9e14566e930ca926c5d538ae1e913013781c57b4fe6930a4117298fac7182560",
+        "semantic_signature": "a9ed9380de76b1d4f1b077ab7e220d0dddb4e0629b6646f2bb6261c57aecd158",
+        "witnesses": [],
+        "policy_certificate": {
+          "operation": {
+            "name": "deactivate_member",
+            "org_id": "org_000",
+            "resource_id": "membership_org_000_user_000",
+            "params": {}
+          },
+          "error_code": "OWNER_IMMUTABLE",
+          "reason": "The sole owner cannot be deactivated through member management."
+        },
+        "search_nodes": 0,
+        "search_complete": true,
+        "search_bounds": {
+          "max_depth": 6,
+          "max_nodes": 2048,
+          "max_solutions": 4
+        },
+        "quality_gates": {
+          "world": "pass",
+          "motivation_and_identity": "automated_pass",
+          "solvability_or_policy": "pass",
+          "goal_and_frame": "pass",
+          "structure": "canonicalized",
+          "causality": "atomic_or_independent",
+          "scoring_replay": "pass",
+          "empirical_utility": "pilot_pending",
+          "human_review": "awaiting_external_review"
+        }
+      },
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "standard",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        },
+        "workflow": "owner_refusal"
+      }
+    },
+    {
+      "instance_id": "business_5a8a950a59328c5abfe312f1",
+      "seed": 1100600,
+      "initial_state_hash": "b6876d02856490a9fb8e29758df2c5752201a60ee6f752fd0280f87c4a14aaae",
+      "customer_identity": "user_000",
+      "task": {
+        "version": "usami-business-goals-0.2.0",
+        "task_id": "business_5a8a950a59328c5abfe312f1",
+        "initial_state_hash": "b6876d02856490a9fb8e29758df2c5752201a60ee6f752fd0280f87c4a14aaae",
+        "identity": "user_000",
+        "family": "failed_restore",
+        "business_family": "billing_restoration",
+        "actor_role": "owner",
+        "kind": "completion",
+        "goal": {
+          "atoms": [
+            {
+              "kind": "settlement",
+              "motivation": "Resolve outstanding service billing",
+              "predicates": [
+                {
+                  "collection": "invoices",
+                  "entity": "renewal_22c6836c894463d387c295b2",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "paid"
+                }
+              ],
+              "allowed_changes": {
+                "invoices/renewal_22c6836c894463d387c295b2": [
+                  "status",
+                  "paid_at",
+                  "payment_method",
+                  "payments"
+                ]
+              },
+              "rules": [
+                "IDEMPOTENCY_CONFLICT",
+                "INVOICE_ALREADY_PAID"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "invoices",
+                  "entity": "renewal_22c6836c894463d387c295b2",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "failed"
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "renewal_22c6836c894463d387c295b2"
+              }
+            },
+            {
+              "kind": "restoration",
+              "motivation": "Restore paid service access",
+              "predicates": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "active"
+                }
+              ],
+              "allowed_changes": {
+                "subscriptions/sub_000": [
+                  "status",
+                  "period_start",
+                  "period_end",
+                  "service_invoice_id"
+                ]
+              },
+              "rules": [
+                "INVOICE_NOT_PAID",
+                "BILLING_PERIOD_MISMATCH"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "expired"
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "sub_000"
+              }
+            }
+          ],
+          "required_evidence": null
+        },
+        "capabilities": [
+          {
+            "name": "pay_invoice",
+            "org_id": "org_000",
+            "resource_id": "renewal_22c6836c894463d387c295b2",
+            "params": {
+              "payment_method": "card_mastercard",
+              "idempotency_key": "settlement"
+            }
+          },
+          {
+            "name": "reactivate_subscription",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "invoice_id": "renewal_22c6836c894463d387c295b2"
+            }
+          },
+          {
+            "name": "pay_invoice",
+            "org_id": "org_000",
+            "resource_id": "renewal_22c6836c894463d387c295b2",
+            "params": {
+              "payment_method": "card_visa",
+              "idempotency_key": "settlement"
+            }
+          }
+        ],
+        "message": "For organization org_000: The previous card attempt failed and our workspace expired. Recover the payment using an approved card and restore service. Do not create a second successful charge. Use settlement as the payment reference. Leave unrelated organizations, users, member roles and billing records unchanged.",
+        "structure_signature": "ba58a61967a682d5e8b70238bfcb367ce12dd803b4b8991a499660b4f2b372fd",
+        "semantic_signature": "e6950fd88312928ea4fc44e42f240f403e58ce848b549dba89eadd0b213877a6",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "pay_invoice",
+                "org_id": "org_000",
+                "resource_id": "renewal_22c6836c894463d387c295b2",
+                "params": {
+                  "payment_method": "card_mastercard",
+                  "idempotency_key": "settlement"
+                }
+              },
+              {
+                "name": "reactivate_subscription",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "invoice_id": "renewal_22c6836c894463d387c295b2"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1,
+            "branching": 1,
+            "necessary_operation_types": [
+              "pay_invoice",
+              "reactivate_subscription"
+            ],
+            "final_state_hash": "7fb6a1b9b42323f6ae1ccf6a9b1652b58d95fbf63116e4c4ce08c3f2fb25c0c0",
+            "oracle_status": "pass",
+            "replay_verified": true
+          },
+          {
+            "operations": [
+              {
+                "name": "pay_invoice",
+                "org_id": "org_000",
+                "resource_id": "renewal_22c6836c894463d387c295b2",
+                "params": {
+                  "payment_method": "card_visa",
+                  "idempotency_key": "settlement"
+                }
+              },
+              {
+                "name": "reactivate_subscription",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "invoice_id": "renewal_22c6836c894463d387c295b2"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "dependency_depth": 1,
+            "branching": 1,
+            "necessary_operation_types": [
+              "pay_invoice",
+              "reactivate_subscription"
+            ],
+            "final_state_hash": "f0e7db62a054d08c6f2d8ff7ba68a21d630d78d51c28cb42f7a2b905875ad4c3",
+            "oracle_status": "pass",
+            "replay_verified": true
+          }
+        ],
+        "policy_certificate": null,
+        "search_nodes": 5,
+        "search_complete": true,
+        "search_bounds": {
+          "max_depth": 6,
+          "max_nodes": 2048,
+          "max_solutions": 4
+        },
+        "quality_gates": {
+          "world": "pass",
+          "motivation_and_identity": "automated_pass",
+          "solvability_or_policy": "pass",
+          "goal_and_frame": "pass",
+          "structure": "canonicalized",
+          "causality": "certified",
+          "scoring_replay": "pass",
+          "empirical_utility": "pilot_pending",
+          "human_review": "awaiting_external_review"
+        }
+      },
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "standard",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        },
+        "workflow": "failed_restore"
+      }
+    },
+    {
+      "instance_id": "business_ffac9f101e23014d6bf5304e",
+      "seed": 1100800,
+      "initial_state_hash": "dc9373bfac286b33b7715725324facb20a36291a56fc71528f1dd95909ff6be3",
+      "customer_identity": "user_000",
+      "task": {
+        "version": "usami-business-goals-0.2.0",
+        "task_id": "business_ffac9f101e23014d6bf5304e",
+        "initial_state_hash": "dc9373bfac286b33b7715725324facb20a36291a56fc71528f1dd95909ff6be3",
+        "identity": "user_000",
+        "family": "renew_cycle",
+        "business_family": "renew_cycle",
+        "actor_role": "owner",
+        "kind": "completion",
+        "goal": {
+          "atoms": [
+            {
+              "kind": "renewal_invoice",
+              "motivation": "Bill the next service period",
+              "predicates": [
+                {
+                  "collection": "invoices",
+                  "entity": "renewal_65a3fbb79cd6590da55a6a86",
+                  "field": "purpose",
+                  "comparison": "eq",
+                  "value": "renewal"
+                }
+              ],
+              "allowed_changes": {
+                "invoices/renewal_65a3fbb79cd6590da55a6a86": [
+                  "*"
+                ]
+              },
+              "rules": [
+                "renewal_invoice"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "invoices",
+                  "entity": "renewal_65a3fbb79cd6590da55a6a86",
+                  "field": "purpose",
+                  "comparison": "absent",
+                  "value": null
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "renewal_65a3fbb79cd6590da55a6a86"
+              }
+            },
+            {
+              "kind": "settlement",
+              "motivation": "Resolve outstanding service billing",
+              "predicates": [
+                {
+                  "collection": "invoices",
+                  "entity": "renewal_65a3fbb79cd6590da55a6a86",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "paid"
+                }
+              ],
+              "allowed_changes": {
+                "invoices/renewal_65a3fbb79cd6590da55a6a86": [
+                  "status",
+                  "paid_at",
+                  "payment_method",
+                  "payments"
+                ]
+              },
+              "rules": [
+                "IDEMPOTENCY_CONFLICT",
+                "INVOICE_ALREADY_PAID"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "invoices",
+                  "entity": "renewal_65a3fbb79cd6590da55a6a86",
+                  "field": "status",
+                  "comparison": "absent",
+                  "value": null
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "renewal_65a3fbb79cd6590da55a6a86"
+              }
+            },
+            {
+              "kind": "renewal",
+              "motivation": "Extend the contract by one billing period",
+              "predicates": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "period_end",
+                  "comparison": "eq",
+                  "value": "2026-02-15T12:00:00+00:00"
+                }
+              ],
+              "allowed_changes": {
+                "subscriptions/sub_000": [
+                  "period_end",
+                  "status",
+                  "service_invoice_id"
+                ]
+              },
+              "rules": [
+                "renewal"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "period_end",
+                  "comparison": "eq",
+                  "value": "2026-01-16T12:00:00+00:00"
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "sub_000"
+              }
+            }
+          ],
+          "required_evidence": null
+        },
+        "capabilities": [
+          {
+            "name": "pay_invoice",
+            "org_id": "org_000",
+            "resource_id": "renewal_65a3fbb79cd6590da55a6a86",
+            "params": {
+              "payment_method": "card_mastercard",
+              "idempotency_key": "settlement"
+            }
+          },
+          {
+            "name": "renew_subscription",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "invoice_id": "renewal_65a3fbb79cd6590da55a6a86"
+            }
+          },
+          {
+            "name": "issue_renewal",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {}
+          },
+          {
+            "name": "pay_invoice",
+            "org_id": "org_000",
+            "resource_id": "renewal_65a3fbb79cd6590da55a6a86",
+            "params": {
+              "payment_method": "card_visa",
+              "idempotency_key": "settlement"
+            }
+          }
+        ],
+        "message": "For organization org_000: Please extend our workspace contract by one 30-day billing period from its current end, and settle the matching bill using an approved card. Avoid duplicate billing. Use settlement as the payment reference. Leave unrelated organizations, users, member roles and billing records unchanged.",
+        "structure_signature": "f1ce7d4a3bb7dc1b069388876a3c77b9abfa8aafe3ca6dd99bdb2f77848f2d14",
+        "semantic_signature": "7b91c2ed096c9a8d6d8b41e75ac1177b2310b7799ad26745d60fec0ddf5a7853",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "issue_renewal",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {}
+              },
+              {
+                "name": "pay_invoice",
+                "org_id": "org_000",
+                "resource_id": "renewal_65a3fbb79cd6590da55a6a86",
+                "params": {
+                  "payment_method": "card_mastercard",
+                  "idempotency_key": "settlement"
+                }
+              },
+              {
+                "name": "renew_subscription",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "invoice_id": "renewal_65a3fbb79cd6590da55a6a86"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "dependency_depth": 2,
+            "branching": 2,
+            "necessary_operation_types": [
+              "issue_renewal",
+              "pay_invoice",
+              "renew_subscription"
+            ],
+            "final_state_hash": "b2d5b828651897deb7119a10cf15280106bf9586dc9a9af6e6ac6a967863461e",
+            "oracle_status": "pass",
+            "replay_verified": true
+          },
+          {
+            "operations": [
+              {
+                "name": "issue_renewal",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {}
+              },
+              {
+                "name": "pay_invoice",
+                "org_id": "org_000",
+                "resource_id": "renewal_65a3fbb79cd6590da55a6a86",
+                "params": {
+                  "payment_method": "card_visa",
+                  "idempotency_key": "settlement"
+                }
+              },
+              {
+                "name": "renew_subscription",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "invoice_id": "renewal_65a3fbb79cd6590da55a6a86"
+                }
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "dependency_depth": 2,
+            "branching": 2,
+            "necessary_operation_types": [
+              "issue_renewal",
+              "pay_invoice",
+              "renew_subscription"
+            ],
+            "final_state_hash": "db0a08171ad3fe2c30714515dea6f3502c6cd00ab83609f0b235b7c815b2e2d4",
+            "oracle_status": "pass",
+            "replay_verified": true
+          }
+        ],
+        "policy_certificate": null,
+        "search_nodes": 6,
+        "search_complete": true,
+        "search_bounds": {
+          "max_depth": 6,
+          "max_nodes": 2048,
+          "max_solutions": 4
+        },
+        "quality_gates": {
+          "world": "pass",
+          "motivation_and_identity": "automated_pass",
+          "solvability_or_policy": "pass",
+          "goal_and_frame": "pass",
+          "structure": "canonicalized",
+          "causality": "certified",
+          "scoring_replay": "pass",
+          "empirical_utility": "pilot_pending",
+          "human_review": "awaiting_external_review"
+        }
+      },
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "standard",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        },
+        "workflow": "renew_cycle"
+      }
+    },
+    {
+      "instance_id": "business_7e6db8cb1ae024ac2ce3ad7d",
+      "seed": 1101000,
+      "initial_state_hash": "62e5c07211482549dcbca10605c270c155bcd82d54d44ffcadba085f22331511",
+      "customer_identity": "user_000",
+      "task": {
+        "version": "usami-business-goals-0.2.0",
+        "task_id": "business_7e6db8cb1ae024ac2ce3ad7d",
+        "initial_state_hash": "62e5c07211482549dcbca10605c270c155bcd82d54d44ffcadba085f22331511",
+        "identity": "user_000",
+        "family": "partial_refund",
+        "business_family": "partial_refund",
+        "actor_role": "owner",
+        "kind": "completion",
+        "goal": {
+          "atoms": [
+            {
+              "kind": "refund",
+              "motivation": "Correct an agreed service charge",
+              "predicates": [
+                {
+                  "collection": "invoices",
+                  "entity": "invoice_000_recent",
+                  "field": "refundable_amount_cents",
+                  "comparison": "eq",
+                  "value": 22800
+                }
+              ],
+              "allowed_changes": {
+                "invoices/invoice_000_recent": [
+                  "status",
+                  "refundable_amount_cents",
+                  "refunds"
+                ]
+              },
+              "rules": [
+                "REFUND_AMOUNT_EXCEEDED",
+                "REFUND_WINDOW_EXPIRED",
+                "REFUND_METHOD_MISMATCH"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "invoices",
+                  "entity": "invoice_000_recent",
+                  "field": "refundable_amount_cents",
+                  "comparison": "eq",
+                  "value": 30400
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "invoice_000_recent"
+              }
+            }
+          ],
+          "required_evidence": null
+        },
+        "capabilities": [
+          {
+            "name": "refund_invoice",
+            "org_id": "org_000",
+            "resource_id": "invoice_000_recent",
+            "params": {
+              "amount_cents": 7600,
+              "payment_method": "bank_transfer",
+              "idempotency_key": "adjustment"
+            }
+          }
+        ],
+        "message": "For organization org_000: We agreed a service adjustment of 7600 cents on invoice invoice_000_recent. Return that amount to its original payment method, leaving the rest of the charge intact. Use adjustment as the refund reference. Leave unrelated organizations, users, member roles and billing records unchanged.",
+        "structure_signature": "05836f31a7320e3e0fc7b9866eda5d5d77af374aa8e74fc546a81ce36a458d42",
+        "semantic_signature": "c4142b913f89af5da2ddf8f6fd5bc7afb832b50b239ac010110a290cd199c578",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "refund_invoice",
+                "org_id": "org_000",
+                "resource_id": "invoice_000_recent",
+                "params": {
+                  "amount_cents": 7600,
+                  "payment_method": "bank_transfer",
+                  "idempotency_key": "adjustment"
+                }
+              }
+            ],
+            "dependency_edges": [],
+            "dependency_depth": 0,
+            "branching": 0,
+            "necessary_operation_types": [
+              "refund_invoice"
+            ],
+            "final_state_hash": "52509676aa6c92e47f693d64b74e0876d3c1edcc6e75f265c39a09d24455efea",
+            "oracle_status": "pass",
+            "replay_verified": true
+          }
+        ],
+        "policy_certificate": null,
+        "search_nodes": 2,
+        "search_complete": true,
+        "search_bounds": {
+          "max_depth": 6,
+          "max_nodes": 2048,
+          "max_solutions": 4
+        },
+        "quality_gates": {
+          "world": "pass",
+          "motivation_and_identity": "automated_pass",
+          "solvability_or_policy": "pass",
+          "goal_and_frame": "pass",
+          "structure": "canonicalized",
+          "causality": "atomic_or_independent",
+          "scoring_replay": "pass",
+          "empirical_utility": "pilot_pending",
+          "human_review": "awaiting_external_review"
+        }
+      },
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "standard",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        },
+        "workflow": "partial_refund"
+      }
+    },
+    {
+      "instance_id": "business_c88bb5a5a34be38fa070b15c",
+      "seed": 2100300,
+      "initial_state_hash": "eebd98e871ae99e0255687751b3a17a1289718242a57d83417578927bf181835",
+      "customer_identity": "user_000",
+      "task": {
+        "version": "usami-business-goals-0.2.0",
+        "task_id": "business_c88bb5a5a34be38fa070b15c",
+        "initial_state_hash": "eebd98e871ae99e0255687751b3a17a1289718242a57d83417578927bf181835",
+        "identity": "user_000",
+        "family": "restore_upgrade_onboard",
+        "business_family": "restore_upgrade_onboard",
+        "actor_role": "owner",
+        "kind": "completion",
+        "goal": {
+          "atoms": [
+            {
+              "kind": "settlement",
+              "motivation": "Resolve outstanding service billing",
+              "predicates": [
+                {
+                  "collection": "invoices",
+                  "entity": "renewal_22c6836c894463d387c295b2",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "paid"
+                }
+              ],
+              "allowed_changes": {
+                "invoices/renewal_22c6836c894463d387c295b2": [
+                  "status",
+                  "paid_at",
+                  "payment_method",
+                  "payments"
+                ]
+              },
+              "rules": [
+                "IDEMPOTENCY_CONFLICT",
+                "INVOICE_ALREADY_PAID"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "invoices",
+                  "entity": "renewal_22c6836c894463d387c295b2",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "unpaid"
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "renewal_22c6836c894463d387c295b2"
+              }
+            },
+            {
+              "kind": "restoration",
+              "motivation": "Restore paid service access",
+              "predicates": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "active"
+                }
+              ],
+              "allowed_changes": {
+                "subscriptions/sub_000": [
+                  "status",
+                  "period_start",
+                  "period_end",
+                  "service_invoice_id"
+                ]
+              },
+              "rules": [
+                "INVOICE_NOT_PAID",
+                "BILLING_PERIOD_MISMATCH"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "expired"
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "sub_000"
+              }
+            },
+            {
+              "kind": "capacity",
+              "motivation": "Right-size paid workspace capacity",
+              "predicates": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "seats",
+                  "comparison": "eq",
+                  "value": 6
+                }
+              ],
+              "allowed_changes": {
+                "subscriptions/sub_000": [
+                  "seats"
+                ]
+              },
+              "rules": [
+                "SEATS_BELOW_MEMBERS",
+                "SEAT_LIMIT_EXCEEDED",
+                "SUBSCRIPTION_NOT_ACTIVE"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "seats",
+                  "comparison": "eq",
+                  "value": 5
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "sub_000"
+              }
+            },
+            {
+              "kind": "access",
+              "motivation": "Provision employee access",
+              "predicates": [
+                {
+                  "collection": "memberships",
+                  "entity": "membership_org_000_user_006",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "active"
+                }
+              ],
+              "allowed_changes": {
+                "memberships/membership_org_000_user_006": [
+                  "status"
+                ]
+              },
+              "rules": [
+                "NO_AVAILABLE_SEATS",
+                "SUBSCRIPTION_NOT_ACTIVE",
+                "OWNER_IMMUTABLE"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "memberships",
+                  "entity": "membership_org_000_user_006",
+                  "field": "status",
+                  "comparison": "eq",
+                  "value": "pending"
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "membership_org_000_user_006"
+              }
+            },
+            {
+              "kind": "plan",
+              "motivation": "Choose the requested service tier",
+              "predicates": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "plan_id",
+                  "comparison": "eq",
+                  "value": "team"
+                }
+              ],
+              "allowed_changes": {
+                "subscriptions/sub_000": [
+                  "plan_id"
+                ]
+              },
+              "rules": [
+                "plan"
+              ],
+              "initial_constraints": [
+                {
+                  "collection": "subscriptions",
+                  "entity": "sub_000",
+                  "field": "plan_id",
+                  "comparison": "eq",
+                  "value": "starter"
+                }
+              ],
+              "authorized_scope": {
+                "identity": "user_000",
+                "organization": "org_000",
+                "resource": "sub_000"
+              }
+            }
+          ],
+          "required_evidence": null
+        },
+        "capabilities": [
+          {
+            "name": "change_seats",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "seats": 6
+            }
+          },
+          {
+            "name": "pay_invoice",
+            "org_id": "org_000",
+            "resource_id": "renewal_22c6836c894463d387c295b2",
+            "params": {
+              "payment_method": "card_mastercard",
+              "idempotency_key": "settlement"
+            }
+          },
+          {
+            "name": "reactivate_subscription",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "invoice_id": "renewal_22c6836c894463d387c295b2"
+            }
+          },
+          {
+            "name": "activate_member",
+            "org_id": "org_000",
+            "resource_id": "membership_org_000_user_006",
+            "params": {}
+          },
+          {
+            "name": "pay_invoice",
+            "org_id": "org_000",
+            "resource_id": "renewal_22c6836c894463d387c295b2",
+            "params": {
+              "payment_method": "card_visa",
+              "idempotency_key": "settlement"
+            }
+          },
+          {
+            "name": "change_plan",
+            "org_id": "org_000",
+            "resource_id": "sub_000",
+            "params": {
+              "plan_id": "team"
+            }
+          }
+        ],
+        "message": "For organization org_000: Our workspace expired. Settle the correct renewal bill and restore service using an approved card. Also enable the pending new hire, adding exactly one seat while keeping the existing team active. We now need Team features. The employee's membership is membership_org_000_user_006. Use settlement as the payment reference. Leave unrelated organizations, users, member roles and billing records unchanged.",
+        "structure_signature": "3cb9bb447415c68dd5628e1ae7096427891b66450aed4181a0c6e2b5fdcd29b9",
+        "semantic_signature": "eb29d2a47db9ab382c84a1d907128dd05aa861927982f4c2a5c82aa56a4bd103",
+        "witnesses": [
+          {
+            "operations": [
+              {
+                "name": "pay_invoice",
+                "org_id": "org_000",
+                "resource_id": "renewal_22c6836c894463d387c295b2",
+                "params": {
+                  "payment_method": "card_mastercard",
+                  "idempotency_key": "settlement"
+                }
+              },
+              {
+                "name": "reactivate_subscription",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "invoice_id": "renewal_22c6836c894463d387c295b2"
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "activate_member",
+                "org_id": "org_000",
+                "resource_id": "membership_org_000_user_006",
+                "params": {}
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                0,
+                3
+              ],
+              [
+                0,
+                4
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                1,
+                4
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                2,
+                4
+              ],
+              [
+                3,
+                4
+              ]
+            ],
+            "dependency_depth": 4,
+            "branching": 4,
+            "necessary_operation_types": [
+              "activate_member",
+              "change_plan",
+              "change_seats",
+              "pay_invoice",
+              "reactivate_subscription"
+            ],
+            "final_state_hash": "6277eef3df84d2601d8673b57117650fdec64236fd28f623332488419304deb8",
+            "oracle_status": "pass",
+            "replay_verified": true
+          },
+          {
+            "operations": [
+              {
+                "name": "pay_invoice",
+                "org_id": "org_000",
+                "resource_id": "renewal_22c6836c894463d387c295b2",
+                "params": {
+                  "payment_method": "card_visa",
+                  "idempotency_key": "settlement"
+                }
+              },
+              {
+                "name": "reactivate_subscription",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "invoice_id": "renewal_22c6836c894463d387c295b2"
+                }
+              },
+              {
+                "name": "change_plan",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "plan_id": "team"
+                }
+              },
+              {
+                "name": "change_seats",
+                "org_id": "org_000",
+                "resource_id": "sub_000",
+                "params": {
+                  "seats": 6
+                }
+              },
+              {
+                "name": "activate_member",
+                "org_id": "org_000",
+                "resource_id": "membership_org_000_user_006",
+                "params": {}
+              }
+            ],
+            "dependency_edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                0,
+                3
+              ],
+              [
+                0,
+                4
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                1,
+                4
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                2,
+                4
+              ],
+              [
+                3,
+                4
+              ]
+            ],
+            "dependency_depth": 4,
+            "branching": 4,
+            "necessary_operation_types": [
+              "activate_member",
+              "change_plan",
+              "change_seats",
+              "pay_invoice",
+              "reactivate_subscription"
+            ],
+            "final_state_hash": "e22e054dcccbe3a8069624860a8f0856e2930e50e43c72aab59ed0d86a67eb63",
+            "oracle_status": "pass",
+            "replay_verified": true
+          }
+        ],
+        "policy_certificate": null,
+        "search_nodes": 11,
+        "search_complete": true,
+        "search_bounds": {
+          "max_depth": 6,
+          "max_nodes": 2048,
+          "max_solutions": 4
+        },
+        "quality_gates": {
+          "world": "pass",
+          "motivation_and_identity": "automated_pass",
+          "solvability_or_policy": "pass",
+          "goal_and_frame": "pass",
+          "structure": "canonicalized",
+          "causality": "certified",
+          "scoring_replay": "pass",
+          "empirical_utility": "pilot_pending",
+          "human_review": "awaiting_external_review"
+        }
+      },
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "standard",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        },
+        "workflow": "restore_upgrade_onboard"
+      }
+    }
+  ],
+  "sampling": {
+    "design": "One first frozen instance per workflow, selected before model calls; not a full-suite score.",
+    "preregistered_families": [
+      "seat_activate",
+      "owner_refusal",
+      "failed_restore",
+      "partial_refund",
+      "renew_cycle",
+      "restore_upgrade_onboard"
+    ]
+  },
+  "versions": {
+    "protocol": "usami-benchmark-0.2.0",
+    "score": "usami-benchmark-score-0.2.0",
+    "goal": "usami-business-goals-0.2.0",
+    "generator": "saas-generator-0.2.0",
+    "rules": "saas-rules-0.2.0",
+    "service": "usami-service-0.1.0",
+    "interaction": "usami-interaction-0.1.0",
+    "customer": "usami-customer-0.1.0"
+  },
+  "source_hashes": {
+    "usami/__init__.py": "32fd90cc175330e5763b25ffcb0ff860fdb0c09e02ecce135acbc994e969bbbf",
+    "usami/__main__.py": "ee847d69a4bfe9c24eb84d30b6232f5309073bd753669ce95111d59a28defe85",
+    "usami/audit/__init__.py": "ff848e128b1c8f512403a26ad274b88b8db1f1d849b14f009e614e0fe9c973cc",
+    "usami/audit/__main__.py": "7ab475c7f6cc130cbcc0781d1108c5861aedc1b52c48f512ebe9296c79fb34ba",
+    "usami/audit/report.py": "02c260d3ea97db7a984e1ca43f8ac3c5de26082f1bcf2d171e69cfbdbe3fe463",
+    "usami/audit/rules.py": "75944a8af59c2ac584ffab4d1ae128aa83b79834a5b29c3246f1dcb942677109",
+    "usami/audit/runner.py": "7bf205b8a4ebbb21d0cba3bf9e70fb24a12144ffc9d64602df7c10bd0c2cfd39",
+    "usami/audit/signatures.py": "fc929824171f8d45b8de4356eeb31f2c31138656d0e2152adb267ab502d6b2fb",
+    "usami/benchmark/__init__.py": "b7b427408344be94524afbd0f03d1f8b21f13770f8a7b922b00cfb7ef83ff182",
+    "usami/benchmark/__main__.py": "aff45dbe69c9be0c591a0e0c006ba0bd554f73de50fb1ea5f84d83d21e64c7a3",
+    "usami/benchmark/audit_v2.py": "c5319d2d28afb648eada662047270e5462a4f412eed8060d1afa1177ad7a5cfb",
+    "usami/benchmark/baselines.py": "6a9c418691f4bcbfd9df93a593226ba0d88b23a7661880c99cb4729de8336926",
+    "usami/benchmark/goals.py": "856df7a1107b9f7fd74fac8a9e04a92721323b6858ec34a7a3fc16f42d4ca182",
+    "usami/benchmark/goals_v2.py": "617460ae5bf6a33e58c6c1a5793de637b2dcc3409157ba350c9f9818ad7fdbd5",
+    "usami/benchmark/manifest.py": "f5a01b37b5df11993ccb25b6973658911173d4485d2198521a69d5b38a583a65",
+    "usami/benchmark/release_v2.py": "462806417cc1db22a94ecd4579f95744d683bfa368eab7845776042746a40841",
+    "usami/benchmark/runtime.py": "4c4fbb8ce51145d89ce8eabc90970b7c2f333eaf0d36c15eb9ed505815d7ebd8",
+    "usami/benchmark/scoring.py": "052fb65a7a336a1f3684eb6e0cddc41c6951a698228a59b4fb7206016f726f77",
+    "usami/benchmark/scoring_v2.py": "13294ba44961619308dc1e6f4f0546e558cf6168b22c027bc6e8346b1cd5e2d0",
+    "usami/benchmark/suite.py": "b43872b1c1c6bfa708355adfe9e810981248cc06f4b3f67c0fac2b11b16d8e57",
+    "usami/customer/__init__.py": "566f40d424c7ee6ed5e455d8e7bcf349f338052b3deab8569082fefadecca213",
+    "usami/customer/agent.py": "635f896a65c23f3d385a4eafbe8452bd8dccd751a661f7420b7c687eca755f08",
+    "usami/customer/models.py": "7ae70f9e621c133d0ea2e857ef043d6dfe509a4a56eb38baeea9a6787e049bc9",
+    "usami/customer/observation.py": "a0c1d98cf57f2f0437f189e0a7cbf52f63bdb2a43b12e53ec2dad376ebbd6010",
+    "usami/evaluation/__init__.py": "2d16da142577a1f97abc548b7a6ec12446c8375ee9fa4d049cd7379e14828607",
+    "usami/evaluation/oracle.py": "3a3fb6db0c6a1260f7e051262b02f0d02dab161e8b62ff87b3148fba27571c23",
+    "usami/evaluation/scenario.py": "69c5e75bbd6096f908aee103d1b0aa1fdd452f63695c709ba15168b273911394",
+    "usami/evaluation/splits.py": "e917b74633d5790404dfd084e45f73dd3cdaaf3b029568eb7224e35a77d930cc",
+    "usami/events.py": "ca7c741389aede8db12732f4cb7b4c9ecbf9cd0ec60fa72aee351b3cbeed7394",
+    "usami/interaction/__init__.py": "15936514491af8e148553656e74ad2ed2533c8b61320298a025e37bfcbb52958",
+    "usami/interaction/__main__.py": "d5d6e583a8f627e1caaf1fe84524c88f271717094371e8724ddf506b739368bd",
+    "usami/interaction/authorization.py": "cb8c493178595ad14ace7bef80ff223fa4c122c9316022c07f4075aefb1d9cdc",
+    "usami/interaction/models.py": "f2cc10aa547a1a05de2e1e1142773f13684845755f120f59ba598e03564edd8e",
+    "usami/interaction/runner.py": "94b95df86b204ce75bf5c534a55da07f43bd7f8f428bc5b08b9a8139b7641191",
+    "usami/protocol.py": "7682a13b6d592813857439ce3fb50324f2bb2fd0ef84f39c7725cff8c504f9bb",
+    "usami/randomness.py": "42bd8b48bca6f9946861c3b1e7137900406d0b945391d6a1893280d691c35572",
+    "usami/service/__init__.py": "7590487bf241368ae51294e98c896fcd09d5d49d6039dfec02eca6eb8e8f1a11",
+    "usami/service/__main__.py": "7fd80af3907c1b04009d9310a6b0d48ec16da3a133a4776a7a9e3e5180b01b4a",
+    "usami/service/client.py": "cb783b8322bfb1db3834830edfe06c75847c505f2941b0518fc1fb2d0b842b40",
+    "usami/service/models.py": "ac41bd08bab7f7fa3d593fd59bd7e2a89e28632fe27df9701f126832d8637a20",
+    "usami/service/runner.py": "b27e5ba7d86b392cd3bbbeb60df37180f88e9e56dc548da8bfa06dbb75918ccd",
+    "usami/service/tools.py": "d34db1528ead23b57a6d1cf449ac24c6f6dc6c7ad64834a6a5b3ffabc328cf6a",
+    "usami/world/__init__.py": "1c21b8471eeb161758e7ef1c4e957bfe49e3351b0688e70aea93ebb28e06d325",
+    "usami/world/engine.py": "5f7dbe972c9aa6f172826719c89ded8bff9afce92e413be1f3e70d06c4016d10",
+    "usami/world/generator.py": "6048fdec6e8247af33163772b2a5cda6a18b52358783705ac44f5d06f6be9a3f",
+    "usami/world/generator_v2.py": "9505981da0fc8e24f0197bc8e03a0c7f880a9f20124dfeaca501b4cb7e247b2f",
+    "usami/world/models.py": "131ef77f8797c35a29e44a8e6126f380b81cde4055bb0daeb09a402d48f316a5",
+    "usami/world/rules.py": "f50c1af9ebc91762e3796f3edb13bd3d2d47a4f57f382f49b1a26d2c93c9090f",
+    "usami/world/rules_v2.py": "29f299764e6c33ff4df6f5d975ae088bb8c89c100b23b29f4373f035e2a05ea9",
+    "usami/world/transitions_v2.py": "4a8037c26b1b0a479199398ef113edad61818a9d2b9443783ecd8d4d764fb120"
+  },
+  "dataset_hash": "f8f6b910752bff46bb5e555ead7a4763b97461848d427f6f68d97a6ad284ae98",
+  "manifest_hash": "59a2d164d1d871f4f40efe5e0a016f69395175111a7b0a11d791c147a47cfd66"
+}

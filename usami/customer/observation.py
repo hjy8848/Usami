@@ -37,6 +37,10 @@ def initial_observation(world, identity):
                 if data is not None:
                     view["invoices"].append(data)
     view["users"] = list(users.values())
+    if world.rules.version == "saas-rules-0.2.0":
+        view["rules_version"] = world.rules.version
+    if world.rules.version == "saas-rules-0.2.0" and any(m.user_id == identity and m.role == "owner" and m.status == "active" for m in world.memberships.values()):
+        view["directory_users"] = [{"id": u.id, "name": u.name} for u in world.users.values()]
     return view
 
 
@@ -45,6 +49,7 @@ def observed_ids(view):
     context = view["customer_context"]
     for collection in ("organizations", "memberships"):
         ids.update(entity["id"] for entity in context[collection])
-    for collection in ("organizations", "subscriptions", "memberships", "invoices"):
+    for collection in ("organizations", "subscriptions", "memberships", "invoices", "users"):
         ids.update(entity["id"] for entity in view[collection])
+    ids.update(entity["id"] for entity in view.get("directory_users", []))
     return ids

@@ -20,6 +20,8 @@ def main(argv=None):
     freeze = sub.add_parser("freeze", help="freeze spec and finite capabilities before any model calls")
     freeze.add_argument("--spec", type=Path, required=True)
     freeze.add_argument("--out", type=Path, required=True)
+    release = sub.add_parser("freeze-release", help="build curated v0.2 public splits, audit and review package")
+    release.add_argument("--out", type=Path, required=True)
     run = sub.add_parser("run")
     run.add_argument("--manifest", type=Path, required=True)
     run.add_argument("--instance", required=True)
@@ -28,6 +30,14 @@ def main(argv=None):
     profile = sub.add_parser("profile", help="bind environment model settings without changing the task dataset")
     profile.add_argument("--manifest", type=Path, required=True)
     profile.add_argument("--out", type=Path, required=True)
+    profile.add_argument("--strategy", help="v0.2 Discovery method strategy; not a dataset condition")
+    validate = sub.add_parser("validate", help="regenerate goals and all Engine/Oracle/replay certificates")
+    validate.add_argument("--manifest", type=Path, required=True)
+    suite = sub.add_parser("run-suite", help="run all instances/trials; resume verified evidence atomically")
+    suite.add_argument("--manifest", type=Path, required=True)
+    suite.add_argument("--out", type=Path, required=True)
+    suite.add_argument("--max-runs", type=int, help="pilot limit; summary stays incomplete")
+    suite.add_argument("--baseline", choices=["reference-proof", "one-step"], help="explicit offline baseline, never a real LLM result")
     score = sub.add_parser("score", help="exact replay and evidence score, offline")
     score.add_argument("--manifest", type=Path, required=True)
     score.add_argument("--run", type=Path, required=True)
@@ -40,6 +50,11 @@ def main(argv=None):
     overlap.add_argument("--require-holdout", action="store_true")
     args = parser.parse_args(argv)
     try:
+        if args.command == "freeze-release":
+            from usami.benchmark.release_v2 import build_release
+            result = build_release(args.out)
+            print(json.dumps({"split_sizes": result["split_sizes"], "structures": result["structural_diversity"]["unique"]}, indent=2))
+            return 0
         if args.command == "freeze":
             spec = json.loads(args.spec.read_text(encoding="utf-8"))
             track = spec.pop("track")
@@ -65,6 +80,8 @@ def main(argv=None):
             manifest.service_model = settings_from_env(provider_environment("service"))
             if manifest.track == "customer_discovery":
                 manifest.customer_model = settings_from_env(provider_environment("customer"))
+            if args.strategy is not None:
+                manifest.method_strategy = args.strategy
             manifest.seal()
             if manifest.dataset_hash != previous_dataset_hash:
                 raise ValueError("binding model settings changed fixed dataset conditions")
@@ -74,11 +91,30 @@ def main(argv=None):
             result = split_overlap(load_manifest(args.left), load_manifest(args.right), require_holdout=args.require_holdout)
         else:
             manifest = load_manifest(args.manifest)
-            if args.command == "score":
+            if args.command == "validate":
+                result = {"valid": True, "instances": len(manifest.instances), "manifest_hash": manifest.manifest_hash}
+            elif args.command == "run-suite":
+                from usami.benchmark.suite import run_suite
+                if args.max_runs is not None and args.max_runs < 1: raise ValueError("max-runs must be positive")
+                def clients(m, instance):
+                    if args.baseline:
+                        from usami.benchmark.baselines import BaselineClient
+                        if m.track != "service_task" or m.release != "0.2.0": raise ValueError("these offline baselines require v0.2 Service tasks")
+                        return BaselineClient(m, instance, args.baseline), None
+                    service = OpenAICompatibleClient.from_env(provider_environment("service"))
+                    try:
+                        customer = OpenAICompatibleClient.from_env(provider_environment("customer")) if m.track == "customer_discovery" else None
+                    except Exception:
+                        service.close(); raise
+                    return service, customer
+                result = run_suite(manifest, args.out, clients, max_runs=args.max_runs,
+                    progress=lambda instance, trial, evidence: print(f"{instance.instance_id}/{trial}: recorded", file=sys.stderr, flush=True))
+            elif args.command == "score":
                 result = score_run(manifest, BenchmarkRun.load(args.run))
             elif args.command == "summarize":
                 result = summarize(manifest, [BenchmarkRun.load(path) for path in args.runs])
             else:
+                if args.out.exists(): raise ValueError("output already exists; use run-suite to resume verified evidence")
                 service = OpenAICompatibleClient.from_env(provider_environment("service"))
                 customer = None
                 try:

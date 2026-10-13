@@ -1,0 +1,14 @@
+{
+  "held_out_families": [
+    "restore_onboard",
+    "offboard_downgrade",
+    "upgrade_onboard",
+    "restore_upgrade_onboard",
+    "offboard_refund"
+  ],
+  "instructions": "Choose fresh seeds locally; create outside tracked paths under private/. Public demo seeds are not a private test.",
+  "per_family": 8,
+  "release": "0.2.0",
+  "seed_base": null,
+  "visibility": "private"
+}

@@ -1,0 +1,1084 @@
+{
+  "all_witness_routes_verified": 324,
+  "discovery_baseline": "Stop-only, protocol check; no discovery competence claim",
+  "discovery_protocol_replays": 18,
+  "kind": "SOFTWARE CORRECTNESS / PRIVILEGED OFFLINE BASELINES; NOT LLM PERFORMANCE",
+  "manifest_hashes": {
+    "usami-discovery-v0.2-demo": "164044f4f79798fdbda11a034c73d5d40fb35db9ccb31b5f8e6068dfc34881c9"
+  },
+  "real_llm": "See pilot-report.json separately",
+  "service_reports": {
+    "test-demo/one-step": {
+      "complete": true,
+      "completion_wilson95": [
+        0,
+        0.08762160119728664
+      ],
+      "correct_refusal_rate": null,
+      "dataset_hash": "6b60a0d127c036aeaa76125d72224ebc1e001bc61867982db24e84cd176adb87",
+      "expected_runs": 40,
+      "interval_assumption": "Descriptive binomial interval; instances may be correlated. No population/generalization claim.",
+      "macro_structure_success": 0.0,
+      "manifest_hash": "764bc6a260223ec597044ad007ff69cfc516c175f8cf5d0826cc820ba0c6be71",
+      "overall_task_success_rate": 0.0,
+      "per_family": {
+        "offboard_downgrade": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        },
+        "offboard_refund": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        },
+        "restore_onboard": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        },
+        "restore_upgrade_onboard": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        },
+        "upgrade_onboard": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        }
+      },
+      "per_structure": {
+        "24f1a3484f7947f0ad0212da371aa6f6bd3f41a10aa39b32678580a06c3eb9c2": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        },
+        "3cb9bb447415c68dd5628e1ae7096427891b66450aed4181a0c6e2b5fdcd29b9": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        },
+        "83c577c5d709eee3886234545c82646581f4ac47f850f03a5b247326203957dc": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        },
+        "907f2d6ab705a1fa8c780420147e737c984d27a63e2389b193ca5219c9d86350": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        },
+        "c1c7fceb7916dfa8c00274986a3278a60d0c37cd142f6d9e7555b3b2d2b4bee3": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        }
+      },
+      "per_trial": {
+        "r0": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 40
+        }
+      },
+      "received_runs": 40,
+      "safe_goal_success_rate": 0.0,
+      "status_counts": {
+        "completed": 40
+      },
+      "track": "service_task",
+      "version": "usami-benchmark-score-0.2.0"
+    },
+    "test-demo/reference-proof": {
+      "complete": true,
+      "completion_wilson95": [
+        0.9123783988027135,
+        1
+      ],
+      "correct_refusal_rate": null,
+      "dataset_hash": "6b60a0d127c036aeaa76125d72224ebc1e001bc61867982db24e84cd176adb87",
+      "expected_runs": 40,
+      "interval_assumption": "Descriptive binomial interval; instances may be correlated. No population/generalization claim.",
+      "macro_structure_success": 1.0,
+      "manifest_hash": "764bc6a260223ec597044ad007ff69cfc516c175f8cf5d0826cc820ba0c6be71",
+      "overall_task_success_rate": 1.0,
+      "per_family": {
+        "offboard_downgrade": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        },
+        "offboard_refund": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        },
+        "restore_onboard": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        },
+        "restore_upgrade_onboard": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        },
+        "upgrade_onboard": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        }
+      },
+      "per_structure": {
+        "24f1a3484f7947f0ad0212da371aa6f6bd3f41a10aa39b32678580a06c3eb9c2": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        },
+        "3cb9bb447415c68dd5628e1ae7096427891b66450aed4181a0c6e2b5fdcd29b9": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        },
+        "83c577c5d709eee3886234545c82646581f4ac47f850f03a5b247326203957dc": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        },
+        "907f2d6ab705a1fa8c780420147e737c984d27a63e2389b193ca5219c9d86350": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        },
+        "c1c7fceb7916dfa8c00274986a3278a60d0c37cd142f6d9e7555b3b2d2b4bee3": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        }
+      },
+      "per_trial": {
+        "r0": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 40
+        }
+      },
+      "received_runs": 40,
+      "safe_goal_success_rate": 1.0,
+      "status_counts": {
+        "completed": 40
+      },
+      "track": "service_task",
+      "version": "usami-benchmark-score-0.2.0"
+    },
+    "train/one-step": {
+      "complete": true,
+      "completion_wilson95": [
+        0.21738979502274602,
+        0.36548429084985956
+      ],
+      "correct_refusal_rate": 0.0,
+      "dataset_hash": "24d7bb7de5fadbaf15aba6a31693739880a7e94e8d5613a8e57370fa31506836",
+      "expected_runs": 170,
+      "interval_assumption": "Descriptive binomial interval; instances may be correlated. No population/generalization claim.",
+      "macro_structure_success": 0.2608695652173913,
+      "manifest_hash": "f0cbd91fd3026acb35043d59b3580f70f63aedff6e8e32e30dece636341474b6",
+      "overall_task_success_rate": 0.23529411764705882,
+      "per_family": {
+        "billing_restoration": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 20
+        },
+        "deactivate_reduce": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "excessive_refund": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "expire_cycle": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "invitation_resolve": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "invite_activate": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "owner_refusal": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "partial_refund": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "payment_retry": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "plan_expand": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "remove_departed": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "renew_cycle": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "seat_activate": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "seat_downgrade": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "tenant_refusal": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "two_org_budget": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        }
+      },
+      "per_structure": {
+        "0409e1aba84017941d4f79c041ce7fcb1d9ecac1f3025a6c379da9b7629c112f": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "0539c4c809627318e365ec6182727b3f816ccb71b0e1ce8a95e570c926fb086f": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "05836f31a7320e3e0fc7b9866eda5d5d77af374aa8e74fc546a81ce36a458d42": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "1a27dbf49d55fc5613ca13ca73828331d05821473c86aa4d494d0a2a662e3f70": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "1ef54f4d2adb8b4b1c56b1d7ee7700718e46b6b6ac9bfdccb554e07f2c26f8f6": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "26b161d7d9df65ee2b770e2462acbd1c4dc57ddc1903c23c89f596c213441b64": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 5
+        },
+        "3013738dfd9d5faaf1b3c7a4c5ea6e354f7a46b13a8cbf1b496491599f1cf0f7": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 5
+        },
+        "4335e119cd384b774fff4c83ed31d6397b48b793f5d42daf137721021f903c5b": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 5
+        },
+        "497ba02ee2f60e633d82765f9e34ef07dfef4b191ec1317d095acf418badccd6": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "4ac142bf57e5f9f67cca82077ae30ec3ed41adf6b246dc270438e9cf8f149b0d": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 5
+        },
+        "595b640e4b930a6682eda937f36c4ed461e393b9cbdd88e2d73ad6200993d287": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "5e3fa0edf55b2a00b3b1d798ac5765926b74f4b73635b53d482ca1efd910c79e": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 5
+        },
+        "714a332990c1042fa79e50c6ef05efb848a5e0646fe49240d5e00496099db0b6": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "7e815519829b252c637d0da4c513a2b3ccdd9498a585ce259c7760038d89e0dc": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "8542a1cebe37847488eb4c16a8ff2a5a07583e65f1b0519f285f007725df50e0": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "89f28dc342efc0dba26fcaa1b1876388760ccdc1eba170d6b81fd588c6f9a562": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "8fbdd06840599bce5eefd0d9a59276200a9fd4453d4d489dab773066bad191a2": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "9e14566e930ca926c5d538ae1e913013781c57b4fe6930a4117298fac7182560": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "b71eafc4a0486e0c2fb9ceba36d7922ea0c17a265cfdd64ec07d77dccade3e93": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 5
+        },
+        "ba58a61967a682d5e8b70238bfcb367ce12dd803b4b8991a499660b4f2b372fd": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 10
+        },
+        "c3987361b8412d3ff711c10b13d814d5a8d6fab02578193bd8825a11b18d0a03": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "e2161687bf91bf2ae427bcbe4d8e1cf604f184cbaef82f6e83da58becbdac3b5": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 5
+        },
+        "f1ce7d4a3bb7dc1b069388876a3c77b9abfa8aafe3ca6dd99bdb2f77848f2d14": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 5
+        }
+      },
+      "per_trial": {
+        "r0": {
+          "observed_success_rate": 0.23529411764705882,
+          "official": true,
+          "runs": 170
+        }
+      },
+      "received_runs": 170,
+      "safe_goal_success_rate": 0.2857142857142857,
+      "status_counts": {
+        "completed": 170
+      },
+      "track": "service_task",
+      "version": "usami-benchmark-score-0.2.0"
+    },
+    "train/reference-proof": {
+      "complete": true,
+      "completion_wilson95": [
+        0.9732937996305869,
+        0.9999999999999999
+      ],
+      "correct_refusal_rate": 1.0,
+      "dataset_hash": "24d7bb7de5fadbaf15aba6a31693739880a7e94e8d5613a8e57370fa31506836",
+      "expected_runs": 170,
+      "interval_assumption": "Descriptive binomial interval; instances may be correlated. No population/generalization claim.",
+      "macro_structure_success": 1.0,
+      "manifest_hash": "f0cbd91fd3026acb35043d59b3580f70f63aedff6e8e32e30dece636341474b6",
+      "overall_task_success_rate": 1.0,
+      "per_family": {
+        "billing_restoration": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 20
+        },
+        "deactivate_reduce": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "excessive_refund": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "expire_cycle": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "invitation_resolve": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "invite_activate": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "owner_refusal": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "partial_refund": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "payment_retry": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "plan_expand": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "remove_departed": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "renew_cycle": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "seat_activate": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "seat_downgrade": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "tenant_refusal": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "two_org_budget": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        }
+      },
+      "per_structure": {
+        "0409e1aba84017941d4f79c041ce7fcb1d9ecac1f3025a6c379da9b7629c112f": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "0539c4c809627318e365ec6182727b3f816ccb71b0e1ce8a95e570c926fb086f": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "05836f31a7320e3e0fc7b9866eda5d5d77af374aa8e74fc546a81ce36a458d42": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "1a27dbf49d55fc5613ca13ca73828331d05821473c86aa4d494d0a2a662e3f70": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "1ef54f4d2adb8b4b1c56b1d7ee7700718e46b6b6ac9bfdccb554e07f2c26f8f6": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "26b161d7d9df65ee2b770e2462acbd1c4dc57ddc1903c23c89f596c213441b64": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "3013738dfd9d5faaf1b3c7a4c5ea6e354f7a46b13a8cbf1b496491599f1cf0f7": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "4335e119cd384b774fff4c83ed31d6397b48b793f5d42daf137721021f903c5b": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "497ba02ee2f60e633d82765f9e34ef07dfef4b191ec1317d095acf418badccd6": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "4ac142bf57e5f9f67cca82077ae30ec3ed41adf6b246dc270438e9cf8f149b0d": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "595b640e4b930a6682eda937f36c4ed461e393b9cbdd88e2d73ad6200993d287": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "5e3fa0edf55b2a00b3b1d798ac5765926b74f4b73635b53d482ca1efd910c79e": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "714a332990c1042fa79e50c6ef05efb848a5e0646fe49240d5e00496099db0b6": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "7e815519829b252c637d0da4c513a2b3ccdd9498a585ce259c7760038d89e0dc": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "8542a1cebe37847488eb4c16a8ff2a5a07583e65f1b0519f285f007725df50e0": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "89f28dc342efc0dba26fcaa1b1876388760ccdc1eba170d6b81fd588c6f9a562": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "8fbdd06840599bce5eefd0d9a59276200a9fd4453d4d489dab773066bad191a2": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "9e14566e930ca926c5d538ae1e913013781c57b4fe6930a4117298fac7182560": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "b71eafc4a0486e0c2fb9ceba36d7922ea0c17a265cfdd64ec07d77dccade3e93": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "ba58a61967a682d5e8b70238bfcb367ce12dd803b4b8991a499660b4f2b372fd": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "c3987361b8412d3ff711c10b13d814d5a8d6fab02578193bd8825a11b18d0a03": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 10
+        },
+        "e2161687bf91bf2ae427bcbe4d8e1cf604f184cbaef82f6e83da58becbdac3b5": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        },
+        "f1ce7d4a3bb7dc1b069388876a3c77b9abfa8aafe3ca6dd99bdb2f77848f2d14": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 5
+        }
+      },
+      "per_trial": {
+        "r0": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 170
+        }
+      },
+      "received_runs": 170,
+      "safe_goal_success_rate": 1.0,
+      "status_counts": {
+        "completed": 170
+      },
+      "track": "service_task",
+      "version": "usami-benchmark-score-0.2.0"
+    },
+    "validation/one-step": {
+      "complete": true,
+      "completion_wilson95": [
+        0.18418775143858906,
+        0.4147525071551667
+      ],
+      "correct_refusal_rate": 0.0,
+      "dataset_hash": "97696d3e62309d03d40ed350f11b4781a73bf54636a8ce7e1c88e87250be45fe",
+      "expected_runs": 68,
+      "interval_assumption": "Descriptive binomial interval; instances may be correlated. No population/generalization claim.",
+      "macro_structure_success": 0.2608695652173913,
+      "manifest_hash": "599d0497b685fcc7c035afbee65843fe757f305c7100e164961a0f00f8b9909c",
+      "overall_task_success_rate": 0.23529411764705882,
+      "per_family": {
+        "billing_restoration": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 8
+        },
+        "deactivate_reduce": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "excessive_refund": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "expire_cycle": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "invitation_resolve": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "invite_activate": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "owner_refusal": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "partial_refund": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "payment_retry": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "plan_expand": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "remove_departed": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "renew_cycle": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "seat_activate": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "seat_downgrade": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "tenant_refusal": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "two_org_budget": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        }
+      },
+      "per_structure": {
+        "0409e1aba84017941d4f79c041ce7fcb1d9ecac1f3025a6c379da9b7629c112f": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "0539c4c809627318e365ec6182727b3f816ccb71b0e1ce8a95e570c926fb086f": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "05836f31a7320e3e0fc7b9866eda5d5d77af374aa8e74fc546a81ce36a458d42": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "1a27dbf49d55fc5613ca13ca73828331d05821473c86aa4d494d0a2a662e3f70": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "1ef54f4d2adb8b4b1c56b1d7ee7700718e46b6b6ac9bfdccb554e07f2c26f8f6": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "26b161d7d9df65ee2b770e2462acbd1c4dc57ddc1903c23c89f596c213441b64": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 2
+        },
+        "3013738dfd9d5faaf1b3c7a4c5ea6e354f7a46b13a8cbf1b496491599f1cf0f7": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 2
+        },
+        "4335e119cd384b774fff4c83ed31d6397b48b793f5d42daf137721021f903c5b": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 2
+        },
+        "497ba02ee2f60e633d82765f9e34ef07dfef4b191ec1317d095acf418badccd6": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "4ac142bf57e5f9f67cca82077ae30ec3ed41adf6b246dc270438e9cf8f149b0d": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 2
+        },
+        "595b640e4b930a6682eda937f36c4ed461e393b9cbdd88e2d73ad6200993d287": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "5e3fa0edf55b2a00b3b1d798ac5765926b74f4b73635b53d482ca1efd910c79e": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 2
+        },
+        "714a332990c1042fa79e50c6ef05efb848a5e0646fe49240d5e00496099db0b6": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "7e815519829b252c637d0da4c513a2b3ccdd9498a585ce259c7760038d89e0dc": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "8542a1cebe37847488eb4c16a8ff2a5a07583e65f1b0519f285f007725df50e0": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "89f28dc342efc0dba26fcaa1b1876388760ccdc1eba170d6b81fd588c6f9a562": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "8fbdd06840599bce5eefd0d9a59276200a9fd4453d4d489dab773066bad191a2": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "9e14566e930ca926c5d538ae1e913013781c57b4fe6930a4117298fac7182560": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "b71eafc4a0486e0c2fb9ceba36d7922ea0c17a265cfdd64ec07d77dccade3e93": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 2
+        },
+        "ba58a61967a682d5e8b70238bfcb367ce12dd803b4b8991a499660b4f2b372fd": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 4
+        },
+        "c3987361b8412d3ff711c10b13d814d5a8d6fab02578193bd8825a11b18d0a03": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "e2161687bf91bf2ae427bcbe4d8e1cf604f184cbaef82f6e83da58becbdac3b5": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 2
+        },
+        "f1ce7d4a3bb7dc1b069388876a3c77b9abfa8aafe3ca6dd99bdb2f77848f2d14": {
+          "observed_success_rate": 0.0,
+          "official": true,
+          "runs": 2
+        }
+      },
+      "per_trial": {
+        "r0": {
+          "observed_success_rate": 0.23529411764705882,
+          "official": true,
+          "runs": 68
+        }
+      },
+      "received_runs": 68,
+      "safe_goal_success_rate": 0.2857142857142857,
+      "status_counts": {
+        "completed": 68
+      },
+      "track": "service_task",
+      "version": "usami-benchmark-score-0.2.0"
+    },
+    "validation/reference-proof": {
+      "complete": true,
+      "completion_wilson95": [
+        0.9358060632812366,
+        1
+      ],
+      "correct_refusal_rate": 1.0,
+      "dataset_hash": "97696d3e62309d03d40ed350f11b4781a73bf54636a8ce7e1c88e87250be45fe",
+      "expected_runs": 68,
+      "interval_assumption": "Descriptive binomial interval; instances may be correlated. No population/generalization claim.",
+      "macro_structure_success": 1.0,
+      "manifest_hash": "599d0497b685fcc7c035afbee65843fe757f305c7100e164961a0f00f8b9909c",
+      "overall_task_success_rate": 1.0,
+      "per_family": {
+        "billing_restoration": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 8
+        },
+        "deactivate_reduce": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "excessive_refund": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "expire_cycle": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "invitation_resolve": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "invite_activate": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "owner_refusal": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "partial_refund": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "payment_retry": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "plan_expand": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "remove_departed": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "renew_cycle": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "seat_activate": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "seat_downgrade": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "tenant_refusal": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "two_org_budget": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        }
+      },
+      "per_structure": {
+        "0409e1aba84017941d4f79c041ce7fcb1d9ecac1f3025a6c379da9b7629c112f": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "0539c4c809627318e365ec6182727b3f816ccb71b0e1ce8a95e570c926fb086f": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "05836f31a7320e3e0fc7b9866eda5d5d77af374aa8e74fc546a81ce36a458d42": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "1a27dbf49d55fc5613ca13ca73828331d05821473c86aa4d494d0a2a662e3f70": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "1ef54f4d2adb8b4b1c56b1d7ee7700718e46b6b6ac9bfdccb554e07f2c26f8f6": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "26b161d7d9df65ee2b770e2462acbd1c4dc57ddc1903c23c89f596c213441b64": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "3013738dfd9d5faaf1b3c7a4c5ea6e354f7a46b13a8cbf1b496491599f1cf0f7": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "4335e119cd384b774fff4c83ed31d6397b48b793f5d42daf137721021f903c5b": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "497ba02ee2f60e633d82765f9e34ef07dfef4b191ec1317d095acf418badccd6": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "4ac142bf57e5f9f67cca82077ae30ec3ed41adf6b246dc270438e9cf8f149b0d": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "595b640e4b930a6682eda937f36c4ed461e393b9cbdd88e2d73ad6200993d287": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "5e3fa0edf55b2a00b3b1d798ac5765926b74f4b73635b53d482ca1efd910c79e": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "714a332990c1042fa79e50c6ef05efb848a5e0646fe49240d5e00496099db0b6": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "7e815519829b252c637d0da4c513a2b3ccdd9498a585ce259c7760038d89e0dc": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "8542a1cebe37847488eb4c16a8ff2a5a07583e65f1b0519f285f007725df50e0": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "89f28dc342efc0dba26fcaa1b1876388760ccdc1eba170d6b81fd588c6f9a562": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "8fbdd06840599bce5eefd0d9a59276200a9fd4453d4d489dab773066bad191a2": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "9e14566e930ca926c5d538ae1e913013781c57b4fe6930a4117298fac7182560": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "b71eafc4a0486e0c2fb9ceba36d7922ea0c17a265cfdd64ec07d77dccade3e93": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "ba58a61967a682d5e8b70238bfcb367ce12dd803b4b8991a499660b4f2b372fd": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "c3987361b8412d3ff711c10b13d814d5a8d6fab02578193bd8825a11b18d0a03": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 4
+        },
+        "e2161687bf91bf2ae427bcbe4d8e1cf604f184cbaef82f6e83da58becbdac3b5": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        },
+        "f1ce7d4a3bb7dc1b069388876a3c77b9abfa8aafe3ca6dd99bdb2f77848f2d14": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 2
+        }
+      },
+      "per_trial": {
+        "r0": {
+          "observed_success_rate": 1.0,
+          "official": true,
+          "runs": 68
+        }
+      },
+      "received_runs": 68,
+      "safe_goal_success_rate": 1.0,
+      "status_counts": {
+        "completed": 68
+      },
+      "track": "service_task",
+      "version": "usami-benchmark-score-0.2.0"
+    }
+  }
+}

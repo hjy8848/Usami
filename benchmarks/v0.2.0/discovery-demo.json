@@ -1,0 +1,565 @@
+{
+  "version": "usami-benchmark-0.2.0",
+  "suite_id": "usami-discovery-v0.2-demo",
+  "release": "0.2.0",
+  "track": "customer_discovery",
+  "split": "test",
+  "visibility": "demo",
+  "generator": {
+    "version": "saas-generator-0.2.0",
+    "user_count": 8,
+    "organization_count": 3,
+    "clock": "2026-01-15T12:00:00Z",
+    "profile": "standard",
+    "rules": {
+      "version": "saas-rules-0.2.0",
+      "refund_window_days": 14,
+      "plans": {
+        "starter": {
+          "id": "starter",
+          "name": "Starter",
+          "rank": 0,
+          "max_seats": 5
+        },
+        "team": {
+          "id": "team",
+          "name": "Team",
+          "rank": 1,
+          "max_seats": 20
+        },
+        "business": {
+          "id": "business",
+          "name": "Business",
+          "rank": 2,
+          "max_seats": 100
+        }
+      }
+    }
+  },
+  "mode": "sandbox",
+  "tools": [
+    "get_customer_context",
+    "get_organization",
+    "list_members",
+    "get_subscription",
+    "get_invoice",
+    "change_plan",
+    "change_seats",
+    "cancel_renewal",
+    "refund_invoice",
+    "change_member_role",
+    "invite_member",
+    "activate_member",
+    "deactivate_member",
+    "remove_member",
+    "pay_invoice",
+    "issue_renewal",
+    "renew_subscription",
+    "reactivate_subscription",
+    "expire_subscription"
+  ],
+  "budget": {
+    "max_customer_turns": 6,
+    "max_customer_llm_calls": 8,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 48
+  },
+  "service_model": {
+    "model": "offline-contract",
+    "base_url": "https://example.invalid/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 2048
+    },
+    "trust_env": false
+  },
+  "customer_model": {
+    "model": "offline-contract",
+    "base_url": "https://example.invalid/v1",
+    "timeout_seconds": 60.0,
+    "options": {
+      "max_tokens": 2048
+    },
+    "trust_env": false
+  },
+  "trials": [
+    "r0",
+    "r1",
+    "r2"
+  ],
+  "instances": [
+    {
+      "instance_id": "discovery_ad9f367f71cbef26ab94007d",
+      "seed": 4000000,
+      "initial_state_hash": "568cc897e6d554aaa8178bb8a3bc8223f414f62eede154b71a78e125d51f8dce",
+      "customer_identity": "user_000",
+      "task": null,
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "standard",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        },
+        "workflow": "seat_activate"
+      }
+    },
+    {
+      "instance_id": "discovery_4e48e9fd9146d38f681ee530",
+      "seed": 4000001,
+      "initial_state_hash": "ba7fcfa54224b6d30547f50949e4895959181b5bd466f7804dc6bf2ad764aae4",
+      "customer_identity": "user_002",
+      "task": null,
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "standard",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        },
+        "workflow": "seat_activate"
+      }
+    },
+    {
+      "instance_id": "discovery_cd1d5022d73c04cb6a63b099",
+      "seed": 4000002,
+      "initial_state_hash": "1e82f3fc0df9b5faa6a6b5331b6fa825e05d0ef2bc3223c195db569d8cfa5703",
+      "customer_identity": "user_001",
+      "task": null,
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "standard",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        },
+        "workflow": "seat_activate"
+      }
+    },
+    {
+      "instance_id": "discovery_513cf7ad7e3a7d869ce80370",
+      "seed": 4000003,
+      "initial_state_hash": "264e78fa0598095629e2c3a23011ed7bb5016e75500a4261477614d51d2150d0",
+      "customer_identity": "user_000",
+      "task": null,
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "test_composed",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        }
+      }
+    },
+    {
+      "instance_id": "discovery_402a7921ccf83c3eb0419b56",
+      "seed": 4000004,
+      "initial_state_hash": "3cbe9b13c733e159aee9af569e5a8ea1bcf16c0834194dd08691bebca25967db",
+      "customer_identity": "user_002",
+      "task": null,
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "test_composed",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        }
+      }
+    },
+    {
+      "instance_id": "discovery_59f270a5529e34fefd6d8ca8",
+      "seed": 4000005,
+      "initial_state_hash": "045cf65ecce0a8912784a02d80fff98135ecd7ff1fbbdaa2e5434ee9da2f66d6",
+      "customer_identity": "user_002",
+      "task": null,
+      "exploration_strategy": null,
+      "generator": {
+        "version": "saas-generator-0.2.0",
+        "user_count": 8,
+        "organization_count": 3,
+        "clock": "2026-01-15T12:00:00Z",
+        "profile": "test_composed",
+        "rules": {
+          "version": "saas-rules-0.2.0",
+          "refund_window_days": 14,
+          "plans": {
+            "starter": {
+              "id": "starter",
+              "name": "Starter",
+              "rank": 0,
+              "max_seats": 5
+            },
+            "team": {
+              "id": "team",
+              "name": "Team",
+              "rank": 1,
+              "max_seats": 20
+            },
+            "business": {
+              "id": "business",
+              "name": "Business",
+              "rank": 2,
+              "max_seats": 100
+            }
+          }
+        }
+      }
+    }
+  ],
+  "sampling": {
+    "profiles": [
+      {
+        "instance_id": "discovery_ad9f367f71cbef26ab94007d",
+        "profile": "standard",
+        "identity": "user_000",
+        "primary_organization": "org_000",
+        "primary_role": "owner",
+        "actual_memberships": [
+          {
+            "id": "membership_002_user_000",
+            "org_id": "org_002",
+            "user_id": "user_000",
+            "role": "billing_admin",
+            "status": "inactive"
+          },
+          {
+            "id": "membership_org_000_user_000",
+            "org_id": "org_000",
+            "user_id": "user_000",
+            "role": "owner",
+            "status": "active"
+          }
+        ]
+      },
+      {
+        "instance_id": "discovery_4e48e9fd9146d38f681ee530",
+        "profile": "standard",
+        "identity": "user_002",
+        "primary_organization": "org_000",
+        "primary_role": "billing_admin",
+        "actual_memberships": [
+          {
+            "id": "membership_001_user_002",
+            "org_id": "org_001",
+            "user_id": "user_002",
+            "role": "member",
+            "status": "active"
+          },
+          {
+            "id": "membership_002_user_002",
+            "org_id": "org_002",
+            "user_id": "user_002",
+            "role": "owner",
+            "status": "active"
+          },
+          {
+            "id": "membership_org_000_user_002",
+            "org_id": "org_000",
+            "user_id": "user_002",
+            "role": "billing_admin",
+            "status": "active"
+          }
+        ]
+      },
+      {
+        "instance_id": "discovery_cd1d5022d73c04cb6a63b099",
+        "profile": "standard",
+        "identity": "user_001",
+        "primary_organization": "org_000",
+        "primary_role": "member",
+        "actual_memberships": [
+          {
+            "id": "membership_001_user_001",
+            "org_id": "org_001",
+            "user_id": "user_001",
+            "role": "owner",
+            "status": "active"
+          },
+          {
+            "id": "membership_002_user_001",
+            "org_id": "org_002",
+            "user_id": "user_001",
+            "role": "member",
+            "status": "active"
+          },
+          {
+            "id": "membership_org_000_user_001",
+            "org_id": "org_000",
+            "user_id": "user_001",
+            "role": "member",
+            "status": "active"
+          }
+        ]
+      },
+      {
+        "instance_id": "discovery_513cf7ad7e3a7d869ce80370",
+        "profile": "test_composed",
+        "identity": "user_000",
+        "primary_organization": "org_000",
+        "primary_role": "owner",
+        "actual_memberships": [
+          {
+            "id": "membership_000_user_000",
+            "org_id": "org_000",
+            "user_id": "user_000",
+            "role": "owner",
+            "status": "active"
+          },
+          {
+            "id": "membership_002_user_000",
+            "org_id": "org_002",
+            "user_id": "user_000",
+            "role": "member",
+            "status": "active"
+          }
+        ]
+      },
+      {
+        "instance_id": "discovery_402a7921ccf83c3eb0419b56",
+        "profile": "test_composed",
+        "identity": "user_002",
+        "primary_organization": "org_000",
+        "primary_role": "billing_admin",
+        "actual_memberships": [
+          {
+            "id": "membership_000_user_002",
+            "org_id": "org_000",
+            "user_id": "user_002",
+            "role": "billing_admin",
+            "status": "active"
+          },
+          {
+            "id": "membership_001_user_002",
+            "org_id": "org_001",
+            "user_id": "user_002",
+            "role": "member",
+            "status": "active"
+          },
+          {
+            "id": "membership_002_user_002",
+            "org_id": "org_002",
+            "user_id": "user_002",
+            "role": "owner",
+            "status": "active"
+          }
+        ]
+      },
+      {
+        "instance_id": "discovery_59f270a5529e34fefd6d8ca8",
+        "profile": "test_composed",
+        "identity": "user_002",
+        "primary_organization": "org_001",
+        "primary_role": "member",
+        "actual_memberships": [
+          {
+            "id": "membership_000_user_002",
+            "org_id": "org_000",
+            "user_id": "user_002",
+            "role": "billing_admin",
+            "status": "active"
+          },
+          {
+            "id": "membership_001_user_002",
+            "org_id": "org_001",
+            "user_id": "user_002",
+            "role": "member",
+            "status": "active"
+          },
+          {
+            "id": "membership_002_user_002",
+            "org_id": "org_002",
+            "user_id": "user_002",
+            "role": "owner",
+            "status": "active"
+          }
+        ]
+      }
+    ],
+    "fixed_attack_script": false,
+    "trial_design": "Three preregistered repeats; role is scoped per organization, not a global user property."
+  },
+  "versions": {
+    "protocol": "usami-benchmark-0.2.0",
+    "score": "usami-benchmark-score-0.2.0",
+    "goal": "usami-business-goals-0.2.0",
+    "generator": "saas-generator-0.2.0",
+    "rules": "saas-rules-0.2.0",
+    "service": "usami-service-0.1.0",
+    "interaction": "usami-interaction-0.1.0",
+    "customer": "usami-customer-0.1.0"
+  },
+  "source_hashes": {
+    "usami/__init__.py": "32fd90cc175330e5763b25ffcb0ff860fdb0c09e02ecce135acbc994e969bbbf",
+    "usami/__main__.py": "ee847d69a4bfe9c24eb84d30b6232f5309073bd753669ce95111d59a28defe85",
+    "usami/audit/__init__.py": "ff848e128b1c8f512403a26ad274b88b8db1f1d849b14f009e614e0fe9c973cc",
+    "usami/audit/__main__.py": "7ab475c7f6cc130cbcc0781d1108c5861aedc1b52c48f512ebe9296c79fb34ba",
+    "usami/audit/report.py": "02c260d3ea97db7a984e1ca43f8ac3c5de26082f1bcf2d171e69cfbdbe3fe463",
+    "usami/audit/rules.py": "75944a8af59c2ac584ffab4d1ae128aa83b79834a5b29c3246f1dcb942677109",
+    "usami/audit/runner.py": "7bf205b8a4ebbb21d0cba3bf9e70fb24a12144ffc9d64602df7c10bd0c2cfd39",
+    "usami/audit/signatures.py": "fc929824171f8d45b8de4356eeb31f2c31138656d0e2152adb267ab502d6b2fb",
+    "usami/benchmark/__init__.py": "b7b427408344be94524afbd0f03d1f8b21f13770f8a7b922b00cfb7ef83ff182",
+    "usami/benchmark/__main__.py": "aff45dbe69c9be0c591a0e0c006ba0bd554f73de50fb1ea5f84d83d21e64c7a3",
+    "usami/benchmark/audit_v2.py": "c5319d2d28afb648eada662047270e5462a4f412eed8060d1afa1177ad7a5cfb",
+    "usami/benchmark/baselines.py": "6a9c418691f4bcbfd9df93a593226ba0d88b23a7661880c99cb4729de8336926",
+    "usami/benchmark/goals.py": "856df7a1107b9f7fd74fac8a9e04a92721323b6858ec34a7a3fc16f42d4ca182",
+    "usami/benchmark/goals_v2.py": "617460ae5bf6a33e58c6c1a5793de637b2dcc3409157ba350c9f9818ad7fdbd5",
+    "usami/benchmark/manifest.py": "f5a01b37b5df11993ccb25b6973658911173d4485d2198521a69d5b38a583a65",
+    "usami/benchmark/release_v2.py": "462806417cc1db22a94ecd4579f95744d683bfa368eab7845776042746a40841",
+    "usami/benchmark/runtime.py": "4c4fbb8ce51145d89ce8eabc90970b7c2f333eaf0d36c15eb9ed505815d7ebd8",
+    "usami/benchmark/scoring.py": "052fb65a7a336a1f3684eb6e0cddc41c6951a698228a59b4fb7206016f726f77",
+    "usami/benchmark/scoring_v2.py": "13294ba44961619308dc1e6f4f0546e558cf6168b22c027bc6e8346b1cd5e2d0",
+    "usami/benchmark/suite.py": "b43872b1c1c6bfa708355adfe9e810981248cc06f4b3f67c0fac2b11b16d8e57",
+    "usami/customer/__init__.py": "566f40d424c7ee6ed5e455d8e7bcf349f338052b3deab8569082fefadecca213",
+    "usami/customer/agent.py": "635f896a65c23f3d385a4eafbe8452bd8dccd751a661f7420b7c687eca755f08",
+    "usami/customer/models.py": "7ae70f9e621c133d0ea2e857ef043d6dfe509a4a56eb38baeea9a6787e049bc9",
+    "usami/customer/observation.py": "a0c1d98cf57f2f0437f189e0a7cbf52f63bdb2a43b12e53ec2dad376ebbd6010",
+    "usami/evaluation/__init__.py": "2d16da142577a1f97abc548b7a6ec12446c8375ee9fa4d049cd7379e14828607",
+    "usami/evaluation/oracle.py": "3a3fb6db0c6a1260f7e051262b02f0d02dab161e8b62ff87b3148fba27571c23",
+    "usami/evaluation/scenario.py": "69c5e75bbd6096f908aee103d1b0aa1fdd452f63695c709ba15168b273911394",
+    "usami/evaluation/splits.py": "e917b74633d5790404dfd084e45f73dd3cdaaf3b029568eb7224e35a77d930cc",
+    "usami/events.py": "ca7c741389aede8db12732f4cb7b4c9ecbf9cd0ec60fa72aee351b3cbeed7394",
+    "usami/interaction/__init__.py": "15936514491af8e148553656e74ad2ed2533c8b61320298a025e37bfcbb52958",
+    "usami/interaction/__main__.py": "d5d6e583a8f627e1caaf1fe84524c88f271717094371e8724ddf506b739368bd",
+    "usami/interaction/authorization.py": "cb8c493178595ad14ace7bef80ff223fa4c122c9316022c07f4075aefb1d9cdc",
+    "usami/interaction/models.py": "f2cc10aa547a1a05de2e1e1142773f13684845755f120f59ba598e03564edd8e",
+    "usami/interaction/runner.py": "94b95df86b204ce75bf5c534a55da07f43bd7f8f428bc5b08b9a8139b7641191",
+    "usami/protocol.py": "7682a13b6d592813857439ce3fb50324f2bb2fd0ef84f39c7725cff8c504f9bb",
+    "usami/randomness.py": "42bd8b48bca6f9946861c3b1e7137900406d0b945391d6a1893280d691c35572",
+    "usami/service/__init__.py": "7590487bf241368ae51294e98c896fcd09d5d49d6039dfec02eca6eb8e8f1a11",
+    "usami/service/__main__.py": "7fd80af3907c1b04009d9310a6b0d48ec16da3a133a4776a7a9e3e5180b01b4a",
+    "usami/service/client.py": "cb783b8322bfb1db3834830edfe06c75847c505f2941b0518fc1fb2d0b842b40",
+    "usami/service/models.py": "ac41bd08bab7f7fa3d593fd59bd7e2a89e28632fe27df9701f126832d8637a20",
+    "usami/service/runner.py": "b27e5ba7d86b392cd3bbbeb60df37180f88e9e56dc548da8bfa06dbb75918ccd",
+    "usami/service/tools.py": "d34db1528ead23b57a6d1cf449ac24c6f6dc6c7ad64834a6a5b3ffabc328cf6a",
+    "usami/world/__init__.py": "1c21b8471eeb161758e7ef1c4e957bfe49e3351b0688e70aea93ebb28e06d325",
+    "usami/world/engine.py": "5f7dbe972c9aa6f172826719c89ded8bff9afce92e413be1f3e70d06c4016d10",
+    "usami/world/generator.py": "6048fdec6e8247af33163772b2a5cda6a18b52358783705ac44f5d06f6be9a3f",
+    "usami/world/generator_v2.py": "9505981da0fc8e24f0197bc8e03a0c7f880a9f20124dfeaca501b4cb7e247b2f",
+    "usami/world/models.py": "131ef77f8797c35a29e44a8e6126f380b81cde4055bb0daeb09a402d48f316a5",
+    "usami/world/rules.py": "f50c1af9ebc91762e3796f3edb13bd3d2d47a4f57f382f49b1a26d2c93c9090f",
+    "usami/world/rules_v2.py": "29f299764e6c33ff4df6f5d975ae088bb8c89c100b23b29f4373f035e2a05ea9",
+    "usami/world/transitions_v2.py": "4a8037c26b1b0a479199398ef113edad61818a9d2b9443783ecd8d4d764fb120"
+  },
+  "dataset_hash": "b04dd3e211869b16096223c38b64a479a877c408c2794d4d702dc80175e16ef2",
+  "manifest_hash": "164044f4f79798fdbda11a034c73d5d40fb35db9ccb31b5f8e6068dfc34881c9"
+}

@@ -1,3 +1,5 @@
+> Current SaaS release: [v0.2 installation, datasets, baselines, suite runner and Discovery](../../benchmarks/v0.2.0/README.md). The v0.1 protocol below is historical; frozen v0.1 data requires its original source pin.
+
 # Usami Benchmark protocol v0.1.0
 
 两条评测轨道共享原有 World Engine、Reference Rules、Oracle 与真实 Agent 接口，

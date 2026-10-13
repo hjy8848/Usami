@@ -8,7 +8,7 @@ from usami.customer.models import CustomerAction
 from usami.evaluation.oracle import RequestEvaluation
 from usami.protocol import Operation
 from usami.service import CustomerInput, ModelSettings, ServiceExecution, ServiceTurn
-from usami.service.models import LLMRecord, TOOL_NAMES
+from usami.service.models import LLMRecord, TOOL_NAMES, TOOL_NAMES_V2
 from usami.world.generator import GeneratorConfig
 from usami.world.models import Model, digest
 
@@ -34,7 +34,8 @@ class InteractionConfig(Model):
 
     @model_validator(mode="after")
     def fixed_tools(self):
-        if len(self.tools) != len(set(self.tools)) or set(self.tools) - set(TOOL_NAMES):
+        supported = TOOL_NAMES_V2 if self.generator.rules.version == "saas-rules-0.2.0" else TOOL_NAMES
+        if len(self.tools) != len(set(self.tools)) or set(self.tools) - set(supported):
             raise ValueError("tools must be distinct supported Service tool names")
         return self
 

@@ -1,0 +1,35 @@
+{
+  "release": "0.2.0",
+  "status": "EXECUTED",
+  "baseline_commit": "e9e1bb0470c577e02e34186089490f96550367a9",
+  "tests": {
+    "baseline_independently_confirmed": 251,
+    "final_full_suite": 414,
+    "final_duration_seconds": 47.85,
+    "pinned_original_v0_1_tests": 251,
+    "pinned_original_manifest_valid": true
+  },
+  "determinism": {
+    "independent_builds": 2,
+    "byte_identical_frozen_files": 7
+  },
+  "verification": {
+    "reference_routes": 324,
+    "service_offline_executions": 556,
+    "discovery_protocol_replays": 18
+  },
+  "real_model_observations": {
+    "service_cases": 6,
+    "customer_discovery_trials": 3,
+    "score_only_reevaluation": "Exact requests, executions, Oracle and errors preserved; only scoring_v2.py differs."
+  },
+  "human_review": "AWAITING EXTERNAL REVIEW",
+  "private_test": "Specification and ignored-path generator only; no private instances published",
+  "python": "3.9.6",
+  "mandatory_implementation_and_software_checks": "pass",
+  "limitations": [
+    "No full-release real-model capability score",
+    "No external human ratings",
+    "Operational refusal/code communication; explanation rhetoric/truthfulness unjudged"
+  ]
+}

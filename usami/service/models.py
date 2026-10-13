@@ -14,6 +14,8 @@ SERVICE_VERSION = "usami-service-0.1.0"
 TOOL_NAMES = ["get_customer_context", "get_organization", "list_members", "get_subscription",
               "get_invoice", "change_plan", "change_seats", "cancel_renewal", "refund_invoice",
               "change_member_role"]
+TOOL_NAMES_V2 = TOOL_NAMES + ["invite_member", "activate_member", "deactivate_member", "remove_member",
+    "pay_invoice", "issue_renewal", "renew_subscription", "reactivate_subscription", "expire_subscription"]
 
 
 class CustomerInput(Model):
@@ -45,7 +47,8 @@ class Experiment(Model):
 
     @model_validator(mode="after")
     def fixed_tools(self):
-        if len(self.tools) != len(set(self.tools)) or set(self.tools) - set(TOOL_NAMES):
+        supported = TOOL_NAMES_V2 if self.generator.rules.version == "saas-rules-0.2.0" else TOOL_NAMES
+        if len(self.tools) != len(set(self.tools)) or set(self.tools) - set(supported):
             raise ValueError("tools must be distinct supported tool names")
         return self
 

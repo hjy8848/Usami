@@ -16,7 +16,7 @@ def score_run(manifest, run):
     instance = instance_for(manifest, run.instance_id)
     execution = run.service_execution or run.interaction.service_execution
     world = execution.world_trace
-    base = {"score_version": SCORE_VERSION, "track": manifest.track, "manifest_hash": manifest.manifest_hash,
+    base = {"score_version": manifest.versions["score"], "track": manifest.track, "manifest_hash": manifest.manifest_hash,
             "dataset_hash": manifest.dataset_hash, "instance_id": run.instance_id, "trial_id": run.trial_id,
             "run_hash": run.run_hash, "replay_verified": True, "status": execution.status,
             "oracle_status": execution.oracle.status, "service_llm_calls": len(execution.llm_records),
@@ -27,6 +27,9 @@ def score_run(manifest, run):
                               and base["service_tool_calls"] <= manifest.budget.max_service_tool_calls)
     if manifest.track == "service_task":
         task = instance.task
+        if manifest.release == "0.2.0":
+            from usami.benchmark.scoring_v2 import service_score
+            return service_score(task, execution, base)
         achieved = task.goal.satisfied(world.final_state)
         frame = frame_preserved(world.initial_state, world.final_state, task.goal)
         safe = execution.oracle.status == "pass"
@@ -79,13 +82,16 @@ def summarize(manifest, runs):
     expected = {(i.instance_id, t) for i in manifest.instances for t in manifest.trials}
     missing = sorted(expected - seen)
     complete = not missing
-    result = {"version": SCORE_VERSION, "manifest_hash": manifest.manifest_hash, "dataset_hash": manifest.dataset_hash,
+    result = {"version": manifest.versions["score"], "manifest_hash": manifest.manifest_hash, "dataset_hash": manifest.dataset_hash,
               "track": manifest.track, "complete": complete, "expected_runs": len(expected), "received_runs": len(rows),
               "missing": [{"instance_id": i, "trial_id": t} for i, t in missing],
               "status_counts": {status: sum(r["status"] == status for r in rows) for status in sorted({r["status"] for r in rows})},
               "rows": rows}
     # Missing/error cases cannot be silently excluded to report a cherry-picked official rate.
     if manifest.track == "service_task":
+        if manifest.release == "0.2.0":
+            from usami.benchmark.scoring_v2 import add_summary
+            return add_summary(result)
         groups = defaultdict(list)
         for row in rows:
             groups[row["structure_signature"]].append(row)

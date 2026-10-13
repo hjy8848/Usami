@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections import Counter
 import hashlib
 from pathlib import Path
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional, Union
 
 from pydantic import Field, model_validator
 
@@ -13,25 +13,27 @@ from usami.evaluation.splits import business_fingerprint
 from usami.benchmark.goals import CLASSES, GOAL_VERSION, GoalTask, generate_goal_tasks, validate_task
 from usami.interaction.models import CUSTOMER_VERSION, INTERACTION_VERSION
 from usami.randomness import StableRandom
-from usami.service.models import ModelSettings, SERVICE_VERSION, TOOL_NAMES
+from usami.service.models import ModelSettings, SERVICE_VERSION, TOOL_NAMES, TOOL_NAMES_V2
+from usami.benchmark.goals_v2 import BusinessTask, GOAL_VERSION_V2, validate_business_task
 from usami.world.generator import GeneratorConfig, generate_world
 from usami.world.models import GENERATOR_VERSION, RULES_VERSION, Model, digest
 
 PROTOCOL_VERSION = "usami-benchmark-0.1.0"
 SCORE_VERSION = "usami-benchmark-score-0.1.0"
+PROTOCOL_VERSION_V2 = "usami-benchmark-0.2.0"
+SCORE_VERSION_V2 = "usami-benchmark-score-0.2.0"
 ROOT = Path(__file__).resolve().parents[2]
+_VALIDATED = set()
 
 
 def runtime_hashes():
-    paths = list(CORE_FILES) + ["usami/audit/signatures.py"]
-    for package in ("service", "customer", "interaction", "benchmark"):
-        paths += [str(p.relative_to(ROOT)) for p in sorted((ROOT / "usami" / package).glob("*.py"))]
+    paths = [str(p.relative_to(ROOT)) for p in sorted((ROOT / "usami").rglob("*.py"))]
     return {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in sorted(paths)}
 
 
-def versions():
-    return dict(protocol=PROTOCOL_VERSION, score=SCORE_VERSION, goal=GOAL_VERSION,
-                generator=GENERATOR_VERSION, rules=RULES_VERSION, service=SERVICE_VERSION,
+def versions(v2=False):
+    return dict(protocol=PROTOCOL_VERSION_V2 if v2 else PROTOCOL_VERSION, score=SCORE_VERSION_V2 if v2 else SCORE_VERSION, goal=GOAL_VERSION_V2 if v2 else GOAL_VERSION,
+                generator="saas-generator-0.2.0" if v2 else GENERATOR_VERSION, rules="saas-rules-0.2.0" if v2 else RULES_VERSION, service=SERVICE_VERSION,
                 interaction=INTERACTION_VERSION, customer=CUSTOMER_VERSION)
 
 
@@ -47,8 +49,9 @@ class Instance(Model):
     seed: int = Field(strict=True)
     initial_state_hash: str
     customer_identity: str
-    task: Optional[GoalTask] = None
+    task: Optional[Union[GoalTask, BusinessTask]] = None
     exploration_strategy: Optional[str] = None
+    generator: Optional[GeneratorConfig] = Field(default=None, exclude_if=lambda v: v is None)
 
 
 class BenchmarkManifest(Model):
@@ -67,6 +70,7 @@ class BenchmarkManifest(Model):
     trials: List[str] = Field(default_factory=lambda: ["r0"])
     instances: List[Instance] = Field(min_length=1)
     sampling: Dict = Field(default_factory=dict)
+    method_strategy: Optional[str] = Field(default=None, exclude_if=lambda v: v is None)
     versions: Dict[str, str]
     source_hashes: Dict[str, str]
     dataset_hash: str = ""
@@ -78,7 +82,7 @@ class BenchmarkManifest(Model):
             raise ValueError("suite/release must be named")
         if self.split == "test" and self.visibility == "public":
             raise ValueError("test is private or explicitly demo, never a published blind test")
-        if len(self.tools) != len(set(self.tools)) or set(self.tools) - set(TOOL_NAMES):
+        if len(self.tools) != len(set(self.tools)) or set(self.tools) - set(TOOL_NAMES_V2 if self.version == PROTOCOL_VERSION_V2 else TOOL_NAMES):
             raise ValueError("fixed tools must be distinct supported tools")
         if not self.trials or any(not trial for trial in self.trials) or len(self.trials) != len(set(self.trials)):
             raise ValueError("trials must be nonempty and distinct")
@@ -89,11 +93,15 @@ class BenchmarkManifest(Model):
                 raise ValueError("every Service task instance needs a goal, not a discovery strategy")
         elif self.customer_model is None or self.budget.max_customer_llm_calls < 1 or any(i.task is not None for i in self.instances):
             raise ValueError("Discovery requires Customer model/budget and no fixed task or attack script")
+        if self.version == PROTOCOL_VERSION_V2 and any(i.exploration_strategy is not None for i in self.instances):
+            raise ValueError("v0.2 strategy belongs to method configuration, never an instance")
+        if self.method_strategy is not None and (self.version != PROTOCOL_VERSION_V2 or self.track != "customer_discovery"):
+            raise ValueError("method strategy applies only to v0.2 Discovery")
         return self
 
     def computed_dataset_hash(self):
         # Compare Service methods on the same task set while pinning each method per run.
-        return digest(self.model_dump(mode="json", exclude={"dataset_hash", "manifest_hash", "service_model", "customer_model"}))
+        return digest(self.model_dump(mode="json", exclude={"dataset_hash", "manifest_hash", "service_model", "customer_model", "method_strategy"}))
 
     def computed_hash(self):
         return digest(self.model_dump(mode="json", exclude={"manifest_hash"}))
@@ -113,34 +121,60 @@ class BenchmarkManifest(Model):
 def validate_manifest(manifest):
     # Revalidate shape even after mutable fields were modified.
     BenchmarkManifest.model_validate(manifest.model_dump())
-    if (manifest.version != PROTOCOL_VERSION or manifest.versions != versions()
-            or manifest.generator.rules.version != RULES_VERSION
+    v2 = manifest.version == PROTOCOL_VERSION_V2
+    if manifest.release != ("0.2.0" if v2 else "0.1.0"):
+        raise ValueError("release and protocol versions must agree")
+    if (manifest.version not in {PROTOCOL_VERSION, PROTOCOL_VERSION_V2} or manifest.versions != versions(v2)
+            or manifest.generator.rules.version != manifest.versions["rules"]
             or manifest.source_hashes != runtime_hashes()
             or manifest.dataset_hash != manifest.computed_dataset_hash()
             or manifest.manifest_hash != manifest.computed_hash()):
         raise ValueError("manifest version, source provenance or hash mismatch")
+    # Always verify the entire serialized hash and live source pin above. Cache
+    # only successful semantic validation of that exact immutable commitment.
+    if manifest.manifest_hash in _VALIDATED:
+        return
     identifiers = set()
     for instance in manifest.instances:
         if instance.instance_id in identifiers:
             raise ValueError("duplicate benchmark instance")
         identifiers.add(instance.instance_id)
-        world = generate_world(instance.seed, manifest.generator)
+        config = instance.generator or manifest.generator
+        if config.version != manifest.versions["generator"] or config.rules != manifest.generator.rules:
+            raise ValueError("instance generator/policy version differs from the suite")
+        world = generate_world(instance.seed, config)
         expected_id = (instance.task.task_id if instance.task else "discovery_" + digest(
-            {"state": world.state_hash, "identity": instance.customer_identity, "strategy": instance.exploration_strategy})[:24])
+            {"state": world.state_hash, "identity": instance.customer_identity, **({} if v2 else {"strategy": instance.exploration_strategy})})[:24])
         if instance.initial_state_hash != world.state_hash or instance.customer_identity not in world.users or instance.instance_id != expected_id:
             raise ValueError("fixed world/identity/instance cannot be reproduced")
         if instance.task:
             if instance.task.identity != instance.customer_identity:
                 raise ValueError("task cannot change the fixed Customer identity")
-            validate_task(world, instance.task)
+            if v2:
+                if not isinstance(instance.task, BusinessTask): raise ValueError("v0.2 requires atomic business goals")
+                validate_business_task(world, instance.task, config.workflow)
+            else:
+                if instance.generator is not None: raise ValueError("v0.1 has one suite generator")
+                validate_task(world, instance.task)
             if set(o.name for o in instance.task.capabilities) - set(manifest.tools):
                 raise ValueError("task requires unavailable tools")
-            if not any(len(w.operations) <= manifest.budget.max_service_tool_calls for w in instance.task.witnesses):
+            if not (v2 and instance.task.kind == "policy_refusal") and not any(len(w.operations) <= manifest.budget.max_service_tool_calls for w in instance.task.witnesses):
                 raise ValueError("tool budget cannot cover any certified route")
     if manifest.track == "service_task" and "quotas" in manifest.sampling:
         actual = Counter(i.task.structural_class for i in manifest.instances)
         if dict(actual) != {k: v for k, v in manifest.sampling["quotas"].items() if v}:
             raise ValueError("structural sampling quotas do not match actual instances")
+    if v2 and manifest.track == "service_task":
+        if "family_quotas" in manifest.sampling and dict(Counter(i.task.family for i in manifest.instances)) != manifest.sampling["family_quotas"]:
+            raise ValueError("business family quotas differ from accepted instances")
+        if "per_structure_quota" in manifest.sampling:
+            quota = manifest.sampling["per_structure_quota"]
+            counts = Counter(i.task.structure_signature for i in manifest.instances)
+            if type(quota) is not int or quota < 1 or max(counts.values()) > quota or dict(counts) != manifest.sampling.get("structure_counts"):
+                raise ValueError("canonical structure quotas differ from accepted instances")
+    if len(_VALIDATED) >= 128:
+        _VALIDATED.clear()
+    _VALIDATED.add(manifest.manifest_hash)
 
 
 def load_manifest(path, expected_hash=None):
@@ -212,8 +246,8 @@ def split_overlap(left, right, *, require_holdout=False):
     b = {i.task.structure_signature for i in right.instances}
     sa = {i.task.semantic_signature for i in left.instances}
     sb = {i.task.semantic_signature for i in right.instances}
-    worlds = {business_fingerprint(generate_world(i.seed, left.generator)) for i in left.instances} & {
-        business_fingerprint(generate_world(i.seed, right.generator)) for i in right.instances}
+    worlds = {business_fingerprint(generate_world(i.seed, i.generator or left.generator)) for i in left.instances} & {
+        business_fingerprint(generate_world(i.seed, i.generator or right.generator)) for i in right.instances}
     train_atoms = {o.name for i in left.instances for w in i.task.witnesses for o in w.operations}
     test_atoms = {o.name for i in right.instances for w in i.task.witnesses for o in w.operations}
     result = {"shared_world_instances": len(worlds), "common_structures": len(a & b), "common_semantics": len(sa & sb),

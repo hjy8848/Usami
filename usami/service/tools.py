@@ -5,6 +5,15 @@ from usami.protocol import PARAMETERS, Operation
 from usami.service.models import ServiceError, strict_json
 
 DESCRIPTIONS = {
+    "invite_member": "Owner provisions a known directory user in this organization with a pending membership. resource_id is the organization ID. Duplicate pending invitations with the same role are idempotent.",
+    "activate_member": "Owner activates a pending or inactive non-owner membership. Requires an active subscription and a free seat. This is administrator provisioning, not acting as the invited user.",
+    "deactivate_member": "Owner suspends an active non-owner membership, reducing the active seat requirement.",
+    "remove_member": "Owner removes a pending or inactive non-owner membership. Active members must first be deactivated.",
+    "pay_invoice": "Simulated full invoice payment. card_declined records failure; other supported methods succeed. Exact invoice/key/method retry returns the original result; changing method needs a fresh key. Never charges real money.",
+    "issue_renewal": "Create or retrieve the linked next 30-day renewal invoice for this subscription. Returns invoice ID and period. Active cycles start at current end; expired cycles start at frozen business time.",
+    "renew_subscription": "Extend an active subscription with its paid, unrefunded next-cycle invoice. invoice_id must link to this subscription and the correct period.",
+    "reactivate_subscription": "Restore an expired subscription with its paid, unrefunded renewal invoice starting at frozen business time.",
+    "expire_subscription": "Record expiration only when the service period has ended at frozen business time; disables automatic renewal.",
     "get_customer_context": "Get the fixed authenticated customer's own profile and organization memberships. No identity argument.",
     "get_organization": "Read an organization. On success also discover related invoice IDs; subscription ID is in the entity.",
     "list_members": "Read organization memberships and related public user profiles; resource_id must equal org_id.",
@@ -18,7 +27,7 @@ DESCRIPTIONS = {
 }
 
 
-def tool_schemas(names):
+def tool_schemas(names, rules_version=None):
     tools = []
     for name in names:
         props, required = {}, []
@@ -28,12 +37,18 @@ def tool_schemas(names):
                      "resource_id": {"type": "string", "description": "Target organization, subscription, invoice or membership ID"},
                      **params.get("properties", {})}
             required = ["org_id", "resource_id", *params.get("required", [])]
-        tools.append({"type": "function", "function": {"name": name, "description": DESCRIPTIONS[name],
+            if name == "refund_invoice" and rules_version != "saas-rules-0.2.0":
+                props.pop("idempotency_key", None)
+        description = DESCRIPTIONS[name]
+        if name == "refund_invoice" and rules_version == "saas-rules-0.2.0":
+            description = "Refund a positive amount no greater than the remaining refundable balance within the refund window to the original method. idempotency_key is required; exact retries do not refund twice."
+            required.append("idempotency_key")
+        tools.append({"type": "function", "function": {"name": name, "description": description,
             "parameters": {"type": "object", "properties": props, "required": required, "additionalProperties": False}}})
     return tools
 
 
-def parse_operation(name, arguments):
+def parse_operation(name, arguments, rules_version=None):
     try:
         data = strict_json(arguments)
         if not isinstance(data, dict):
@@ -43,6 +58,8 @@ def parse_operation(name, arguments):
                 raise ValueError("identity is fixed; this tool takes no arguments")
             return None
         shape = PARAMETERS[name].model_json_schema().get("properties", {})
+        if name == "refund_invoice" and rules_version != "saas-rules-0.2.0":
+            shape.pop("idempotency_key", None)
         if set(data) - {"org_id", "resource_id", *shape}:
             raise ValueError("unexpected argument")
         return Operation(name=name, org_id=data["org_id"], resource_id=data["resource_id"],
@@ -63,6 +80,8 @@ def discovery(world, op, result):
     # Additional ID/name projections are gated by an actual successful core query.
     if not result["success"]:
         return {}
+    if world.rules.version == "saas-rules-0.2.0":
+        return {}  # All v0.2 query projections are independently specified core data.
     if op.name == "get_organization":
         return {"invoice_ids": [i.id for i in world.invoices.values() if i.org_id == op.org_id]}
     if op.name == "list_members":

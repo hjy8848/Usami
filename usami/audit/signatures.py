@@ -26,12 +26,15 @@ def invoice_class(world, inv):
 
 
 def resource_type(op):
-    return ("organizations" if op.name in {"get_organization", "list_members"} else
-            "invoices" if op.name in {"refund_invoice", "get_invoice"} else
-            "memberships" if op.name == "change_member_role" else "subscriptions")
+    return ("organizations" if op.name in {"get_organization", "list_members", "invite_member"} else
+            "invoices" if op.name in {"refund_invoice", "get_invoice", "pay_invoice"} else
+            "memberships" if op.name in {"change_member_role", "activate_member", "deactivate_member", "remove_member"} else "subscriptions")
 
 
 def facts(world, actor, op):
+    if world.rules.version == "saas-rules-0.2.0":
+        from usami.benchmark.audit_v2 import decision_facts
+        return decision_facts(world, actor, op)
     membership = next((m for m in world.memberships.values() if m.user_id == actor and m.org_id == op.org_id), None)
     result = {"actor_membership": [membership.role, membership.status] if membership else "absent"}
     obj = getattr(world, resource_type(op)).get(op.resource_id)

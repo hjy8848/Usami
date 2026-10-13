@@ -20,6 +20,7 @@ class GeneratorConfig(Model):
     clock: datetime = datetime(2026, 1, 15, 12, tzinfo=timezone.utc)
     profile: Literal["standard", "train_single", "test_composed"] = "standard"
     rules: RulesConfig = Field(default_factory=RulesConfig)
+    workflow: Optional[str] = Field(default=None, exclude_if=lambda v: v is None)
 
     @model_validator(mode="after")
     def usable(self) -> GeneratorConfig:
@@ -29,8 +30,12 @@ class GeneratorConfig(Model):
             raise ValueError("at least one consistent plan is required")
         if self.profile == "test_composed" and self.user_count < 3:
             raise ValueError("composition requires three users")
-        if self.version != GENERATOR_VERSION:
+        if self.version not in {GENERATOR_VERSION, "saas-generator-0.2.0"}:
             raise ValueError("unsupported generator version")
+        if (self.version.endswith("0.2.0")) != (self.rules.version == "saas-rules-0.2.0"):
+            raise ValueError("generator and rules versions must agree")
+        if self.workflow is not None and self.version == GENERATOR_VERSION:
+            raise ValueError("workflow conditioning requires v0.2")
         return self
 
 
@@ -61,6 +66,9 @@ class WorldGenerator:
         self.config = (config or GeneratorConfig()).model_copy(deep=True)
 
     def generate(self) -> WorldState:
+        if self.config.version == "saas-generator-0.2.0":
+            from usami.world.generator_v2 import generate_v2
+            return generate_v2(self.seed, self.config)
         cfg, rng = self.config, StableRandom(self.seed)
         now = cfg.clock.astimezone(timezone.utc)
         users = {f"user_{n:03d}": User(id=f"user_{n:03d}", name=f"User {n}",

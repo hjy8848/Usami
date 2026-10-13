@@ -1,0 +1,55 @@
+{
+  "atomic_goal_combinations": {
+    "access": 14,
+    "access+capacity": 14,
+    "access+capacity+plan": 8,
+    "access+capacity+plan+restoration+settlement": 8,
+    "access+capacity+restoration+settlement": 8,
+    "capacity+capacity": 14,
+    "capacity+plan": 28,
+    "capacity+plan+suspend": 8,
+    "capacity+refund+suspend": 8,
+    "capacity+suspend": 14,
+    "expiration": 14,
+    "preservation": 42,
+    "provision": 14,
+    "refund": 14,
+    "removal": 14,
+    "renewal+renewal_invoice+settlement": 14,
+    "restoration+settlement": 28,
+    "verify_payment": 14
+  },
+  "distinct_touched_resources": {
+    "1": 98,
+    "2": 156,
+    "3": 24
+  },
+  "methodology": "Goal predicates plus fixed operation domains; includes refusal targets and creation operations. Original coverage.json subsystem metric counts terminal-predicate entities only.",
+  "operation_and_goal_subsystem_combinations": {
+    "invoices": 28,
+    "invoices+memberships": 14,
+    "invoices+memberships+subscriptions": 24,
+    "invoices+subscriptions": 42,
+    "memberships": 28,
+    "memberships+organizations": 28,
+    "memberships+subscriptions": 58,
+    "subscriptions": 56
+  },
+  "splits": {
+    "test-demo": {
+      "instances": 40,
+      "semantics": 11,
+      "structures": 5
+    },
+    "train": {
+      "instances": 170,
+      "semantics": 35,
+      "structures": 23
+    },
+    "validation": {
+      "instances": 68,
+      "semantics": 33,
+      "structures": 23
+    }
+  }
+}

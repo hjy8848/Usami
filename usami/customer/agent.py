@@ -8,7 +8,7 @@ from usami.service.runner import completion_message
 from usami.service.tools import DESCRIPTIONS
 
 
-def customer_prompt(strategy, tools):
+def customer_prompt(strategy, tools, rules_version=None):
     prompt = (
         "You are the Customer explorer in a virtual SaaS business world. You have no assigned task. "
         "Choose your own business requests, organizations, topics and order from your permitted initial observation "
@@ -31,7 +31,7 @@ def customer_prompt(strategy, tools):
         "Do not flatten params into the Operation object. Role changes target a membership ID, not a user or organization ID. "
         "Available Service interfaces: " + json.dumps({name: DESCRIPTIONS[name] for name in tools}, ensure_ascii=False) + ". "
         "Customer action JSON schema (parameter models are from the existing business protocol): "
-        + json.dumps(action_schema(tools), ensure_ascii=False) + "."
+        + json.dumps(action_schema(tools, rules_version), ensure_ascii=False) + "."
     )
     if strategy:
         prompt += " Optional exploration strategy: " + strategy
@@ -43,7 +43,7 @@ class CustomerAgent:
         self.settings = client.settings.model_copy(deep=True)
         self._client = client
         self._observation = copy.deepcopy(observation)
-        self._prompt = customer_prompt(strategy, tools)
+        self._prompt = customer_prompt(strategy, tools, observation.get("rules_version"))
         self.reset()
 
     def reset(self):

@@ -9,6 +9,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 GENERATOR_VERSION = "saas-generator-0.1.0"
 RULES_VERSION = "saas-rules-0.1.0"
+GENERATOR_VERSION_V2 = "saas-generator-0.2.0"
+RULES_VERSION_V2 = "saas-rules-0.2.0"
 
 
 class Model(BaseModel):
@@ -57,7 +59,7 @@ class Membership(Model):
     org_id: str
     user_id: str
     role: Literal["owner", "billing_admin", "member"]
-    status: Literal["active", "inactive"] = "active"
+    status: Literal["pending", "active", "inactive"] = "active"
 
 
 class Subscription(Model):
@@ -69,6 +71,16 @@ class Subscription(Model):
     period_start: datetime
     period_end: datetime
     status: Literal["active", "expired"]
+    service_invoice_id: Optional[str] = Field(default=None, exclude_if=lambda v: v is None)
+
+
+class Payment(Model):
+    id: str
+    key: str
+    amount_cents: int = Field(gt=0)
+    method: str
+    outcome: Literal["succeeded", "failed"]
+    attempted_at: datetime
 
 
 class Refund(Model):
@@ -76,17 +88,23 @@ class Refund(Model):
     amount_cents: int = Field(ge=0)
     payment_method: str
     refunded_at: datetime
+    key: Optional[str] = Field(default=None, exclude_if=lambda v: v is None)
 
 
 class Invoice(Model):
     id: str
     org_id: str
     amount_cents: int = Field(gt=0)
-    refundable_amount_cents: int = Field(gt=0)
-    status: Literal["unpaid", "paid", "refunded"]
+    refundable_amount_cents: int = Field(ge=0)
+    status: Literal["unpaid", "failed", "paid", "partially_refunded", "refunded"]
     paid_at: Optional[datetime] = None
     payment_method: Optional[str] = None
     refunds: List[Refund] = Field(default_factory=list)
+    subscription_id: Optional[str] = Field(default=None, exclude_if=lambda v: v is None)
+    period_start: Optional[datetime] = Field(default=None, exclude_if=lambda v: v is None)
+    period_end: Optional[datetime] = Field(default=None, exclude_if=lambda v: v is None)
+    purpose: Optional[Literal["historical", "renewal"]] = Field(default=None, exclude_if=lambda v: v is None)
+    payments: Optional[List[Payment]] = Field(default=None, exclude_if=lambda v: v is None)
 
 
 class WorldState(Model):

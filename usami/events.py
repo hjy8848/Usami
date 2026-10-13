@@ -51,7 +51,8 @@ class Trace(Model):
 
     def integrity_errors(self) -> List[str]:
         errors = []
-        if self.schema_version != "usami-trace-0.1.0":
+        expected_schema = "usami-trace-0.2.0" if self.initial_state.rules.version == "saas-rules-0.2.0" else "usami-trace-0.1.0"
+        if self.schema_version != expected_schema:
             errors.append("unsupported trace schema")
         if self.initial_state_hash != self.initial_state.state_hash:
             errors.append("initial state hash mismatch")

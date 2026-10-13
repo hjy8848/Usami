@@ -22,7 +22,7 @@ class WorldEngine:
         self._state = world.clone()
         self._requests: Dict[str, RequestContext] = {}
         self.operation_budget = operation_budget
-        self.trace = Trace(initial_state=world.clone(), initial_state_hash=world.state_hash,
+        self.trace = Trace(schema_version="usami-trace-0.2.0" if world.rules.version == "saas-rules-0.2.0" else "usami-trace-0.1.0", initial_state=world.clone(), initial_state_hash=world.state_hash,
                            rules_hash=digest(world.rules), operation_budget=operation_budget,
                            final_state=world.clone(), final_state_hash=world.state_hash)
         self.trace.append("generation", {"generator_version": world.generator_version, "seed": world.seed,
@@ -68,8 +68,12 @@ class WorldEngine:
             elif not decision.allowed:
                 result = ExecutionResult(success=False, error_code=decision.error_code)
             else:
-                self._state = decision.expected_state.clone()
-                result = ExecutionResult(success=True, data=decision.expected_data)
+                if before.rules.version == "saas-rules-0.2.0":
+                    from usami.world.transitions_v2 import apply_v2
+                    self._state, result = apply_v2(before, actor_id, operation, event_id)
+                else:
+                    self._state = decision.expected_state.clone()
+                    result = ExecutionResult(success=True, data=decision.expected_data)
         else:
             self._state, result = sandbox_apply(before, actor_id, operation, event_id)
         event = self.trace.append("operation", {"request_id": request_id, "actor_id": actor_id,
@@ -109,6 +113,9 @@ class WorldEngine:
 
 def sandbox_apply(world: WorldState, actor_id: str, op: Operation, event_id: str):
     """Only schema/existence checks. All business validation belongs to the oracle."""
+    if world.rules.version == "saas-rules-0.2.0":
+        from usami.world.transitions_v2 import apply_v2
+        return apply_v2(world, actor_id, op, event_id)
     new = world.clone()
     if actor_id not in world.users:
         return new, ExecutionResult(success=False, error_code="UNKNOWN_ACTOR")

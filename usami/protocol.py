@@ -18,6 +18,21 @@ class ChangeSeats(Model):
 class RefundInvoice(Model):
     amount_cents: int = Field(strict=True, ge=0)
     payment_method: str
+    idempotency_key: Optional[str] = Field(default=None, min_length=1, max_length=80, exclude_if=lambda v: v is None)
+
+
+class InviteMember(Model):
+    user_id: str
+    role: Literal["billing_admin", "member"] = "member"
+
+
+class PayInvoice(Model):
+    payment_method: Literal["card_visa", "card_mastercard", "bank_transfer", "card_declined"]
+    idempotency_key: str = Field(min_length=1, max_length=80)
+
+
+class FundSubscription(Model):
+    invoice_id: str
 
 
 class ChangeRole(Model):
@@ -29,6 +44,11 @@ class NoParams(Model):
 
 
 PARAMETERS = {
+    "invite_member": InviteMember, "activate_member": NoParams,
+    "deactivate_member": NoParams, "remove_member": NoParams,
+    "pay_invoice": PayInvoice, "issue_renewal": NoParams,
+    "renew_subscription": FundSubscription, "reactivate_subscription": FundSubscription,
+    "expire_subscription": NoParams,
     "change_plan": ChangePlan, "change_seats": ChangeSeats,
     "cancel_renewal": NoParams, "refund_invoice": RefundInvoice,
     "change_member_role": ChangeRole,
@@ -40,6 +60,8 @@ QUERIES = frozenset({"get_organization", "get_subscription", "get_invoice", "lis
 
 class Operation(Model):
     name: Literal["change_plan", "change_seats", "cancel_renewal", "refund_invoice",
+                  "invite_member", "activate_member", "deactivate_member", "remove_member",
+                  "pay_invoice", "issue_renewal", "renew_subscription", "reactivate_subscription", "expire_subscription",
                   "change_member_role", "get_organization", "get_subscription",
                   "get_invoice", "list_members"]
     org_id: str
@@ -48,7 +70,8 @@ class Operation(Model):
 
     @model_validator(mode="after")
     def parameter_shape(self) -> Operation:
-        PARAMETERS[self.name].model_validate(self.params)
+        normalized = PARAMETERS[self.name].model_validate(self.params).model_dump(mode="json", exclude_none=True)
+        object.__setattr__(self, "params", normalized)
         return self
 
     @property

@@ -1,0 +1,13 @@
+{
+  "identical": true,
+  "fresh_independent_processes": true,
+  "frozen_file_sha256": {
+    "service-train.json": "ff8438ce93464bb701fc3241c513f9a808a669366a22efbe05169eea4b7c998d",
+    "review-examples.json": "d350c9bd18995d222d69900d41832ccf1085da1574c42f4456f0b1f396bdab9d",
+    "discovery-demo.json": "08359d59bfacfd8a13ca61e633e49f793e2c8dc4a57422ca407757cdfa16cd10",
+    "private-test-spec.json": "4c35b6774c6c39580748f3d73600654e6910751b5437b6f6b7ed5f41c6b9698e",
+    "service-test-demo.json": "ae3271be3514468a1ef4cd6ff4a603fe3be7e3c3724081f915903e6a3769ce1a",
+    "service-validation.json": "4d59bd0affee399731f25741d0d37487189ef099357ec5b7455d13e53a64841a",
+    "coverage.json": "08b77d6d091e3165c57aecbab061bbfd8d7a0ab13df8e89716c8a86d81acb762"
+  }
+}

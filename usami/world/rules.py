@@ -14,6 +14,9 @@ def membership_for(world: WorldState, user_id: str, org_id: str) -> Optional[Mem
 
 
 def check_invariants(world: WorldState) -> List[StateViolation]:
+    if world.rules.version == "saas-rules-0.2.0":
+        from usami.world.rules_v2 import invariants_v2
+        return invariants_v2(world)
     errors: List[StateViolation] = []
 
     def bad(code: str, entity: str, path: str, detail: str) -> None:
@@ -29,6 +32,8 @@ def check_invariants(world: WorldState) -> List[StateViolation]:
     seen = set()
     for m in world.memberships.values():
         path = f"memberships.{m.id}"
+        if m.status not in {"active", "inactive"}:
+            bad("UNSUPPORTED_STATE_VERSION", m.id, path, "pending memberships require v0.2 rules")
         if m.user_id not in world.users or m.org_id not in world.organizations:
             bad("BROKEN_RELATIONSHIP", m.id, path, "membership refers to missing user or org")
         if m.role == "owner" and (m.status != "active" or m.org_id not in world.organizations
@@ -48,6 +53,8 @@ def check_invariants(world: WorldState) -> List[StateViolation]:
             bad("SUBSCRIPTION_INCONSISTENT", org.id, f"organizations.{org.id}.subscription_id", "exactly one linked subscription")
     for s in world.subscriptions.values():
         path = f"subscriptions.{s.id}"
+        if s.service_invoice_id is not None:
+            bad("UNSUPPORTED_STATE_VERSION", s.id, path, "funding linkage requires v0.2 rules")
         if s.org_id not in world.organizations:
             bad("BROKEN_RELATIONSHIP", s.id, path, "missing organization")
         plan = world.rules.plans.get(s.plan_id)
@@ -68,6 +75,8 @@ def check_invariants(world: WorldState) -> List[StateViolation]:
     refund_ids = set()
     for inv in world.invoices.values():
         path = f"invoices.{inv.id}"
+        if any(getattr(inv, field) is not None for field in ("subscription_id", "period_start", "period_end", "purpose", "payments")) or any(r.key is not None for r in inv.refunds):
+            bad("UNSUPPORTED_STATE_VERSION", inv.id, path, "linked accounting requires v0.2 rules")
         if inv.org_id not in world.organizations:
             bad("BROKEN_RELATIONSHIP", inv.id, path, "missing organization")
         if inv.refundable_amount_cents != inv.amount_cents:
@@ -104,11 +113,16 @@ def check_invariants(world: WorldState) -> List[StateViolation]:
 class ReferenceRules:
     def decide(self, world: WorldState, actor_id: str, operation: Operation,
                event_id: str = "reference") -> RuleDecision:
+        if world.rules.version == "saas-rules-0.2.0":
+            from usami.world.rules_v2 import decide_v2
+            return decide_v2(world, actor_id, operation, event_id)
         def reject(code: str, detail: str = "") -> RuleDecision:
             return RuleDecision(allowed=False, error_code=code, detail=detail)
 
         if world.rules.version != RULES_VERSION:
             return reject("UNSUPPORTED_RULES_VERSION")
+        if operation.name not in {"change_plan", "change_seats", "cancel_renewal", "refund_invoice", "change_member_role", "get_organization", "get_subscription", "get_invoice", "list_members"} or operation.params.get("idempotency_key") is not None:
+            return reject("UNSUPPORTED_OPERATION_VERSION")
         if check_invariants(world):
             return reject("INVALID_WORLD")
         if actor_id not in world.users:

@@ -1,0 +1,422 @@
+{
+  "accepted_instances": 278,
+  "accepted_witness_frame_failures": 0,
+  "actual_decision_branches": {
+    "activate_member/ALLOWED": 96,
+    "activate_member/NO_AVAILABLE_SEATS": 22,
+    "activate_member/RESOURCE_NOT_FOUND": 14,
+    "activate_member/SUBSCRIPTION_NOT_ACTIVE": 16,
+    "cancel_renewal/CROSS_ORG_RESOURCE": 14,
+    "change_plan/ALLOWED": 82,
+    "change_plan/SEAT_LIMIT_EXCEEDED": 22,
+    "change_plan/SUBSCRIPTION_NOT_ACTIVE": 8,
+    "change_seats/ALLOWED": 240,
+    "change_seats/SEATS_BELOW_MEMBERS": 30,
+    "change_seats/SEAT_LIMIT_EXCEEDED": 22,
+    "change_seats/SUBSCRIPTION_NOT_ACTIVE": 16,
+    "deactivate_member/ALLOWED": 104,
+    "deactivate_member/OWNER_IMMUTABLE": 14,
+    "expire_subscription/ALLOWED": 28,
+    "invite_member/ALLOWED": 42,
+    "issue_renewal/ALLOWED": 42,
+    "pay_invoice/ALLOWED": 232,
+    "pay_invoice/RESOURCE_NOT_FOUND": 28,
+    "reactivate_subscription/ALLOWED": 88,
+    "reactivate_subscription/INVOICE_NOT_PAID": 44,
+    "refund_invoice/ALLOWED": 60,
+    "refund_invoice/REFUND_AMOUNT_EXCEEDED": 14,
+    "remove_member/ALLOWED": 14,
+    "remove_member/MEMBERSHIP_STILL_ACTIVE": 14,
+    "renew_subscription/ALLOWED": 28,
+    "renew_subscription/INVOICE_NOT_FOUND": 14
+  },
+  "branching_tasks": 46,
+  "business_families": {
+    "billing_restoration": 28,
+    "deactivate_reduce": 14,
+    "excessive_refund": 14,
+    "expire_cycle": 14,
+    "invitation_resolve": 14,
+    "invite_activate": 14,
+    "offboard_downgrade": 8,
+    "offboard_refund": 8,
+    "owner_refusal": 14,
+    "partial_refund": 14,
+    "payment_retry": 14,
+    "plan_expand": 14,
+    "remove_departed": 14,
+    "renew_cycle": 14,
+    "restore_onboard": 8,
+    "restore_upgrade_onboard": 8,
+    "seat_activate": 14,
+    "seat_downgrade": 14,
+    "tenant_refusal": 14,
+    "two_org_budget": 14,
+    "upgrade_onboard": 8
+  },
+  "causal_edge_types": {
+    "change_plan->activate_member": 24,
+    "change_plan->change_seats": 38,
+    "change_seats->activate_member": 54,
+    "change_seats->change_plan": 22,
+    "deactivate_member->change_plan": 8,
+    "deactivate_member->change_seats": 46,
+    "deactivate_member->remove_member": 14,
+    "invite_member->activate_member": 14,
+    "issue_renewal->pay_invoice": 28,
+    "issue_renewal->renew_subscription": 28,
+    "pay_invoice->activate_member": 32,
+    "pay_invoice->change_plan": 16,
+    "pay_invoice->change_seats": 32,
+    "pay_invoice->reactivate_subscription": 88,
+    "pay_invoice->renew_subscription": 28,
+    "reactivate_subscription->activate_member": 32,
+    "reactivate_subscription->change_plan": 16,
+    "reactivate_subscription->change_seats": 32
+  },
+  "dependency_depth": {
+    "0": 112,
+    "1": 120,
+    "2": 30,
+    "3": 8,
+    "4": 8
+  },
+  "distinct_guard_interactions": 27,
+  "generated_candidates": 278,
+  "generation_scope": "Explicit workflow-conditioned candidate grid, not a claim about the unconstrained entire world distribution.",
+  "goal_family_labels": {
+    "deactivate_reduce": 14,
+    "excessive_refund": 14,
+    "expire_cycle": 14,
+    "failed_restore": 14,
+    "invitation_resolve": 14,
+    "invite_activate": 14,
+    "offboard_downgrade": 8,
+    "offboard_refund": 8,
+    "owner_refusal": 14,
+    "partial_refund": 14,
+    "payment_retry": 14,
+    "plan_expand": 14,
+    "remove_departed": 14,
+    "renew_cycle": 14,
+    "restore_onboard": 8,
+    "restore_upgrade_onboard": 8,
+    "seat_activate": 14,
+    "seat_downgrade": 14,
+    "tenant_refusal": 14,
+    "two_org_budget": 14,
+    "unpaid_restore": 14,
+    "upgrade_onboard": 8
+  },
+  "guard_measurement": "Actual (operation, first reference rejection code or ALLOWED) interactions, not all masked AST predicates.",
+  "human_review": "AWAITING EXTERNAL REVIEW",
+  "manifest_hashes": {
+    "usami-discovery-v0.2-demo": "164044f4f79798fdbda11a034c73d5d40fb35db9ccb31b5f8e6068dfc34881c9",
+    "usami-saas-v0.2-test": "764bc6a260223ec597044ad007ff69cfc516c175f8cf5d0826cc820ba0c6be71",
+    "usami-saas-v0.2-train": "f0cbd91fd3026acb35043d59b3580f70f63aedff6e8e32e30dece636341474b6",
+    "usami-saas-v0.2-validation": "599d0497b685fcc7c035afbee65843fe757f305c7100e164961a0f00f8b9909c"
+  },
+  "multi_tenant_tasks": 28,
+  "policy_certified_refusal_tasks": 42,
+  "rejected_candidates": 0,
+  "rejections_by_reason": {},
+  "role_distribution": {
+    "billing_admin": 56,
+    "owner": 222
+  },
+  "satisfiable_completion_tasks": 236,
+  "semantic_diversity": {
+    "effective_diversity": 39.07043955163255,
+    "entropy_bits": 5.288005581158715,
+    "frequencies": {
+      "27bfdcf0de8bf5bba9b1d7550a09fc8f970695e6dfb6f8240418b9b883fe8ff5": 2,
+      "2ad5ea3ed44c1797a635975173055c11afd0dbbbf01e021745e0d839e8e976a1": 2,
+      "2ed612af05680ad200688fb8ca9079f8b3f086424e2358b66cd0cfe0d1d963dd": 14,
+      "3161fba487885a520e5d5ab025cfbc0aaa1a1e6d29252303f50ca4a3c0c9827e": 3,
+      "34f23781e48407b8497a7ce3d4667c33b332c49fa2d7a6dfefe2679f2cef823b": 5,
+      "35b4f6ca2dd9ec6f80622c0f8b32e687cc5021869c6ccc04df3ce31aeeb4e410": 2,
+      "38e97733e5c5b638d6dc35874097743d2ec2ff66a5d8a15802108a8686f96af6": 7,
+      "3b96383838d30a077212d8a7be04d609020eec65525b66e4892fcd3edee379fe": 2,
+      "423fb23aa5fe7ffe90b4902ffff308e948393c78ba1760caa6d692ae06b7114d": 4,
+      "42f6b28f62c69be30acd3aa9943321acfe4d95d087356d0b758961294b2dfebb": 1,
+      "4801f0ca2ae516f20496eceb4c10929b98a53d18567f8963032f20d3542f2310": 5,
+      "49459704a54d5c3817afff888d3792eacd042ad5eb8485a5a4b611134a40a108": 7,
+      "4ad09cf45a88e4994481d6575e4826867ead1a29f741d8f09065e4ee3578be76": 2,
+      "4d39faa2875a6821a4ce4c2b5adeaec24cab9ddccb67ad25d2345d3a8531369c": 3,
+      "642c75cf0a1d39d8520b924d5cb6ba67daac14b8a32098e7d67f55c7ba75b832": 14,
+      "742e48b81e4d653364fd052e43cc0bd59ca75aee16536fc9a33c7f8ae8fe577d": 7,
+      "7b91c2ed096c9a8d6d8b41e75ac1177b2310b7799ad26745d60fec0ddf5a7853": 7,
+      "827814f96254433a6de1930266be6453fa98f6cdc37cfa70ce2c64cb2560d895": 14,
+      "8750d7b883e593d6311e27d225b54d09e07af6fefded73ef81f846ce828188b7": 7,
+      "8c754c1efa1c0e6224fee98ed26a68c25ca0ffa7ebbc92b350e0bf9ad5a488d8": 7,
+      "8ca7fc6f86ed3b0433271328fbac49be6ddc3dfeab483e6b8a24f44a451e96c2": 8,
+      "91e9022570264ab7587c4192de53407aa0d09b740b0eb19dad0f264af7022433": 14,
+      "95b01d6c6e61d0894a0c73fa5b8d287531c5ab66038851dd19671d3d7c847fce": 5,
+      "9b8f01add6e391fc2fd836fdbb361179cb935744197d4a94e7b1530c2fd0f679": 5,
+      "9d0bd3497fa0d13364d4aa8b3087635cc7581c50826929d879f25bd8145b978c": 1,
+      "a3cbf80b3947f494d6a4497a6d6169f6856b59454e5e88efb407a888900f5a5d": 7,
+      "a3ea03e53680b61509541c80a97ba6337cd110b5548d9c9c74085f0e483836b2": 2,
+      "a58e2703da1659b91529bffd0dbd5fdd412ed4edd6cacc899493b7e56e1ea265": 7,
+      "a9ed9380de76b1d4f1b077ab7e220d0dddb4e0629b6646f2bb6261c57aecd158": 14,
+      "aa1e1b96d04c996c92b796a6886d2f9294a9c523ad01aaaa2ae3c447c0a8e394": 2,
+      "b24bdc904445ad7fcaf18cb2f4e8349ea7c0c808f60ec222618a1bc8ecb5a97a": 3,
+      "b99fb59d9c27112364dd6a4d6667d3baf7217610b85567aad186da0581a18bb0": 6,
+      "c0c630e8389c5093ae32942898e0cd8d74b2db0e28b8b94af8623ffab1ac9bd5": 7,
+      "c4142b913f89af5da2ddf8f6fd5bc7afb832b50b239ac010110a290cd199c578": 5,
+      "c4386fc0eb846e78074e2dff81458bc4d713ba69be8c4674f3e646b996560c47": 2,
+      "ca9e7955261b86d1573bb0053654487fbd6fbe4073bd57425d037080aaeb566e": 7,
+      "d69d43331ec34397ffae5d028c2e547670b4a6aa65c9503712fa988e023f4d22": 7,
+      "d7326c3f9632c2866491f7af51d5e295e16d6ee8c9205bb62c0cb470064f5d2c": 7,
+      "db2f4ab5e8b1ed88a0a9d99be27814672f00ccdec5ddfe619d5ae1c5ea6dc6a7": 3,
+      "dd68899a62ece0c18f95ddc451cb438d799523ed2b643acb4e384be7f8b19edb": 7,
+      "e301085b977aeda57607b50c551d6f5e48453d84969747c11b3cb55a62c028d0": 6,
+      "e6950fd88312928ea4fc44e42f240f403e58ce848b549dba89eadd0b213877a6": 7,
+      "e871567c0d5db892342b4ae2726be28447c11f1d6b18da9033b9a888dfbad20e": 4,
+      "eb29d2a47db9ab382c84a1d907128dd05aa861927982f4c2a5c82aa56a4bd103": 5,
+      "eb741239db9f79847d5c91ee7bac321a3f25ae8702d0b779a538dc5a70768438": 3,
+      "ef502e974474409750d532ed90dfc2bf50534ac9dd8264a6ad83d8bc27ae46a9": 14,
+      "f4a9714fbc56cf12872dc521736d7c4e2a1a4debf1f35d8002566f41385a1aea": 5
+    },
+    "repetition_ratio": 0.8309352517985612,
+    "repetitions": 231,
+    "singletons": 2,
+    "top10": [
+      {
+        "count": 14,
+        "signature": "2ed612af05680ad200688fb8ca9079f8b3f086424e2358b66cd0cfe0d1d963dd"
+      },
+      {
+        "count": 14,
+        "signature": "642c75cf0a1d39d8520b924d5cb6ba67daac14b8a32098e7d67f55c7ba75b832"
+      },
+      {
+        "count": 14,
+        "signature": "827814f96254433a6de1930266be6453fa98f6cdc37cfa70ce2c64cb2560d895"
+      },
+      {
+        "count": 14,
+        "signature": "91e9022570264ab7587c4192de53407aa0d09b740b0eb19dad0f264af7022433"
+      },
+      {
+        "count": 14,
+        "signature": "a9ed9380de76b1d4f1b077ab7e220d0dddb4e0629b6646f2bb6261c57aecd158"
+      },
+      {
+        "count": 14,
+        "signature": "ef502e974474409750d532ed90dfc2bf50534ac9dd8264a6ad83d8bc27ae46a9"
+      },
+      {
+        "count": 8,
+        "signature": "8ca7fc6f86ed3b0433271328fbac49be6ddc3dfeab483e6b8a24f44a451e96c2"
+      },
+      {
+        "count": 7,
+        "signature": "38e97733e5c5b638d6dc35874097743d2ec2ff66a5d8a15802108a8686f96af6"
+      },
+      {
+        "count": 7,
+        "signature": "49459704a54d5c3817afff888d3792eacd042ad5eb8485a5a4b611134a40a108"
+      },
+      {
+        "count": 7,
+        "signature": "742e48b81e4d653364fd052e43cc0bd59ca75aee16536fc9a33c7f8ae8fe577d"
+      }
+    ],
+    "top10_share": 0.4064748201438849,
+    "total": 278,
+    "unique": 47
+  },
+  "split_overlap": {
+    "train_test": {
+      "common_semantics": 0,
+      "common_structures": 0,
+      "left_only_structures": [
+        "0409e1aba84017941d4f79c041ce7fcb1d9ecac1f3025a6c379da9b7629c112f",
+        "0539c4c809627318e365ec6182727b3f816ccb71b0e1ce8a95e570c926fb086f",
+        "05836f31a7320e3e0fc7b9866eda5d5d77af374aa8e74fc546a81ce36a458d42",
+        "1a27dbf49d55fc5613ca13ca73828331d05821473c86aa4d494d0a2a662e3f70",
+        "1ef54f4d2adb8b4b1c56b1d7ee7700718e46b6b6ac9bfdccb554e07f2c26f8f6",
+        "26b161d7d9df65ee2b770e2462acbd1c4dc57ddc1903c23c89f596c213441b64",
+        "3013738dfd9d5faaf1b3c7a4c5ea6e354f7a46b13a8cbf1b496491599f1cf0f7",
+        "4335e119cd384b774fff4c83ed31d6397b48b793f5d42daf137721021f903c5b",
+        "497ba02ee2f60e633d82765f9e34ef07dfef4b191ec1317d095acf418badccd6",
+        "4ac142bf57e5f9f67cca82077ae30ec3ed41adf6b246dc270438e9cf8f149b0d",
+        "595b640e4b930a6682eda937f36c4ed461e393b9cbdd88e2d73ad6200993d287",
+        "5e3fa0edf55b2a00b3b1d798ac5765926b74f4b73635b53d482ca1efd910c79e",
+        "714a332990c1042fa79e50c6ef05efb848a5e0646fe49240d5e00496099db0b6",
+        "7e815519829b252c637d0da4c513a2b3ccdd9498a585ce259c7760038d89e0dc",
+        "8542a1cebe37847488eb4c16a8ff2a5a07583e65f1b0519f285f007725df50e0",
+        "89f28dc342efc0dba26fcaa1b1876388760ccdc1eba170d6b81fd588c6f9a562",
+        "8fbdd06840599bce5eefd0d9a59276200a9fd4453d4d489dab773066bad191a2",
+        "9e14566e930ca926c5d538ae1e913013781c57b4fe6930a4117298fac7182560",
+        "b71eafc4a0486e0c2fb9ceba36d7922ea0c17a265cfdd64ec07d77dccade3e93",
+        "ba58a61967a682d5e8b70238bfcb367ce12dd803b4b8991a499660b4f2b372fd",
+        "c3987361b8412d3ff711c10b13d814d5a8d6fab02578193bd8825a11b18d0a03",
+        "e2161687bf91bf2ae427bcbe4d8e1cf604f184cbaef82f6e83da58becbdac3b5",
+        "f1ce7d4a3bb7dc1b069388876a3c77b9abfa8aafe3ca6dd99bdb2f77848f2d14"
+      ],
+      "right_only_atomic_operations": [],
+      "right_only_structures": [
+        "24f1a3484f7947f0ad0212da371aa6f6bd3f41a10aa39b32678580a06c3eb9c2",
+        "3cb9bb447415c68dd5628e1ae7096427891b66450aed4181a0c6e2b5fdcd29b9",
+        "83c577c5d709eee3886234545c82646581f4ac47f850f03a5b247326203957dc",
+        "907f2d6ab705a1fa8c780420147e737c984d27a63e2389b193ca5219c9d86350",
+        "c1c7fceb7916dfa8c00274986a3278a60d0c37cd142f6d9e7555b3b2d2b4bee3"
+      ],
+      "right_sample_structure_overlap": 0.0,
+      "shared_world_instances": 0
+    },
+    "train_validation": {
+      "common_semantics": 32,
+      "common_structures": 23,
+      "left_only_structures": [],
+      "right_only_atomic_operations": [],
+      "right_only_structures": [],
+      "right_sample_structure_overlap": 1.0,
+      "shared_world_instances": 0
+    },
+    "validation_test": {
+      "common_semantics": 0,
+      "common_structures": 0,
+      "left_only_structures": [
+        "0409e1aba84017941d4f79c041ce7fcb1d9ecac1f3025a6c379da9b7629c112f",
+        "0539c4c809627318e365ec6182727b3f816ccb71b0e1ce8a95e570c926fb086f",
+        "05836f31a7320e3e0fc7b9866eda5d5d77af374aa8e74fc546a81ce36a458d42",
+        "1a27dbf49d55fc5613ca13ca73828331d05821473c86aa4d494d0a2a662e3f70",
+        "1ef54f4d2adb8b4b1c56b1d7ee7700718e46b6b6ac9bfdccb554e07f2c26f8f6",
+        "26b161d7d9df65ee2b770e2462acbd1c4dc57ddc1903c23c89f596c213441b64",
+        "3013738dfd9d5faaf1b3c7a4c5ea6e354f7a46b13a8cbf1b496491599f1cf0f7",
+        "4335e119cd384b774fff4c83ed31d6397b48b793f5d42daf137721021f903c5b",
+        "497ba02ee2f60e633d82765f9e34ef07dfef4b191ec1317d095acf418badccd6",
+        "4ac142bf57e5f9f67cca82077ae30ec3ed41adf6b246dc270438e9cf8f149b0d",
+        "595b640e4b930a6682eda937f36c4ed461e393b9cbdd88e2d73ad6200993d287",
+        "5e3fa0edf55b2a00b3b1d798ac5765926b74f4b73635b53d482ca1efd910c79e",
+        "714a332990c1042fa79e50c6ef05efb848a5e0646fe49240d5e00496099db0b6",
+        "7e815519829b252c637d0da4c513a2b3ccdd9498a585ce259c7760038d89e0dc",
+        "8542a1cebe37847488eb4c16a8ff2a5a07583e65f1b0519f285f007725df50e0",
+        "89f28dc342efc0dba26fcaa1b1876388760ccdc1eba170d6b81fd588c6f9a562",
+        "8fbdd06840599bce5eefd0d9a59276200a9fd4453d4d489dab773066bad191a2",
+        "9e14566e930ca926c5d538ae1e913013781c57b4fe6930a4117298fac7182560",
+        "b71eafc4a0486e0c2fb9ceba36d7922ea0c17a265cfdd64ec07d77dccade3e93",
+        "ba58a61967a682d5e8b70238bfcb367ce12dd803b4b8991a499660b4f2b372fd",
+        "c3987361b8412d3ff711c10b13d814d5a8d6fab02578193bd8825a11b18d0a03",
+        "e2161687bf91bf2ae427bcbe4d8e1cf604f184cbaef82f6e83da58becbdac3b5",
+        "f1ce7d4a3bb7dc1b069388876a3c77b9abfa8aafe3ca6dd99bdb2f77848f2d14"
+      ],
+      "right_only_atomic_operations": [],
+      "right_only_structures": [
+        "24f1a3484f7947f0ad0212da371aa6f6bd3f41a10aa39b32678580a06c3eb9c2",
+        "3cb9bb447415c68dd5628e1ae7096427891b66450aed4181a0c6e2b5fdcd29b9",
+        "83c577c5d709eee3886234545c82646581f4ac47f850f03a5b247326203957dc",
+        "907f2d6ab705a1fa8c780420147e737c984d27a63e2389b193ca5219c9d86350",
+        "c1c7fceb7916dfa8c00274986a3278a60d0c37cd142f6d9e7555b3b2d2b4bee3"
+      ],
+      "right_sample_structure_overlap": 0.0,
+      "shared_world_instances": 0
+    }
+  },
+  "split_sizes": {
+    "test": 40,
+    "train": 170,
+    "validation": 68
+  },
+  "structural_diversity": {
+    "effective_diversity": 26.536581011141976,
+    "entropy_bits": 4.7299105998828255,
+    "frequencies": {
+      "0409e1aba84017941d4f79c041ce7fcb1d9ecac1f3025a6c379da9b7629c112f": 14,
+      "0539c4c809627318e365ec6182727b3f816ccb71b0e1ce8a95e570c926fb086f": 14,
+      "05836f31a7320e3e0fc7b9866eda5d5d77af374aa8e74fc546a81ce36a458d42": 7,
+      "1a27dbf49d55fc5613ca13ca73828331d05821473c86aa4d494d0a2a662e3f70": 14,
+      "1ef54f4d2adb8b4b1c56b1d7ee7700718e46b6b6ac9bfdccb554e07f2c26f8f6": 14,
+      "24f1a3484f7947f0ad0212da371aa6f6bd3f41a10aa39b32678580a06c3eb9c2": 8,
+      "26b161d7d9df65ee2b770e2462acbd1c4dc57ddc1903c23c89f596c213441b64": 7,
+      "3013738dfd9d5faaf1b3c7a4c5ea6e354f7a46b13a8cbf1b496491599f1cf0f7": 7,
+      "3cb9bb447415c68dd5628e1ae7096427891b66450aed4181a0c6e2b5fdcd29b9": 8,
+      "4335e119cd384b774fff4c83ed31d6397b48b793f5d42daf137721021f903c5b": 7,
+      "497ba02ee2f60e633d82765f9e34ef07dfef4b191ec1317d095acf418badccd6": 14,
+      "4ac142bf57e5f9f67cca82077ae30ec3ed41adf6b246dc270438e9cf8f149b0d": 7,
+      "595b640e4b930a6682eda937f36c4ed461e393b9cbdd88e2d73ad6200993d287": 7,
+      "5e3fa0edf55b2a00b3b1d798ac5765926b74f4b73635b53d482ca1efd910c79e": 7,
+      "714a332990c1042fa79e50c6ef05efb848a5e0646fe49240d5e00496099db0b6": 14,
+      "7e815519829b252c637d0da4c513a2b3ccdd9498a585ce259c7760038d89e0dc": 7,
+      "83c577c5d709eee3886234545c82646581f4ac47f850f03a5b247326203957dc": 8,
+      "8542a1cebe37847488eb4c16a8ff2a5a07583e65f1b0519f285f007725df50e0": 14,
+      "89f28dc342efc0dba26fcaa1b1876388760ccdc1eba170d6b81fd588c6f9a562": 7,
+      "8fbdd06840599bce5eefd0d9a59276200a9fd4453d4d489dab773066bad191a2": 14,
+      "907f2d6ab705a1fa8c780420147e737c984d27a63e2389b193ca5219c9d86350": 8,
+      "9e14566e930ca926c5d538ae1e913013781c57b4fe6930a4117298fac7182560": 14,
+      "b71eafc4a0486e0c2fb9ceba36d7922ea0c17a265cfdd64ec07d77dccade3e93": 7,
+      "ba58a61967a682d5e8b70238bfcb367ce12dd803b4b8991a499660b4f2b372fd": 14,
+      "c1c7fceb7916dfa8c00274986a3278a60d0c37cd142f6d9e7555b3b2d2b4bee3": 8,
+      "c3987361b8412d3ff711c10b13d814d5a8d6fab02578193bd8825a11b18d0a03": 14,
+      "e2161687bf91bf2ae427bcbe4d8e1cf604f184cbaef82f6e83da58becbdac3b5": 7,
+      "f1ce7d4a3bb7dc1b069388876a3c77b9abfa8aafe3ca6dd99bdb2f77848f2d14": 7
+    },
+    "repetition_ratio": 0.8992805755395683,
+    "repetitions": 250,
+    "singletons": 0,
+    "top10": [
+      {
+        "count": 14,
+        "signature": "0409e1aba84017941d4f79c041ce7fcb1d9ecac1f3025a6c379da9b7629c112f"
+      },
+      {
+        "count": 14,
+        "signature": "0539c4c809627318e365ec6182727b3f816ccb71b0e1ce8a95e570c926fb086f"
+      },
+      {
+        "count": 14,
+        "signature": "1a27dbf49d55fc5613ca13ca73828331d05821473c86aa4d494d0a2a662e3f70"
+      },
+      {
+        "count": 14,
+        "signature": "1ef54f4d2adb8b4b1c56b1d7ee7700718e46b6b6ac9bfdccb554e07f2c26f8f6"
+      },
+      {
+        "count": 14,
+        "signature": "497ba02ee2f60e633d82765f9e34ef07dfef4b191ec1317d095acf418badccd6"
+      },
+      {
+        "count": 14,
+        "signature": "714a332990c1042fa79e50c6ef05efb848a5e0646fe49240d5e00496099db0b6"
+      },
+      {
+        "count": 14,
+        "signature": "8542a1cebe37847488eb4c16a8ff2a5a07583e65f1b0519f285f007725df50e0"
+      },
+      {
+        "count": 14,
+        "signature": "8fbdd06840599bce5eefd0d9a59276200a9fd4453d4d489dab773066bad191a2"
+      },
+      {
+        "count": 14,
+        "signature": "9e14566e930ca926c5d538ae1e913013781c57b4fe6930a4117298fac7182560"
+      },
+      {
+        "count": 14,
+        "signature": "ba58a61967a682d5e8b70238bfcb367ce12dd803b4b8991a499660b4f2b372fd"
+      }
+    ],
+    "top10_share": 0.5035971223021583,
+    "total": 278,
+    "unique": 28
+  },
+  "subsystem_combinations": {
+    "invoices": 28,
+    "invoices+memberships+subscriptions": 24,
+    "invoices+subscriptions": 42,
+    "memberships": 84,
+    "memberships+subscriptions": 44,
+    "subscriptions": 56
+  },
+  "tasks_with_alternative_routes": 80,
+  "v0_1_comparison": {
+    "business_families": 2,
+    "maximum_dependency_depth": 1,
+    "methodology": "Frozen goal-task suites, ID-free goal/dependency signatures; generator scenario census has different unit and is not numerically conflated.",
+    "service_instances": 40,
+    "structural_classes": 4
+  },
+  "verified_routes": 324
+}

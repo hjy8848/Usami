@@ -25,18 +25,23 @@ class CustomerAction(Model):
         return self
 
 
-def action_schema(tools):
+def action_schema(tools, rules_version=None):
     """Describe the Customer's nested Operation shape using core parameter models."""
-    target_types = {"refund_invoice": "invoice ID", "change_member_role": "membership ID (not a user or organization ID)"}
+    target_types = {name: "membership ID" for name in ("change_member_role", "activate_member", "deactivate_member", "remove_member")}
+    target_types.update(refund_invoice="invoice ID", pay_invoice="invoice ID", invite_member="organization ID")
     operations = []
     for name in tools:
         if name not in PARAMETERS or name in QUERIES:
             continue
+        params = PARAMETERS[name].model_json_schema()
+        if name == "refund_invoice":
+            if rules_version == "saas-rules-0.2.0": params["required"].append("idempotency_key")
+            else: params["properties"].pop("idempotency_key", None)
         operations.append({"type": "object", "additionalProperties": False,
             "required": ["name", "org_id", "resource_id", "params"], "properties": {
                 "name": {"const": name}, "org_id": {"type": "string", "description": "Observed organization ID"},
                 "resource_id": {"type": "string", "description": "Observed " + target_types.get(name, "subscription ID")},
-                "params": PARAMETERS[name].model_json_schema()}})
+                "params": params}})
     schema = CustomerAction.model_json_schema()
     schema.pop("$defs", None)
     schema["properties"]["requested_operations"]["items"] = {"anyOf": operations} if operations else False

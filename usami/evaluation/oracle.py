@@ -59,7 +59,8 @@ def evaluate_trace(trace: Union[Trace, str, Path],
     counts: Dict[str, int] = {}
     state = trace.initial_state.clone()
     rules = ReferenceRules()
-    unsupported = trace.initial_state.rules.version != RULES_VERSION or trace.schema_version != "usami-trace-0.1.0"
+    expected_schema = "usami-trace-0.2.0" if state.rules.version == "saas-rules-0.2.0" else "usami-trace-0.1.0"
+    unsupported = trace.initial_state.rules.version not in {RULES_VERSION, "saas-rules-0.2.0"} or trace.schema_version != expected_schema
 
     def evidence(code: str, entity: str, event: Optional[Event], detail: str,
                  snapshot: Optional[WorldState] = None, path: Optional[str] = None) -> Violation:

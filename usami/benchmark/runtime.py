@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from usami import make_request, replay_trace
-from usami.benchmark.manifest import PROTOCOL_VERSION, BenchmarkManifest, validate_manifest
+from usami.benchmark.manifest import PROTOCOL_VERSION, PROTOCOL_VERSION_V2, BenchmarkManifest, validate_manifest
 from usami.interaction import InteractionBudget, InteractionConfig, InteractionSession, replay_interaction
 from usami.interaction.models import InteractionTrace
 from usami.service import CustomerInput, Experiment, ServiceExecution, ServiceSession
@@ -17,8 +17,9 @@ class GoalServiceSession(ServiceSession):
     """Optional capabilities are authority, not mandatory requests or a reference plan."""
     def __init__(self, manifest, instance, client):
         task = instance.task
+        self._v2 = manifest.version == PROTOCOL_VERSION_V2
         self._goal_grants = [make_request(f"goal_{n:03d}", task.identity, op) for n, op in enumerate(task.capabilities)]
-        experiment = Experiment(seed=instance.seed, generator=manifest.generator,
+        experiment = Experiment(seed=instance.seed, generator=instance.generator or manifest.generator,
             customer=CustomerInput(identity=instance.customer_identity, message=task.message),
             mode=manifest.mode, tools=manifest.tools, max_llm_calls=manifest.budget.max_service_llm_calls,
             max_tool_calls=manifest.budget.max_service_tool_calls)
@@ -26,7 +27,10 @@ class GoalServiceSession(ServiceSession):
 
     def reset(self):
         self._goal_used = set()
-        return super().reset()
+        state = super().reset()
+        if self._v2:
+            self._messages[0]["content"] += " When declining or asking for authorization, communicate the corresponding policy_code from the public catalog verbatim in your final reply. After a verified rejection, natural-language replies are accepted. If declining without a write probe, return JSON with disposition refused or clarification, policy_code and explanation. Queries may establish the refusal reason. Do not claim an action happened unless a tool confirms it."
+        return state
 
     def _request_for(self, operation):
         if not operation.is_query:
@@ -38,8 +42,8 @@ class GoalServiceSession(ServiceSession):
 
 
 def interaction_config(manifest, instance):
-    return InteractionConfig(seed=instance.seed, generator=manifest.generator, customer_identity=instance.customer_identity,
-                             exploration_strategy=instance.exploration_strategy, mode=manifest.mode, tools=manifest.tools,
+    return InteractionConfig(seed=instance.seed, generator=instance.generator or manifest.generator, customer_identity=instance.customer_identity,
+                             exploration_strategy=manifest.method_strategy if manifest.version == PROTOCOL_VERSION_V2 else instance.exploration_strategy, mode=manifest.mode, tools=manifest.tools,
                              budget=InteractionBudget(**manifest.budget.model_dump()))
 
 
@@ -87,7 +91,7 @@ def run_instance(manifest, identifier, service_client, customer_client=None, tri
         if customer_client is None or customer_client.settings != manifest.customer_model:
             raise ValueError("Discovery Customer model differs from frozen run profile")
         interaction = InteractionSession(interaction_config(manifest, instance), customer_client, service_client).run()
-    result = BenchmarkRun(manifest_hash=manifest.manifest_hash, dataset_hash=manifest.dataset_hash,
+    result = BenchmarkRun(version=manifest.version, manifest_hash=manifest.manifest_hash, dataset_hash=manifest.dataset_hash,
                           instance_id=identifier, trial_id=trial_id, service_execution=execution, interaction=interaction)
     result.run_hash = result.computed_hash()
     return result
@@ -97,7 +101,7 @@ def replay_run(manifest, run):
     validate_manifest(manifest)
     if not isinstance(run, BenchmarkRun):
         run = BenchmarkRun.load(run)
-    if (run.version != PROTOCOL_VERSION or run.run_hash != run.computed_hash() or run.manifest_hash != manifest.manifest_hash
+    if (run.version != manifest.version or run.run_hash != run.computed_hash() or run.manifest_hash != manifest.manifest_hash
             or run.dataset_hash != manifest.dataset_hash or run.trial_id not in manifest.trials):
         raise ValueError("run differs from trusted manifest, trial or integrity hash")
     instance = instance_for(manifest, run.instance_id)

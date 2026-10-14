@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Optional, Tuple, Union
 
-from pydantic import Field, StringConstraints, field_validator, model_validator
+from pydantic import ConfigDict, Field, StringConstraints, field_validator, model_validator
 
 from ..schema import FrozenModel, digest
 
@@ -38,6 +38,11 @@ class Scope(FrozenModel):
 
 
 class Trigger(FrozenModel):
+    model_config = ConfigDict(json_schema_extra={"anyOf": [
+        {"required": ["keywords"], "properties": {"keywords": {"minItems": 1}}},
+        {"required": ["intents"], "properties": {"intents": {"minItems": 1}}},
+    ]})
+
     keywords: Tuple[NonemptyText, ...] = Field(default=(), max_length=64)
     intents: Tuple[NonemptyText, ...] = Field(default=(), max_length=64)
 
@@ -95,8 +100,40 @@ def skill_role(skill: Union[ExplorationSkill, DecisionSkill]) -> SkillRole:
     return "customer" if isinstance(skill, ExplorationSkill) else "service"
 
 
+def _patch_schema_constraints(schema):
+    """Expose action/role shape invariants without changing stored v1 objects.
+
+    A required nullable field still accepts null, so mutation branches also
+    constrain skill to the concrete role-specific object. Snapshot, ID equality
+    and content-hash checks remain in the parser and gates.
+    """
+    schema["allOf"] = [
+        {
+            "if": {"properties": {"action": {"enum": ["ADD", "UPDATE"]},
+                                  "role": {"const": role}}, "required": ["action", "role"]},
+            "then": {"required": ["skill"], "properties": {"skill": {
+                "type": "object", "required": ["type"],
+                "properties": {"type": {"const": kind}},
+            }}},
+        }
+        for role, kind in (("customer", "exploration"), ("service", "decision"))
+    ] + [
+        {
+            "if": {"properties": {"action": {"const": "REMOVE"}}, "required": ["action"]},
+            "then": {"required": ["skill_id"], "properties": {
+                "skill_id": {"type": "string"}, "skill": {"type": "null"}}},
+        },
+        {
+            "if": {"properties": {"action": {"const": "NOOP"}}, "required": ["action"]},
+            "then": {"properties": {"skill_id": {"type": "null"}, "skill": {"type": "null"}}},
+        },
+    ]
+
+
 class SkillPatch(FrozenModel):
     """Exactly one modification, bound to the snapshot reflected upon."""
+
+    model_config = ConfigDict(json_schema_extra=_patch_schema_constraints)
 
     schema_version: Literal[1] = 1
     action: Literal["ADD", "UPDATE", "REMOVE", "NOOP"]

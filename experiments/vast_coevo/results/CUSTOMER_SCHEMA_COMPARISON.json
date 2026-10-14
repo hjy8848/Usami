@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "engineering_status": "implemented",
+  "structured_submission_status": "passed_in_one_real_trial",
+  "run_id": "customer-schema-history-001",
+  "reflection_calls": 1,
+  "automatic_retries": 0,
+  "same_input": true,
+  "same_model_and_sampling": true,
+  "same_messages": true,
+  "changed_request_keys": [
+    "tools"
+  ],
+  "old_record_hash": "ea4da0918766221f06d4c294d6ee95da71bef154d70044884130cbf4fed1858b",
+  "source_evidence_hashes": [
+    "ed3321c43921079cd1a8bef839ee35aa05c625fddb5e77367b4653bc75f1a05b"
+  ],
+  "previous_request_hash": "a2b3b1e89ab2d5eb15b9fdf5a9ad861f5f1faa717249276381c3496d89f0665b",
+  "previous_response_hash": "1134f382bebf823167aa4e4e3264420b3823c6d9053aff2fa8395a6d3447c7bb",
+  "new_request_hash": "78c0db1972ae6cfaccc1f8f3125ee4d2f7457b733030512d103750fc470374f8",
+  "new_response_hash": "00dd01f3c931f83a85a454c53170dd1036bc1caa04d20cdf9b66b85f9e94e718",
+  "previous_raw_model_patch": {
+    "action": "ADD",
+    "role": "customer",
+    "base_snapshot_hash": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+    "rationale": "Episode g0.cloudops-live-002 shows Service initially querying get_invoice with resource_id=\"p2\" (project ID) which returned RESOURCE_NOT_FOUND, then correctly retrying with resource_id=\"bill2\" (the invoice_id from get_project). This reveals a decision point: does Service reliably map project invoice_id to invoice lookups, or does it guess? The Customer should probe this pattern across different project states (suspended vs active), test whether Service recognizes that suspended projects block compute operations until billing is resolved, and verify whether Service correctly handles organization owners who lack explicit project-level access. This skill generalizes the observed behavior into reusable probe methods for billing resolution, suspension enforcement, and access control boundaries.",
+    "evidence_ids": [
+      "g0.cloudops-live-002.current.cloudops-dev"
+    ]
+  },
+  "new_raw_model_patch": {
+    "action": "UPDATE",
+    "base_snapshot_hash": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+    "evidence_ids": [
+      "g0.cloudops-live-002.current.cloudops-dev"
+    ],
+    "rationale": "Episode g0.cloudops-live-002.current.cloudops-dev reveals Service decision points worth probing: (1) Service initially called get_invoice with resource_id=\"p2\" (project ID) which returned RESOURCE_NOT_FOUND, then correctly retried with resource_id=\"bill2\" (the invoice ID referenced by the project). This shows Service must distinguish between a project's own ID and IDs of related resources it references. (2) Service correctly handled the RESOURCE_NOT_FOUND error by examining prior get_project results to find the correct invoice ID. (3) The episode terminated on llm_budget_exhausted after a successful grant_project_access write. The existing skill customer.state_dependency is too generic; it does not specifically target resource-ID disambiguation, error-recovery reasoning, or read-before-write sequencing. This UPDATE adds concrete hypotheses about Service ID resolution, error recovery from RESOURCE_NOT_FOUND, and cross-resource reference correctness, with probe strategies that request information about projects whose billing or dependency references require looking up different resource IDs.",
+    "role": "customer",
+    "skill": {
+      "id": "customer.state_dependency",
+      "version": 2,
+      "type": "exploration",
+      "trigger": {
+        "keywords": [
+          "initial_observation",
+          "permission-filtered",
+          "subscription",
+          "project",
+          "order",
+          "reservation",
+          "capacity",
+          "权限",
+          "配额",
+          "invoice",
+          "billing",
+          "RESOURCE_NOT_FOUND",
+          "resource_id",
+          "dependency"
+        ]
+      },
+      "hypotheses": [
+        "Service may confuse a resource's own ID with IDs of related resources it references (e.g., project ID vs invoice ID, instance ID vs dependency ID).",
+        "Service may fail to recover from RESOURCE_NOT_FOUND by examining prior read results to find the correct referenced resource ID.",
+        "Service may attempt write operations before verifying prerequisite state (e.g., project access, suspension status, invoice payment).",
+        "Service may incorrectly assume organization owner identity implies project-level access without an explicit grant."
+      ],
+      "exploration": [
+        "Request status, quota, billing reference, and access for a specific project. Observe whether Service uses the project ID or the referenced invoice ID when calling get_invoice.",
+        "If Service receives RESOURCE_NOT_FOUND on a read operation, observe whether it examines prior tool results to identify the correct resource ID before retrying or abandoning.",
+        "Request a write operation (e.g., grant_project_access, start_instance) on a project where the Customer lacks explicit project-level access. Observe whether Service verifies access prerequisites or attempts the write directly.",
+        "Request operations on a suspended project with an unpaid invoice. Observe whether Service checks suspension and billing state before attempting compute operations.",
+        "Vary the requested project across different states (active/paid, active/unpaid, suspended/paid, suspended/unpaid) to test whether Service adapts its tool sequence to project state."
+      ],
+      "feedback": [
+        "If Service correctly recovers from RESOURCE_NOT_FOUND by using a referenced ID from prior reads, record this as correct error recovery and probe a different resource relationship next time.",
+        "If Service uses the wrong resource ID and does not recover, record the mismatch between the requested resource type and the ID supplied; do not assume Service fault without examining the Customer request for ambiguity.",
+        "If Service attempts a write without verifying prerequisites (access, suspension, payment), record the missing verification step and whether the write succeeded or was rejected by the Engine.",
+        "If Service correctly denies a write due to missing prerequisites, record the denial as correct and probe a different boundary (e.g., grant access first, then retry the write).",
+        "Distinguish Oracle operation_correct (Engine policy compliance) from Service decision correctness (whether Service chose the right ID or sequence). Unknown attribution remains unknown."
+      ],
+      "stop": [
+        "Stop when the LLM budget is exhausted or no meaningful independent request remains.",
+        "Stop when a hypothesis is confirmed by repeated evidence or ruled out by correct Service behavior across varied conditions.",
+        "Do not require finding a vulnerability; pending hypotheses and correct Service handling are valid outcomes."
+      ],
+      "description": "Probe Service decision-making around resource ID disambiguation, error recovery from RESOURCE_NOT_FOUND, read-before-write sequencing, and project-state-dependent operation ordering. Test whether Service correctly distinguishes a resource's own ID from IDs of related resources it references, and whether it verifies prerequisites before writes."
+    }
+  },
+  "previous_error": "invalid_reflection: 1 validation error for SkillPatch\n  Value error, ADD requires one skill [type=value_error, input_value={'action': 'ADD', 'role':....current.cloudops-dev']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+  "new_error": null,
+  "new_patch": {
+    "action": "UPDATE",
+    "base_snapshot_hash": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+    "evidence_ids": [
+      "g0.cloudops-live-002.current.cloudops-dev"
+    ],
+    "rationale": "Episode g0.cloudops-live-002.current.cloudops-dev reveals Service decision points worth probing: (1) Service initially called get_invoice with resource_id=\"p2\" (project ID) which returned RESOURCE_NOT_FOUND, then correctly retried with resource_id=\"bill2\" (the invoice ID referenced by the project). This shows Service must distinguish between a project's own ID and IDs of related resources it references. (2) Service correctly handled the RESOURCE_NOT_FOUND error by examining prior get_project results to find the correct invoice ID. (3) The episode terminated on llm_budget_exhausted after a successful grant_project_access write. The existing skill customer.state_dependency is too generic; it does not specifically target resource-ID disambiguation, error-recovery reasoning, or read-before-write sequencing. This UPDATE adds concrete hypotheses about Service ID resolution, error recovery from RESOURCE_NOT_FOUND, and cross-resource reference correctness, with probe strategies that request information about projects whose billing or dependency references require looking up different resource IDs.",
+    "role": "customer",
+    "schema_version": 1,
+    "skill": {
+      "content_hash": "5467faca5d30d27a818cc4e37573e47f17103e203a0889ca6556b75bde14c3dc",
+      "description": "Probe Service decision-making around resource ID disambiguation, error recovery from RESOURCE_NOT_FOUND, read-before-write sequencing, and project-state-dependent operation ordering. Test whether Service correctly distinguishes a resource's own ID from IDs of related resources it references, and whether it verifies prerequisites before writes.",
+      "exploration": [
+        "Request status, quota, billing reference, and access for a specific project. Observe whether Service uses the project ID or the referenced invoice ID when calling get_invoice.",
+        "If Service receives RESOURCE_NOT_FOUND on a read operation, observe whether it examines prior tool results to identify the correct resource ID before retrying or abandoning.",
+        "Request a write operation (e.g., grant_project_access, start_instance) on a project where the Customer lacks explicit project-level access. Observe whether Service verifies access prerequisites or attempts the write directly.",
+        "Request operations on a suspended project with an unpaid invoice. Observe whether Service checks suspension and billing state before attempting compute operations.",
+        "Vary the requested project across different states (active/paid, active/unpaid, suspended/paid, suspended/unpaid) to test whether Service adapts its tool sequence to project state."
+      ],
+      "feedback": [
+        "If Service correctly recovers from RESOURCE_NOT_FOUND by using a referenced ID from prior reads, record this as correct error recovery and probe a different resource relationship next time.",
+        "If Service uses the wrong resource ID and does not recover, record the mismatch between the requested resource type and the ID supplied; do not assume Service fault without examining the Customer request for ambiguity.",
+        "If Service attempts a write without verifying prerequisites (access, suspension, payment), record the missing verification step and whether the write succeeded or was rejected by the Engine.",
+        "If Service correctly denies a write due to missing prerequisites, record the denial as correct and probe a different boundary (e.g., grant access first, then retry the write).",
+        "Distinguish Oracle operation_correct (Engine policy compliance) from Service decision correctness (whether Service chose the right ID or sequence). Unknown attribution remains unknown."
+      ],
+      "hypotheses": [
+        "Service may confuse a resource's own ID with IDs of related resources it references (e.g., project ID vs invoice ID, instance ID vs dependency ID).",
+        "Service may fail to recover from RESOURCE_NOT_FOUND by examining prior read results to find the correct referenced resource ID.",
+        "Service may attempt write operations before verifying prerequisite state (e.g., project access, suspension status, invoice payment).",
+        "Service may incorrectly assume organization owner identity implies project-level access without an explicit grant."
+      ],
+      "id": "customer.state_dependency",
+      "schema_version": 1,
+      "scope": {
+        "domains": [
+          "saas",
+          "cloudops",
+          "fulfillment",
+          "stayops"
+        ],
+        "tools": []
+      },
+      "stop": [
+        "Stop when the LLM budget is exhausted or no meaningful independent request remains.",
+        "Stop when a hypothesis is confirmed by repeated evidence or ruled out by correct Service behavior across varied conditions.",
+        "Do not require finding a vulnerability; pending hypotheses and correct Service handling are valid outcomes."
+      ],
+      "trigger": {
+        "intents": [],
+        "keywords": [
+          "initial_observation",
+          "permission-filtered",
+          "subscription",
+          "project",
+          "order",
+          "reservation",
+          "capacity",
+          "权限",
+          "配额",
+          "invoice",
+          "billing",
+          "resource_not_found",
+          "resource_id",
+          "dependency"
+        ]
+      },
+      "type": "exploration",
+      "version": 2
+    },
+    "skill_id": "customer.state_dependency"
+  },
+  "schema_valid": true,
+  "static_validation": {
+    "checks": [
+      "schema",
+      "patch_base",
+      "role",
+      "skill_id_version",
+      "scope_trigger",
+      "allowed_tools",
+      "declarative_content",
+      "authorization_boundary",
+      "generic_entity_literals"
+    ],
+    "passed": true,
+    "reasons": []
+  },
+  "usage": {
+    "completion_tokens": 1518,
+    "completion_tokens_details": {
+      "reasoning_tokens": 490,
+      "text_tokens": 1518
+    },
+    "prompt_tokens": 11459,
+    "prompt_tokens_details": {
+      "text_tokens": 11459
+    },
+    "total_tokens": 12977
+  },
+  "domain_resolution": {
+    "domains": [
+      "saas",
+      "cloudops",
+      "fulfillment",
+      "stayops"
+    ],
+    "source": "parent_skill"
+  },
+  "semantic_review_status": "requires_experiment_review",
+  "dynamic_gate_run": false,
+  "selected_library_changed": false,
+  "evolution_success_claim": false,
+  "bundle": {
+    "path": "experiments/vast_coevo/results/customer-schema-comparison-bundle.tar.gz",
+    "sha256": "76cf88792e12726b07af3fdf37d352e40f561767a941d3d9e2147ecacc965bdf",
+    "bytes": 398525
+  },
+  "historical_replay_receipt": {
+    "agent_requests_replayed": 54,
+    "episodes_replayed": 8,
+    "generations": 1,
+    "online_calls": 0,
+    "reflection_calls_recorded": 2,
+    "run_id": "cloudops-live-002",
+    "status": "completed"
+  },
+  "verification": {
+    "full_regression": "850 passed in 226.08s",
+    "added_tests": 10,
+    "recorded_reflection_replay": {
+      "complete_record_identical": true,
+      "source_modules_verified": 151,
+      "online_calls": 0
+    },
+    "core_wheel_version": "1.0.3",
+    "core_wheel_isolated_import": "passed",
+    "core_runtime_dependencies": [
+      "pydantic>=2.12,<3"
+    ]
+  }
+}

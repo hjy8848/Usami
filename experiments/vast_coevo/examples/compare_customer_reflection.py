@@ -104,6 +104,7 @@ def main():
     parser.add_argument("--bundle", type=Path, default=REPO / "experiments/vast_coevo/results/live-pilot-bundle.tar.gz")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--run-id", required=True)
+    parser.add_argument("--purpose", default="customer_goal_direction_comparison")
     parser.add_argument("--offline-check", action="store_true", help="verify and prepare input; zero model calls")
     args = parser.parse_args()
     output = args.out.resolve()
@@ -121,7 +122,7 @@ def main():
         target = output / "source-snapshot" / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(original, target)
-    manifest = dict(schema_version=1, run_id=args.run_id, purpose="customer_goal_direction_comparison",
+    manifest = dict(schema_version=1, run_id=args.run_id, purpose=args.purpose,
                     source_run_id="cloudops-live-002", old_record_hash=old["record_hash"],
                     historical_bundle_sha256=hashlib.sha256(args.bundle.read_bytes()).hexdigest(),
                     model=model.model_dump(mode="json"), max_reflection_calls=0 if args.offline_check else 1,

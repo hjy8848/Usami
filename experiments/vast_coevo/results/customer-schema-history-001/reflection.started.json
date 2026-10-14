@@ -1,0 +1,1 @@
+{"input_hash":"c59885758a31ae6ba284326a52c67f951825fbd002a506ad8438190db758dbf1","model":{"base_url":"http://10.130.138.46:8010/v1","model":"dashscope/qwen3.6-plus","options":{"max_tokens":4096,"temperature":0},"schema_version":1,"timeout_seconds":90.0,"trust_env":false},"run_id":"customer-schema-history-001"}

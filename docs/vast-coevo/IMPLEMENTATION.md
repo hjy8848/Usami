@@ -97,6 +97,10 @@ PYTHONDONTWRITEBYTECODE=1 .venv/bin/python   experiments/vast_coevo/examples/rep
 
 本地原始目录为 `outputs/vast-coevo/live-20261014*`；原始包 3,825,916 bytes，SHA256 `080810eddf3d390a412c5ab26f9981515b6caf599ab872b2abd451708ed460df`。API 费用未估算；报告实际调用与工具数。
 
+## 1.0.3 Customer 提案 Schema 修正（2026-10-14）
+
+ADD/UPDATE 在工具 Schema 中条件必填完整非 null Skill，REMOVE/NOOP 排除矛盾载荷，保留历史 v1 序列化与单次调用规则。同一 CloudOps 历史输入、提示词、模型和采样参数下，一次真实 Reflection 交付完整 UPDATE 并通过静态检查；未运行动态 Gate，未声称探索效果提升。详情与原始证据见 [Customer 提案协议复测](CUSTOMER_PROPOSAL_SCHEMA.md)。
+
 ## 当前限制与下一步研究
 
 - 真实在线 Pilot 没有接受新 Skill；在线动态候选修复/接受尚无成功证据。动态接受机制已有四域真实 Engine + CI 模型响应验收。

@@ -32,7 +32,15 @@ class ScopeResolution(FrozenModel):
 
 
 def proposal_json_schema(role=None):
+    if role not in (None, "customer", "service"):
+        raise ValueError("unknown proposal role")
     schema = SkillPatch.model_json_schema()
+    if role is not None:
+        schema["properties"]["role"]["const"] = role
+    schema["properties"]["skill"]["description"] = (
+        "ADD/UPDATE require a complete non-null skill with id, type, trigger and all step arrays. "
+        "REMOVE/NOOP must omit skill or use null. Scope metadata is program-managed."
+    )
     scope = schema["$defs"]["Scope"]
     scope["required"] = [name for name in scope.get("required", ()) if name != "domains"]
     scope["properties"]["domains"]["description"] = (

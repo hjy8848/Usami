@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-14",
+  "purpose": "Online retests after scope fix, completed before Customer-goal correction task. All trials retained.",
+  "code_commit": "9723284b4e19215c66b90dedf6438bf9f85ec3ff",
+  "model": "dashscope/qwen3.6-plus",
+  "gateway_smoke_calls": 1,
+  "fixture": false,
+  "sampling_note": "Trial 1 failed before Reflection; exactly two independent same-config trials were then declared and run. No proposal retry or rule changes.",
+  "archive": "protocol-v2-retest-bundle.tar.gz",
+  "archive_sha256": "81def4934d18719758f437f4472ba28ce9f466b1045f2b1e9186bf11d819093f",
+  "archive_bytes": 2966360,
+  "runs": [
+    {
+      "run_id": "cloudops-protocol-v2-live-001",
+      "status": "failed",
+      "consumption": {
+        "customer_llm_calls": 1,
+        "reflection_calls": 0,
+        "service_llm_calls": 0,
+        "tool_calls": 0
+      },
+      "error": "RuntimeError: main episode terminated with CUSTOMER_OUTPUT_INVALID: g0.cloudops-protocol-v2-live-001.current.cloudops-dev",
+      "evolutions": []
+    },
+    {
+      "run_id": "cloudops-protocol-v2-live-002",
+      "status": "completed",
+      "consumption": {
+        "customer_llm_calls": 8,
+        "reflection_calls": 2,
+        "service_llm_calls": 44,
+        "tool_calls": 41
+      },
+      "error": "",
+      "evolutions": [
+        {
+          "role": "customer",
+          "outcome": "rejected",
+          "reasons": [
+            "invalid_reflection: 1 validation error for SkillPatch\n  Value error, ADD requires one skill [type=value_error, input_value={'action': 'ADD', 'role':....current.cloudops-dev']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+          ]
+        },
+        {
+          "role": "service",
+          "outcome": "noop",
+          "reasons": [
+            "explicit_noop"
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "cloudops-protocol-v2-live-003",
+      "status": "completed",
+      "consumption": {
+        "customer_llm_calls": 10,
+        "reflection_calls": 2,
+        "service_llm_calls": 44,
+        "tool_calls": 39
+      },
+      "error": "",
+      "evolutions": [
+        {
+          "role": "customer",
+          "outcome": "rejected",
+          "reasons": [
+            "invalid_reflection: 1 validation error for SkillPatch\n  Value error, ADD requires one skill [type=value_error, input_value={'action': 'ADD', 'role':....current.cloudops-dev']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+          ]
+        },
+        {
+          "role": "service",
+          "outcome": "noop",
+          "reasons": [
+            "explicit_noop"
+          ]
+        }
+      ]
+    }
+  ],
+  "online_customer_skill_accepted": false,
+  "improved_discovery_claim": false,
+  "replay": {
+    "native_episodes": 17,
+    "agent_wire_requests": 107,
+    "full_controller_reports_identical": true,
+    "online_calls": 0
+  }
+}

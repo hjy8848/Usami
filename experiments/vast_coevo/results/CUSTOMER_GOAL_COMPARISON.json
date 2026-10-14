@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "c2c_status": "BLOCKED",
+  "engineering_status": "implemented; full regression passed",
+  "run_id": "customer-goal-history-001",
+  "model_available": true,
+  "reflection_calls": 1,
+  "same_model_and_sampling": true,
+  "same_historical_evidence_hashes": true,
+  "old_record_hash": "ea4da0918766221f06d4c294d6ee95da71bef154d70044884130cbf4fed1858b",
+  "new_request_hash": "a2b3b1e89ab2d5eb15b9fdf5a9ad861f5f1faa717249276381c3496d89f0665b",
+  "new_response_hash": "1134f382bebf823167aa4e4e3264420b3823c6d9053aff2fa8395a6d3447c7bb",
+  "old_raw_model_patch": {
+    "action": "UPDATE",
+    "role": "customer",
+    "base_snapshot_hash": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+    "skill_id": "customer.state_dependency",
+    "skill": {
+      "schema_version": 1,
+      "id": "customer.state_dependency",
+      "version": 2,
+      "scope": {
+        "domains": [
+          "saas",
+          "cloudops",
+          "fulfillment",
+          "stayops"
+        ],
+        "tools": []
+      },
+      "trigger": {
+        "keywords": [
+          "initial_observation",
+          "permission-filtered",
+          "subscription",
+          "project",
+          "order",
+          "reservation",
+          "capacity",
+          "权限",
+          "配额"
+        ],
+        "intents": []
+      },
+      "type": "exploration",
+      "hypotheses": [
+        "A later business request may depend on resource state or available capacity.",
+        "Resource identifiers may differ from project IDs; query failures can reveal the correct identifier format.",
+        "Organization owners require explicit project Admin/Operator roles for compute operations, even though they can grant themselves access."
+      ],
+      "exploration": [
+        "Inspect the permitted initial observation and ask for missing state through Service.",
+        "Choose your own business request and supply exact write intentions before Service acts.",
+        "Use the actual reply to choose a different prerequisite or boundary to explore.",
+        "When a query returns RESOURCE_NOT_FOUND, retry with alternative resource identifiers such as the specific invoice or instance ID.",
+        "Before compute operations on a project, verify explicit Admin/Operator access; org owners can grant themselves access if missing."
+      ],
+      "feedback": [
+        "Distinguish a claimed outcome from the actual reported tool result.",
+        "Record uncertainty for later independent verification; public replies do not expose Oracle verdicts.",
+        "A failed query with RESOURCE_NOT_FOUND indicates incorrect resource_id scope, not absence of the resource."
+      ],
+      "stop": [
+        "Stop when no meaningful independent request remains or the fixed budget is exhausted."
+      ]
+    },
+    "rationale": "Episode g0.cloudops-live-002 revealed two reusable exploration patterns not captured in the original skill: (1) resource identifiers for invoices differ from project IDs (bill2 vs p2), and a RESOURCE_NOT_FOUND failure guides retry with the correct identifier; (2) org owners need explicit project Admin/Operator roles for compute, but can self-grant access. Updated hypotheses, exploration steps, and feedback to encode these learnings for future episodes.",
+    "evidence_ids": [
+      "g0.cloudops-live-002.current.cloudops-dev"
+    ]
+  },
+  "new_raw_model_patch": {
+    "action": "ADD",
+    "role": "customer",
+    "base_snapshot_hash": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+    "rationale": "Episode g0.cloudops-live-002 shows Service initially querying get_invoice with resource_id=\"p2\" (project ID) which returned RESOURCE_NOT_FOUND, then correctly retrying with resource_id=\"bill2\" (the invoice_id from get_project). This reveals a decision point: does Service reliably map project invoice_id to invoice lookups, or does it guess? The Customer should probe this pattern across different project states (suspended vs active), test whether Service recognizes that suspended projects block compute operations until billing is resolved, and verify whether Service correctly handles organization owners who lack explicit project-level access. This skill generalizes the observed behavior into reusable probe methods for billing resolution, suspension enforcement, and access control boundaries.",
+    "evidence_ids": [
+      "g0.cloudops-live-002.current.cloudops-dev"
+    ]
+  },
+  "new_materialized_patch": null,
+  "new_parse_error": "invalid_reflection: 1 validation error for SkillPatch\n  Value error, ADD requires one skill [type=value_error, input_value={'action': 'ADD', 'role':....current.cloudops-dev']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+  "dynamic_gate_run": false,
+  "evolution_success_claim": false,
+  "manual_direction_review": {
+    "scope": "one case, raw rationale only; no full Skill exists",
+    "result": "New rationale focuses on examining Service resource mapping, state handling and permission boundaries; a reusable ExplorationSkill was not emitted.",
+    "attribution": "RESOURCE_NOT_FOUND is an observed rejection; Service selected the parameters, but decision fault is not automatically confirmed.",
+    "unresolved": "ADD omitted the complete skill object, so probe steps, outcome branches and transferability cannot be assessed as a Skill."
+  },
+  "comparison": [
+    {
+      "item": "Customer examination responsibility",
+      "old": "Only generic exploration objective; actual Skill emphasizes Customer operation techniques.",
+      "new": "Explicit Service-examination objective plus five checks; rationale asks how to test Service."
+    },
+    {
+      "item": "Customer vs Service behavior",
+      "old": "Role-labelled raw messages, no dedicated separation of intentions, selected tools and Oracle interpretation.",
+      "new": "Hash-bound native view separates exact Customer intents/grants, Service tool order/arguments/results and independent Oracle facts."
+    },
+    {
+      "item": "Blame for tool error",
+      "old": "Treats RESOURCE_NOT_FOUND as incorrect resource scope, without locating parameter provenance or proving responsibility.",
+      "new": "Rationale names Service-selected project ID and later invoice ID; projection leaves blame unknown."
+    },
+    {
+      "item": "Specific Service testing hypotheses",
+      "old": "Mainly business prerequisites and correct IDs/roles.",
+      "new": "Rationale asks whether Service reliably maps invoice references or guesses, and proposes checking suspension/access boundaries."
+    },
+    {
+      "item": "Executable next probes",
+      "old": "Concrete business-use steps, including retrying IDs and granting access.",
+      "new": "Rationale suggests active/suspended project variants and missing project access; complete probe/feedback arrays absent."
+    },
+    {
+      "item": "Business tutorials as primary experience",
+      "old": "Yes, resource retry and permission setup are prominent.",
+      "new": "Rationale focuses on tests of Service; no valid Skill to evaluate beyond that."
+    },
+    {
+      "item": "Facts vs hypotheses",
+      "old": "Some uncertainty guidance exists, but broad resource-error claims and compute-role knowledge are not established by a successful compute test.",
+      "new": "Projection distinguishes observation and post-run Oracle; rationale uses testing questions. Full Skill outcome interpretation remains unavailable."
+    }
+  ],
+  "tests": {
+    "full_regression_passed": 840,
+    "seconds": 230.25
+  },
+  "archive": "customer-goal-comparison-bundle.tar.gz",
+  "archive_sha256": "107e94278b094bafdbad8f5127ac8d128369d8bfe3689bff48e13b0466a68ff4",
+  "archive_bytes": 397195,
+  "replay": {
+    "original_history_complete_controller_verified": true,
+    "recorded_reflection_calls_replayed": 1,
+    "complete_new_reflection_record_identical": true,
+    "source_modules_verified": 151,
+    "online_calls": 0
+  }
+}

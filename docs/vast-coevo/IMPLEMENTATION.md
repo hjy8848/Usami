@@ -1,5 +1,11 @@
 # VAST-CoEvo v1.0 — 实现与验收报告
 
+## 1.0.2 Customer 经验方向修正（2026-10-14）
+
+[方向修正与真实对照](CUSTOMER_GOAL.md) 已明确 Customer 的 Service 考察目标，在单次反思内加入五项自检，提供可审计的双方行为/工具结果/独立 Oracle 视图。旧 Skill/Snapshot/Patch、授权边界和收益阈值保持兼容。全量回归 **840 passed in 230.25s**，Core wheel 构建成功。
+
+真实历史对照 `customer-goal-history-001` 使用同一模型与同一 `cloudops-live-002` 证据执行一次 Reflection：新理由面向 Service 资源识别、状态和权限测试，但模型遗漏完整 skill，未形成有效 Patch，未接受策略。完整经验产出标 **BLOCKED**，不能声称泛化或进化成功。原历史、上轮三次复测及本次反思均有固定源码与原响应的离线回放核验。原始材料见 [机器比较](../../experiments/vast_coevo/results/CUSTOMER_GOAL_COMPARISON.json)。
+
 ## 1.0.1 增量修复（2026-10-14）
 
 [提案协议 v2](PROTOCOL.md) 将适用范围交由程序管理：UPDATE 继承父领域集合，ADD 使用固定实验领域；模型可省略该字段，等价列表顺序不视为范围变化。执行 Gate 单独记录实际覆盖与未验证领域，普通 UPDATE 不支持扩大或缩小范围。独立 CLI 已同步，原 Engine/Reference/Oracle、冻结 Manifest、网页及历史实验原件零修改。

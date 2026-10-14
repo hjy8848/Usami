@@ -31,7 +31,7 @@ class ScopeResolution(FrozenModel):
     domains: Tuple[NonemptyText, ...]
 
 
-def proposal_json_schema():
+def proposal_json_schema(role=None):
     schema = SkillPatch.model_json_schema()
     scope = schema["$defs"]["Scope"]
     scope["required"] = [name for name in scope.get("required", ()) if name != "domains"]
@@ -43,6 +43,15 @@ def proposal_json_schema():
         skill = schema["$defs"][name]
         skill["required"] = [key for key in skill["required"] if key != "scope"]
         skill["properties"]["content_hash"]["description"] = "Omit; the program computes and checks this hash."
+    if role == "customer":
+        fields = schema["$defs"]["ExplorationSkill"]["properties"]
+        for name, description in {
+            "hypotheses": "Testing hypotheses about Service decision-making; distinguish suspected from confirmed weaknesses.",
+            "exploration": "Concrete, authorized probes of Service choices, not a business execution tutorial.",
+            "feedback": "Interpret correct, suspicious, unknown and independently verified outcomes; branch to the next legal test.",
+            "stop": "Stop at budget, authorization or evidence limits; finding a vulnerability is not required.",
+        }.items():
+            fields[name]["description"] = description
     return schema
 
 

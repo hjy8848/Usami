@@ -4,9 +4,65 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 from .domains import execution_of
+from vast_coevo.reflection.evidence import native_view, wire_view
 
 CLASSIFICATIONS = ("successful_business_violation", "rejected_invalid_attempt", "authorization_only",
                    "false_rejection", "legal_execution", "unscored")
+
+
+def reflection_view(evidence, trace, domain, track):
+    """Exact post-run Customer/Service facts; source pointers target the artifact.
+
+    Caller verifies the linked artifact and native Replay before use. This
+    translator neither grants operations nor diagnoses Service reasoning.
+    """
+    execution = execution_of(domain, trace, track)
+    raw = execution.model_dump(mode="json")
+    prefix = "/native_trace" + ("/service_execution" if domain in {"saas", "cloudops"} else "/service") if track == "discovery" else "/native_trace"
+    requests, replies = [], []
+    if domain == "saas":
+        for index, turn in enumerate(trace.model_dump(mode="json").get("turns", []) if track == "discovery" else []):
+            prepared, service = turn["prepared"], turn["service"]
+            customer = prepared["customer"]
+            requests.append(dict(turn_id=prepared["turn_id"], message=customer["message"],
+                declared_write_intents=prepared["action"]["requested_operations"], accepted_write_grants=customer["authorizations"],
+                authorization_source="native_session_input", source_refs=("/native_trace/turns/" + str(index) + "/prepared",)))
+    else:
+        actions = trace.model_dump(mode="json").get("actions", []) if track == "discovery" else []
+        sent = [action for action in actions if action.get("type") == "send_message" or action.get("kind") == "request"]
+        for index, turn in enumerate(raw["inputs"]):
+            declared = (sent[index].get("requested_operations", sent[index].get("intentions", []))
+                        if index < len(sent) else turn["grants"])
+            requests.append(dict(turn_id=turn["turn_id"], message=turn["message"], declared_write_intents=declared,
+                accepted_write_grants=turn["grants"], authorization_source="native_session_input",
+                source_refs=(prefix + "/inputs/" + str(index),)))
+    # Match each actual wire tool_call to its native turn using the last input
+    # message. Repeated indistinguishable text leaves linkage unknown.
+    turns_by_call = {}
+    for call in evidence.model_calls:
+        if call.role != "service" or not isinstance(call.response, dict):
+            continue
+        last_user = next((msg.get("content") for msg in reversed(call.base_request.get("messages", []))
+                          if isinstance(msg, dict) and msg.get("role") == "user"), None)
+        matches = [row["turn_id"] for row in requests if row["message"] == last_user]
+        choices = call.response.get("choices", [])
+        message = choices[0].get("message", {}) if isinstance(choices, list) and len(choices) == 1 and isinstance(choices[0], dict) else {}
+        if not isinstance(message, dict):
+            continue
+        if len(matches) == 1:
+            for tool in message.get("tool_calls") or []:
+                if isinstance(tool, dict) and isinstance(tool.get("id"), str):
+                    turns_by_call[tool["id"]] = matches[0]
+        if isinstance(message.get("content"), str) and message["content"]:
+            replies.append(dict(model_call_id=call.id, turn_id=matches[0] if len(matches) == 1 else None,
+                                content=message["content"], status="unverified_text"))
+    tools = [dict(record, turn_id=turns_by_call.get(record["call_id"]),
+                  source_refs=(prefix + "/tool_records/" + str(index),))
+             for index, record in enumerate(raw["tool_records"])]
+    # Existing initial observation is permission-filtered native Agent context.
+    visible = ((getattr(trace, "initial_observation"),) if track == "discovery" and hasattr(trace, "initial_observation")
+               else wire_view(evidence).customer_visible_context)
+    return native_view(evidence, requests, tools, replies, visible, "flattened" if domain == "saas" else "nested")
 
 
 def operation_rows(domain, trace, track="discovery"):

@@ -61,6 +61,8 @@ Exploration 是方法而非预设操作序列；Customer 自主提出精确写�
 
 ReflectionRecord 新增 `proposal_protocol_version=2` 与 `scope_resolution(source, domains)`。GateResult 的 `validated_domains` 来自实际父版/候选执行；EvolutionRecord 的 `domain_coverage` 分别记录声明、实际验证和未验证领域。执行过验证与 Gate 通过是两个维度。旧记录缺少这些新字段时不在序列化中补写，保持原始内容 hash。完整含义与历史错误见 [协议说明](PROTOCOL.md)。
 
+Customer 反思可增加绑定原证据的 `interaction_views`，Record 保存 `prepared_interaction_views`、`customer_goal_version=service-examination-v1` 和 `semantic_review_status=requires_experiment_review`。它们是开发阶段的证据投影与目标标记，不是运行 Agent 的工具或授权，也不是自动语义通过证书。旧记录省略时保持原始序列化。字段来源、边界与真实对照见 [Customer 目标修正](CUSTOMER_GOAL.md)。
+
 ## 确定性检索与渲染
 
 `SkillContext` 只接收 `domain`、`public_text`、`intents`、`available_tools`。Retriever 按领域（支持 `*`）和 Scope 工具子集过滤；keyword 命中数加上三倍 intent 命中数进行排序，同分按 Skill ID 排序。默认最多 4 个 Skills、渲染长度 6,000 字符，完整 Skill 不截断；无匹配返回空结果。这里的上下文预算单位是字符，不是模型 Token。

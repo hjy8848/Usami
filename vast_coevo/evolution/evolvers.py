@@ -47,6 +47,8 @@ class Evolver:
             self.adapter.forbidden_identifiers(case.config) if hasattr(self.adapter, "forbidden_identifiers") else ())}))
         policies = [self.adapter.public_policy(case.config) for case in cases if hasattr(self.adapter, "public_policy")]
         value = ReflectionInput(generation=generation, role=self.role, library=parent, evidence=evidence,
+                                interaction_views=tuple(self.adapter.reflection_view(row) for row in evidence)
+                                if self.role == "customer" and hasattr(self.adapter, "reflection_view") else None,
                                 domain_policy=DomainPolicy(add_domains=tuple(sorted({case.config.domain for case in cases}))),
                                 allowed_tools=tools, public_policy=json.dumps(policies, ensure_ascii=False, sort_keys=True))
         reflection = self.reflector.reflect(value)

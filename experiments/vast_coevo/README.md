@@ -90,6 +90,8 @@ python -m integrations.usami --root artifacts/vast-coevo \
 
 可以重复传入 `--evidence` 汇总多个真实 Episode。一次命令只有一次反思和一个 Patch；无依据时可以 NOOP。调用前写入 `OUTPUT.started.json`；输出或在途标记已存在时拒绝再次调用，未知中断不会自动重试。完整反思输入、请求、响应/错误和解析结果保存在输出中。Controller 才负责形成候选、静态/动态验证和接受/回滚。
 
+Customer Reflector 现在以考察 Service 决策为目标，使用确定性的双方交互视图与五项目标自检，收益指标和接受阈值保持原样。真实历史对照用 `cloudops-live-002` 的原始证据调用一次模型：理由转向 Service 测试，但 ADD 缺少完整 skill，未接受新策略。详见 [目标修正与对照报告](../../docs/vast-coevo/CUSTOMER_GOAL.md) 和 [原始新记录](results/customer-goal-history-001)。
+
 ## 单代、多代、历史与恢复
 
 ```bash

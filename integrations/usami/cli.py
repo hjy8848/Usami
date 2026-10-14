@@ -204,6 +204,7 @@ def main(argv=None):
                     tasks = {task.task_ref: task for task in plan.service_tasks}
                     scope_profiles = set(plan.validation) | {tasks[row.task_ref].config_id for row in plan.regressions}
                     value = ReflectionInput(generation=args.generation, role=args.role, library=snapshot, evidence=rows,
+                                            interaction_views=tuple(adapter.reflection_view(row) for row in rows) if args.role == "customer" else None,
                                             domain_policy=DomainPolicy(add_domains=tuple(sorted({profiles[key].domain for key in scope_profiles}))),
                                             allowed_tools=tuple(sorted({t for row in rows for t in row.config.tools})),
                                             public_policy=json.dumps([adapter.public_policy(row.config) for row in rows], sort_keys=True))

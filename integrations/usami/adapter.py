@@ -23,7 +23,7 @@ from .domains import (ServiceTaskProfile, UsamiProfile, customer_records_of, exe
                       initial_world, interaction_session, model_settings, native_interaction_config,
                       native_service_config, native_task, native_trace, public_observation,
                       public_policy, replay_native, run_native_service, task_score, tool_names)
-from .evidence import failure_details, operation_rows
+from .evidence import failure_details, operation_rows, reflection_view
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -200,6 +200,25 @@ class UsamiAdapter:
         return PublicContext(domain=config.domain, public_text=json.dumps(public_observation(observed_profile, world),
                                                                          sort_keys=True, ensure_ascii=False),
                              available_tools=config.tools)
+
+    def reflection_view(self, evidence):
+        """Post-run only; callers supply independently replay-verified evidence.
+
+        Historical experiments must be replayed under their archived sources,
+        rather than pretending their source pins match the current adapter.
+        """
+        if not evidence.replay.verified or evidence.config.partition != "development":
+            raise ValueError("reflection projection requires replay-verified development evidence")
+        artifact = NativeArtifact.model_validate_json(Path(evidence.trace.path).read_text())
+        if (digest(artifact) != evidence.trace.sha256 or artifact.episode_id != evidence.episode_id or
+                artifact.config != evidence.config or artifact.model_calls != evidence.model_calls or
+                artifact.customer_snapshot.snapshot_hash != evidence.customer_snapshot_hash or
+                artifact.service_snapshot.snapshot_hash != evidence.service_snapshot_hash):
+            raise ValueError("reflection artifact differs from the verified evidence")
+        trace = native_trace(artifact.profile.domain, json.loads(artifact.native_trace_json), artifact.track)
+        if _native_hash(trace, artifact.track) != evidence.native_trace_hash:
+            raise ValueError("reflection native trace hash mismatch")
+        return reflection_view(evidence, trace, artifact.profile.domain, artifact.track)
 
     def public_policy(self, config):
         _, world, _, _, _ = self._resolve(config, public_only=True)

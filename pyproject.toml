@@ -26,9 +26,10 @@ usami-benchmark = "usami.benchmark.__main__:main"
 usami-cloudops = "usami_cloudops.__main__:main"
 usami-fulfillment = "usami_fulfillment.__main__:main"
 usami-stayops = "usami_stayops.__main__:main"
+usami-coevo = "integrations.usami.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["usami*", "web", "web.backend*"]
+include = ["usami*", "web", "web.backend*", "vast_coevo*", "integrations*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

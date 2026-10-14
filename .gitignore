@@ -12,3 +12,4 @@ test-results/
 .DS_Store
 .suite.lock
 *.tsbuildinfo
+artifacts/vast-coevo*/

@@ -6,6 +6,23 @@ Usami 是可执行的虚构 SaaS 业务世界：组织、成员权限、订阅�
 
 v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer**、**Service LLM** 和 **Customer–Service 多轮交互**模块。Benchmark 核心不依赖 LLM；可选 Customer 自主选择业务请求，Service 使用真实兼容 API 自主选择工具。没有 Evolver、LLM Judge、训练、Service 自动修复、真实支付接口或数据库。业务数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。
 
+## VAST-CoEvo v1.0
+
+新增独立算法层 **Verification-Guided Adversarial Co-Evolution of Customer Exploration and Service Decision Skills**。冻结 Customer/Service 模型权重，以结构化 Skill、单次 Reflection、真实开发集验证、不可变快照和回滚实现 Customer-first / Service-second 交替更新。Usami 继续独立负责业务环境与 Oracle；所有四域依赖限制在 `integrations/usami`。H1/H2/H3 的泛化与共进化收益仍需正式实验检验。
+
+阅读 [研究 Roadmap](docs/vast-coevo/ROADMAP.md)、[方法与验收门槛](docs/vast-coevo/METHOD.md)、[架构边界](docs/vast-coevo/ARCHITECTURE.md)、[Schema](docs/vast-coevo/SCHEMAS.md) 和 [运行与验证记录](docs/vast-coevo/IMPLEMENTATION.md)。
+
+```bash
+# 现有 Usami 仍可单独运行；独立 Core 的安装仅依赖 Pydantic
+python -m pip install ./vast_coevo
+# Usami 四域实验：先设置 USAMI_LLM_MODEL / BASE_URL，API Key 使用环境或现有 Keychain
+python -m integrations.usami --plan experiments/vast_coevo/configs/cloudops-pilot.json \
+  --root artifacts/vast-coevo run --id cloudops-live --generations 1
+python -m integrations.usami --root artifacts/vast-coevo history --id cloudops-live
+```
+
+模型、世界、身份、工具、预算和 Skill 版本被固定在外层运行配置；完整实际请求、原 Session 轨迹与 Oracle 结果一并归档。相同 run ID 可恢复已完成步骤；结果不明的中断调用会停下，避免隐式重复在线执行。正式 held-out 数据不进入 Reflection 或候选选择。
+
 ## FulfillmentOps v0.1 与 StayOps v0.1
 
 独立的仓储履约与酒店运营世界，分别提供真实 World、Reference Rules、Engine、Oracle、Service/Customer 会话、冻结双 Track、全事件回放及真实模型 Pilot。FulfillmentOps 已冻结 338 个任务；StayOps 已冻结 302 个任务。库存守恒与运输生命周期、按日期房型库存与物理房间分配具有不同业务语义。开放 Customer 自主探索，不读取固定任务或参考解法。核心运行无需网页。

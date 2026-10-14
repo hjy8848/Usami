@@ -120,3 +120,22 @@ npm run test:e2e
 端到端测试默认使用已安装的 Google Chrome，在独立浏览器 context 中实际操作；测试自动启动 8001 / 5173，或复用这两个地址的现有 Usami 服务。没有 Chrome 时可安装 Playwright Chromium：`npx playwright install chromium`，然后 `USAMI_BROWSER_CHANNEL=chromium npm run test:e2e`。测试启动的后端使用仓库根目录 `.venv/bin/python`。
 
 验收覆盖真实实体、图筛选/拖动/缩放、合法转换、非法拒绝、Sandbox 检出、组织权限、多步组合、原始事件、下载与重放、Seed 一致性和浏览器会话隔离。实际测试结果与版本见 [VERIFICATION.md](VERIFICATION.md)。
+
+## 四域版本对齐
+
+左侧 **Business domain** 可切换 SaaS v0.2、CloudOps v0.1、FulfillmentOps v0.1 与 StayOps v0.1。选择保存在浏览器本地并同步 URL `?domain=...`。同一浏览器保留每个领域独立的内存会话；切换不会把业务状态、权限或工具串用。SaaS 原有操作、场景与 Benchmark 页面保留。
+
+三个独立领域提供：
+
+- **World Overview / Business Entities**：真实实体、状态、权限、四域发布指标与集合/scope/文本筛选。StayOps 保留每晚 Calendar 记录；仓储库存各阶段保持独立字段；完整实体及审计记录可检查。
+- **World Graph**：实际 ID 引用、scope 筛选、拖动、缩放和关系检查。显示项目依赖、订单/SKU/库存/运输关联、酒店/房型/房间/住宿关联；StayOps 可包含每晚 Calendar。
+- **Operation Playground**：参数表单来自领域强类型 Schema，调用真实 Reference / Sandbox Engine，显示实际返回、状态差异与独立 Oracle；可检查所选身份的权限过滤 Customer observation。
+- **Benchmark & Pilots**：分别读取 45 / 338 / 302 个 Service 实例及独立 Discovery 世界，显示身份、工具、预算、版本、hash、目标与证书。实际中间状态实例有明确标记，基础结构指标不会混入这些实例或跨领域相加。
+- **Run reference witness** 从冻结初态运行真实规则路径，零模型调用；结果进入 Event Timeline。它是离线规则示范，不是 Service 自主决策或模型成绩。
+- **Real LLM pilot evidence** 保留真实模型请求/回复、Customer 动作、工具、实际世界与 Oracle，以及预算终止/协议错误/非法尝试/授权异常。CloudOps 历史格式与新 Harness 格式分别读取，原文件不改写。
+- **Replay recorded run** 使用固定 profile、记录客户端和核心回放/评分，无新增模型调用。当前手动轨迹也可查看详情、导出 JSON 与实际重放。
+- **Audit & release reports** 只显示实际存在的发布文档，保留人工 review、公开 Demo、Validation 数量限制和实测解释。
+
+`GET /api/domains` 返回四域真实发布指标。三个独立领域的 API 前缀是 `/api/domains/{cloudops|fulfillment|stayops}`，包含 `/sessions`、`/world`、`/world/generate`、`/world/reset`、`/tools`、`/observation?identity=...`、`/operations`、`/world/graph`、`/events/{id}`、`/export/{world|trace}`、`/replay`、`/benchmark`、`/benchmark/suites/{split}`、`/benchmark/load`、`/benchmark/witness`、`/benchmark/pilots/{hash}` 及其 `/replay`、`/reports/{document}`。
+
+完整 World 与 evaluator 证书供人工审计；正式 Customer 模型仍通过核心权限过滤 observation 运行。手动参数形成的授权仅属于手动探索，不会进入正式 Service/Customer 实验。网页不运行新实时模型、不读取钥匙串，不接受上传的 profile、授权或 Oracle；新实验通过 CLI 执行，网页展示已发布证据。桌面端优先。

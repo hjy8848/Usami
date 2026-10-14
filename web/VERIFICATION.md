@@ -52,3 +52,15 @@ Python Web 依赖验收版本：FastAPI 0.128.8、Uvicorn 0.39.0、HTTPX 0.28.1�
 ## 已知边界
 
 场景 Run 从生成时的初始状态替换当前历史；Replay 只重放当前受信会话的完整 Trace，外部文件可使用核心 CLI。内存会话要求一个 Uvicorn worker，后端重启会清空世界。Sandbox 不支持核心未实现的技术操作，非法 pre-state 的 Unknown / 已知违规遵循已有 Oracle 语义。手机端保留基础响应式样式，未作为最终验收目标。
+
+## 四域网页对齐（2026-10-14）
+
+新增三域的独立会话、真实操作、实体/关系、冻结库、实测证据、报告与回放接口及桌面页面。SaaS 原页面保留；四域 Python 业务运行代码和所有发布 Manifest/Pilot 数据未修改。
+
+- 新领域网页 API **17 passed**：确定性生成/重置、领域及浏览器会话隔离、陈旧 hash、真实权限拒绝、Sandbox 业务违规、酒店押金确认、错误参数与伪造 Oracle 拒绝、图引用、权限过滤 observation、冻结载入、真实 Witness 和已发布模型重放。
+- 原有网页 API **25 passed**。
+- 全仓库 **622 passed in 141.30s**，含此前 605 项测试。
+- 全桌面 Chrome 交互 **18 passed**，含原有 13 项及新增 5 项；覆盖三域任务/图/Customer/模型回放、酒店状态持久化、切回 SaaS 和仓储 Sandbox 检出。
+- TypeScript/Vite 构建通过；新领域按需加载。人工检查实际截图后调整面板间距、Oracle 排版和空字段显示，五项新领域交互复跑 **5 passed**。
+
+工作区日志 `outputs/web-four-*.txt`，截图 `outputs/web-four-domains/`。网页没有调用新模型或读取凭证。真实模型成绩来自已发布证据；业务违规、授权异常、拒绝和预算终止分开。人工真实性审核待执行，公开 Test 为 Demo。

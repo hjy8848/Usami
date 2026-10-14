@@ -20,6 +20,8 @@ python -m usami_stayops verify benchmarks/stayops-v0.1/service-test-demo.json
 
 分别阅读 [FulfillmentOps 发布说明](benchmarks/fulfillment-v0.1/README.md) 与 [StayOps 发布说明](benchmarks/stayops-v0.1/README.md)。真实模型结果与离线证书分开报告，人工业务真实性审核为 `AWAITING HUMAN REVIEW`，公开 Test 为 Demo。
 
+本地 [World Explorer](web/README.md) 现支持四域切换、实体与关系图、真实 Reference/Sandbox 操作、固定任务与实测轨迹/离线回放；打开 `http://127.0.0.1:5173`。网页手动探索与正式模型授权、评分分开。
+
 ## CloudOps v0.1
 
 新增独立的企业云资源世界：项目级角色、计算实例依赖 DAG、三维配额、确定性账单与支付恢复。提供 11 项真实写操作、独立 Reference / Engine / Oracle、固定身份 Service 和无预设题目的多轮 Customer Discovery；无需网页。已冻结 45 个 Service 任务、12 种结构及 2 个开放探索世界 × 3 次试验。SaaS 规则和历史 Manifest 保持原样。

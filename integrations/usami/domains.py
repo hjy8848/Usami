@@ -19,6 +19,9 @@ class UsamiProfile(BaseModel):
     mode: Literal["reference", "sandbox"] = "reference"
     split: Literal["train", "dev", "heldout"] = "dev"
     generator: Dict[str, Any] = Field(default_factory=dict)
+    # Optional preregistered state, never a goal/witness. Omission preserves
+    # historical profile serialization and hashes.
+    frozen_world: Optional[Dict[str, Any]] = Field(default=None, exclude_if=lambda value: value is None)
     customer_method: Literal["adaptive", "careful"] = "adaptive"
 
     @model_validator(mode="after")
@@ -27,6 +30,14 @@ class UsamiProfile(BaseModel):
             raise ValueError("only SaaS has a configurable native generator")
         if self.generator.get("workflow") is not None:
             raise ValueError("Discovery cannot be conditioned on a fixed task or witness")
+        if self.frozen_world is not None:
+            if self.domain != "cloudops":
+                raise ValueError("frozen world profiles currently support only CloudOps")
+            from usami_cloudops.models import World
+            from usami_cloudops.rules import invariants
+            world = World.model_validate(self.frozen_world)
+            if world.seed != self.seed or self.identity not in world.users or invariants(world):
+                raise ValueError("frozen CloudOps world is invalid or differs from seed/identity")
         # Validate the actual generator now, before a model can be called.
         if self.domain == "saas":
             from usami.world.generator import GeneratorConfig
@@ -52,6 +63,12 @@ def domain_module(domain):
 
 def initial_world(profile):
     module = domain_module(profile.domain)
+    if profile.frozen_world is not None:
+        # Revalidate the potentially mutable mapping and return a fresh World
+        # for each Session, including concurrent paired executions and Replay.
+        checked = UsamiProfile.model_validate(profile.model_dump(mode="json"))
+        from usami_cloudops.models import World
+        return World.model_validate(checked.frozen_world)
     if profile.domain == "saas":
         from usami.world.generator import GeneratorConfig
         return module.generate_world(profile.seed, GeneratorConfig.model_validate(profile.generator))

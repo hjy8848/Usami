@@ -8,6 +8,7 @@ from pydantic import ValidationError
 
 from vast_coevo.models import ArtifactRef, Budget, Consumption, EpisodeConfig, EpisodeEvidence, ModelSpec, ReplayResult
 from vast_coevo.reflection.reflector import CustomerReflector, ReflectionInput, ServiceReflector
+from vast_coevo.reflection.scope import DomainPolicy
 from vast_coevo.schema import atomic_json, digest
 from vast_coevo.skills import ExplorationSkill, Scope, SkillPatch, Trigger, empty_snapshot
 
@@ -30,7 +31,8 @@ def evidence(tmp_path, partition="development", verified=True):
 
 
 def reflection_input(tmp_path, role="customer"):
-    return ReflectionInput(generation=0, role=role, library=empty_snapshot(role), evidence=(evidence(tmp_path),), allowed_tools=("read_public",))
+    return ReflectionInput(generation=0, role=role, library=empty_snapshot(role), evidence=(evidence(tmp_path),),
+                           allowed_tools=("read_public",), domain_policy=DomainPolicy(add_domains=("generic",)))
 
 
 def noop(value):

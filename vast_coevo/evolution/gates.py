@@ -130,9 +130,13 @@ class DynamicGate:
 
     @staticmethod
     def _result(old, new, reasons, baseline, proposed, repaired=()):
+        if not baseline or not proposed:
+            reasons.append("no_validation_episodes")
         if not old.replay_verified or not new.replay_verified:
             reasons.append("replay_failed")
         return GateResult(passed=not reasons, reasons=tuple(reasons), baseline=old, candidate=new,
                           baseline_evidence=tuple(row.evidence_hash for row in baseline),
                           candidate_evidence=tuple(row.evidence_hash for row in proposed), repaired=repaired,
+                          validated_domains=tuple(sorted({row.config.domain for row in baseline}
+                                                         & {row.config.domain for row in proposed})),
                           consumption=consumption_sum(row.consumption for row in baseline + proposed))

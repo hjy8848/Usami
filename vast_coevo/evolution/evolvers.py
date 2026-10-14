@@ -4,10 +4,11 @@ import json
 
 from ..models import Consumption, EpisodeEvidence
 from ..reflection.reflector import ReflectionInput
+from ..reflection.scope import DomainPolicy
 from ..skills.library import apply_patch
 from ..skills.validation import StaticSkillGate
 from .gates import DynamicGate, consumption_sum
-from .models import EvolutionRecord, GatePolicy
+from .models import DomainCoverage, EvolutionRecord, GatePolicy
 
 
 class Evolver:
@@ -17,6 +18,7 @@ class Evolver:
         self.policy = policy or GatePolicy()
 
     def update(self, generation, customer, service, evidence, discovery_cases, service_task_cases=(), episode_prefix=None):
+        discovery_cases, service_task_cases = tuple(discovery_cases), tuple(service_task_cases)
         parent = customer if self.role == "customer" else service
         evidence = tuple(EpisodeEvidence.model_validate(row.model_dump(mode="json")) for row in evidence)
         if any(row.config.partition != "development" for row in evidence):
@@ -27,6 +29,8 @@ class Evolver:
             if not checked.verified:
                 raise ValueError("evolution evidence failed independent replay: " + checked.reason)
         cases = tuple(discovery_cases) + tuple(service_task_cases)
+        if not discovery_cases:
+            raise ValueError("evolution requires at least one Discovery validation case")
         if any(case.config.partition != "development" for case in cases):
             raise ValueError("heldout cases cannot influence evolution")
         prefix = episode_prefix or ("g" + str(generation) + "." + self.role + ".validation")
@@ -43,6 +47,7 @@ class Evolver:
             self.adapter.forbidden_identifiers(case.config) if hasattr(self.adapter, "forbidden_identifiers") else ())}))
         policies = [self.adapter.public_policy(case.config) for case in cases if hasattr(self.adapter, "public_policy")]
         value = ReflectionInput(generation=generation, role=self.role, library=parent, evidence=evidence,
+                                domain_policy=DomainPolicy(add_domains=tuple(sorted({case.config.domain for case in cases}))),
                                 allowed_tools=tools, public_policy=json.dumps(policies, ensure_ascii=False, sort_keys=True))
         reflection = self.reflector.reflect(value)
         costs = consumption_sum((Consumption(reflection_calls=reflection.calls), *(row.consumption for row in preflight)))
@@ -51,6 +56,8 @@ class Evolver:
                       selected_snapshot_hash=parent.snapshot_hash)
         if reflection.error or reflection.patch is None:
             return EvolutionRecord(**fields, outcome="rejected", reasons=(reflection.error or "missing_patch",), consumption=costs)
+        declared = reflection.patch.skill.scope.domains if reflection.patch.skill is not None else ()
+        fields["domain_coverage"] = DomainCoverage(declared_domains=declared, validated_domains=(), unvalidated_domains=declared)
         static = StaticSkillGate(allowed_tools=tools, forbidden_identifiers=forbidden,
                                  allowed_domains={case.config.domain for case in cases}).validate(parent, reflection.patch)
         fields["static_validation"] = static
@@ -68,6 +75,9 @@ class Evolver:
             else:
                 result = gate.service(customer, parent, candidate, discovery_cases, service_task_cases, evidence, prefix)
             fields["dynamic_validation"] = result
+            validated = result.validated_domains or ()
+            fields["domain_coverage"] = DomainCoverage(declared_domains=declared, validated_domains=validated,
+                                                     unvalidated_domains=tuple(domain for domain in declared if domain not in validated))
             costs = consumption_sum((costs, result.consumption))
             if not result.passed:
                 return EvolutionRecord(**fields, outcome="rejected", reasons=result.reasons, consumption=costs)

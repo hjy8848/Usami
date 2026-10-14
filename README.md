@@ -23,6 +23,8 @@ python -m integrations.usami --root artifacts/vast-coevo history --id cloudops-l
 
 模型、世界、身份、工具、预算和 Skill 版本被固定在外层运行配置；完整实际请求、原 Session 轨迹与 Oracle 结果一并归档。相同 run ID 可恢复已完成步骤；结果不明的中断调用会停下，避免隐式重复在线执行。正式 held-out 数据不进入 Reflection 或候选选择。
 
+[提案协议 v2](docs/vast-coevo/PROTOCOL.md) 将策略适用范围与实际验证覆盖分开：UPDATE 的领域由程序继承，模型无需重复生成；单领域验证不会误拒通用策略，也不会冒充跨领域验证。历史实验与判定保留原样。
+
 ## FulfillmentOps v0.1 与 StayOps v0.1
 
 独立的仓储履约与酒店运营世界，分别提供真实 World、Reference Rules、Engine、Oracle、Service/Customer 会话、冻结双 Track、全事件回放及真实模型 Pilot。FulfillmentOps 已冻结 338 个任务；StayOps 已冻结 302 个任务。库存守恒与运输生命周期、按日期房型库存与物理房间分配具有不同业务语义。开放 Customer 自主探索，不读取固定任务或参考解法。核心运行无需网页。

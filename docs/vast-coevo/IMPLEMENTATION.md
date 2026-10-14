@@ -1,5 +1,13 @@
 # VAST-CoEvo v1.0 — 实现与验收报告
 
+## 1.0.1 增量修复（2026-10-14）
+
+[提案协议 v2](PROTOCOL.md) 将适用范围交由程序管理：UPDATE 继承父领域集合，ADD 使用固定实验领域；模型可省略该字段，等价列表顺序不视为范围变化。执行 Gate 单独记录实际覆盖与未验证领域，普通 UPDATE 不支持扩大或缩小范围。独立 CLI 已同步，原 Engine/Reference/Oracle、冻结 Manifest、网页及历史实验原件零修改。
+
+最终全量回归 **824 passed in 245.39s**（原 804 + 新增 20），包含四域真实 Engine/Oracle 上通用范围的单域双 Evolver 比较。历史压缩包离线 Replay 核验 17 个 Episodes、112 次 Agent 请求及 3 份 Controller 报告，全部一致，在线调用 0；旧 scope 拒绝判定与 record hash 保留。完整 Customer 提案的可读提取见 [范围审计](../../experiments/vast_coevo/results/CUSTOMER_UPDATE_SCOPE_AUDIT.json)。Core 1.0.1 wheel 构建成功，新增范围补全模块仍不依赖 Usami 包。本轮没有新的在线候选接受证据。
+
+下文是最初 v1.0 发布时的实现与验收记录。
+
 [Roadmap](ROADMAP.md) · [方法](METHOD.md) · [架构](ARCHITECTURE.md) · [Schema](SCHEMAS.md) · [完整运行说明](../../experiments/vast_coevo/README.md)
 
 ## 工作区与 Git

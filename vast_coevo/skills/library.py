@@ -69,6 +69,8 @@ def apply_patch(parent: LibrarySnapshot, patch: SkillPatch, source: str) -> Libr
             raise ValueError("UPDATE references a missing skill")
         if patch.skill.version != skills[patch.skill_id].version + 1:
             raise ValueError("UPDATE must increment the skill version exactly once")
+        if set(patch.skill.scope.domains) != set(skills[patch.skill_id].scope.domains):
+            raise ValueError("UPDATE must inherit domain scope; applicability changes require a separate experiment")
         skills[patch.skill.id] = patch.skill
     elif patch.action == "REMOVE":
         if patch.skill_id not in skills:

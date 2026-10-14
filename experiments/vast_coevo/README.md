@@ -39,6 +39,8 @@ python -m json.tool experiments/vast_coevo/examples/service-library.json
 
 第一次在线执行会将 Plan 引用的 Library 保存到 `--root/libraries`。每份候选由实际单次 Reflector 响应产生，再经过验证接受或拒绝。
 
+提案协议 v2 由程序管理领域元数据：UPDATE 继承原领域、ADD 使用 Plan 配置的开发验证领域；模型可省略 `scope.domains`。实际覆盖由执行结果另行记录，四域通用策略在 CloudOps 更新不会被误拒，也不会因此获得其余三域的验证结论。详见 [协议设计与意义](../../docs/vast-coevo/PROTOCOL.md)。历史 Pilot 判定保持原样，完整原始 Customer 修改可读提取见 [范围审计](results/CUSTOMER_UPDATE_SCOPE_AUDIT.json)。新实验使用新的 run ID。
+
 ## 静态 Skill Episode 与离线 Replay
 
 使用已经配置的真实模型网关运行一个新的 Episode ID，保存便于后续引用的通用 Evidence：

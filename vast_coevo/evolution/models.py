@@ -54,6 +54,14 @@ class GateResult(FrozenModel):
     candidate_evidence: Tuple[Hash, ...]
     repaired: Tuple[Hash, ...] = ()
     consumption: Consumption
+    validated_domains: Optional[Tuple[str, ...]] = Field(default=None, exclude_if=lambda value: value is None)
+
+
+class DomainCoverage(FrozenModel):
+    """Coverage describes executions, never a model's claim of generalization."""
+    declared_domains: Tuple[str, ...]
+    validated_domains: Tuple[str, ...]
+    unvalidated_domains: Tuple[str, ...]
 
 
 class EvolutionRecord(FrozenModel):
@@ -71,6 +79,7 @@ class EvolutionRecord(FrozenModel):
     outcome: Literal["accepted", "rejected", "noop"]
     reasons: Tuple[str, ...] = ()
     consumption: Consumption
+    domain_coverage: Optional[DomainCoverage] = Field(default=None, exclude_if=lambda value: value is None)
 
 
 class RunConfig(FrozenModel):

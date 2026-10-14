@@ -13,7 +13,7 @@ from vast_coevo.evolution.evolvers import CustomerEvolver, ServiceEvolver
 from vast_coevo.evolution.models import ValidationCase
 from vast_coevo.models import Budget
 from vast_coevo.reflection.reflector import CustomerReflector, ServiceReflector
-from vast_coevo.skills.library import LibraryStore
+from vast_coevo.skills.library import LibrarySnapshot, LibraryStore
 from vast_coevo.skills.models import SkillPatch
 from test_vast_evolution import PatchClient
 from test_vast_usami import SPEC, LIMITS, ScriptedClient, answer, call, libraries, scripts, service_arguments
@@ -68,6 +68,14 @@ def test_both_evolvers_accept_only_after_real_failure_and_normal_task_gates(tmp_
         task_cases.append(ValidationCase(id=task_profile.task_ref, config=frozen, task_ref=task_profile.task_ref, purpose=purpose))
 
     customer, service = libraries(domain)
+    # The same reusable applicability declaration is validated in one domain at
+    # a time. This reproduces the live pilot's four-domain/CloudOps-only mismatch.
+    domains = ("saas", "cloudops", "fulfillment", "stayops")
+    def shared(snapshot):
+        raw = snapshot.skills[0].model_dump(mode="json", exclude={"content_hash"})
+        raw["scope"]["domains"] = domains
+        return LibrarySnapshot(role=snapshot.role, skills=(type(snapshot.skills[0]).model_validate(raw),))
+    customer, service = shared(customer), shared(service)
     store, archive = LibraryStore(tmp_path / "libraries"), EvidenceArchive(tmp_path / "evidence")
     store.save(customer); store.save(service)
     source = adapter.run_episode(config, customer, service, domain + ".source")
@@ -84,6 +92,9 @@ def test_both_evolvers_accept_only_after_real_failure_and_normal_task_gates(tmp_
         0, customer, service, (source,), cases, task_cases, domain + ".customer")
     assert c_record.outcome == "accepted", c_record.reasons
     assert c_record.dynamic_validation.passed and len(c_client.requests) == 1
+    assert c_record.domain_coverage.declared_domains == domains
+    assert c_record.domain_coverage.validated_domains == (domain,)
+    assert c_record.domain_coverage.unvalidated_domains == tuple(value for value in domains if value != domain)
     selected_customer = store.load(c_record.selected_snapshot_hash)
 
     s_raw = service.skills[0].model_dump(mode="json", exclude={"content_hash"})
@@ -98,6 +109,8 @@ def test_both_evolvers_accept_only_after_real_failure_and_normal_task_gates(tmp_
     assert s_record.outcome == "accepted", s_record.reasons
     gate = s_record.dynamic_validation
     assert gate.passed and gate.repaired and len(s_client.requests) == 1
+    assert s_record.domain_coverage.declared_domains == domains
+    assert s_record.domain_coverage.validated_domains == (domain,)
     assert gate.baseline.business_violations > 0 and gate.candidate.business_violations == 0
     assert gate.candidate.authorization_anomalies == 0
     assert gate.candidate.legal_task_successes == gate.candidate.correct_refusals == 1

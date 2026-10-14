@@ -55,6 +55,12 @@ Exploration 是方法而非预设操作序列；Customer 自主提出精确写�
 
 `LibrarySnapshot` 实际字段为 `schema_version=1`、`role`、不可变 `skills`、可选 `parent_hash`、`provenance` 和 `snapshot_hash`。Skill 按 ID 排序后计算内容 hash；重复 ID 与角色不匹配被拒绝。`LibraryStore` 保存 `snapshots/<hash>.json` 与 `skills/<role>/<id>/<version>.json`；相同 ID/Version 的已发布内容不能被替换。候选版本与已接受指针分离；NOOP 或拒绝保留真实父快照。
 
+### 提案协议 v2 的领域元数据
+
+模型输出的提案允许省略 `scope.domains` 或整个 `scope`。UPDATE 由程序继承父策略领域；ADD 由 ReflectionInput 的 `domain_policy.add_domains` 生成；显式不一致的声明会拒绝。普通 UPDATE 不支持范围变化。存储的规范化 SkillPatch/Skill 仍是完整 v1 对象，保留内容 hash 校验。
+
+ReflectionRecord 新增 `proposal_protocol_version=2` 与 `scope_resolution(source, domains)`。GateResult 的 `validated_domains` 来自实际父版/候选执行；EvolutionRecord 的 `domain_coverage` 分别记录声明、实际验证和未验证领域。执行过验证与 Gate 通过是两个维度。旧记录缺少这些新字段时不在序列化中补写，保持原始内容 hash。完整含义与历史错误见 [协议说明](PROTOCOL.md)。
+
 ## 确定性检索与渲染
 
 `SkillContext` 只接收 `domain`、`public_text`、`intents`、`available_tools`。Retriever 按领域（支持 `*`）和 Scope 工具子集过滤；keyword 命中数加上三倍 intent 命中数进行排序，同分按 Skill ID 排序。默认最多 4 个 Skills、渲染长度 6,000 字符，完整 Skill 不截断；无匹配返回空结果。这里的上下文预算单位是字符，不是模型 Token。

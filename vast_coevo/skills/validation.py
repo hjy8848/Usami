@@ -82,8 +82,10 @@ class StaticSkillGate:
             unknown = set(skill.scope.tools) - self.allowed_tools
             if unknown:
                 reasons.append("undeclared or disallowed tools: " + ", ".join(sorted(unknown)))
-            if self.allowed_domains is not None and set(skill.scope.domains) - self.allowed_domains:
-                reasons.append("skill declares an unregistered validation domain")
+            # UPDATE's domain scope is checked against the parent in apply_patch.
+            # Only a new ADD is restricted to this experiment's configured domains.
+            if patch.action == "ADD" and self.allowed_domains is not None and set(skill.scope.domains) - self.allowed_domains:
+                reasons.append("new skill declares a domain outside the experiment's ADD policy")
             payload = skill.model_dump(mode="json", exclude={"content_hash"})
             # Check the actual natural-language fields and declarations, not JSON syntax.
             strings = []

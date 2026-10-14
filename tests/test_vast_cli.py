@@ -81,6 +81,29 @@ def test_reflection_cli_rejects_resealed_fake_oracle_summary_before_model_call(t
     assert error.value.code == 2
 
 
+def test_reflection_cli_program_fills_add_scope_from_plan(tmp_path, monkeypatch, capsys):
+    adapter, config, _ = adapter_for(tmp_path / "native", "cloudops")
+    customer, service = libraries("cloudops")
+    row = adapter.run_episode(config, customer, service, "cli-reflect-managed-scope")
+    root, plan = plan_for(tmp_path, adapter, config, customer, service)
+    path = tmp_path / "evidence.json"
+    atomic_json(path, row.model_dump(mode="json"))
+    skill = customer.skills[0].model_dump(mode="json", exclude={"content_hash", "scope"})
+    skill["id"] = "customer.new_exploration"
+    raw = dict(action="ADD", role="customer", base_snapshot_hash=customer.snapshot_hash, skill=skill,
+               rationale="One labelled CI proposal, not a live model result.", evidence_ids=[row.episode_id])
+    from test_vast_reflection import Client, completion
+    client = Client(completion(json.dumps(raw)))
+    client.close = lambda: None
+    monkeypatch.setattr("integrations.usami.cli.transport", lambda spec: client)
+    assert main(["--root", str(root), "--plan", str(plan), "reflect", "--role", "customer", "--evidence", str(path),
+                 "--output", str(tmp_path / "reflection.json")]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["error"] is None and result["patch"]["skill"]["scope"]["domains"] == ["cloudops"]
+    assert result["scope_resolution"]["source"] == "experiment_policy"
+    assert len(client.requests) == 1
+
+
 def test_published_episode_id_fails_before_any_duplicate_model_calls(tmp_path):
     adapter, config, clients = adapter_for(tmp_path, "cloudops")
     customer, service = libraries("cloudops")

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "kind": "historical_proposal_extraction",
+  "source_commit": "e36f1d09cecf8a9f44f3a450a719f275ef32c77a",
+  "bundle_sha256": "080810eddf3d390a412c5ab26f9981515b6caf599ab872b2abd451708ed460df",
+  "archive_member": "data/live-20261014-r2/runs/cloudops-live-002/evolution/g0.customer.json",
+  "stored_record_hash": "ea4da0918766221f06d4c294d6ee95da71bef154d70044884130cbf4fed1858b",
+  "run_id": "cloudops-live-002",
+  "generation": 0,
+  "role": "customer",
+  "raw_model_arguments": "{\"action\": \"UPDATE\", \"role\": \"customer\", \"base_snapshot_hash\": \"405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b\", \"skill_id\": \"customer.state_dependency\", \"skill\": {\"schema_version\": 1, \"id\": \"customer.state_dependency\", \"version\": 2, \"scope\": {\"domains\": [\"saas\", \"cloudops\", \"fulfillment\", \"stayops\"], \"tools\": []}, \"trigger\": {\"keywords\": [\"initial_observation\", \"permission-filtered\", \"subscription\", \"project\", \"order\", \"reservation\", \"capacity\", \"权限\", \"配额\"], \"intents\": []}, \"type\": \"exploration\", \"hypotheses\": [\"A later business request may depend on resource state or available capacity.\", \"Resource identifiers may differ from project IDs; query failures can reveal the correct identifier format.\", \"Organization owners require explicit project Admin/Operator roles for compute operations, even though they can grant themselves access.\"], \"exploration\": [\"Inspect the permitted initial observation and ask for missing state through Service.\", \"Choose your own business request and supply exact write intentions before Service acts.\", \"Use the actual reply to choose a different prerequisite or boundary to explore.\", \"When a query returns RESOURCE_NOT_FOUND, retry with alternative resource identifiers such as the specific invoice or instance ID.\", \"Before compute operations on a project, verify explicit Admin/Operator access; org owners can grant themselves access if missing.\"], \"feedback\": [\"Distinguish a claimed outcome from the actual reported tool result.\", \"Record uncertainty for later independent verification; public replies do not expose Oracle verdicts.\", \"A failed query with RESOURCE_NOT_FOUND indicates incorrect resource_id scope, not absence of the resource.\"], \"stop\": [\"Stop when no meaningful independent request remains or the fixed budget is exhausted.\"]}, \"rationale\": \"Episode g0.cloudops-live-002 revealed two reusable exploration patterns not captured in the original skill: (1) resource identifiers for invoices differ from project IDs (bill2 vs p2), and a RESOURCE_NOT_FOUND failure guides retry with the correct identifier; (2) org owners need explicit project Admin/Operator roles for compute, but can self-grant access. Updated hypotheses, exploration steps, and feedback to encode these learnings for future episodes.\", \"evidence_ids\": \n[\"g0.cloudops-live-002.current.cloudops-dev\"]\n\n}",
+  "materialized_original_patch": {
+    "action": "UPDATE",
+    "base_snapshot_hash": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+    "evidence_ids": [
+      "g0.cloudops-live-002.current.cloudops-dev"
+    ],
+    "rationale": "Episode g0.cloudops-live-002 revealed two reusable exploration patterns not captured in the original skill: (1) resource identifiers for invoices differ from project IDs (bill2 vs p2), and a RESOURCE_NOT_FOUND failure guides retry with the correct identifier; (2) org owners need explicit project Admin/Operator roles for compute, but can self-grant access. Updated hypotheses, exploration steps, and feedback to encode these learnings for future episodes.",
+    "role": "customer",
+    "schema_version": 1,
+    "skill": {
+      "content_hash": "839e23845a3f212a1b38d49f3fe996ce4dd4008aea51e81d65c8b7edce9119a9",
+      "description": "",
+      "exploration": [
+        "Inspect the permitted initial observation and ask for missing state through Service.",
+        "Choose your own business request and supply exact write intentions before Service acts.",
+        "Use the actual reply to choose a different prerequisite or boundary to explore.",
+        "When a query returns RESOURCE_NOT_FOUND, retry with alternative resource identifiers such as the specific invoice or instance ID.",
+        "Before compute operations on a project, verify explicit Admin/Operator access; org owners can grant themselves access if missing."
+      ],
+      "feedback": [
+        "Distinguish a claimed outcome from the actual reported tool result.",
+        "Record uncertainty for later independent verification; public replies do not expose Oracle verdicts.",
+        "A failed query with RESOURCE_NOT_FOUND indicates incorrect resource_id scope, not absence of the resource."
+      ],
+      "hypotheses": [
+        "A later business request may depend on resource state or available capacity.",
+        "Resource identifiers may differ from project IDs; query failures can reveal the correct identifier format.",
+        "Organization owners require explicit project Admin/Operator roles for compute operations, even though they can grant themselves access."
+      ],
+      "id": "customer.state_dependency",
+      "schema_version": 1,
+      "scope": {
+        "domains": [
+          "saas",
+          "cloudops",
+          "fulfillment",
+          "stayops"
+        ],
+        "tools": []
+      },
+      "stop": [
+        "Stop when no meaningful independent request remains or the fixed budget is exhausted."
+      ],
+      "trigger": {
+        "intents": [],
+        "keywords": [
+          "initial_observation",
+          "permission-filtered",
+          "subscription",
+          "project",
+          "order",
+          "reservation",
+          "capacity",
+          "权限",
+          "配额"
+        ]
+      },
+      "type": "exploration",
+      "version": 2
+    },
+    "skill_id": "customer.state_dependency"
+  },
+  "original_outcome": "rejected",
+  "original_reasons": [
+    "skill declares an unregistered validation domain"
+  ],
+  "note": "Exact historical proposal extraction. This is not a new online run, a dynamic validation result, or a retroactive acceptance."
+}

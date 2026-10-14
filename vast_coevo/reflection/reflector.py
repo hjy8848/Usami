@@ -162,6 +162,15 @@ class Reflector:
                 row.pop("messages")
                 row["interaction"] = view.model_dump(mode="json")
             payload.pop("interaction_views", None)
+        elif value.interaction_views is not None:
+            # Same verified native projection for Service learning: actual
+            # customer declarations, selected tools/results and Oracle facts.
+            # Complete original wire records remain in input; no new judge.
+            record_fields["prepared_interaction_views"] = value.interaction_views
+            for row, view in zip(payload["evidence"], value.interaction_views):
+                row.pop("messages")
+                row["interaction"] = view.model_dump(mode="json")
+            payload.pop("interaction_views", None)
         content = json.dumps(payload, ensure_ascii=False, sort_keys=True)
         if len(content) > self.max_input_chars:
             return ReflectionRecord(**record_fields, error="reflection_input_budget_exceeded", calls=0)

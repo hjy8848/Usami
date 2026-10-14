@@ -52,6 +52,7 @@ class ServiceTaskProfile(BaseModel):
     task_ref: str = Field(min_length=1)
     config_id: str = Field(min_length=1)
     scenario: str = Field(min_length=1)
+    frozen_task: Optional[Dict[str, Any]] = Field(default=None, exclude_if=lambda value: value is None)
 
 
 def domain_module(domain):
@@ -111,6 +112,18 @@ def native_task(profile, task_profile):
     """Generate certified native goals outside either Agent's Discovery context."""
     if task_profile.config_id != profile.config_id:
         raise ValueError("task belongs to another frozen profile")
+    if task_profile.frozen_task is not None:
+        if profile.domain != "cloudops" or profile.frozen_world is None:
+            raise ValueError("frozen refusal task requires a frozen CloudOps world")
+        from usami_cloudops.goals import Task
+        from usami_cloudops.rules import decide
+        world, task = initial_world(profile), Task.model_validate(task_profile.frozen_task)
+        if task.kind != "policy_refusal" or task.initial_state_hash != world.state_hash or task.identity != profile.identity or task.identity not in world.users or len(task.capabilities) != 1:
+            raise ValueError("frozen task must be one certified refusal on its pinned world")
+        decision = decide(world, task.identity, task.capabilities[0])
+        if decision.allowed or decision.error_code != task.refusal_code:
+            raise ValueError("frozen refusal certificate differs from Reference rules")
+        return world, task, None
     if profile.domain == "saas":
         from usami.world.generator import GeneratorConfig
         from usami.world.models import RulesConfig

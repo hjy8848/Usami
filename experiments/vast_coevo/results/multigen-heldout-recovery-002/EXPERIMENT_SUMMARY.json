@@ -1,0 +1,21 @@
+{
+  "status": "EXECUTED",
+  "episodes_replayed": 136,
+  "heldout_episodes": 72,
+  "customer_protocol_failures_retained": 4,
+  "formal_generations": {
+    "A": 2,
+    "B": 2
+  },
+  "actual_calls": 842,
+  "actual_tokens": 5047500,
+  "new_calls_since_fix": 454,
+  "new_tokens_since_fix": 2599350,
+  "all_attempts_including_earliest": {
+    "calls": 987,
+    "tokens": 6009080
+  },
+  "same_service_snapshots": true,
+  "service_evolution_proven": false,
+  "tests_passed": 946
+}

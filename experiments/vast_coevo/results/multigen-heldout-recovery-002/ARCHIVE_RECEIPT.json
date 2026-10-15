@@ -1,0 +1,13 @@
+{
+  "bundle": "raw-evidence.tar.gz",
+  "bytes": 20727552,
+  "sha256": "d11479877540a5f0d061dc05bdad6a7691916583ffb7100490467c35876e2251",
+  "files": 4246,
+  "verified_against_originals": true,
+  "parent_bundle_dependency": {
+    "path": "PARENT_EVIDENCE.tar.gz",
+    "sha256": "e23c4baeaf0e6aecce8a13afafc0692fbd11fd0c214beacab02f3da954f9d405"
+  },
+  "api_keys_included": false,
+  "published": false
+}

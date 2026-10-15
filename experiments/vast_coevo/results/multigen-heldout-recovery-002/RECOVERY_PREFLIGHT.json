@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "external_calls": 0,
+  "runs": [
+    {
+      "arm": "A",
+      "generations": 2,
+      "selected_customer": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "selected_service": "6e42c560d19223634c454da907f314de209ec74e1459621913380f0930f65e4a"
+    },
+    {
+      "arm": "B",
+      "generations": 2,
+      "selected_customer": "ec79ca36f4edb7dde32d0cbc0dbefd1ea43e8f5fcdabb551d8afec845efc1398",
+      "selected_service": "6e42c560d19223634c454da907f314de209ec74e1459621913380f0930f65e4a"
+    }
+  ]
+}

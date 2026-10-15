@@ -1,0 +1,12 @@
+{
+  "configured_max_workers": 4,
+  "observed_in_flight": 4,
+  "pending_call_ids": [
+    "100027693e02965318f837cce5c9883732d53299e2d69b85de893664c4b40bb1",
+    "7b3075654fd30b0611e34881ce0395960fc2eb1a0a7cf0d8d46c8b25d54489aa",
+    "8440a46a7c5a19b43bbf66b6a15d459ba6c4688590555a79124197818d05751d",
+    "edf5a9701c7c674f49d7cc0e98a80f1b7eb83a728bef310007ded5175601f4e0"
+  ],
+  "source": "atomic wire ledger snapshot during heldout",
+  "training_chains_reused": true
+}

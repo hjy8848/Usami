@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "wire_native_reflection_match": true,
+  "wire_calls": 842,
+  "complete_native_traces": 136,
+  "reflection_calls": 9,
+  "pending_external_calls": 0,
+  "source": "exact Counter equality inside completed full Replay with heldout present"
+}

@@ -1,0 +1,6 @@
+{
+  "configured_max_workers": 4,
+  "observed_interval_peak": 4,
+  "open_intervals": 0,
+  "interval_source": "preserved original started/completed file mtimes; completion file publication ends interval"
+}

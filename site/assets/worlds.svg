@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580" height="520" viewBox="0 0 580 520" fill="none">
+<defs>
+<pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#c9cebb"/></pattern>
+<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 6L6 0" stroke="#829478" stroke-width=".4"/></pattern>
+<linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edf0e1"/><stop offset="1" stop-color="#dde4cd"/></linearGradient>
+</defs>
+<ellipse cx="298" cy="267" rx="241" ry="213" fill="url(#grid)" opacity=".7"/>
+<ellipse cx="297" cy="281" rx="223" ry="145" stroke="#d6ddc7" stroke-dasharray="3 6"/>
+<ellipse cx="297" cy="281" rx="156" ry="97" stroke="#dce1d1"/>
+<path d="M295 178v55M170 267l75 19M345 284l76-23M297 324v69" stroke="#849572" stroke-dasharray="3 4"/>
+<circle cx="295" cy="210" r="3" fill="#b8805c"/><circle cx="207" cy="277" r="3" fill="#b8805c"/><circle cx="390" cy="270" r="3" fill="#b8805c"/><circle cx="297" cy="362" r="3" fill="#b8805c"/>
+<!-- Four original miniature business-world plates. -->
+<g transform="translate(220 59)">
+<path d="M0 94l74-42 76 42-75 44z" fill="#cbd5bc" stroke="#9bab8a"/>
+<path d="M0 86l74-42 76 42-75 44z" fill="url(#tile)" stroke="#9bab8a"/>
+<path d="M0 86v8l75 44v-8M150 86v8" stroke="#9bab8a"/>
+<path d="M49 69V20l25-14 26 14v49L75 84z" fill="#c3cfae" stroke="#6d8461"/>
+<path d="M49 20l26 14 25-14M75 34v50" stroke="#6d8461"/>
+<path d="M56 34l12 7M56 46l12 7M56 58l12 7M83 40l10-6M83 52l10-6M83 64l10-6" stroke="#82976e" stroke-width="3"/>
+<path d="M23 82V66l14-8 13 8v16l-13 8z" fill="#e6ebd7" stroke="#8fa27c"/>
+<path d="M23 66l14 8 13-8M37 74v16" stroke="#8fa27c"/>
+<circle cx="114" cy="86" r="7" fill="#a4b68b"/>
+<text x="76" y="166" fill="#53694c" text-anchor="middle" font-size="10" font-family="monospace" letter-spacing="1.4">CLOUDOPS</text>
+<text x="75" y="181" fill="#8d967d" text-anchor="middle" font-size="8" font-family="sans-serif">roles · compute · dependencies</text>
+</g>
+<g transform="translate(37 190)">
+<path d="M0 97l74-42 76 42-75 44z" fill="#d8dcc7" stroke="#a7b093"/>
+<path d="M0 89l74-42 76 42-75 44z" fill="#e8ebdc" stroke="#a7b093"/>
+<path d="M0 89v8l75 44v-8M150 89v8" stroke="#a7b093"/>
+<path d="M31 76V31l33-19 35 20v44L65 96z" fill="#e1e8cf" stroke="#879a72"/>
+<path d="M31 31l34 20 34-19M65 51v45" stroke="#879a72"/>
+<path d="M40 43v23l15 9V52z" fill="#b7c69d"/><path d="M73 57l17-10v7L73 64zM73 70l17-10v7L73 77z" fill="#b7c69d"/>
+<path d="M91 99V76l17-10 17 10v23l-17 10z" fill="#d0d9bc" stroke="#879a72"/><path d="M91 76l17 10 17-10M108 86v23" stroke="#879a72"/>
+<text x="76" y="167" fill="#53694c" text-anchor="middle" font-size="10" font-family="monospace" letter-spacing="1.4">SAAS</text>
+<text x="76" y="182" fill="#8d967d" text-anchor="middle" font-size="8" font-family="sans-serif">members · subscriptions · billing</text>
+</g>
+<g transform="translate(391 183)">
+<path d="M0 104l74-42 76 42-75 44z" fill="#d9d8c6" stroke="#aeab8d"/>
+<path d="M0 96l74-42 76 42-75 44z" fill="#edeade" stroke="#aeab8d"/>
+<path d="M0 96v8l75 44v-8M150 96v8" stroke="#aeab8d"/>
+<path d="M22 86V44l47-27 45 26v42l-46 27z" fill="#d9d4b8" stroke="#9a9370"/>
+<path d="M22 44l46 26 46-27M68 70v42" stroke="#9a9370"/>
+<path d="M22 44l45-44 47 43-46 27z" fill="#e4dfc9" stroke="#9a9370"/>
+<path d="M77 79l26-15v26L77 105z" fill="url(#hatch)" stroke="#9a9370"/>
+<path d="M31 56l12 7v19l-12-7zM49 66l10 6v19l-10-6z" fill="#b7b18e"/>
+<text x="76" y="174" fill="#786f50" text-anchor="middle" font-size="10" font-family="monospace" letter-spacing="1.1">FULFILLMENT</text>
+<text x="76" y="189" fill="#96917d" text-anchor="middle" font-size="8" font-family="sans-serif">inventory · orders · shipping</text>
+</g>
+<g transform="translate(221 345)">
+<path d="M0 94l74-42 76 42-75 44z" fill="#d5d8c4" stroke="#9eaa8b"/>
+<path d="M0 86l74-42 76 42-75 44z" fill="url(#tile)" stroke="#9eaa8b"/>
+<path d="M0 86v8l75 44v-8M150 86v8" stroke="#9eaa8b"/>
+<path d="M37 71V18L75-4l37 22v53L75 93z" fill="#dce3ce" stroke="#81936b"/>
+<path d="M37 18l38 22 37-22M75 40v53" stroke="#81936b"/>
+<path d="M47 33l8 5v10l-8-5zM61 41l7 4v10l-7-4zM47 53l8 5v10l-8-5zM61 61l7 4v10l-7-4zM84 45l8-5v10l-8 5zM99 36l6-4v10l-6 4zM84 65l8-5v10l-8 5zM99 56l6-4v10l-6 4z" fill="#a5b78b"/>
+<path d="M87 91V80l13-7v11" fill="#81936b"/>
+<text x="76" y="161" fill="#53694c" text-anchor="middle" font-size="10" font-family="monospace" letter-spacing="1.4">STAYOPS</text>
+</g>
+<!-- Independent verification at the shared center. -->
+<g transform="translate(245 240)">
+<path d="M0 50l52-30 53 30-53 31z" fill="#bdd09f" stroke="#7c9464"/>
+<path d="M0 40l52-30 53 30-53 31z" fill="#284c3e" stroke="#284c3e"/>
+<path d="M0 40v10l52 31V71M105 40v10" stroke="#7c9464"/>
+<path d="M52-9l21 13v27L52 44 31 31V4z" fill="#f3f5e9" stroke="#a0b187"/>
+<path d="M41 17l8 8 15-17" stroke="#4a6c46" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="52" y="61" fill="#dce8bf" font-size="8" font-family="monospace" text-anchor="middle" letter-spacing="1.8">VERIFY</text>
+</g>
+<path d="M470 105h16m-8-8v16M98 160h12m-6-6v12M438 407h10m-5-5v10" stroke="#a7b78f"/>
+<text x="34" y="43" fill="#939c84" font-family="monospace" font-size="8" letter-spacing="1.5">FIG. 01 / WORLD ATLAS</text>
+</svg>

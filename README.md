@@ -2,6 +2,8 @@
 
 **Usami — A Compositional Business World Benchmark for Interactive AI Agents**
 
+[项目展示网站](https://hjy8848.github.io/Usami/) · [展示页源码与部署说明](site/README.md)
+
 Usami 是可执行的虚构 SaaS 业务世界：组织、成员权限、订阅、席位和账单通过明确 ID 关联，操作能够组合并改变后续操作的可行性。研究者先生成世界，再从实际状态派生结构化请求。评测依据是请求授权、业务规则和实际事件，而不是预先写死的唯一最终答案。
 
 v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World Explorer**、**Service LLM** 和 **Customer–Service 多轮交互**模块。Benchmark 核心不依赖 LLM；可选 Customer 自主选择业务请求，Service 使用真实兼容 API 自主选择工具。没有 Evolver、LLM Judge、训练、Service 自动修复、真实支付接口或数据库。业务数据和操作都在内存沙盒中；业务政策是 Usami 的公开虚构规则。

@@ -29,6 +29,22 @@ class Evolver:
             if not checked.verified:
                 raise ValueError("evolution evidence failed independent replay: " + checked.reason)
         cases = tuple(discovery_cases) + tuple(service_task_cases)
+        gate_policy = self.policy
+        if self.role == "customer" and self.policy.customer_quality is not None:
+            if (any(case.config.domain != "cloudops" for case in discovery_cases) or
+                    any(row.config.domain != "cloudops" for row in evidence) or
+                    not callable(getattr(self.adapter, "customer_business_shape", None))):
+                raise ValueError("QGD v1 requires a CloudOps Customer probe adapter")
+            excluded = set(self.policy.customer_excluded_world_hashes or ())
+            excluded.update(row.config.initial_world_hash for row in evidence)
+            if any(case.config.initial_world_hash in excluded for case in discovery_cases):
+                raise ValueError("QGD validation worlds overlap learning or excluded evidence")
+            shapes = set(self.policy.customer_excluded_business_shapes or ())
+            shapes.update(self.adapter.customer_business_shape(row.config) for row in evidence)
+            if any(self.adapter.customer_business_shape(case.config) in shapes for case in discovery_cases):
+                raise ValueError("QGD validation business structures overlap learning or excluded evidence")
+            gate_policy = self.policy.model_copy(update={"customer_excluded_world_hashes": tuple(sorted(excluded)),
+                                                        "customer_excluded_business_shapes": tuple(sorted(shapes))})
         if not discovery_cases:
             raise ValueError("evolution requires at least one Discovery validation case")
         if any(case.config.partition != "development" for case in cases):
@@ -38,7 +54,7 @@ class Evolver:
         if self.role == "service":
             # The actual normal-task results are part of the one Reflection,
             # including legal completion and correct refusal, not only attacks.
-            gate = DynamicGate(self.adapter, self.archive, self.policy)
+            gate = DynamicGate(self.adapter, self.archive, gate_policy)
             for case in service_task_cases:
                 preflight.append(gate._case(case, customer, service, prefix + ".reflection-task." + case.id))
             evidence += tuple(preflight)
@@ -71,7 +87,7 @@ class Evolver:
             candidate = apply_patch(parent, reflection.patch, source=prefix + ".reflection")
             self.library_store.save(candidate, publish=False)
             fields["candidate_snapshot_hash"] = candidate.snapshot_hash
-            gate = DynamicGate(self.adapter, self.archive, self.policy)
+            gate = DynamicGate(self.adapter, self.archive, gate_policy)
             if self.role == "customer":
                 result = gate.customer(parent, candidate, service, discovery_cases, prefix)
             else:
@@ -82,7 +98,9 @@ class Evolver:
                                                      unvalidated_domains=tuple(domain for domain in declared if domain not in validated))
             costs = consumption_sum((costs, result.consumption))
             if not result.passed:
-                return EvolutionRecord(**fields, outcome="rejected", reasons=result.reasons, consumption=costs)
+                inconclusive = result.customer_quality is not None and result.customer_quality.decision == "INCONCLUSIVE"
+                return EvolutionRecord(**fields, outcome="inconclusive" if inconclusive else "rejected",
+                                       reasons=result.reasons, consumption=costs)
             self.library_store.save(candidate)
         except (ValueError, TypeError, OSError) as exc:
             return EvolutionRecord(**fields, outcome="rejected", reasons=("candidate_validation_error: " + str(exc),), consumption=costs)

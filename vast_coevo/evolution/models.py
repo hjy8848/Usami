@@ -7,6 +7,7 @@ from ..schema import FrozenModel
 from ..skills.models import Hash, SkillPatch, SkillRole
 from ..skills.validation import StaticValidation
 from ..reflection.reflector import ReflectionRecord
+from ..evaluation.customer import CustomerQualityPolicy, CustomerQualityResult
 
 
 class ValidationCase(FrozenModel):
@@ -25,6 +26,11 @@ class ValidationCase(FrozenModel):
 
 
 class GatePolicy(FrozenModel):
+    # None is the historical v1 protocol. Explicit opt-in prevents changing
+    # past run hashes or retrospectively selecting a candidate on heldout data.
+    customer_quality: Optional[CustomerQualityPolicy] = Field(default=None, exclude_if=lambda value: value is None)
+    customer_excluded_world_hashes: Optional[Tuple[Hash, ...]] = Field(default=None, exclude_if=lambda value: value is None)
+    customer_excluded_business_shapes: Optional[Tuple[Hash, ...]] = Field(default=None, exclude_if=lambda value: value is None)
     customer_allow_equal: bool = True
     service_allow_equal_without_failure: bool = True
     require_known_failure_reproduction: bool = True
@@ -55,6 +61,7 @@ class GateResult(FrozenModel):
     repaired: Tuple[Hash, ...] = ()
     consumption: Consumption
     validated_domains: Optional[Tuple[str, ...]] = Field(default=None, exclude_if=lambda value: value is None)
+    customer_quality: Optional[CustomerQualityResult] = Field(default=None, exclude_if=lambda value: value is None)
 
 
 class DomainCoverage(FrozenModel):
@@ -76,7 +83,7 @@ class EvolutionRecord(FrozenModel):
     dynamic_validation: Optional[GateResult] = None
     candidate_snapshot_hash: Optional[Hash] = None
     selected_snapshot_hash: Hash
-    outcome: Literal["accepted", "rejected", "noop"]
+    outcome: Literal["accepted", "rejected", "inconclusive", "noop"]
     reasons: Tuple[str, ...] = ()
     consumption: Consumption
     domain_coverage: Optional[DomainCoverage] = Field(default=None, exclude_if=lambda value: value is None)
@@ -106,6 +113,14 @@ class RunConfig(FrozenModel):
             raise ValueError("Discovery worlds cannot contain task references")
         if any(c.task_ref is None for c in self.service_task_cases):
             raise ValueError("Service regression cases require native task references")
+        if self.policy.customer_quality is not None:
+            from ..evaluation.customer import CustomerGateManifest
+            excluded = set(self.policy.customer_excluded_world_hashes or ())
+            excluded.update(case.config.initial_world_hash for case in self.exploration_cases)
+            CustomerGateManifest(policy=self.policy.customer_quality,
+                baseline_customer_hash=self.initial_customer_hash, candidate_customer_hash=self.initial_customer_hash,
+                service_hash=self.initial_service_hash, configs=tuple(case.config for case in self.validation_cases),
+                excluded_world_hashes=tuple(sorted(excluded)))
         pairs = {(c.config.customer_model.model_dump_json(), c.config.service_model.model_dump_json()) for c in self.exploration_cases + self.validation_cases + self.service_task_cases}
         if len(pairs) != 1:
             raise ValueError("base Agent models must be frozen throughout a run")

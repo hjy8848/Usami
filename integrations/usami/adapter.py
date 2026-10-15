@@ -224,6 +224,28 @@ class UsamiAdapter:
         _, world, _, _, _ = self._resolve(config, public_only=True)
         return public_policy(config.domain, world)
 
+    def customer_probe_source_hashes(self):
+        return source_hashes()
+
+    def customer_business_shape(self, config):
+        if config.domain != "cloudops":
+            raise ValueError("QGD v1 currently supports CloudOps Discovery only")
+        from .customer_probes import business_shape
+        _, world, _, _, _ = self._resolve(config, public_only=True)
+        return business_shape(world, config.identity)
+
+    def customer_probes(self, evidence):
+        """Post-run only, with full native, injection and source-pin replay."""
+        if evidence.config.domain != "cloudops" or evidence.track != "discovery":
+            raise ValueError("QGD v1 currently supports CloudOps Discovery only")
+        artifact = NativeArtifact.model_validate_json(Path(evidence.trace.path).read_text())
+        replay = self.replay(evidence, artifact.customer_snapshot, artifact.service_snapshot)
+        if not replay.verified:
+            raise ValueError("Customer probe evidence failed exact replay: " + replay.reason)
+        from .customer_probes import evaluate_cloudops
+        trace = native_trace("cloudops", json.loads(artifact.native_trace_json), "discovery")
+        return evaluate_cloudops(trace, evidence)
+
     def forbidden_identifiers(self, config):
         _, world, _, _, _ = self._resolve(config, public_only=True)
         identifiers = set()

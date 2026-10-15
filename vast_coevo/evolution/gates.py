@@ -57,6 +57,8 @@ class DynamicGate:
         return self._save(row, case.config, customer, service)
 
     def customer(self, parent, candidate, service, cases, prefix):
+        if self.policy.customer_quality is not None:
+            return self._quality_customer(parent, candidate, service, tuple(cases), prefix)
         baseline, proposed = [], []
         for case in cases:
             baseline.append(self._case(case, parent, service, prefix + ".baseline." + case.id))
@@ -76,6 +78,48 @@ class DynamicGate:
         ):
             reasons.append("no_development_improvement")
         return self._result(old, new, reasons, baseline, proposed)
+
+    def _quality_customer(self, parent, candidate, service, cases, prefix):
+        from ..evaluation.customer import CustomerGateManifest
+        from ..evaluation.discovery_gate import compare_customer_probes
+        from ..schema import atomic_json, digest
+        if any(case.task_ref is not None for case in cases):
+            raise ValueError("Customer Discovery gate cannot contain fixed Service tasks")
+        if any(case.config.domain != "cloudops" for case in cases):
+            raise ValueError("QGD v1 currently supports CloudOps Discovery only")
+        if not all(callable(getattr(self.adapter, name, None)) for name in (
+                "customer_probes", "customer_probe_source_hashes", "customer_business_shape")):
+            raise ValueError("adapter does not support independent Customer probe evaluation")
+        manifest = CustomerGateManifest(policy=self.policy.customer_quality,
+            baseline_customer_hash=parent.snapshot_hash, candidate_customer_hash=candidate.snapshot_hash,
+            service_hash=service.snapshot_hash, configs=tuple(case.config for case in cases),
+            required_candidate_skill_hashes=tuple(sorted({skill.content_hash for skill in candidate.skills}
+                - {skill.content_hash for skill in parent.skills})),
+            excluded_world_hashes=self.policy.customer_excluded_world_hashes or (),
+            source_hashes=self.adapter.customer_probe_source_hashes(),
+            business_shape_hashes=tuple(self.adapter.customer_business_shape(case.config) for case in cases),
+            excluded_business_shapes=self.policy.customer_excluded_business_shapes or ())
+        manifest = CustomerGateManifest.model_validate(manifest.model_dump(mode="json"))
+        destination = self.archive.root / "customer-quality" / digest(prefix)
+        # Immutable registration precedes the very first online episode. Resume
+        # with a different policy/world/skill is refused rather than overwritten.
+        atomic_json(destination / "manifest.json", manifest, immutable=True)
+        baseline, proposed, old_reports, new_reports = [], [], [], []
+        for case in cases:
+            for label, snapshot, rows, reports in (("baseline", parent, baseline, old_reports),
+                                                     ("candidate", candidate, proposed, new_reports)):
+                row = self._case(case, snapshot, service, prefix + "." + label + "." + case.id)
+                rows.append(row)
+                report = self.adapter.customer_probes(row)
+                reports.append(report)
+                atomic_json(destination / (report.report_hash + ".json"), report, immutable=True)
+        quality = compare_customer_probes(manifest, old_reports, new_reports)
+        atomic_json(destination / "result.json", quality, immutable=True)
+        legacy = self._result(metrics(baseline), metrics(proposed), [], baseline, proposed)
+        # Legacy tool metrics remain diagnostics only. Selection is exclusively
+        # the three-state request-level decision in this versioned protocol.
+        return legacy.model_copy(update={"passed": quality.decision == "ACCEPT", "reasons": quality.reasons,
+                                         "customer_quality": quality})
 
     def service(self, customer, parent, candidate, discovery_cases, task_cases, failures, prefix):
         baseline, proposed = [], []

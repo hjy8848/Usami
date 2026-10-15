@@ -105,11 +105,23 @@ def run_config(plan, adapter, customer, service, specs, run_id, generations=None
         if regression.purpose != expected:
             raise ValueError("declared regression purpose differs from native task kind")
         task_cases.append(case(task.config_id, task.task_ref, regression.purpose))
+    policy = plan.policy
+    if policy.customer_quality is not None:
+        from .domains import initial_world
+        excluded = set(policy.customer_excluded_world_hashes or ())
+        excluded.update(initial_world(profile).state_hash for profile in plan.profiles
+                        if profile.split == "heldout" or profile.config_id in plan.exploration)
+        from .customer_probes import business_shape
+        shapes = set(policy.customer_excluded_business_shapes or ())
+        shapes.update(business_shape(initial_world(profile), profile.identity) for profile in plan.profiles
+                      if profile.domain == "cloudops" and (profile.split == "heldout" or profile.config_id in plan.exploration))
+        policy = policy.model_copy(update={"customer_excluded_world_hashes": tuple(sorted(excluded)),
+                                           "customer_excluded_business_shapes": tuple(sorted(shapes))})
     return RunConfig(run_id=run_id, generations=generations or plan.generations,
                      exploration_cases=tuple(case(key) for key in plan.exploration),
                      validation_cases=tuple(case(key) for key in plan.validation), service_task_cases=tuple(task_cases),
                      customer_reflector_model=specs["customer_reflector"], service_reflector_model=specs["service_reflector"],
-                     max_llm_calls=plan.max_llm_calls, max_tool_calls=plan.max_tool_calls, policy=plan.policy,
+                     max_llm_calls=plan.max_llm_calls, max_tool_calls=plan.max_tool_calls, policy=policy,
                      initial_customer_hash=customer.snapshot_hash, initial_service_hash=service.snapshot_hash)
 
 

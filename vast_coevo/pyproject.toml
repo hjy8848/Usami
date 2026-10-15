@@ -13,5 +13,5 @@ dependencies = ["pydantic>=2.12,<3"]
 vast-coevo = "vast_coevo.cli:main"
 
 [tool.setuptools]
-packages = ["vast_coevo", "vast_coevo.skills", "vast_coevo.agents", "vast_coevo.reflection", "vast_coevo.evolution", "vast_coevo.evidence", "vast_coevo.storage"]
+packages = ["vast_coevo", "vast_coevo.skills", "vast_coevo.agents", "vast_coevo.reflection", "vast_coevo.evolution", "vast_coevo.evidence", "vast_coevo.evaluation", "vast_coevo.storage"]
 package-dir = {vast_coevo = "."}

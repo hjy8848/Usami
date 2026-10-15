@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#fcfbf8">
+  <meta name="theme-color" content="#f6f3ec">
   <meta name="description" content="Usami 研究介绍：可执行业务 Benchmark 与 Customer–Service Skill 共进化。通过任务、状态转移和证据流的交互示例解释两项方法。">
   <meta property="og:title" content="Usami — Business environments and agent co-evolution">
   <meta property="og:description" content="可组合业务任务如何评测 Agent，交互证据如何用于 Skill 迭代。方法介绍与交互式示意。">
@@ -19,11 +19,18 @@
 <header class="site-header"><a class="wordmark" href="#" aria-label="Usami 首页">usami</a><nav aria-label="主导航"><a href="#benchmark">Benchmark</a><a href="#method">共进化</a><a href="#evaluation">评价设计</a><a href="https://github.com/hjy8848/Usami">代码 ↗</a></nav></header>
 <main>
   <header class="article-header" id="overview">
-    <p class="overline">研究介绍 / 方法与设计</p>
-    <h1>Usami</h1>
-    <p class="subtitle">可执行业务 Benchmark 与 Customer–Service 共进化</p>
-    <p class="abstract">在业务环境中，Agent 的一次操作会改变下一次操作的条件。Usami 将这些条件建模为可执行的状态和规则，用于评测多步决策；VAST-CoEvo 则在这一环境上研究测试策略与业务决策经验的共同迭代。</p>
-    <div class="article-meta"><div><span>项目</span><a href="https://github.com/hjy8848/Usami">开源代码 ↗</a></div><div><span>方法</span><a href="#benchmark">Usami Benchmark</a><a href="#method">VAST-CoEvo</a></div><div><span>阅读说明</span><p>本页介绍机制，不展示实验成绩。<br>交互内容均为教学示例。</p></div></div>
+    <div class="hero-editorial">
+      <div class="hero-type">
+        <p class="overline"><span></span> Interactive agents · Research notes</p>
+        <h1>Usami<span class="title-period">.</span></h1>
+        <p class="subtitle">可执行业务世界，<br>与 Agent 共进化。</p>
+        <p class="abstract">将业务约束放进可执行的世界，评测多步决策；再从可验证的交互中，研究测试策略与决策经验的共同迭代。</p>
+        <div class="hero-links"><a href="#benchmark">阅读方法 <span>↓</span></a><a href="https://github.com/hjy8848/Usami">GitHub <span>↗</span></a></div>
+      </div>
+      <figure class="hero-frontispiece"><img src="assets/research-map.svg" alt="上层为业务世界的状态依赖，下层为 Customer、交互证据和 Service Skill 的迭代；评测环境与进化方法是相互连接的两个部分。" width="560" height="510"><figcaption>概念示意 · 业务状态决定操作条件，交互证据用于 Skill 迭代。</figcaption></figure>
+    </div>
+    <div class="article-meta"><a href="#benchmark"><span class="meta-index">01</span><div><span>Usami Benchmark</span><strong>可组合的任务与独立验证</strong></div><span class="meta-arrow">↗</span></a><a href="#method"><span class="meta-index">02</span><div><span>VAST-CoEvo</span><strong>基于交互证据的 Skill 迭代</strong></div><span class="meta-arrow">↗</span></a></div>
+    <p class="reading-note">方法介绍 · 本页不展示实验成绩，交互内容为教学示例。</p>
   </header>
 
   <section class="prose" id="introduction">
@@ -33,10 +40,10 @@
   </section>
 
   <section id="benchmark" class="chapter">
-    <div class="prose"><p class="chapter-label">第一部分 · Usami Benchmark</p><h2>评测对象是状态转移，而不只是回答</h2><p>固定问答可以检查知识，却没有完整表达操作之间的业务依赖。Usami 的一个实例包含初始世界、独立的顾客身份、业务目标、允许的操作范围与预算。Service 查询世界并选择工具；评测方根据实际事件和终态判断是否完成任务。</p><p>下面用一个简化的 CloudOps 项目说明这种区别。目标是启动 <code>app</code>，它依赖 <code>db</code> 和 <code>cache</code>。两项上游服务彼此独立，因此可以交换启动顺序，但不能跳过它们。身份与三项启动操作的授权在示例开始前固定，授权范围不包括修改权限、项目状态、依赖或配额。</p></div>
+    <div class="prose"><p class="chapter-label"><span>01</span> Usami Benchmark</p><h2>从请求，到可验证的状态转移</h2><p>固定问答可以检查知识，却没有完整表达操作之间的业务依赖。Usami 的一个实例包含初始世界、独立的顾客身份、业务目标、允许的操作范围与预算。Service 查询世界并选择工具；评测方根据实际事件和终态判断是否完成任务。</p><p>下面用一个简化的 CloudOps 项目说明这种区别。目标是启动 <code>app</code>，它依赖 <code>db</code> 和 <code>cache</code>。两项上游服务彼此独立，因此可以交换启动顺序，但不能跳过它们。身份与三项启动操作的授权在示例开始前固定，授权范围不包括修改权限、项目状态、依赖或配额。</p></div>
 
     <figure class="wide-figure task-figure" id="task-example" aria-labelledby="task-caption">
-      <div class="figure-heading"><span>示例 A / 业务状态与操作</span><span class="example-label">教学示例 · 本地确定性演示</span></div>
+      <div class="figure-heading"><span><b>A</b> 业务状态与操作</span><span class="example-label">教学示例 · 本地确定性演示</span></div>
       <div class="task-toolbar"><label for="scenario">初始条件</label><select id="scenario"><option value="normal">活跃项目 / Operator / 配额充足</option><option value="viewer">活跃项目 / Viewer / 配额充足</option><option value="suspended">暂停项目 / Operator / 配额充足</option><option value="quota">活跃项目 / Operator / CPU 配额不足</option></select><button id="reset-world" class="quiet-button">重置状态 ↺</button></div>
       <div class="task-workspace">
         <div class="world-drawing">
@@ -71,10 +78,10 @@
   </section>
 
   <section id="method" class="chapter">
-    <div class="prose"><p class="chapter-label">第二部分 · VAST-CoEvo</p><h2>把交互转化为下一代的决策经验</h2><p>固定测试策略可能反复覆盖同一类边界，而 Service 的错误也会随着策略更新而变化。VAST-CoEvo 将测试者也纳入迭代：Customer 学习的是测试方向与组合方式；Service 学习的是业务决策原则。两者的基础模型权重都不更新，更新对象是有版本、作用域和内容 Hash 的声明式 Skill。</p><p>每一代先由当前 Customer 与 Service 完成正常探索，Oracle 验证并保存证据，然后依次进行 Customer、Service Reflection。Customer 候选通过静态验收后可更新；Service 候选还需要动态验收。保存实际选中的版本后，再进入下一代。新的 Customer 不在同一代额外执行一轮比较探索。</p></div>
+    <div class="prose"><p class="chapter-label"><span>02</span> VAST-CoEvo</p><h2>交互如何成为下一代的经验</h2><p>固定测试策略可能反复覆盖同一类边界，而 Service 的错误也会随着策略更新而变化。VAST-CoEvo 将测试者也纳入迭代：Customer 学习的是测试方向与组合方式；Service 学习的是业务决策原则。两者的基础模型权重都不更新，更新对象是有版本、作用域和内容 Hash 的声明式 Skill。</p><p>每一代先由当前 Customer 与 Service 完成正常探索，Oracle 验证并保存证据，然后依次进行 Customer、Service Reflection。Customer 候选通过静态验收后可更新；Service 候选还需要动态验收。保存实际选中的版本后，再进入下一代。新的 Customer 不在同一代额外执行一轮比较探索。</p></div>
 
     <figure class="wide-figure evolution-figure" id="evolution-example" aria-labelledby="evolution-caption">
-      <div class="figure-heading"><span>示例 B / 证据与版本流</span><span class="example-label">虚构案例 · 不是模型生成结果</span></div>
+      <div class="figure-heading"><span><b>B</b> 证据与版本流</span><span class="example-label">虚构案例 · 不是模型生成结果</span></div>
       <div class="evolution-diagram">
         <svg viewBox="0 0 1000 450" role="img" aria-labelledby="evolution-title evolution-description">
           <title id="evolution-title">Customer 与 Service 的递归训练与独立评价</title><desc id="evolution-description">当前 Customer 和 Service 交互生成证据，同一证据分流到双方 Reflection，分别经过静态或静态加动态验收后保存版本，返回下一代。Held-out 在训练结束后独立评价。</desc>
@@ -108,7 +115,7 @@
   </section>
 
   <section id="evaluation" class="chapter">
-    <div class="prose"><p class="chapter-label">评价设计</p><h2>分别检验环境、更新与泛化</h2><p>一次 Skill 发布只说明完成了对应的版本选择流程。要判断它是否改善行为，需要把训练、开发验收和独立测试分开。训练后的交叉测试只加载已保存版本，不产生 Reflection，也不修改选中版本。</p></div>
+    <div class="prose"><p class="chapter-label"><span>03</span> 评价设计</p><h2>分别检验环境、更新与泛化</h2><p>一次 Skill 发布只说明完成了对应的版本选择流程。要判断它是否改善行为，需要把训练、开发验收和独立测试分开。训练后的交叉测试只加载已保存版本，不产生 Reflection，也不修改选中版本。</p></div>
     <div class="evaluation-layout"><div><span>训练</span><h3>自主交互与学习</h3><p>当前 Cₙ × Sₙ 产生证据，用于本代双方 Reflection。合法与失败交互均保留。</p></div><div><span>开发</span><h3>候选验收与诊断</h3><p>Service 动态 Gate 验收候选。Customer 诊断可选，且没有版本选择权。</p></div><div><span>独立测试</span><h3>冻结版本再比较</h3><p>固定 Customer、世界与预算比较 S₀ / Sₙ，另以交叉组合研究 Customer 的影响。结果不回流训练。</p></div></div>
     <div class="prose"><p>这项研究需要同时观察错误与正常业务：Service 减少违规的同时，是否仍完成合法请求；Customer 是否发现不同根因，而不是重复同一错误；变化是否伴随无效查询或成本增加。比较不同版本时，初态、身份、模型、工具、预算与评分规则必须一致。</p><p>本页暂不展示真实实验结果或能力提升结论。机制图只说明系统如何工作；它们不提供有效性、稳定性或跨场景泛化的证据。</p></div>
   </section>

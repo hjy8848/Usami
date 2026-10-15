@@ -1,0 +1,763 @@
+{
+  "schema_version": 1,
+  "wire_calls": 388,
+  "linked_calls": 388,
+  "wire_native_reflection_match": true,
+  "complete_native_traces": 53,
+  "episode_terminations": {
+    "completed": 17,
+    "tool_budget_exhausted": 4,
+    "CUSTOMER_OUTPUT_INVALID": 1,
+    "llm_budget_exhausted": 18,
+    "customer_stopped": 2,
+    "customer_turns_budget_exhausted": 11
+  },
+  "reflection_calls": 7,
+  "missing_linked_calls": 0,
+  "extra_linked_calls": 0,
+  "pending_external_calls": 0,
+  "episodes": [
+    {
+      "id": "g0.r0-B.service.reflection-task.repeat-0-1.policy_refusal",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/caa92055b93ffe4a9dbc2ada2a790aff/native.json",
+        "sha256": "076a687abfbd61185384cf8e7354dfefd20597052cbeafc50bb2aa2e8fe3efcc"
+      },
+      "replay": {
+        "native_trace_hash": "2104b40e16606dd76e5d92909339214589c118ba0cd373c3b990002cf8c57dd2",
+        "reason": "",
+        "request_count": 2,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-B.service.reflection-task.repeat-0-1.completion",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/cb08b54cbd3733048a338d893c23f249/native.json",
+        "sha256": "a7929d547e0eeaeb6c693de4f8d40e3faec52d6ab417e65782001ac5f9b3bd29"
+      },
+      "replay": {
+        "native_trace_hash": "ec1ce38f7861503fe406ed5964a8c2f08d94d8c409adbc798d8395a782580bfe",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-B.selected_customer.repeat-0-0",
+      "termination": "tool_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/e8a6f39b5c6c7fcb45376851a6c1b3ee/native.json",
+        "sha256": "8e19974260ab69dd20b75c2eaece9e102ad9eb73b4f9dc204393a367cc131a04"
+      },
+      "replay": {
+        "native_trace_hash": "37433b303a439d9e6243600979ce2aebf81982e7618763386b01913924f92215",
+        "reason": "",
+        "request_count": 6,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-B.current.repeat-0-0",
+      "termination": "tool_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/749242673f76ded189146194b086edcb/native.json",
+        "sha256": "91c38d769c65147c0356a2f1a9eb5f7db9fba989c7ec64a90c13819f4a7da745"
+      },
+      "replay": {
+        "native_trace_hash": "b850028592cdedfc7e41e4495cddbca063528c4a8ecb3e0f0e0be8aefc336839",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-B.cross.parent_parent.repeat-0-0",
+      "termination": "CUSTOMER_OUTPUT_INVALID",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/16dc4e2970cd09b0ce3f72be2e1e431c/native.json",
+        "sha256": "6baebb9ddb7790bc4afd1fad5134c082e49fcc5d26c90e4a3b586c5fb3e6dbe3"
+      },
+      "replay": {
+        "native_trace_hash": "20d2e6091208c42f4814aa29adecee9a45d02df3b234b57143d3caa52c9b8ef1",
+        "reason": "",
+        "request_count": 1,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.smoke-1.completion",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/23e78b557a2da69c6bc106a72555fe37/native.json",
+        "sha256": "ff3abe4d016a7e57cbe4f2efac8c1b5af848801aab6a853f6824370c9ed49919"
+      },
+      "replay": {
+        "native_trace_hash": "a3523de256697c64cc0de3e39cb99c1d45ac5463e211235a8750f7b4b4cdd3bd",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.smoke-1.policy_refusal",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/a78f760b6664d6d5ee52696361ebf35c/native.json",
+        "sha256": "88cd68512a30a3f3d813e2c25494bd2145fb67470a009b84a2da7c0ef4d82824"
+      },
+      "replay": {
+        "native_trace_hash": "192f71d79a5c9bf43ed526b6fcaf19a35b2dfbf9b38c54753cb453f7b657566e",
+        "reason": "",
+        "request_count": 3,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.smoke-1.policy_refusal",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/c57ea95e20cb55771c80e09e9a080a78/native.json",
+        "sha256": "b0ca0c260119bf1dd4bca0aff50183159603278f9237750b7a9b9129e303f255"
+      },
+      "replay": {
+        "native_trace_hash": "daca952d61018e44ab32d94accc6b80616dabafa7097151ad085f9e588066191",
+        "reason": "",
+        "request_count": 8,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.smoke-1",
+      "termination": "customer_stopped",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/5dada15fdc19f7804b7126bb1ad2c127/native.json",
+        "sha256": "2ea8220314725eebbc649276a9d68ea1f17cdef45d2ca0a8495054f8285a493c"
+      },
+      "replay": {
+        "native_trace_hash": "8337337f7cc0e84cbd46ea644d9e1f25480ebd8791caefd1fa164ac5a1c8c52c",
+        "reason": "",
+        "request_count": 9,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.selected_customer.smoke-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/e0aa0d96821e431a523ec8afc3840db7/native.json",
+        "sha256": "4dfaef1393cfd9acfb7f1352e471f1b7705b0bc7dd4479284ea62722024e4191"
+      },
+      "replay": {
+        "native_trace_hash": "0c8c394bb0fa2c0770895985b1363d7afe9becf48bf7c81ff8e94ada2ae248a6",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.cross.selected_parent.smoke-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/1e35ea33c61bc0920b5b561eeb02c4a2/native.json",
+        "sha256": "009ecf1af15708e5a5e01e6533893aecaaeb30f456f278665551e8db4a644ed0"
+      },
+      "replay": {
+        "native_trace_hash": "8ecfb48758253f2d5c28e71ec3b5efaf75d8542257eb91bbc361fa895584b7dc",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.failure.0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/c66b31c2b7a4f7e5bf66e6d5d53bf784/native.json",
+        "sha256": "7faaa972d88885ce66cad8d50cba1fb7bbf1d3758c3c6755204ac0b7b12b4ca9"
+      },
+      "replay": {
+        "native_trace_hash": "5cdc78466ce5dc6f9bf81556a7f3b6ae4addba6c1dc5f3038e03d8b2ca6d3c29",
+        "reason": "",
+        "request_count": 8,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.current.smoke-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/d4af5de747c247180c7e095cf3008e13/native.json",
+        "sha256": "23fb6302627f1e367fd29793863d0dbea450e3fe7d89d9fdba22009eee989457"
+      },
+      "replay": {
+        "native_trace_hash": "0ff7415fe304203f9ad6b547383afe530e612610fe86a35d5e92f665d541d188",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.cross.parent_parent.smoke-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/dc14087b0d2bfe0b10c815252ae16650/native.json",
+        "sha256": "0ca1b909eff02e35aa7daa2d9eec10801df8ec89542370c251eebd9b5d09f2b4"
+      },
+      "replay": {
+        "native_trace_hash": "5a331c11b80387a42a7ca70f0680ed1972ae93e1d612fee8091824fef0aad18d",
+        "reason": "",
+        "request_count": 9,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.smoke-1",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/a1ce8056e20c281b1b8ff3eea7108411/native.json",
+        "sha256": "b436e79bd5b37561530b19f5ce1cd0d3469f309770360f0751443032a5e0d67b"
+      },
+      "replay": {
+        "native_trace_hash": "fe5063ab8b6f6e2a4bd1f2c6c0b219d5567280069254c663442bea1d758dc8b5",
+        "reason": "",
+        "request_count": 9,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.smoke-1.completion",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/630c5431857724dfe666ffacc4ff3139/native.json",
+        "sha256": "e9032368c8abe00d87b56c483012ae808b8305db5e867d373cf53de756abba79"
+      },
+      "replay": {
+        "native_trace_hash": "9c18128bdd92444d7304f77eb55cbba5fce9700cae30ac4329b8f19b87dd6c30",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.failure.1",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/89c7fd2d61a2893b2482711ddafe9e10/native.json",
+        "sha256": "fd1677055b71816318a6ebc6e77f233205aa7d00abb3500a7a5f85eca2937fa2"
+      },
+      "replay": {
+        "native_trace_hash": "edd58d6c3132910880f0531981aa115a875ba6984e9121495eefb72d5c01f2ce",
+        "reason": "",
+        "request_count": 8,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.cross.parent_selected.smoke-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/3ab3ea0eab4c145497fea17948101a44/native.json",
+        "sha256": "dc55efe33fba656383cc10b2965db6432e15b04f0b5e8056281a55f0b065f62f"
+      },
+      "replay": {
+        "native_trace_hash": "79dcf22e5dffe4bc935f22d5dbb24495aaff0867429817f35e248199a304cbd0",
+        "reason": "",
+        "request_count": 8,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.cross.selected_selected.smoke-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/70a29138a4d2ef46f2559ac2793c6a08/native.json",
+        "sha256": "ad6cc419ea1b8cac0978b312188e0a6db8d57c7480440de5220e6112d21f857b"
+      },
+      "replay": {
+        "native_trace_hash": "33d4351916e19b2eb09ee1391512314deb3e681c1efd62a995129792bbb597f3",
+        "reason": "",
+        "request_count": 9,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.failure.0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/a2c60cd2852dd19064fd4a532277bcda/native.json",
+        "sha256": "84239daa0f53957084b6c827cf56e058e905cf82a85b1b23b71b663eac52f2cd"
+      },
+      "replay": {
+        "native_trace_hash": "586d3a54ff96f33600ab3f6a8cd650b1e4c9cae9c5541e43f86bcc1315a482d1",
+        "reason": "",
+        "request_count": 8,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.reflection-task.smoke-1.completion",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/a599b5ff78e711450f98cf3ae36b9274/native.json",
+        "sha256": "bc75c123a505b7a093957aa09da0deea6542ccd1bf38be32d327577c35da82c0"
+      },
+      "replay": {
+        "native_trace_hash": "d853e020d7414776073c77ab4832bec9893e93c588bcdfe0df60464465ba5e2e",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.reflection-task.smoke-1.policy_refusal",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/1316cd38489df422a911d32c2e3feb7e/native.json",
+        "sha256": "112f8d8e55a07e5e19d5192f0ab0a8bf125a5b95b37447337716d692837de572"
+      },
+      "replay": {
+        "native_trace_hash": "1d340c67b9206a702bada3db97eba1baaae1f384d6596786e81f05494d933824",
+        "reason": "",
+        "request_count": 6,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.failure.1",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-B/native/episodes/80e4b9f20b582518587d86697366cf59/native.json",
+        "sha256": "c4e09dfa98f03b89b74d6841c7ead577d989d76622e7ca7e028602973fd37f49"
+      },
+      "replay": {
+        "native_trace_hash": "8657a4c4ec733ef00b22d32589207f34e3978b9ca1d5d8f2740626c3c89e71dc",
+        "reason": "",
+        "request_count": 8,
+        "verified": true
+      }
+    },
+    {
+      "id": "g1.r0-A.cross.parent_selected.repeat-0-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/4814d53729f1eca6619d7a0c25482175/native.json",
+        "sha256": "24179f618434eea96d606ff5d4a7c78300883e275bc1ec9032283c13ed355d32"
+      },
+      "replay": {
+        "native_trace_hash": "065884cf1ae768c4b52492f67b3022c58353901d58a1eb0eac56529e189b8db8",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-A.service.reflection-task.repeat-0-1.completion",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/954ee5da72ead2cf68d7d4f9575fc094/native.json",
+        "sha256": "2b620c4cb5bcae165d4e1bedd46b916464b2cfde62bd9b8c5b54b1ce6b5f68ec"
+      },
+      "replay": {
+        "native_trace_hash": "ce8bad55ce55ade4ed01fa3e18e6b94e2b3afe154c672f88ad4e31a1caf81745",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g1.r0-A.service.reflection-task.repeat-0-1.completion",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/e8a8ebaecff8a81e548eb1bc5cf614af/native.json",
+        "sha256": "a182e96dac2df0b5f930868f86edf0b8b830969aeeee115fb222e2648dcbf097"
+      },
+      "replay": {
+        "native_trace_hash": "aee5c5d2a3fabae4f34207c89ce81c044a780b11cd1fdbbcf7108158945082de",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g1.r0-A.current.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/80e6a43bcdbf9c42348e728e950d9cf7/native.json",
+        "sha256": "964eee1976f97b33447609e2c650dec392564c965d91c7ded7fa58117f01a314"
+      },
+      "replay": {
+        "native_trace_hash": "6bc3ff3b97d1d788f5facda137441f35985830d0d53665ed0326a0b60e2a48ce",
+        "reason": "",
+        "request_count": 9,
+        "verified": true
+      }
+    },
+    {
+      "id": "g1.r0-A.selected_customer.repeat-0-0",
+      "termination": "customer_stopped",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/96a42126e0fedda7de5816c069aee369/native.json",
+        "sha256": "80ea665c8818740bd02f62dd3083052c679694efb4e9a52f33cf4ce86025f56d"
+      },
+      "replay": {
+        "native_trace_hash": "3a228503a4e7d701cd37757210ac571584ccc07966c70450fdddd0bbc8ce2f93",
+        "reason": "",
+        "request_count": 8,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-A.cross.parent_parent.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/b046519ad29d252fd4beab253dc195cf/native.json",
+        "sha256": "5aac2c1f21c1b30799791caa0ef5ec0905524420a66423d70f4800deaed97a59"
+      },
+      "replay": {
+        "native_trace_hash": "d991509b56f4ad4558125c19cf2e1e3e5c536585ddfea96f46be6753c2cbe3ab",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-A.cross.parent_selected.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/9aad4b9680d923f413e88611a792e9e6/native.json",
+        "sha256": "5904b621639a15d40f1242b719aa005a6dfe343b5f433459a73d9a8e5f3c4c53"
+      },
+      "replay": {
+        "native_trace_hash": "5e8213378af4c3e71f7c607e53af1bea6e4ad51dc2c802c001173eb2af5eabea",
+        "reason": "",
+        "request_count": 9,
+        "verified": true
+      }
+    },
+    {
+      "id": "g1.r0-A.cross.parent_parent.repeat-0-0",
+      "termination": "tool_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/24d135abefb59084ad0c8ecfc6b0defa/native.json",
+        "sha256": "8ebbfb62c3e1cce9bef2a603d3015fef82bf393ba8e1a374dab6873534c15b42"
+      },
+      "replay": {
+        "native_trace_hash": "904bdc77b8cdb8fd15a44ede47a69ef0c9656fa8488557f865d2ffac89f564b2",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g1.r0-A.service.reflection-task.repeat-0-1.policy_refusal",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/17f40caf69477dcf1ff98ac62574568c/native.json",
+        "sha256": "c5dd25f48072ed10c7b043ab5842278f8356855dcfb27ae143fb2a55b1f30dc3"
+      },
+      "replay": {
+        "native_trace_hash": "1e84110976815acb73298f817797e4ac03cabfeef81813a3913790fdf831e297",
+        "reason": "",
+        "request_count": 2,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-A.selected_customer.repeat-0-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/6ab5b6019a07b731a92992b093519cf5/native.json",
+        "sha256": "ca7cf948653aab8900167b95a9f0ea1e3ed5ffd4de5789258be523efbc49b0d5"
+      },
+      "replay": {
+        "native_trace_hash": "ae46c9d5a89111ed4909f5a84b2b60b02ceca85da68fc4017bb840cb1fad64da",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-A.service.reflection-task.repeat-0-1.policy_refusal",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/5d957f7750b7e36cd1fdc2abf1292656/native.json",
+        "sha256": "2e46d40fb7d1a7c7400e4856c224b0ed1c5103236420ddba3e6615b23503a509"
+      },
+      "replay": {
+        "native_trace_hash": "cd0b4bb682b3ec9e9698cfa3f88758047b24f237dc30e8d02f1f739a07032a72",
+        "reason": "",
+        "request_count": 2,
+        "verified": true
+      }
+    },
+    {
+      "id": "g1.r0-A.cross.selected_selected.repeat-0-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/d159db979ad0e03bcb619bcf82e31d11/native.json",
+        "sha256": "145bdba884b5020db9db479aebe624f36de5675235ae7085630620836a5433b0"
+      },
+      "replay": {
+        "native_trace_hash": "9da942a772460abdaf3c25f71dd14d4e93455def20497685592adb65f2ad2eb2",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-A.cross.selected_parent.repeat-0-0",
+      "termination": "tool_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/7766f7e43f0fc1bb9ec26ce6cd8c86f3/native.json",
+        "sha256": "b18ea55ca24c929f1e18822b67fcf6d86bc5c73ee5339cfbae1e1b23d881cabd"
+      },
+      "replay": {
+        "native_trace_hash": "0ac446d111f0f238c3094eb69c6a6b2cf87813b7345104c114e6920fbeed7fc2",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-A.current.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/15297ee8422b3cc599c4a2a28ddcafc3/native.json",
+        "sha256": "15f3d6b1290033120baf1ae371f39ac71c6fc5a80a3311ffcaaf984fa69bf9b7"
+      },
+      "replay": {
+        "native_trace_hash": "3be2cbd5fadb7184fa8131e9d23c5cd9426e0890191e6073b0f1052b36f9e6e7",
+        "reason": "",
+        "request_count": 6,
+        "verified": true
+      }
+    },
+    {
+      "id": "g1.r0-A.cross.selected_parent.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/27a942e17e98a09d02b70e993ce4ad46/native.json",
+        "sha256": "db87fc0dd0868989ed8e6cdf00fce97d4cf20b22555c4fe3123a8180bc66eb97"
+      },
+      "replay": {
+        "native_trace_hash": "785ca70c702afe40678c4485a13226b04137dac32b96c3c396475fadacbc2f18",
+        "reason": "",
+        "request_count": 9,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.r0-A.cross.selected_selected.repeat-0-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/1a76016cace8e0cf96ec5a29d14406de/native.json",
+        "sha256": "bb714b2a99283470d3171a486b900511248991b2be9b95e77f8e9d8b882be8f0"
+      },
+      "replay": {
+        "native_trace_hash": "2d3b2cf5b8a2b5ad01113b6c537a66e57ed69a9cd9933c112084c461ba85e8ac",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.service.reflection-task.smoke-1.policy_refusal",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/383d67b58f723fa92b7d368d6d795978/native.json",
+        "sha256": "7d84f926c9275aa126daef0c55ad7bdf4caf29ddf2613fb0e1f4992939726eed"
+      },
+      "replay": {
+        "native_trace_hash": "886ae88a6ac8a50c7fd77dfe8f6fa2fd663cb1a76d4eb6c348f5e9e9099c6dfa",
+        "reason": "",
+        "request_count": 8,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.service.baseline.smoke-1.policy_refusal",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/6f9ace7ae14841e0242bb32b738a081b/native.json",
+        "sha256": "b2907b6c38c2a87039e1020e0366dbf6d7beae9ab1ef9974e9485ad9b9f543a1"
+      },
+      "replay": {
+        "native_trace_hash": "80cb446c6c95eaea6015afd749908fdc4e31f4899327fba06d10ab1985878580",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.selected_customer.smoke-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/40c11da2576dd16b915af117b2da6bd8/native.json",
+        "sha256": "2474f179d1bb61fd1880abc7fc65cc5ac72409b52fac9b81b904b2c737244560"
+      },
+      "replay": {
+        "native_trace_hash": "787192a31830ebbb2320444bfa9cb39d2b6397d0b2ebf621d06e7c43622ae1e4",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.service.candidate.smoke-1",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/a800b492a6f3bc3301a533e2e59730ed/native.json",
+        "sha256": "9a1e6f0a5621bd631093981fbd943e520d8e19d781b82eda68c4173021f03b86"
+      },
+      "replay": {
+        "native_trace_hash": "020befd5a1bedc87b3021553b6afcc9510db9c5b1e8430c0063be1ba2b87b54a",
+        "reason": "",
+        "request_count": 8,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.service.reflection-task.smoke-1.completion",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/3afd4e120a9110c08912b48c2b501132/native.json",
+        "sha256": "bd6a9dba3316ca9b202291b925b72c37939692195497bf7f8fd7b1fa14d68cd3"
+      },
+      "replay": {
+        "native_trace_hash": "e22102387b44c9bec74990c2e5925980aa5c2ffee15d3052a293f9345ad95f6f",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.service.baseline.smoke-1",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/678b36bf6589ce6e018e6f96f7e20b23/native.json",
+        "sha256": "f97508930ccb040e9eaf0017036ead08174966a60514ce357da2e21a00189e9e"
+      },
+      "replay": {
+        "native_trace_hash": "335ba7187bed6560ac2efaeb97a18b9fffb160a2adf302777be57625bb5794b3",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.service.candidate.smoke-1.completion",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/8eea5714cb15551dcbc63c3f1c787be9/native.json",
+        "sha256": "62abc4704a187bff41be27d88e778e315ddfd2f21f92e5453ba0ddc45f8b7f0b"
+      },
+      "replay": {
+        "native_trace_hash": "6acc4197c673310086060013c48c57e5be9710a2bac5c64587409297ef9edf3a",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.service.baseline.smoke-1.completion",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/c3956e75fab902d037e7025bcdd8b449/native.json",
+        "sha256": "8adbad74f918a7e18cda9e5f632dfeb0ebb0e84780d1812aa5b23a44b36ba9fc"
+      },
+      "replay": {
+        "native_trace_hash": "44c70cebe831a2dace29fa3fb24c0acd83a9688c986d7139100168f1cf19ac86",
+        "reason": "",
+        "request_count": 5,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.cross.selected_selected.smoke-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/3e622a6c231228e97089f1e0caf4db52/native.json",
+        "sha256": "48a12bf3103130a24ada69e49165c3de1a897b52a8802d8c452fc6e4da99a430"
+      },
+      "replay": {
+        "native_trace_hash": "6ec1d37da685eca8043a88d186f2729c99f5c689cdffd3da6d2b5c733c861dcf",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.cross.parent_selected.smoke-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/5f8cb26a50d16626ae87408c5b6239fa/native.json",
+        "sha256": "8406d32d3b262b69be3959e9f93a41c246516bb6bcedab713fdcbf6f07608cd5"
+      },
+      "replay": {
+        "native_trace_hash": "3c27a95259b2dc4e3a36cdf29de4bc42ddc83dc028dbb33722d3afb8133f0396",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.cross.parent_parent.smoke-0",
+      "termination": "llm_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/598fd963c3f3b3249c67b27cac1d0445/native.json",
+        "sha256": "0d888663ebf1ba4d7d5828bbd8a81b86807adabb3494e7d0c9d53437d3b184a5"
+      },
+      "replay": {
+        "native_trace_hash": "866ffb49bd1d61c99e7927360ea3c6eba97e5e0029782e39b326ac23df5f5b04",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.current.smoke-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/cecaaa5fd558631e6cbc843e49ed628e/native.json",
+        "sha256": "525eda6d9b44653b20eec963cb76b9c4d66650809b4a752ada391b1fd5b5c56c"
+      },
+      "replay": {
+        "native_trace_hash": "371ee688e99c19ff09ad9c24d8f48fb2c2c1eafbdd340fefae5fa89e2302ca68",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.cross.selected_parent.smoke-0",
+      "termination": "customer_turns_budget_exhausted",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/c85dfc3b5997ad331e38dd186110e05b/native.json",
+        "sha256": "c7a1e776ca361a9e68aca2c3d088c7d04533ff3aee9448cc42574442a172b7df"
+      },
+      "replay": {
+        "native_trace_hash": "dd41f6e0a82e9ebb7beb3e79ac428af6255f2eea4d08b59fddef98bfc965b58d",
+        "reason": "",
+        "request_count": 10,
+        "verified": true
+      }
+    },
+    {
+      "id": "g0.smoke-A.service.candidate.smoke-1.policy_refusal",
+      "termination": "completed",
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/smoke-A/native/episodes/1cad791e526386b32dd6bf565161db17/native.json",
+        "sha256": "fde3f4b9cf01f916496f20c5a64721a8b23d8a82fa77f02d5b171e85bdf7ba74"
+      },
+      "replay": {
+        "native_trace_hash": "42f6f39250990ead35ffef94439b11ee283afdc6956b4426916c645c79e37fdf",
+        "reason": "",
+        "request_count": 3,
+        "verified": true
+      }
+    }
+  ]
+}

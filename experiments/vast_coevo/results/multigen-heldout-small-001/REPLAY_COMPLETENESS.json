@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "full_native_traces": 53,
+  "replayed_native_traces": 53,
+  "incomplete_native_traces": 0,
+  "wire_calls": 388,
+  "wire_calls_matched": true,
+  "reflection_calls_reproduced": 7,
+  "service_gates_reproduced": 2,
+  "heldout_completed": 0,
+  "heldout_planned": 72,
+  "experiment_status": "BLOCKED",
+  "note": "full replay means exact reproduction, not successful business completion"
+}

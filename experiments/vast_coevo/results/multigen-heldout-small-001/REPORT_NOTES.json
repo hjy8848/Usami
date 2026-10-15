@@ -1,0 +1,17 @@
+{
+  "protocol": "vast-multigen-heldout-small-v2",
+  "planned_heldout_episodes": 72,
+  "max_workers": 4,
+  "training_parallel_chains": 2,
+  "training_generations_per_arm": 2,
+  "independent_training_repetitions": 1,
+  "prompt_compression_enabled": false,
+  "prior_actual_tokens": 961580,
+  "prior_actual_calls": 145,
+  "historical_records_changed": false,
+  "related_tests": {
+    "passed": 88,
+    "log": "related-tests.log"
+  },
+  "source_commit": "b514141568a09f76fbc7d30b5e1913d1350d01b2"
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "bundle": "raw-evidence.tar.gz",
+  "bytes": 12162340,
+  "sha256": "10d14b38b5fcf21131059d9a4449a38dda587e8b60246b04f9577dd2ffd2af8b",
+  "files": 2125,
+  "verified_against_originals": true,
+  "api_keys_included": false,
+  "internal_gateway_address_included": true,
+  "published": false
+}

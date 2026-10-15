@@ -46,3 +46,15 @@
 `EVOLUTION_SUMMARY.json` 保存每代实际选择及原因，`FINAL_SNAPSHOTS.json` 在评价前冻结最终版本。`HELDOUT_RESULTS.json` 保存逐任务、总体及规则/场景类别结果；`STATISTICAL_ANALYSIS.json` 保存预注册比较。`REPLAY_AUDIT.json` 核验 Episode、真实请求/返回、Reflection、Static Gate、Service Dynamic Gate 与统计。`wire-ledger/` 保存每次真实请求和返回、未知状态及成本；`work/` 与 `evaluation/` 保存全部原生轨迹。
 
 正式结果未完成时，不生成看似成功的空统计。`STATUS.json` / 中文 `FINAL_REPORT.md` 明确报告实际完成数和阻塞。
+
+
+## 用户授权的小规模运行 v2
+
+`prepare --small` 冻结 1 次独立重复、A/B 各 2 代、12 个 Held-out 世界（每个合法/拒绝各一题），共 72 场评估，最大并发 4。两条训练链各自顺序执行，评估池最多 4 个 Episode。
+
+本轮上限 1000 万 Token：Smoke 200 万、A/B 各 250 万、Held-out 300 万；调用总上限 2000。保留旧 Smoke 的 145 次调用 / 961580 Token（含原连通检查），累计上限 10961580，低于原 2500 万。最多额外一次 Smoke，不重试线上失败，不将 Smoke 候选带入正式训练。Prompt 保持原版，Service Gate 不变。单次训练重复只报告探索性、条件于此次训练的世界配对区间，不能宣称训练稳定性得到证明。
+
+```bash
+.venv/bin/python experiments/vast_coevo/examples/multigen_heldout.py prepare --small --root experiments/vast_coevo/results/multigen-heldout-small-001
+.venv/bin/python experiments/vast_coevo/examples/multigen_heldout.py execute --root experiments/vast_coevo/results/multigen-heldout-small-001
+```

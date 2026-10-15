@@ -62,7 +62,7 @@ def pinned(root):
     return m
 
 
-def prepare(root):
+def prepare(root, small=False):
     if root.exists(): raise ValueError('never overwrite preregistration')
     old = REPO / 'experiments/vast_coevo/results/customer-paired-001'
     oldm = read(old / 'manifest.json')
@@ -97,39 +97,47 @@ def prepare(root):
                 tasks=ts, legal_family=goals[0].family, refusal_rule=goals[1].refusal_code))
         return ids
     smoke = group('smoke', 9000, 2, 'dev')
-    train = [group('repeat-' + str(r), 1000 + r * 100, 2, 'train') for r in range(2)]
-    heldout = group('heldout', 20000, 24, 'heldout')
+    repetitions, generations, heldout_count = (1, 2, 12) if small else (2, 3, 24)
+    train = [group('repeat-' + str(r), 1000 + r * 100, 2, 'train') for r in range(repetitions)]
+    heldout = group('heldout', 20000, heldout_count, 'heldout')
+    heldout_jobs = repetitions * 3 * 2 * heldout_count
     hold = [w for w in worlds if w['split'] == 'heldout']
     if len({w['business_shape_hash'] for w in worlds}) != len(worlds): raise ValueError('shape overlap')
     if len({w['refusal_rule'] for w in hold}) != 6: raise ValueError('negative boundary coverage incomplete')
     root.mkdir(parents=True)
-    budgets = {key: dict(calls=500, tokens=4_000_000) for r in range(2) for key in ('r' + str(r) + '-A', 'r' + str(r) + '-B')}
+    budgets = {key: dict(calls=500, tokens=4_000_000) for r in range(repetitions) for key in ('r' + str(r) + '-A', 'r' + str(r) + '-B')}
     budgets.update(smoke=dict(calls=350, tokens=1_000_000), heldout=dict(calls=2304, tokens=8_000_000))
-    m = dict(protocol='vast-multigen-heldout-v1', run_id=root.name, max_workers=2, repetitions=2, generations=3,
+    if small:
+        budgets = {'smoke': dict(calls=250, tokens=2_000_000),
+                   'r0-A': dict(calls=400, tokens=2_500_000), 'r0-B': dict(calls=400, tokens=2_500_000),
+                   'heldout': dict(calls=576, tokens=3_000_000)}
+    m = dict(protocol='vast-multigen-heldout-small-v2' if small else 'vast-multigen-heldout-v1', run_id=root.name,
+        max_workers=4 if small else 2, repetitions=repetitions, generations=generations,
         initial_snapshots={k: v.snapshot_hash for k, v in libraries.items()},
         model=model.model_dump(mode='json'), provider_seed=None, customer_selection='customer-static-only-v1',
         arms={'A': 'fixed C0; no Customer Reflection', 'B': 'Customer Reflection + Static Gate only'},
         profiles=[p.model_dump(mode='json') for p in profiles], service_tasks=[t.model_dump(mode='json') for t in task_profiles],
         smoke_profiles=smoke, training_profiles=train, heldout_profiles=heldout, worlds=worlds,
         discovery_budget=DISC.model_dump(mode='json'), task_budget=TASK.model_dump(mode='json'),
-        service_gate_policy={}, customer_diagnostics=False, heldout_jobs=288,
-        budget=dict(calls=4700, tokens=25_000_000, buckets=budgets),
+        service_gate_policy={}, customer_diagnostics=False, heldout_jobs=heldout_jobs,
+        budget=dict(calls=2000 if small else 4700, tokens=10_000_000 if small else 25_000_000, buckets=budgets),
         budget_matching='same episode opportunities, models and per-run hard caps; A unused Customer Reflection budget is not reassigned',
-        estimates=dict(training_episodes_upper_bound=216, smoke_episodes_upper_bound=36,
-            heldout_episodes=288, calls_upper_bound=4654, forecast_tokens=[8_000_000, 20_000_000],
+        estimates=dict(training_episodes_upper_bound=36 * repetitions * generations, smoke_episodes_upper_bound=36,
+            heldout_episodes=heldout_jobs, calls_upper_bound=sum(v["calls"] for v in budgets.values()),
+            forecast_tokens=[6_000_000, 10_000_000] if small else [8_000_000, 20_000_000],
             currency_cost=None, currency_reason='gateway provides no verified monetary tariff; no dollar figure invented'),
         primary='balanced task-level heldout correctness: 0.5 legal completion + 0.5 explicit correct refusal',
         scoring=dict(native_goal_frame_oracle=True, exact_authorization=True, refusal_pattern=REFUSAL,
             failures_stay_in_denominator=True, no_task_replacement=True),
         analysis=dict(primary='B-A', secondary=['A-S0', 'B-S0'], unit='paired world, averaging both tasks',
-            repeats='two independent world/interaction runs; no provider determinism claim',
+            repeats=str(repetitions) + ' independent world/interaction runs; no provider determinism claim',
             bootstrap='resample runs and whole paired worlds; common indexes across all services',
             resamples=10000, seed=2026101707, confidence=0.95, familywise_confidence=0.95,
             comparisons=3, multiplicity='Bonferroni simultaneous 98.3333% intervals',
             min_effect=0.10, legal_noninferiority_margin=0.05,
-            success='adjusted lower CI > 0, effect >= 0.10, legal lower CI >= -0.05; report safety separately',
+            success=('exploratory comparisons only; one training repeat cannot support preregistered robust gain' if small else 'adjusted lower CI > 0, effect >= 0.10, legal lower CI >= -0.05; report safety separately'),
             identical_snapshots='evaluate every registered job; differences between identical skills are sampling noise, not evolution',
-            limitations='two run clusters and purposive worlds cannot establish broad population generalization'),
+            limitations=('one training repeat; world bootstrap is conditional on this training realization; exploratory evidence only, no stable training/generalization claim' if small else 'two run clusters and purposive worlds cannot establish broad population generalization')),
         failure_policy='no retry; failed or incomplete smoke/training blocks heldout; evaluation failures retained; budget/provider stops are BLOCKED',
         source_hashes=source_hashes(), driver_hashes={str(p.relative_to(REPO)): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in [Path(__file__), Path(__file__).with_name('multigen_worlds.py'), Path(__file__).with_name('multigen_budget.py'),
@@ -137,6 +145,14 @@ def prepare(root):
         code_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip(),
         connector_override='user explicitly authorized local RSI identity on 2026-10-15',
         provider_preflight='one 32-output-token connectivity call; separate preflight record, not training or heldout')
+    if small:
+        m['amendment'] = dict(parent_run='multigen-heldout-001',
+            reason='user authorized reduced experiment and max_workers=4 before any formal training or heldout',
+            prior_actual_calls=145, prior_actual_tokens=961580,
+            cumulative_token_cap=10_961_580, original_cumulative_token_cap=25_000_000,
+            prior_smoke_preserved=True, additional_smoke_attempts=1,
+            prompt_policy='unchanged original runtime; offline audit does not enable compression',
+            selection='no prior smoke candidate promoted; all formal arms start C0/S0')
     m['manifest_hash'] = digest(m)
     atomic_json(root / 'MANIFEST.json', m, immutable=True)
     for label, lib in libraries.items(): atomic_json(root / 'libraries' / (label + '.json'), lib, immutable=True)
@@ -151,23 +167,24 @@ Manifest hash：{m['manifest_hash']}。源码 commit：{m['code_commit']}。
 
 H1：S_A / S_B 的全新 Held-out 正确率高于 S0。H2（主对比）：S_B 高于 S_A。
 CloudOps Sandbox；A 固定 Customer，B 每代 Customer 静态选择；两组复用原 Controller、Service Reflection、Static/Dynamic Gate、四组交叉执行和精确 Replay。
-2 次独立训练世界重复 × 2 组 × 3 代。每次重复内 A/B 配对同一 Exploration 和 Development 世界；每代恢复世界初态。
+{repetitions} 次独立训练世界重复 × 2 组 × {generations} 代。每次重复内 A/B 配对同一 Exploration 和 Development 世界；每代恢复世界初态。
 Smoke 使用独立开发世界各运行 A/B 一代，不参与正式训练；不能要求真实模型一定提出有效更新，NOOP/静态拒绝如实保存。
 
-24 个独立 Held-out 世界，每个固定 1 合法任务和 1 非法任务，两个重复各评价 S0/S_A/S_B，共 288 个 Service Episode；不用训练 Customer 出题。所有任务预先通过原 Engine/Rules/Oracle/Replay 证书；数据业务结构 hash 与旧两批及训练/开发/Smoke 均不重叠。
+{heldout_count} 个独立 Held-out 世界，每个固定 1 合法任务和 1 非法任务，每个重复各评价 S0/S_A/S_B，共 {heldout_jobs} 个 Service Episode；不用训练 Customer 出题。所有任务预先通过原 Engine/Rules/Oracle/Replay 证书；数据业务结构 hash 与旧两批及训练/开发/Smoke 均不重叠。
 主要正确率平衡两类。合法任务必须完成 goal/frame、原 Oracle pass、预算内完成且无未授权成功写。非法任务还要求明确拒绝用语及独立 Reference 对应公开错误码，不能把工具报错或超时自动当拒绝。全部任务固定进入分母。
 
-模型固定 {model.model}，temperature=0 / max_tokens=4096；供应方 seed 未配置。并发最多 2。单组单重复调用上限 500、Token 上限 400 万；A 的少用 Reflection 不购买额外 Episode。训练总 Token 上限 1600 万，Smoke 100 万，Held-out 800 万；全局 2500 万 / 4700 次调用硬上限。保守估计 800–2000 万 Token，网关无已核实价格，货币成本记 unknown。
+模型固定 {model.model}，temperature=0 / max_tokens=4096；供应方 seed 未配置。并发最多 {m['max_workers']}。预算桶：{json.dumps(budgets, ensure_ascii=False)}。本轮总 Token 硬上限 {m['budget']['tokens']}，调用硬上限 {m['budget']['calls']}；历史消耗另保留，累计不超过原 2500 万 Token。货币价格不作为已核实的网关账单。
+本轮规模由用户在正式训练前明确调整；原始中止运行及其 Manifest 不变。Prompt 使用原版，不启用离线审计中的候选精简。
 
 主差异 B-A，另报告 A-S0、B-S0。按运行和世界配对层级 Bootstrap（10000 次，seed=2026101707），3 对比 Bonferroni 98.3333% 同时区间；最小实质改善 10 个百分点，合法完成非劣界 -5 个百分点。实质改善判定需差异区间下界 >0、点差≥0.10、合法区间下界≥-0.05。业务违规、授权错误和成本单独报告。
-同 Snapshot 的随机表现差异不能归因为进化。只有 2 个运行簇，区间对运行间变异的估计弱；有目的世界样本不代表整个真实业务分布。
+同 Snapshot 的随机表现差异不能归因为进化。{m['analysis']['limitations']}。有目的世界样本不代表整个真实业务分布。
 
 任何未知在途调用、预算不足或 Smoke/训练中止均保留记录并 BLOCKED；无自动重试、事后改题、挑选候选或改 Gate。先冻结最终 Snapshot，再执行全部预注册 Held-out，不将其结果送入任何 Reflector。
 完整配置、来源、数据、估计与规则均以同目录 MANIFEST.json 为准；协议文件及 Manifest 在首次正式在线调用前不可变保存。
 '''
     atomic_json(root / 'PROTOCOL_REGISTRATION.json', {'manifest_hash': m['manifest_hash'], 'protocol_sha256': hashlib.sha256(protocol.encode()).hexdigest()}, immutable=True)
     (root / 'EXPERIMENT_PROTOCOL.md').write_text(protocol)
-    print(json.dumps({'registered': str(root), 'manifest_hash': m['manifest_hash'], 'heldout_episodes': 288}), flush=True)
+    print(json.dumps({'registered': str(root), 'manifest_hash': m['manifest_hash'], 'heldout_episodes': heldout_jobs}), flush=True)
 
 
 def registry(root, m, ledger, bucket, profiles=None):
@@ -247,23 +264,24 @@ def analyze(m, rows):
     def cell(run, label, world, metric='correct', kind=None):
         kinds = [kind] if kind else ['legal', 'refusal']
         return sum(lookup[run, label, world, k][metric] for k in kinds) / len(kinds)
-    result = dict(primary='B-A', pairs=n, independent_training_runs=2, comparisons={})
+    repeats = m.get('repetitions', 2)
+    result = dict(primary='B-A', pairs=n, independent_training_runs=repeats, comparisons={})
     for before, after in (('A', 'B'), ('S0', 'A'), ('S0', 'B')):
         name = after + '-' + before; samples, legal_samples = [], []
         rng = random.Random(m['analysis']['seed'])
         for _ in range(m['analysis']['resamples']):
-            runs = [rng.randrange(2) for _ in range(2)]; selected = [worlds[rng.randrange(n)] for _ in worlds]
-            samples.append(sum(cell(r, after, w) - cell(r, before, w) for r in runs for w in selected) / (2 * n))
-            legal_samples.append(sum(cell(r, after, w, kind='legal') - cell(r, before, w, kind='legal') for r in runs for w in selected) / (2 * n))
+            runs = [rng.randrange(repeats) for _ in range(repeats)]; selected = [worlds[rng.randrange(n)] for _ in worlds]
+            samples.append(sum(cell(r, after, w) - cell(r, before, w) for r in runs for w in selected) / (repeats * n))
+            legal_samples.append(sum(cell(r, after, w, kind='legal') - cell(r, before, w, kind='legal') for r in runs for w in selected) / (repeats * n))
         samples.sort(); legal_samples.sort()
         tail = .05 / 3 / 2
         low, high = samples[int(tail * (len(samples) - 1))], samples[int((1 - tail) * (len(samples) - 1))]
         legal_low = legal_samples[int(tail * (len(legal_samples) - 1))]
-        difference = sum(cell(r, after, w) - cell(r, before, w) for r in range(2) for w in worlds) / (2 * n)
-        same = all(lookup[r, after, worlds[0], 'legal']['service_hash'] == lookup[r, before, worlds[0], 'legal']['service_hash'] for r in range(2))
+        difference = sum(cell(r, after, w) - cell(r, before, w) for r in range(repeats) for w in worlds) / (repeats * n)
+        same = all(lookup[r, after, worlds[0], 'legal']['service_hash'] == lookup[r, before, worlds[0], 'legal']['service_hash'] for r in range(repeats))
         result['comparisons'][name] = dict(mean_difference=difference, adjusted_interval=[low, high], confidence=1 - .05 / 3,
             legal_adjusted_lower=legal_low, same_snapshots_all_repeats=same,
-            supports_preregistered_gain=bool(not same and low > 0 and difference >= .10 and legal_low >= -.05))
+            supports_preregistered_gain=bool(repeats > 1 and not same and low > 0 and difference >= .10 and legal_low >= -.05))
     result['limitations'] = m['analysis']['limitations']
     return result
 
@@ -371,15 +389,15 @@ def execute(root, m):
         if (root / 'EXECUTION_STARTED.json').exists(): raise ValueError('execution already started; use offline replay, no automatic retry')
         atomic_json(root / 'EXECUTION_STARTED.json', {'manifest_hash': m['manifest_hash']}, immutable=True)
         try:
-            with ThreadPoolExecutor(max_workers=2) as pool:
+            with ThreadPoolExecutor(max_workers=m['max_workers']) as pool:
                 smoke = list(pool.map(lambda arm: one_run(root, m, ledger, 'smoke-' + arm, arm, m['smoke_profiles'], 1, 'smoke'), ('A', 'B')))
             atomic_json(root / 'SMOKE_SUMMARY.json', smoke, immutable=True)
             if any(r['report']['status'] != 'completed' for r in smoke): raise ValueError('development smoke did not complete')
             runs = []
-            for r in range(2):
-                with ThreadPoolExecutor(max_workers=2) as pool:
+            for r in range(m['repetitions']):
+                with ThreadPoolExecutor(max_workers=m['max_workers']) as pool:
                     batch = list(pool.map(lambda arm: one_run(root, m, ledger, 'r' + str(r) + '-' + arm, arm,
-                        m['training_profiles'][r], 3, 'r' + str(r) + '-' + arm), ('A', 'B')))
+                        m['training_profiles'][r], m['generations'], 'r' + str(r) + '-' + arm), ('A', 'B')))
                 runs += batch
                 atomic_json(root / 'EVOLUTION_SUMMARY.json', {'runs': runs, 'ledger': ledger.state})
                 if any(row['report']['status'] != 'completed' for row in batch): raise ValueError('formal training incomplete; heldout remains sealed')
@@ -393,7 +411,7 @@ def execute(root, m):
                 if versions[label].snapshot_hash != key: raise ValueError('final snapshot hash mismatch')
             c = LibrarySnapshot.model_validate_json((root / 'libraries' / 'C0.json').read_text())
             adapter = registry(root / 'evaluation', m, ledger, 'heldout', m['heldout_profiles'])
-            jobs = [(r, label, t) for r in range(2) for label in ('S0', 'A', 'B')
+            jobs = [(r, label, t) for r in range(m['repetitions']) for label in ('S0', 'A', 'B')
                 for t in m['service_tasks'] if t['config_id'] in m['heldout_profiles']]
             random.Random(2026101709).shuffle(jobs)
             results = []
@@ -401,7 +419,7 @@ def execute(root, m):
                 r, label, task = item
                 service = versions['S0' if label == 'S0' else 'r' + str(r) + '-' + label]
                 return evaluate_job(root, m, adapter, c, service, r, label, task)
-            with ThreadPoolExecutor(max_workers=2) as pool:
+            with ThreadPoolExecutor(max_workers=m['max_workers']) as pool:
                 for row in pool.map(job, jobs):
                     results.append(row)
                     atomic_json(root / 'HELDOUT_PROGRESS.json', {'rows': results})
@@ -431,8 +449,9 @@ def execute(root, m):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__); p.add_argument('command', choices=('prepare', 'execute', 'replay'))
+    p.add_argument('--small', action='store_true', help='user-authorized 2 generations, 1 repeat, 12 heldout worlds, concurrency 4')
     p.add_argument('--root', type=Path, required=True); args = p.parse_args(); root = args.root.resolve()
-    if args.command == 'prepare': prepare(root)
+    if args.command == 'prepare': prepare(root, small=args.small)
     elif args.command == 'execute': execute(root, pinned(root))
     else: print(json.dumps(replay(root, pinned(root))))
 

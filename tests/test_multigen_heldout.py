@@ -139,3 +139,20 @@ def test_actual_controller_driver_and_all_reflection_static_dynamic_replays(tmp_
     audit = experiment.replay(root, m)
     assert audit['status'] == 'PASS' and audit['reflection_calls_reproduced'] == 2
     assert audit['service_gates_reproduced'] == 1 and audit['online_calls'] == 0
+
+
+def test_small_protocol_matches_authorized_scale_and_preserves_rules(tmp_path):
+    root = tmp_path / 'small'; experiment.prepare(root, small=True); m = experiment.pinned(root)
+    assert (m['repetitions'], m['generations'], m['max_workers'], m['heldout_jobs']) == (1, 2, 4, 72)
+    assert len(m['heldout_profiles']) == 12
+    assert m['customer_selection'] == 'customer-static-only-v1'
+    assert m['service_gate_policy'] == {} and m['customer_diagnostics'] is False
+    assert m['amendment']['prompt_policy'].startswith('unchanged')
+    assert m['budget']['tokens'] == sum(v['tokens'] for v in m['budget']['buckets'].values())
+    assert m['amendment']['cumulative_token_cap'] < 25_000_000
+    rows = [dict(repeat=0, service=s, world=w, kind=k, correct=s == 'B', service_hash=s * 64)
+        for s in ('S0', 'A', 'B') for w in m['heldout_profiles'] for k in ('legal', 'refusal')]
+    result = experiment.analyze(m, rows)
+    assert result['independent_training_runs'] == 1
+    assert result['comparisons']['B-A']['mean_difference'] == 1
+    assert not result['comparisons']['B-A']['supports_preregistered_gain']

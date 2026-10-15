@@ -1,0 +1,3266 @@
+{
+  "schema_version": 1,
+  "online_calls": 0,
+  "historical_data_changed": false,
+  "scope": "formal A/B development only; no Smoke, evaluation or heldout data read",
+  "source_root": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-002",
+  "episodes": [
+    {
+      "arm": "A",
+      "id": "g0.r0-A.current.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "acc93588aa3fe4e6877393ea4bc5eba52c75056d5244b2d589a6216b24bb5d55",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "customer_turns_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Query project p0 status, quota, and current running usage.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        },
+        {
+          "message": "Query project p1 status, quota, and current running usage.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/15297ee8422b3cc599c4a2a28ddcafc3/native.json",
+        "sha256": "15f3d6b1290033120baf1ae371f39ac71c6fc5a80a3311ffcaaf984fa69bf9b7"
+      },
+      "source": "work/r0-A/native/episodes/15297ee8422b3cc599c4a2a28ddcafc3/evidence.json",
+      "source_sha256": "07cf526b6eb0d0c9fdcb3a8805be7ee9c85a027330fe31daa0f816a39e43d1b5",
+      "service_reflection_membership": [
+        0
+      ]
+    },
+    {
+      "arm": "A",
+      "id": "g1.r0-A.service.reflection-task.repeat-0-1.policy_refusal",
+      "generation": 1,
+      "evidence_hash": "b8563ab1ead4a011ea83fe407c8457a4b57ecada013c7243eef3e819f4fd15e8",
+      "world_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+      "track": "service_task",
+      "termination": "completed",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/17f40caf69477dcf1ff98ac62574568c/native.json",
+        "sha256": "c5dd25f48072ed10c7b043ab5842278f8356855dcfb27ae143fb2a55b1f30dc3"
+      },
+      "source": "work/r0-A/native/episodes/17f40caf69477dcf1ff98ac62574568c/evidence.json",
+      "source_sha256": "03decd9cb364d4d45205974c1392dc1983b8d717b054a43c63d38a45992731bb",
+      "service_reflection_membership": [
+        1
+      ]
+    },
+    {
+      "arm": "A",
+      "id": "g0.r0-A.cross.selected_selected.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "14f7160ccb70c407c74f140ba8ec55f366cf134f09c7ba70245ba1ace066ea54",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "llm_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "pay_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "resume_project",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND",
+            "UNAUTHORIZED_OPERATION"
+          ],
+          "successful_execution": false,
+          "authorized": false,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_project",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Paying invoice bill1 for project p1 to clear outstanding balance.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "pay_invoice",
+              "params": {
+                "idempotency_key": "pay_bill1_001",
+                "payment_method": "card_approved"
+              },
+              "project_id": "p1",
+              "resource_id": "bill1"
+            }
+          ],
+          "type": "send_message"
+        },
+        {
+          "message": "Resuming project p1 now that invoice bill1 is paid.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "resume_project",
+              "params": {
+                "invoice_id": "bill1"
+              },
+              "project_id": "p1",
+              "resource_id": "bill1"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/1a76016cace8e0cf96ec5a29d14406de/native.json",
+        "sha256": "bb714b2a99283470d3171a486b900511248991b2be9b95e77f8e9d8b882be8f0"
+      },
+      "source": "work/r0-A/native/episodes/1a76016cace8e0cf96ec5a29d14406de/evidence.json",
+      "source_sha256": "a5c75c5f73ff056a6957ad7ca830e1774a326f7f237abf1c319ba9fe39b34379",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "A",
+      "id": "g1.r0-A.cross.parent_parent.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "9d3aa51c2dc93edbf157a3df17c6dafd3f458c821cd9e767185cab5e2fc143c8",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "tool_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000016",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000018",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Starting exploration. I am Employee 1 (u1) with admin access to p0 and p1, operator access to p2, and viewer access to p3. I'll first gather more context about my permissions and project states.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/24d135abefb59084ad0c8ecfc6b0defa/native.json",
+        "sha256": "8ebbfb62c3e1cce9bef2a603d3015fef82bf393ba8e1a374dab6873534c15b42"
+      },
+      "source": "work/r0-A/native/episodes/24d135abefb59084ad0c8ecfc6b0defa/evidence.json",
+      "source_sha256": "71bcd6e15bf66400cd45c75f132d68cbe76a63c7171da966f4af405e8906cf4b",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "A",
+      "id": "g1.r0-A.cross.selected_parent.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "7cac5d238aaedbe8ee8add23e213a38b21230bfb405b35fbe663f3abf71b1398",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "customer_turns_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Exploring my access and project state. Querying customer context and project p0 details.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        },
+        {
+          "message": "Attempting to start the root instance p0_r0 in project p0 to test the dependency chain startup.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r0"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/27a942e17e98a09d02b70e993ce4ad46/native.json",
+        "sha256": "db87fc0dd0868989ed8e6cdf00fce97d4cf20b22555c4fe3123a8180bc66eb97"
+      },
+      "source": "work/r0-A/native/episodes/27a942e17e98a09d02b70e993ce4ad46/evidence.json",
+      "source_sha256": "3834b6d3bcab40f94aa7eb943e3d256c8fbaede38013f6275371ffdcefb82c86",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "A",
+      "id": "g1.r0-A.cross.parent_selected.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "a7b554707acb4209c41f6429294a9481738d4ac8fbec523c07de8ba1ea658796",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "llm_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "pay_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "2803c5fd1bc1efff0eb7d7da3abc3116ae8bb0b33399cc7cfbc397b76fde1503"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "resume_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "2803c5fd1bc1efff0eb7d7da3abc3116ae8bb0b33399cc7cfbc397b76fde1503",
+          "after_hash": "ad1cf4e8e816f37daf0d57ec27586b31883adb1a5c97f0ef72fceb4d783b9257"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "ad1cf4e8e816f37daf0d57ec27586b31883adb1a5c97f0ef72fceb4d783b9257",
+          "after_hash": "ad1cf4e8e816f37daf0d57ec27586b31883adb1a5c97f0ef72fceb4d783b9257"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "I'm Employee 1 (u1) with admin access to projects p0 (production, active) and p1 (development, suspended), operator access to p2 (staging, active), and viewer access to p3 (production, active). I notice p1 is suspended with an unpaid invoice (bill1, 1100 cents). Let me first check the current project details and quotas to understand the state better.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        },
+        {
+          "message": "I will pay the outstanding invoice for project p1 and then resume the project to restore operations.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "pay_invoice",
+              "params": {
+                "idempotency_key": "pay_bill1_u1_001",
+                "payment_method": "card_approved"
+              },
+              "project_id": "p1",
+              "resource_id": "bill1"
+            },
+            {
+              "name": "resume_project",
+              "params": {
+                "invoice_id": "bill1"
+              },
+              "project_id": "p1",
+              "resource_id": "p1"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/4814d53729f1eca6619d7a0c25482175/native.json",
+        "sha256": "24179f618434eea96d606ff5d4a7c78300883e275bc1ec9032283c13ed355d32"
+      },
+      "source": "work/r0-A/native/episodes/4814d53729f1eca6619d7a0c25482175/evidence.json",
+      "source_sha256": "633e79b4d2e052126799bdb711e265327f042fcadb8d86796ccd1586ef821a8c",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "A",
+      "id": "g0.r0-A.service.reflection-task.repeat-0-1.policy_refusal",
+      "generation": 0,
+      "evidence_hash": "0a55c51e5b78cc3968e4688f367b01b091f95589af710188d6a0b5b3fd6f95db",
+      "world_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+      "track": "service_task",
+      "termination": "completed",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/5d957f7750b7e36cd1fdc2abf1292656/native.json",
+        "sha256": "2e46d40fb7d1a7c7400e4856c224b0ed1c5103236420ddba3e6615b23503a509"
+      },
+      "source": "work/r0-A/native/episodes/5d957f7750b7e36cd1fdc2abf1292656/evidence.json",
+      "source_sha256": "a4f887b0266335ea2c553a66828a83e459c5fdce3d352118662d1569dc840316",
+      "service_reflection_membership": [
+        0
+      ]
+    },
+    {
+      "arm": "A",
+      "id": "g0.r0-A.selected_customer.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "de7321880c9f50c3ea7911e8acdaa76dd6879f8a230bd1dac7ef02a8712fb54b",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "llm_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Attempting to start instance p0_r0 in project p0 to verify dependency chain and billing status.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r0"
+            }
+          ],
+          "type": "send_message"
+        },
+        {
+          "message": "Attempting to start instance p0_r1 in project p0 to verify dependency chain progression.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r1"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/6ab5b6019a07b731a92992b093519cf5/native.json",
+        "sha256": "ca7cf948653aab8900167b95a9f0ea1e3ed5ffd4de5789258be523efbc49b0d5"
+      },
+      "source": "work/r0-A/native/episodes/6ab5b6019a07b731a92992b093519cf5/evidence.json",
+      "source_sha256": "75b6a4b31ed28a55683b67da6100a7028c9fff5965951d4f47c498bb7736ac17",
+      "service_reflection_membership": [
+        0
+      ]
+    },
+    {
+      "arm": "A",
+      "id": "g0.r0-A.cross.selected_parent.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "ebe498f0c04648620e3465276fc7852e6819d21d6f4a07d4b9d6ddb9b08bb5b0",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "tool_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000016",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000018",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Exploring my permissions and project state. I have admin access to p0 (active, paid) and p1 (suspended, unpaid), operator on p2 (active), and viewer on p3. Let me gather more context about my access and current project usage.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/7766f7e43f0fc1bb9ec26ce6cd8c86f3/native.json",
+        "sha256": "b18ea55ca24c929f1e18822b67fcf6d86bc5c73ee5339cfbae1e1b23d881cabd"
+      },
+      "source": "work/r0-A/native/episodes/7766f7e43f0fc1bb9ec26ce6cd8c86f3/evidence.json",
+      "source_sha256": "382475c33b8d01838306812a0b6bd84374b0217e65447de84b6c2cd6d59442fb",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "A",
+      "id": "g1.r0-A.current.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "c87b907ffce4fe98c94257488c2bdb29c9d944fa7cba061a17393986231b2158",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "customer_turns_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "pay_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "resume_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f",
+          "after_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f",
+          "after_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Query get_project for p1 and get_invoice for bill1.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        },
+        {
+          "message": "Paying invoice bill1 for project p1 and resuming the project.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "pay_invoice",
+              "params": {
+                "idempotency_key": "pay_bill1_001",
+                "payment_method": "card_approved"
+              },
+              "project_id": "p1",
+              "resource_id": "bill1"
+            },
+            {
+              "name": "resume_project",
+              "params": {
+                "invoice_id": "bill1"
+              },
+              "project_id": "p1",
+              "resource_id": "p1"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/80e6a43bcdbf9c42348e728e950d9cf7/native.json",
+        "sha256": "964eee1976f97b33447609e2c650dec392564c965d91c7ded7fa58117f01a314"
+      },
+      "source": "work/r0-A/native/episodes/80e6a43bcdbf9c42348e728e950d9cf7/evidence.json",
+      "source_sha256": "171eb599e259dd220f76d0f31bec4d24c593fd1824bded5a0994b7db6796595b",
+      "service_reflection_membership": [
+        1
+      ]
+    },
+    {
+      "arm": "A",
+      "id": "g0.r0-A.service.reflection-task.repeat-0-1.completion",
+      "generation": 0,
+      "evidence_hash": "034945a311caa9db5fd83e9b108dc1b4fc1e61e6dc4bea011b7d2db2b1722563",
+      "world_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+      "track": "service_task",
+      "termination": "completed",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "afa694eb3812218ddc0e1dfc2564a96d86fafacd4c7fc040777b74cd006ae60a"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "afa694eb3812218ddc0e1dfc2564a96d86fafacd4c7fc040777b74cd006ae60a",
+          "after_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886",
+          "after_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/954ee5da72ead2cf68d7d4f9575fc094/native.json",
+        "sha256": "2b620c4cb5bcae165d4e1bedd46b916464b2cfde62bd9b8c5b54b1ce6b5f68ec"
+      },
+      "source": "work/r0-A/native/episodes/954ee5da72ead2cf68d7d4f9575fc094/evidence.json",
+      "source_sha256": "4f25c51decbad40586ecce42b885a12bbfa8762e4b9ecd0f7b94d8266243cb63",
+      "service_reflection_membership": [
+        0
+      ]
+    },
+    {
+      "arm": "A",
+      "id": "g1.r0-A.selected_customer.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "d5a43fa84ddc889e1ee0d818ffb2c1e90f101b55c4112599c40c9635f0fce484",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "customer_stopped",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000016",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Exploring my access and project states. I have admin on p0 (active/paid) and p1 (suspended/unpaid), operator on p2 (active), and viewer on p3 (active). Let me gather more details on p2 and p3 where my access is limited.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        },
+        {
+          "message": "",
+          "reason": "Explored project states and access levels across p0-p3. Identified p1 as suspended/unpaid and p2/p3 as active with limited access. Concluding exploration.",
+          "requested_operations": [],
+          "type": "stop"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/96a42126e0fedda7de5816c069aee369/native.json",
+        "sha256": "80ea665c8818740bd02f62dd3083052c679694efb4e9a52f33cf4ce86025f56d"
+      },
+      "source": "work/r0-A/native/episodes/96a42126e0fedda7de5816c069aee369/evidence.json",
+      "source_sha256": "f035d679cbf6a78395891f2899829bceac6504fa1861436e4872c08bc7aff11d",
+      "service_reflection_membership": [
+        1
+      ]
+    },
+    {
+      "arm": "A",
+      "id": "g0.r0-A.cross.parent_selected.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "444c764111cc64af682195088b843f062719cedff0224b6bc7199de44304206d",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "customer_turns_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Starting exploration as Employee 1 (u1). I have admin access to p0 and p1, operator on p2, and viewer on p3. Let me first query my customer context and check the status of project p0 which is active and paid.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        },
+        {
+          "message": "Attempting to start the root instance p0_r0 in project p0 to see if the dependency chain can be brought online.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r0"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/9aad4b9680d923f413e88611a792e9e6/native.json",
+        "sha256": "5904b621639a15d40f1242b719aa005a6dfe343b5f433459a73d9a8e5f3c4c53"
+      },
+      "source": "work/r0-A/native/episodes/9aad4b9680d923f413e88611a792e9e6/evidence.json",
+      "source_sha256": "b562b36e376b77ef9a722a85055bf997d936153df86ee806f605bc4b49f21ed5",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "A",
+      "id": "g0.r0-A.cross.parent_parent.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "68387aa87669abe3a4205b1fe63beca46753e92fdd4500226baac454f309d9a1",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "customer_turns_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "ec7f757ef5e9a2f86541a825bb3ea05d30d30ba21571fa6753bd7e5f32bd816f"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "ec7f757ef5e9a2f86541a825bb3ea05d30d30ba21571fa6753bd7e5f32bd816f",
+          "after_hash": "ec7f757ef5e9a2f86541a825bb3ea05d30d30ba21571fa6753bd7e5f32bd816f"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Querying project p0 status and attempting to start instance p0_r0 (Compute 0, no dependencies, stopped).",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r0"
+            }
+          ],
+          "type": "send_message"
+        },
+        {
+          "message": "Attempting to start instance p0_r1 (Compute 1) which depends on p0_r0.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r1"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/b046519ad29d252fd4beab253dc195cf/native.json",
+        "sha256": "5aac2c1f21c1b30799791caa0ef5ec0905524420a66423d70f4800deaed97a59"
+      },
+      "source": "work/r0-A/native/episodes/b046519ad29d252fd4beab253dc195cf/evidence.json",
+      "source_sha256": "c1eb54176719917984bfaf5ea286403dc6dee78fc6d52a730d604ae8a10b3aff",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "A",
+      "id": "g1.r0-A.cross.selected_selected.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "1e1e6db69f94bb515e1e5b17014adefb27bef1573e66692bf68b7d60965cc14a",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "llm_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "pay_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "7678a33c58c6d3f1192921d742ab2800d2b1fe7cf59bd86b302b6ddbcc254f41"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "7678a33c58c6d3f1192921d742ab2800d2b1fe7cf59bd86b302b6ddbcc254f41",
+          "after_hash": "7678a33c58c6d3f1192921d742ab2800d2b1fe7cf59bd86b302b6ddbcc254f41"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "resume_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "7678a33c58c6d3f1192921d742ab2800d2b1fe7cf59bd86b302b6ddbcc254f41",
+          "after_hash": "132b3cfd9199c2c36be978671832e67424d24d894f83429f60cd5bcc3ea9b3fb"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "132b3cfd9199c2c36be978671832e67424d24d894f83429f60cd5bcc3ea9b3fb",
+          "after_hash": "132b3cfd9199c2c36be978671832e67424d24d894f83429f60cd5bcc3ea9b3fb"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "132b3cfd9199c2c36be978671832e67424d24d894f83429f60cd5bcc3ea9b3fb",
+          "after_hash": "c8ad09e6c1b43c1884f1d952ac469f92b40dc0e41a4313b3c1a68255d1616541"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Attempting to settle the outstanding invoice for the suspended development project (p1) and resume operations.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "pay_invoice",
+              "params": {
+                "idempotency_key": "pay_p1_bill1_001",
+                "payment_method": "card_approved"
+              },
+              "project_id": "p1",
+              "resource_id": "bill1"
+            },
+            {
+              "name": "resume_project",
+              "params": {
+                "invoice_id": "bill1"
+              },
+              "project_id": "p1",
+              "resource_id": "p1"
+            }
+          ],
+          "type": "send_message"
+        },
+        {
+          "message": "Starting instance p1_r0 in the newly resumed development project. Please also report the current project quota and running usage for p1.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p1",
+              "resource_id": "p1_r0"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/d159db979ad0e03bcb619bcf82e31d11/native.json",
+        "sha256": "145bdba884b5020db9db479aebe624f36de5675235ae7085630620836a5433b0"
+      },
+      "source": "work/r0-A/native/episodes/d159db979ad0e03bcb619bcf82e31d11/evidence.json",
+      "source_sha256": "c331c93e0a65e2d20aab88d0d80ad002821e30427a8aa92cb98dfd15169721b8",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "A",
+      "id": "g1.r0-A.service.reflection-task.repeat-0-1.completion",
+      "generation": 1,
+      "evidence_hash": "20c257b4d00fdc8365c16c9185287dc35211c7ebec0f0eda5890c223714da349",
+      "world_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+      "track": "service_task",
+      "termination": "completed",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "afa694eb3812218ddc0e1dfc2564a96d86fafacd4c7fc040777b74cd006ae60a"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "afa694eb3812218ddc0e1dfc2564a96d86fafacd4c7fc040777b74cd006ae60a",
+          "after_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886",
+          "after_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-A/native/episodes/e8a8ebaecff8a81e548eb1bc5cf614af/native.json",
+        "sha256": "a182e96dac2df0b5f930868f86edf0b8b830969aeeee115fb222e2648dcbf097"
+      },
+      "source": "work/r0-A/native/episodes/e8a8ebaecff8a81e548eb1bc5cf614af/evidence.json",
+      "source_sha256": "c0a59e5442e08dbc0d435234579c112dd1bb1d18cf630b263f39feea423ca574",
+      "service_reflection_membership": [
+        1
+      ]
+    },
+    {
+      "arm": "B",
+      "id": "g1.r0-B.selected_customer.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "5490b457b46e0455399bccb61b59ed9c323a5f1e891b884195f80804a41ba099",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "CUSTOMER_OUTPUT_INVALID",
+      "customer_snapshot": "ec79ca36f4edb7dde32d0cbc0dbefd1ea43e8f5fcdabb551d8afec845efc1398",
+      "events": [],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/04e960bf96795832e3195b6e6b466761/native.json",
+        "sha256": "de59c593349bb1340641d57414d8d3afdc723fc91db0023dbc700be210d2b9db"
+      },
+      "source": "work/r0-B/native/episodes/04e960bf96795832e3195b6e6b466761/evidence.json",
+      "source_sha256": "d50e72cf4c8a8165478c7f17a1bfd4794efe594c2671c18267ade9325ca32e3b",
+      "service_reflection_membership": [
+        1
+      ]
+    },
+    {
+      "arm": "B",
+      "id": "g0.r0-B.cross.selected_selected.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "fe4dcaed67bdd969d55c1cc69e371871a2ef1112bba25d21ec1d05f18476a849",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "tool_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000016",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000018",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Exploring initial state: querying customer context and project details for p0 and p1 where I have admin access.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/06a133134d5c84ddc2ec01870a9c1a6e/native.json",
+        "sha256": "616a89ea4b87c956b86a4fa358788f9c53f050355899e50b82bfc5bcf1e5c463"
+      },
+      "source": "work/r0-B/native/episodes/06a133134d5c84ddc2ec01870a9c1a6e/evidence.json",
+      "source_sha256": "546feac8021359f764081e1529c374d712c21e98c787acccfb47c3b7636930fa",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "B",
+      "id": "g0.r0-B.cross.parent_parent.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "e0b819b4632d60a8a737dfab1bb1f12c48868d49c225820a29f39a8e6426fc96",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "CUSTOMER_OUTPUT_INVALID",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/16dc4e2970cd09b0ce3f72be2e1e431c/native.json",
+        "sha256": "6baebb9ddb7790bc4afd1fad5134c082e49fcc5d26c90e4a3b586c5fb3e6dbe3"
+      },
+      "source": "work/r0-B/native/episodes/16dc4e2970cd09b0ce3f72be2e1e431c/evidence.json",
+      "source_sha256": "39e67f023f1efde61b72c2a278e48a45f686d69e4e00ee17075aeeeb1124a0b3",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "B",
+      "id": "g1.r0-B.cross.selected_parent.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "b01e5ce126e2e829f341c2a680a27cc414bb56cbfd9fa5b63bd389a4a9bebc03",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "llm_budget_exhausted",
+      "customer_snapshot": "ec79ca36f4edb7dde32d0cbc0dbefd1ea43e8f5fcdabb551d8afec845efc1398",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "start_instance",
+          "classification": "successful_business_violation",
+          "reference_codes": [
+            "DEPENDENCY_NOT_RUNNING",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": false,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "list_instances",
+          "classification": "unscored",
+          "reference_codes": [
+            "INVALID_WORLD",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": false,
+          "before_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7",
+          "after_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7"
+        },
+        {
+          "event_id": "event_000016",
+          "operation": "get_instance",
+          "classification": "unscored",
+          "reference_codes": [
+            "INVALID_WORLD",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": false,
+          "before_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7",
+          "after_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7"
+        },
+        {
+          "event_id": "event_000018",
+          "operation": "get_project",
+          "classification": "unscored",
+          "reference_codes": [
+            "INVALID_WORLD",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": false,
+          "before_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7",
+          "after_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7"
+        }
+      ],
+      "failures": [
+        {
+          "schema_version": 1,
+          "episode_id": "g1.r0-B.cross.selected_parent.repeat-0-0",
+          "event_id": "event_000012",
+          "domain": "cloudops",
+          "operation": "start_instance",
+          "reference_codes": [
+            "DEPENDENCY_NOT_RUNNING",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "relevant_prestate": {
+            "billing_status": null,
+            "dependency_count": 1,
+            "instance_state": "stopped",
+            "owner": false,
+            "policy_version": "cloudops-0.1.0",
+            "quota_usage_relation": {
+              "cpu": "free",
+              "instances": "free",
+              "memory": "free"
+            },
+            "reference_code": "DEPENDENCY_NOT_RUNNING",
+            "resource_same_project": true,
+            "role": "admin",
+            "status": "active"
+          },
+          "permission_scope": {
+            "authorized": true,
+            "role": "admin"
+          },
+          "causal_prerequisites": [],
+          "expected": {
+            "allowed": false,
+            "error_code": "DEPENDENCY_NOT_RUNNING",
+            "transition": "preserve_prestate"
+          },
+          "actual": {
+            "state_changed": true,
+            "success": true
+          },
+          "successful_business_violation": true,
+          "authorization_only": false,
+          "trace": {
+            "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/1a96540974bc5d7433d0554c68c08ac2/native.json",
+            "sha256": "f625542c0ace6007a171d14d12c3ec078be53563dbb5e537856d5ba4435af2a9"
+          },
+          "fingerprint": "60314a97f1206d4624a8a5457e5cba2f568d3c0030360ac3a7df8697a1c8cf4c",
+          "normalization_scope": "policy_relative_features"
+        }
+      ],
+      "customer_actions": [
+        {
+          "message": "Attempting to start instance p0_r3 in project p0 to test multi-level dependency resolution (p0_r3 -> p0_r2 -> p0_r1 -> p0_r0). All are currently stopped.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r3"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/1a96540974bc5d7433d0554c68c08ac2/native.json",
+        "sha256": "f625542c0ace6007a171d14d12c3ec078be53563dbb5e537856d5ba4435af2a9"
+      },
+      "source": "work/r0-B/native/episodes/1a96540974bc5d7433d0554c68c08ac2/evidence.json",
+      "source_sha256": "1994cd81c839c30f1160430c5caadd6bb050e1acc4a75376b0394aa6c7649a72",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "B",
+      "id": "g1.r0-B.service.reflection-task.repeat-0-1.completion",
+      "generation": 1,
+      "evidence_hash": "47e637587ea37c1676fc947d615c8224fa73e8ab0a524235ff46187ea77903d3",
+      "world_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+      "track": "service_task",
+      "termination": "completed",
+      "customer_snapshot": "ec79ca36f4edb7dde32d0cbc0dbefd1ea43e8f5fcdabb551d8afec845efc1398",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "afa694eb3812218ddc0e1dfc2564a96d86fafacd4c7fc040777b74cd006ae60a"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "afa694eb3812218ddc0e1dfc2564a96d86fafacd4c7fc040777b74cd006ae60a",
+          "after_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886",
+          "after_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886",
+          "after_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/314a70cba5b474085d01d438c45d07b6/native.json",
+        "sha256": "e427c799543c95bb147cd1eb6af9c8b206a3f95136cf37883d57d077e0ac8d74"
+      },
+      "source": "work/r0-B/native/episodes/314a70cba5b474085d01d438c45d07b6/evidence.json",
+      "source_sha256": "346ce1edc047578321579df91c23d3178c38e21aec5adc157c166cf429ecbbe9",
+      "service_reflection_membership": [
+        1
+      ]
+    },
+    {
+      "arm": "B",
+      "id": "g1.r0-B.service.reflection-task.repeat-0-1.policy_refusal",
+      "generation": 1,
+      "evidence_hash": "c42a8caba38b4d079e9b41733034923ad0036bed420e1d7b0d4db6c94e98f4e7",
+      "world_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+      "track": "service_task",
+      "termination": "completed",
+      "customer_snapshot": "ec79ca36f4edb7dde32d0cbc0dbefd1ea43e8f5fcdabb551d8afec845efc1398",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/5f221ab3bdc10bcfdbab423d2e058ae2/native.json",
+        "sha256": "3d15f51fb139f915f44ebaf4a7447b8c7219c34b7cae1aa22e3e741232665a76"
+      },
+      "source": "work/r0-B/native/episodes/5f221ab3bdc10bcfdbab423d2e058ae2/evidence.json",
+      "source_sha256": "21334c184edf939fee35ebf231f809aea4c5784acd9ca0020b4cc17198c5edc3",
+      "service_reflection_membership": [
+        1
+      ]
+    },
+    {
+      "arm": "B",
+      "id": "g0.r0-B.current.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "c026dbf10f175896624c9f24e9e2e9c246afec3e251d18983fdef3378482d079",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "tool_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000016",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000018",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Starting exploration. I am Employee 1 (u1) with admin access to p0 and p1, operator access to p2, and viewer access to p3. I'll first gather context on my permissions and project states.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/749242673f76ded189146194b086edcb/native.json",
+        "sha256": "91c38d769c65147c0356a2f1a9eb5f7db9fba989c7ec64a90c13819f4a7da745"
+      },
+      "source": "work/r0-B/native/episodes/749242673f76ded189146194b086edcb/evidence.json",
+      "source_sha256": "e86cfa07ab68d7fb313cedda6330780412ef0cc413e0372ba5b7f8c2d53eb959",
+      "service_reflection_membership": [
+        0
+      ]
+    },
+    {
+      "arm": "B",
+      "id": "g1.r0-B.cross.parent_parent.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "f6a8f1b7c771cd1c0a0fbb73089510f75995e00aa610081292498dcabcb0a776",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "CUSTOMER_OUTPUT_INVALID",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/759008d9d192eedf85f6f3aff9e2024c/native.json",
+        "sha256": "512eb54def2a7ee52451db94693270785f2fa123bdbe80f9020747d74ca5321e"
+      },
+      "source": "work/r0-B/native/episodes/759008d9d192eedf85f6f3aff9e2024c/evidence.json",
+      "source_sha256": "f21ca7a6b03050ae08083ab79a95b6570aa73b64cbe46dd787b1b85d5efa63d7",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "B",
+      "id": "g1.r0-B.current.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "181a70d97b83478923d9e137bae4c50d7381de46350c73ee6f0b642fedb81c4d",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "customer_turns_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "bc81634e616361e9f59238a08bb2e2ec62331154d97f4493bfcd0fa9ef7b3cb0",
+          "after_hash": "ec7f757ef5e9a2f86541a825bb3ea05d30d30ba21571fa6753bd7e5f32bd816f"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "ec7f757ef5e9a2f86541a825bb3ea05d30d30ba21571fa6753bd7e5f32bd816f",
+          "after_hash": "ec7f757ef5e9a2f86541a825bb3ea05d30d30ba21571fa6753bd7e5f32bd816f"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Attempting to start instance p0_r0 in project p0 to verify startup behavior and dependency chain readiness.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r0"
+            }
+          ],
+          "type": "send_message"
+        },
+        {
+          "message": "Starting instance p0_r1 which depends on the now-running p0_r0.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r1"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/7a56e9727885ab70af608906076edfba/native.json",
+        "sha256": "a94684e3776d7aace24eeaefaacdbea96cc17b98a071a442974ae6847151468d"
+      },
+      "source": "work/r0-B/native/episodes/7a56e9727885ab70af608906076edfba/evidence.json",
+      "source_sha256": "50facabb27fb044d12ab8d7973034b519af9d2e7634ae58e31e0f0d2350db5a1",
+      "service_reflection_membership": [
+        1
+      ]
+    },
+    {
+      "arm": "B",
+      "id": "g1.r0-B.cross.parent_selected.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "1834407848faeb54f4d5705ddaaabf391028a8ffec270732a077080ff9e08875",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "llm_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "pay_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "resume_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f",
+          "after_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f",
+          "after_hash": "e0cad968ea7ea510d620f7210adae18caf786a06171954762e1434a0cf878d84"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Attempting to pay the outstanding invoice for project p1 and resume the suspended project.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "pay_invoice",
+              "params": {
+                "idempotency_key": "pay_bill1_001",
+                "payment_method": "card_approved"
+              },
+              "project_id": "p1",
+              "resource_id": "bill1"
+            },
+            {
+              "name": "resume_project",
+              "params": {
+                "invoice_id": "bill1"
+              },
+              "project_id": "p1",
+              "resource_id": "p1"
+            }
+          ],
+          "type": "send_message"
+        },
+        {
+          "message": "Starting instance p1_r0 in project p1 to verify operational capability after resumption.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p1",
+              "resource_id": "p1_r0"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/81f4e082c6d8690fcc4e57ff0299f9c4/native.json",
+        "sha256": "fea937c681a8fb8bd57630cae302f76250da83087a881d11f2d3f0d1bd88f145"
+      },
+      "source": "work/r0-B/native/episodes/81f4e082c6d8690fcc4e57ff0299f9c4/evidence.json",
+      "source_sha256": "0e7d0f4e2a7d9c6b81a2a8efe6db0db6f2c68be365dc9d10c6fa1021a2ecc59c",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "B",
+      "id": "g0.r0-B.cross.selected_parent.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "6001a4367f684da8d7c826772033ed1d8c122a22ec15f19c0849e6faf2f7866e",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "llm_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_project_members",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "pay_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "resume_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f"
+        },
+        {
+          "event_id": "event_000016",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f",
+          "after_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f"
+        },
+        {
+          "event_id": "event_000018",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f",
+          "after_hash": "dd1656a3fc69c04d8f23b15cb1c2e1b55a1386e4512ed8ea96d07e819f1d833f"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Starting exploration. I'll first query my customer context and examine the suspended project p1 to understand billing and access boundaries.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        },
+        {
+          "message": "Attempting to pay invoice bill1 and resume project p1 to explore the billing/resumption boundary.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "pay_invoice",
+              "params": {
+                "idempotency_key": "pay_bill1_001",
+                "payment_method": "card_approved"
+              },
+              "project_id": "p1",
+              "resource_id": "bill1"
+            },
+            {
+              "name": "resume_project",
+              "params": {
+                "invoice_id": "bill1"
+              },
+              "project_id": "p1",
+              "resource_id": "p1"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/b5c240a3ff1079c3d29c8b89f5c06987/native.json",
+        "sha256": "6d62c293a4f280335e2d97a106d22ead18615dd46d7e266a34ad3158c45be58a"
+      },
+      "source": "work/r0-B/native/episodes/b5c240a3ff1079c3d29c8b89f5c06987/evidence.json",
+      "source_sha256": "8e60c368e6cdbddcd17fa49c3cb6d2be3e6dbaa4f540aa2d90204971d76d6847",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "B",
+      "id": "g0.r0-B.service.reflection-task.repeat-0-1.policy_refusal",
+      "generation": 0,
+      "evidence_hash": "32fc41343adfe0dc3a54c426bfc47943f3c0044b74b2b9b1f82e327d90f9add8",
+      "world_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+      "track": "service_task",
+      "termination": "completed",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/caa92055b93ffe4a9dbc2ada2a790aff/native.json",
+        "sha256": "076a687abfbd61185384cf8e7354dfefd20597052cbeafc50bb2aa2e8fe3efcc"
+      },
+      "source": "work/r0-B/native/episodes/caa92055b93ffe4a9dbc2ada2a790aff/evidence.json",
+      "source_sha256": "9633dcc6c960ede6cd8466a393879b40d732e994fa785311384e5de909243163",
+      "service_reflection_membership": [
+        0
+      ]
+    },
+    {
+      "arm": "B",
+      "id": "g0.r0-B.service.reflection-task.repeat-0-1.completion",
+      "generation": 0,
+      "evidence_hash": "e4563f330497a1f840e6f3239df0cdef4703a1dd363c92acf824115c4e47488f",
+      "world_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+      "track": "service_task",
+      "termination": "completed",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "dc43f4eef6437f21241615079aa22d25f2cc3b66f17e7d35fe90a422846d1695",
+          "after_hash": "afa694eb3812218ddc0e1dfc2564a96d86fafacd4c7fc040777b74cd006ae60a"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "start_instance",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "afa694eb3812218ddc0e1dfc2564a96d86fafacd4c7fc040777b74cd006ae60a",
+          "after_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886",
+          "after_hash": "d28e821d7358d851387bd5d920659f86a20aa51a73f99d22a31acb56cbb23886"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/cb08b54cbd3733048a338d893c23f249/native.json",
+        "sha256": "a7929d547e0eeaeb6c693de4f8d40e3faec52d6ab417e65782001ac5f9b3bd29"
+      },
+      "source": "work/r0-B/native/episodes/cb08b54cbd3733048a338d893c23f249/evidence.json",
+      "source_sha256": "c23e602051e664f7a5aa9317c512e390e6097825e8e622b5e3740a17e6e789bb",
+      "service_reflection_membership": [
+        0
+      ]
+    },
+    {
+      "arm": "B",
+      "id": "g1.r0-B.cross.selected_selected.repeat-0-0",
+      "generation": 1,
+      "evidence_hash": "65f1285d55af37db173a70f437d749b54f2950ff9fe0eed5efbc5f2df46ab212",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "CUSTOMER_OUTPUT_INVALID",
+      "customer_snapshot": "ec79ca36f4edb7dde32d0cbc0dbefd1ea43e8f5fcdabb551d8afec845efc1398",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "PERMISSION_DENIED"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "PERMISSION_DENIED"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "start_instance",
+          "classification": "successful_business_violation",
+          "reference_codes": [
+            "DEPENDENCY_NOT_RUNNING",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": false,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "get_instance",
+          "classification": "unscored",
+          "reference_codes": [
+            "INVALID_WORLD",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": false,
+          "before_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7",
+          "after_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "list_instances",
+          "classification": "unscored",
+          "reference_codes": [
+            "INVALID_WORLD",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": false,
+          "before_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7",
+          "after_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7"
+        },
+        {
+          "event_id": "event_000016",
+          "operation": "get_project",
+          "classification": "unscored",
+          "reference_codes": [
+            "INVALID_WORLD",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": false,
+          "before_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7",
+          "after_hash": "f05dcfecdb58b8e27e339cd12a7e82203a2c1f43a3e6c09faaa5164a942fabe7"
+        }
+      ],
+      "failures": [
+        {
+          "schema_version": 1,
+          "episode_id": "g1.r0-B.cross.selected_selected.repeat-0-0",
+          "event_id": "event_000010",
+          "domain": "cloudops",
+          "operation": "start_instance",
+          "reference_codes": [
+            "DEPENDENCY_NOT_RUNNING",
+            "RUNNING_DEPENDENCY_STOPPED"
+          ],
+          "relevant_prestate": {
+            "billing_status": null,
+            "dependency_count": 1,
+            "instance_state": "stopped",
+            "owner": false,
+            "policy_version": "cloudops-0.1.0",
+            "quota_usage_relation": {
+              "cpu": "free",
+              "instances": "free",
+              "memory": "free"
+            },
+            "reference_code": "DEPENDENCY_NOT_RUNNING",
+            "resource_same_project": true,
+            "role": "admin",
+            "status": "active"
+          },
+          "permission_scope": {
+            "authorized": true,
+            "role": "admin"
+          },
+          "causal_prerequisites": [],
+          "expected": {
+            "allowed": false,
+            "error_code": "DEPENDENCY_NOT_RUNNING",
+            "transition": "preserve_prestate"
+          },
+          "actual": {
+            "state_changed": true,
+            "success": true
+          },
+          "successful_business_violation": true,
+          "authorization_only": false,
+          "trace": {
+            "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/d3bfcb2620e2d28ae9c2d7982c45cb24/native.json",
+            "sha256": "0b032a4051799dd7bc24e4d43aedeca5ceb7a6f5dfd47f5c37e0098b99999635"
+          },
+          "fingerprint": "60314a97f1206d4624a8a5457e5cba2f568d3c0030360ac3a7df8697a1c8cf4c",
+          "normalization_scope": "policy_relative_features"
+        }
+      ],
+      "customer_actions": [
+        {
+          "message": "Please provide project status for p2 and p3, and invoice details for bill2 and bill3. I am also attempting to start instance p0_r3 in project p0 to observe how the Service handles a multi-level dependency chain where all prerequisites are currently stopped.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "start_instance",
+              "params": {},
+              "project_id": "p0",
+              "resource_id": "p0_r3"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/d3bfcb2620e2d28ae9c2d7982c45cb24/native.json",
+        "sha256": "0b032a4051799dd7bc24e4d43aedeca5ceb7a6f5dfd47f5c37e0098b99999635"
+      },
+      "source": "work/r0-B/native/episodes/d3bfcb2620e2d28ae9c2d7982c45cb24/evidence.json",
+      "source_sha256": "ea770d87394c0242bf2f5bee2e8bd23fe2e44bf24b120f854581d5ef5265ec1b",
+      "service_reflection_membership": []
+    },
+    {
+      "arm": "B",
+      "id": "g0.r0-B.selected_customer.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "f5e26e52906aaf1653b7550dc4dd90a1f242ecb5dd951943266aae792bbabf55",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "tool_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000012",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000014",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000016",
+          "operation": "list_instances",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000018",
+          "operation": "get_invoice",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND"
+          ],
+          "successful_execution": false,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Exploring project states and dependencies. I have admin access to p0 (active, paid) and p1 (suspended, unpaid), operator on p2 (active), and viewer on p3. Let me query project details and instance states to understand the current situation.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-small-001/work/r0-B/native/episodes/e8a6f39b5c6c7fcb45376851a6c1b3ee/native.json",
+        "sha256": "8e19974260ab69dd20b75c2eaece9e102ad9eb73b4f9dc204393a367cc131a04"
+      },
+      "source": "work/r0-B/native/episodes/e8a6f39b5c6c7fcb45376851a6c1b3ee/evidence.json",
+      "source_sha256": "dad6f3dc5660219fabbdef68c8878007b89872149bf214398a17f1f89e728d14",
+      "service_reflection_membership": [
+        0
+      ]
+    },
+    {
+      "arm": "B",
+      "id": "g0.r0-B.cross.parent_selected.repeat-0-0",
+      "generation": 0,
+      "evidence_hash": "3595f801b1d534e8694576b37dd4f3c084cc53fc79f24093ba3e92796fd43be9",
+      "world_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+      "track": "discovery",
+      "termination": "customer_turns_budget_exhausted",
+      "customer_snapshot": "405e4a3acb6068b1815f546138f37b15d4d63a67516b823c1e5f1eb2698f856b",
+      "events": [
+        {
+          "event_id": "event_000002",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000004",
+          "operation": "get_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716"
+        },
+        {
+          "event_id": "event_000006",
+          "operation": "pay_invoice",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "a46201d2d2455d23ad99d3fbe531305fe4ba1e8303806fc12a0b33b0dc304716",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000008",
+          "operation": "resume_project",
+          "classification": "rejected_invalid_attempt",
+          "reference_codes": [
+            "RESOURCE_NOT_FOUND",
+            "UNAUTHORIZED_OPERATION"
+          ],
+          "successful_execution": false,
+          "authorized": false,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        },
+        {
+          "event_id": "event_000010",
+          "operation": "get_project",
+          "classification": "legal_execution",
+          "reference_codes": [],
+          "successful_execution": true,
+          "authorized": true,
+          "operation_correct": true,
+          "before_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b",
+          "after_hash": "c950794ab6db23f2547033c59d33af9c5af4408d43fe0eab90a18564373d9a6b"
+        }
+      ],
+      "failures": [],
+      "customer_actions": [
+        {
+          "message": "Query project p1 status and invoice bill1 details.",
+          "reason": "",
+          "requested_operations": [],
+          "type": "send_message"
+        },
+        {
+          "message": "Paying invoice bill1 to clear the outstanding balance and resuming project p1.",
+          "reason": "",
+          "requested_operations": [
+            {
+              "name": "pay_invoice",
+              "params": {
+                "idempotency_key": "pay_bill1_001",
+                "payment_method": "card_approved"
+              },
+              "project_id": "p1",
+              "resource_id": "bill1"
+            },
+            {
+              "name": "resume_project",
+              "params": {
+                "invoice_id": "bill1"
+              },
+              "project_id": "p1",
+              "resource_id": "bill1"
+            }
+          ],
+          "type": "send_message"
+        }
+      ],
+      "trace": {
+        "path": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-recovery-001/work/r0-B/native/episodes/e9dcc4941f70f941587da4d1d5cb328e/native.json",
+        "sha256": "b4081b84baf1e1f87ebb55ace0100a8b0a2f7789b3dcbd672a9112e89cc6d6c5"
+      },
+      "source": "work/r0-B/native/episodes/e9dcc4941f70f941587da4d1d5cb328e/evidence.json",
+      "source_sha256": "becf599276cfe57bbeacc543ced1626f8c2c32f02db73deba5e9bfcf2c3eb074",
+      "service_reflection_membership": []
+    }
+  ],
+  "reflections": [
+    {
+      "arm": "A",
+      "generation": 0,
+      "action": "NOOP",
+      "evidence_ids": [
+        "g0.r0-A.current.repeat-0-0",
+        "g0.r0-A.selected_customer.repeat-0-0",
+        "g0.r0-A.service.reflection-task.repeat-0-1.completion",
+        "g0.r0-A.service.reflection-task.repeat-0-1.policy_refusal"
+      ],
+      "verified_failures": 0,
+      "actual_violations": 0,
+      "source": "work/r0-A/runs/r0-A/evolution/g0.service.json"
+    },
+    {
+      "arm": "A",
+      "generation": 1,
+      "action": "NOOP",
+      "evidence_ids": [
+        "g1.r0-A.current.repeat-0-0",
+        "g1.r0-A.selected_customer.repeat-0-0",
+        "g1.r0-A.service.reflection-task.repeat-0-1.completion",
+        "g1.r0-A.service.reflection-task.repeat-0-1.policy_refusal"
+      ],
+      "verified_failures": 0,
+      "actual_violations": 0,
+      "source": "work/r0-A/runs/r0-A/evolution/g1.service.json"
+    },
+    {
+      "arm": "B",
+      "generation": 0,
+      "action": "NOOP",
+      "evidence_ids": [
+        "g0.r0-B.current.repeat-0-0",
+        "g0.r0-B.selected_customer.repeat-0-0",
+        "g0.r0-B.service.reflection-task.repeat-0-1.completion",
+        "g0.r0-B.service.reflection-task.repeat-0-1.policy_refusal"
+      ],
+      "verified_failures": 0,
+      "actual_violations": 0,
+      "source": "work/r0-B/runs/r0-B/evolution/g0.service.json"
+    },
+    {
+      "arm": "B",
+      "generation": 1,
+      "action": "NOOP",
+      "evidence_ids": [
+        "g1.r0-B.current.repeat-0-0",
+        "g1.r0-B.selected_customer.repeat-0-0",
+        "g1.r0-B.service.reflection-task.repeat-0-1.completion",
+        "g1.r0-B.service.reflection-task.repeat-0-1.policy_refusal"
+      ],
+      "verified_failures": 0,
+      "actual_violations": 0,
+      "source": "work/r0-B/runs/r0-B/evolution/g1.service.json"
+    }
+  ],
+  "discovery_replays": [
+    {
+      "episode_id": "g1.r0-B.cross.selected_parent.repeat-0-0",
+      "replay": {
+        "verified": true,
+        "reason": "",
+        "request_count": 9,
+        "native_trace_hash": "a604d8fbdb5c7c33e6ed4f9b72d9cc42478f13e0a179c685abc48546dc95dcb6"
+      }
+    },
+    {
+      "episode_id": "g1.r0-B.cross.selected_selected.repeat-0-0",
+      "replay": {
+        "verified": true,
+        "reason": "",
+        "request_count": 8,
+        "native_trace_hash": "6ad83e5683387a8e547e4eef58e519acf5941fce5c51b5fdb1e44c9b2ac0e64a"
+      }
+    }
+  ],
+  "summary": {
+    "formal_episodes": 32,
+    "reflections": 4,
+    "distinct_autonomous_worlds": 1,
+    "distinct_task_worlds": 1,
+    "reflection_input_episodes": 16,
+    "successful_business_violations": 2,
+    "failure_episodes": 2,
+    "independent_failure_fingerprints": 1,
+    "discovered_but_never_reflected": [
+      "g1.r0-B.cross.selected_parent.repeat-0-0",
+      "g1.r0-B.cross.selected_selected.repeat-0-0"
+    ],
+    "terminations": {
+      "customer_turns_budget_exhausted": 7,
+      "completed": 8,
+      "llm_budget_exhausted": 7,
+      "tool_budget_exhausted": 5,
+      "customer_stopped": 1,
+      "CUSTOMER_OUTPUT_INVALID": 4
+    }
+  }
+}

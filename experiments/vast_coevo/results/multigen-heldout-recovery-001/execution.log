@@ -1,0 +1,8 @@
+{"run": "r0-A", "status": "completed", "generations": 2, "error": ""}
+{"run": "r0-B", "status": "failed", "generations": 1, "error": "RuntimeError: main episode terminated with CUSTOMER_OUTPUT_INVALID: g1.r0-B.cross.selected_selected.repeat-0-0"}
+Traceback (most recent call last):
+  File "/Users/spring/RSI/Usami/experiments/vast_coevo/examples/recover_multigen.py", line 107, in <module>
+    else: execute(args.root.resolve())
+  File "/Users/spring/RSI/Usami/experiments/vast_coevo/examples/recover_multigen.py", line 93, in execute
+    if any(r['report']['status']!='completed' for r in runs): raise ValueError('training incomplete; heldout remains sealed')
+ValueError: training incomplete; heldout remains sealed

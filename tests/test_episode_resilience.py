@@ -74,3 +74,16 @@ def test_known_customer_error_is_local_in_each_main_phase(tmp_path, stage):
     assert adapter.calls.count(bad_id)==1
     assert next(e for e in archive.query() if e.episode_id==bad_id).termination=='CUSTOMER_OUTPUT_INVALID'
     assert len(c.calls)==len(s.calls)==2
+
+
+def test_second_turn_invalid_customer_reply_with_role_grouped_calls(tmp_path):
+    _,config,adapter,c,s,libraries,archive,runs=setup_run(tmp_path)
+    e=adapter.run_episode(config.exploration_cases[0].config,libraries.load(config.initial_customer_hash),
+                          libraries.load(config.initial_service_hash),'fixture')
+    bad=invalid_customer(e)
+    customer=bad.model_calls[0]
+    service=customer.model_copy(update={'id':'earlier.service.1','role':'service'})
+    grouped=bad.model_copy(update={'model_calls':(customer,service)})
+    ResilientController._check_main_evidence((grouped,))
+    with pytest.raises(RuntimeError):
+        ResilientController._check_main_evidence((grouped.model_copy(update={'model_calls':(customer,service.model_copy(update={'response':None}))}),))

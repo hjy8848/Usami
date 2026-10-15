@@ -1,0 +1,273 @@
+{
+  "wire_native_reflection_match": true,
+  "wire_calls": 461,
+  "complete_native_traces": 64,
+  "reflection_calls": 9,
+  "pending_external_calls": 0,
+  "episode_terminations": {
+    "CUSTOMER_OUTPUT_INVALID": 4,
+    "completed": 19,
+    "llm_budget_exhausted": 21,
+    "tool_budget_exhausted": 5,
+    "customer_turns_budget_exhausted": 13,
+    "customer_stopped": 2
+  },
+  "episodes": [
+    {
+      "id": "g1.r0-B.cross.selected_selected.repeat-0-0",
+      "termination": "CUSTOMER_OUTPUT_INVALID"
+    },
+    {
+      "id": "g0.r0-B.service.reflection-task.repeat-0-1.policy_refusal",
+      "termination": "completed"
+    },
+    {
+      "id": "g1.r0-B.cross.selected_parent.repeat-0-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g1.r0-B.cross.parent_parent.repeat-0-0",
+      "termination": "CUSTOMER_OUTPUT_INVALID"
+    },
+    {
+      "id": "g0.r0-B.cross.selected_parent.repeat-0-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-B.cross.selected_selected.repeat-0-0",
+      "termination": "tool_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-B.service.reflection-task.repeat-0-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g1.r0-B.selected_customer.repeat-0-0",
+      "termination": "CUSTOMER_OUTPUT_INVALID"
+    },
+    {
+      "id": "g1.r0-B.service.reflection-task.repeat-0-1.policy_refusal",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.r0-B.selected_customer.repeat-0-0",
+      "termination": "tool_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-B.current.repeat-0-0",
+      "termination": "tool_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-B.cross.parent_parent.repeat-0-0",
+      "termination": "CUSTOMER_OUTPUT_INVALID"
+    },
+    {
+      "id": "g0.r0-B.cross.parent_selected.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g1.r0-B.current.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g1.r0-B.cross.parent_selected.repeat-0-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g1.r0-B.service.reflection-task.repeat-0-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.smoke-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.smoke-1.policy_refusal",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.smoke-1.policy_refusal",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.smoke-1",
+      "termination": "customer_stopped"
+    },
+    {
+      "id": "g0.smoke-B.selected_customer.smoke-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.cross.selected_parent.smoke-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.failure.0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.current.smoke-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.cross.parent_parent.smoke-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.smoke-1",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.smoke-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-B.service.baseline.failure.1",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.cross.parent_selected.smoke-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.cross.selected_selected.smoke-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.failure.0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-B.service.reflection-task.smoke-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-B.service.reflection-task.smoke-1.policy_refusal",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-B.service.candidate.failure.1",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g1.r0-A.cross.parent_selected.repeat-0-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-A.service.reflection-task.repeat-0-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g1.r0-A.service.reflection-task.repeat-0-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g1.r0-A.current.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g1.r0-A.selected_customer.repeat-0-0",
+      "termination": "customer_stopped"
+    },
+    {
+      "id": "g0.r0-A.cross.parent_parent.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-A.cross.parent_selected.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g1.r0-A.cross.parent_parent.repeat-0-0",
+      "termination": "tool_budget_exhausted"
+    },
+    {
+      "id": "g1.r0-A.service.reflection-task.repeat-0-1.policy_refusal",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.r0-A.selected_customer.repeat-0-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-A.service.reflection-task.repeat-0-1.policy_refusal",
+      "termination": "completed"
+    },
+    {
+      "id": "g1.r0-A.cross.selected_selected.repeat-0-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-A.cross.selected_parent.repeat-0-0",
+      "termination": "tool_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-A.current.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g1.r0-A.cross.selected_parent.repeat-0-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g0.r0-A.cross.selected_selected.repeat-0-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-A.service.reflection-task.smoke-1.policy_refusal",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-A.service.baseline.smoke-1.policy_refusal",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-A.selected_customer.smoke-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-A.service.candidate.smoke-1",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-A.service.reflection-task.smoke-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-A.service.baseline.smoke-1",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-A.service.candidate.smoke-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-A.service.baseline.smoke-1.completion",
+      "termination": "completed"
+    },
+    {
+      "id": "g0.smoke-A.cross.selected_selected.smoke-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-A.cross.parent_selected.smoke-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-A.cross.parent_parent.smoke-0",
+      "termination": "llm_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-A.current.smoke-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-A.cross.selected_parent.smoke-0",
+      "termination": "customer_turns_budget_exhausted"
+    },
+    {
+      "id": "g0.smoke-A.service.candidate.smoke-1.policy_refusal",
+      "termination": "completed"
+    }
+  ]
+}

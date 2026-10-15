@@ -15,9 +15,11 @@ class ResilientController(CoEvolutionController):
             # Only a fully recorded, replayable Customer reply may fail locally.
             # Unknown transport outcomes, unverified evidence, Service errors and
             # other protocol violations retain the original fail-closed behavior.
-            last = value.model_calls[-1] if value.model_calls else None
+            # Native evidence groups calls by role, not global chronology.
+            last = next((call for call in reversed(value.model_calls) if call.role == 'customer'), None)
             if (value.track == 'discovery' and value.termination == 'CUSTOMER_OUTPUT_INVALID'
                     and value.replay.verified and last is not None
-                    and last.role == 'customer' and last.response is not None and not last.error):
+                    and last.response is not None and not last.error
+                    and all(call.response is not None and not call.error for call in value.model_calls)):
                 continue
             CoEvolutionController._check_main_evidence((value,))

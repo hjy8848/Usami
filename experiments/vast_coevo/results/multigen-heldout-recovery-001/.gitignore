@@ -1,0 +1,5 @@
+work/
+evaluation/
+wire-ledger/
+source-snapshot/
+.execute.lock

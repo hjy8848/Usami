@@ -66,13 +66,14 @@ def prepare(parent, root):
     m['driver_hashes']={name:hashlib.sha256((experiment.REPO/name).read_bytes()).hexdigest() for name in sorted(drivers)}
     m.pop('manifest_hash');m['manifest_hash']=digest(m)
     atomic_json(root/'MANIFEST.json',m,immutable=True)
-    protocol=f'''# 故障隔离修复后的续跑协议\n\nManifest: {m['manifest_hash']}\n\n父实验 {parent} 全部记录保留，原 Manifest 不变。此次由用户“修复吧”授权，续用相同模型、Prompt、2 代、1 次重复、12 个陌生世界 / 72 场 Held-out，并发上限 4。\n\n只将已收到完整回复、真实 Replay 通过的 CUSTOMER_OUTPUT_INVALID 视为 Episode 局部失败。保留原回复、消耗、失败标签及统计分母；不修补输出、不重试该 Episode。其余安全、证据、预算、未知调用与 Service 错误仍按原逻辑阻断。Service Reflection、Static/Dynamic Gate 不变。\n\nA 两代全部复用；B 已完成操作复用，从未执行步骤继续。跳过已完成 Smoke。继承 388 次 / 2448150 Token；本轮累计硬上限仍为 1000 万，历史更早 961580 Token 另计。Held-out 桶从 300 万增至 400 万以预留上下文波动，仍受同一个 1000 万总上限约束；训练两臂上限不变。不能称为原 v2 协议无故障完成。\n\n测试题、证书、业务世界、身份、工具、评分与 Bootstrap 定义不变；单次独立训练重复只支持探索性结论。先完成训练、冻结最终服务，再解封 Held-out。\n'''
+    inherited_calls=m['recovery']['inherited_calls']; inherited_tokens=m['recovery']['inherited_tokens']
+    protocol=f'''# 故障隔离修复后的续跑协议\n\nManifest: {m['manifest_hash']}\n\n父实验 {parent} 全部记录保留，原 Manifest 不变。此次由用户“修复吧”授权，续用相同模型、Prompt、2 代、1 次重复、12 个陌生世界 / 72 场 Held-out，并发上限 4。\n\n只将已收到完整回复、真实 Replay 通过的 CUSTOMER_OUTPUT_INVALID 视为 Episode 局部失败。保留原回复、消耗、失败标签及统计分母；不修补输出、不重试该 Episode。其余安全、证据、预算、未知调用与 Service 错误仍按原逻辑阻断。Service Reflection、Static/Dynamic Gate 不变。\n\nA 两代全部复用；B 已完成操作复用，从未执行步骤继续。跳过已完成 Smoke。继承 {inherited_calls} 次 / {inherited_tokens} Token；本轮累计硬上限仍为 1000 万，历史更早 961580 Token 另计。Held-out 桶从 300 万增至 400 万以预留上下文波动，仍受同一个 1000 万总上限约束；训练两臂上限不变。不能称为原 v2 协议无故障完成。\n\n测试题、证书、业务世界、身份、工具、评分与 Bootstrap 定义不变；单次独立训练重复只支持探索性结论。先完成训练、冻结最终服务，再解封 Held-out。\n'''
     (root/'EXPERIMENT_PROTOCOL.md').write_text(protocol)
     atomic_json(root/'PROTOCOL_REGISTRATION.json',dict(manifest_hash=m['manifest_hash'],protocol_sha256=hashlib.sha256(protocol.encode()).hexdigest()),immutable=True)
     for name in set(m['source_hashes'])|set(m['driver_hashes']):
         target=root/'source-snapshot'/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(experiment.REPO/name,target)
     (root/'.gitignore').write_text('work/\nevaluation/\nwire-ledger/\nsource-snapshot/\n.execute.lock\n')
-    print(json.dumps({'registered':str(root),'manifest_hash':m['manifest_hash'],'inherited_calls':388}),flush=True)
+    print(json.dumps({'registered':str(root),'manifest_hash':m['manifest_hash'],'inherited_calls':inherited_calls}),flush=True)
 
 
 def execute(root):

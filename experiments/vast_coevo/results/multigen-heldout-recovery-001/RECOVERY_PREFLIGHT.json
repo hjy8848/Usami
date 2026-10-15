@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "a_generations_reused": 2,
+  "external_calls": 0,
+  "failed_b_episode_accepted_as_local_failure": [
+    "e0b819b4632d60a8a737dfab1bb1f12c48868d49c225820a29f39a8e6426fc96"
+  ],
+  "native_sources_unchanged": true
+}

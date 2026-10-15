@@ -3,6 +3,10 @@
 Public URL: https://hjy8848.github.io/Usami/
 
 A standalone static research presentation, separate from the local World Explorer.
+The page presents two distinct contributions: the Usami executable business
+benchmark (worlds, two evaluation tracks, goal-based generation and verification)
+and VAST-CoEvo Skill co-evolution (training, selection and experimental evidence).
+Co-evolution diagnostics are not presented as benchmark leaderboard results.
 No build step, external fonts, backend, model calls, analytics, or user data storage.
 All assets are local. `assets/worlds.svg` and the mark are original SVG illustrations.
 The editorial research-page format was inspired by https://pub.sakana.ai/mass/;

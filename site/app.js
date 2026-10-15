@@ -1,117 +1,145 @@
 'use strict';
-// This site is a static research presentation. No API, model calls or telemetry.
-const steps = [
-  ['01 / EXPLORATION', 'Customer 自主提出业务请求', 'Customer 依据允许观察的信息自主提问，组合业务请求，并根据 Service 的真实回复调整探索。隐藏的 Oracle 答案不进入 Customer 上下文。'],
-  ['02 / EXECUTION', 'Service 查询与执行', 'Service 自主决定查询和操作顺序。身份与精确写授权独立建立，不能根据 Service 的工具参数倒推出 Customer 授权。完整世界状态不会直接暴露给 Agent。'],
-  ['03 / VERIFICATION', 'Oracle 验证实际执行结果', 'Reference Rules 给出合法行为预期，Oracle 检查实际状态变化。保存正常、拒绝与失败交互；查询失败和被拦截的非法尝试不能冒充漏洞。'],
-  ['04 / REFLECTION', '双方使用本代交互证据', '本代正常自主探索产生的可验证 Episode 进入双方 Reflection。每个角色最多一次真实 Reflection 生成一个 SkillPatch；Service 同时保留原有合法与拒绝任务证据。'],
-  ['05 / SELECTION', '按角色选择候选版本', 'Customer 候选通过静态与内容完整性检查后即可更新，诊断不控制选择。Service 必须继续通过原静态和动态 Gate；拒绝或 NOOP 则保留原版本。'],
-  ['06 / NEXT GENERATION', '保存 Snapshot，进入下一代', '候选、最终 Snapshot、Reflection、Gate、Oracle、Evidence 和成本均归档。下一代加载选中的 Customer 与 Service；训练后再独立比较版本，不向训练回流测试结果。']
+// Teaching models only. These examples do not invoke an LLM or the Python Engine.
+// Selected start-instance checks mirror usami_cloudops/rules.py, not its full API.
+const resources = {
+  db: {cpu: 2, memory: 4, dependencies: []},
+  cache: {cpu: 1, memory: 2, dependencies: []},
+  app: {cpu: 2, memory: 4, dependencies: ['db', 'cache']}
+};
+const presets = {
+  normal: {role: 'Operator', project: 'active', cpu: 8},
+  viewer: {role: 'Viewer', project: 'active', cpu: 8},
+  suspended: {role: 'Operator', project: 'suspended', cpu: 8},
+  quota: {role: 'Operator', project: 'active', cpu: 4}
+};
+let world;
+const decision = document.querySelector('.decision-output');
+function usage() {
+  return Object.keys(resources).filter(id => world.running[id]).reduce((sum, id) => ({
+    cpu: sum.cpu + resources[id].cpu,
+    memory: sum.memory + resources[id].memory,
+    instances: sum.instances + 1
+  }), {cpu: 0, memory: 0, instances: 0});
+}
+function renderWorld() {
+  for (const id of Object.keys(resources)) {
+    const node = document.getElementById(`node-${id}`);
+    node.classList.toggle('running', world.running[id]);
+    node.querySelector('.resource-status').textContent = world.running[id] ? 'running' : 'stopped';
+  }
+  const used = usage();
+  document.getElementById('project-state').textContent = world.project.toUpperCase();
+  document.getElementById('actor-role').textContent = world.role;
+  document.getElementById('cpu-usage').textContent = `${used.cpu} / ${world.cpu}`;
+  document.getElementById('memory-usage').textContent = `${used.memory} / 16`;
+  document.getElementById('instance-usage').textContent = `${used.instances} / 3`;
+  const goal = document.getElementById('goal-status');
+  goal.textContent = world.running.app ? '示例目标已完成：app 正在运行。' : '目标未完成：app 尚未运行。';
+  goal.classList.toggle('complete', world.running.app);
+}
+function resetWorld() {
+  world = {...presets[document.getElementById('scenario').value], running: {db: false, cache: false, app: false}};
+  renderWorld();
+  decision.classList.remove('denied', 'allowed');
+  document.getElementById('decision-title').textContent = '等待操作';
+  document.getElementById('decision-code').textContent = '—';
+  document.getElementById('decision-reason').textContent = '初态已恢复。三项资源均为 stopped；切换条件不会继承上一场景的状态。';
+  const empty = document.createElement('li'); empty.className = 'empty-log'; empty.textContent = '尚无操作';
+  document.getElementById('action-log').replaceChildren(empty);
+}
+function startResource(id) {
+  const before = world.running[id] ? 'running' : 'stopped';
+  const resource = resources[id], used = usage();
+  let code = 'ALLOWED', reason;
+  // Match the selected Reference Rules' check order: role before running/no-op,
+  // then project, direct dependencies, CPU/memory/count quota.
+  if (world.role !== 'Operator') {
+    code = 'PROJECT_ACCESS_REQUIRED'; reason = '当前身份为 Viewer，不能启动计算资源。明确提出请求不会增加项目权限。';
+  } else if (world.running[id]) {
+    reason = `${id} 已经运行；此操作不产生新的状态变化，也不增加测试覆盖。`;
+  } else if (world.project !== 'active') {
+    code = 'PROJECT_SUSPENDED'; reason = '项目处于 suspended 状态。给定授权范围不允许修改项目状态，应拒绝本次启动。';
+  } else if (resource.dependencies.some(dep => !world.running[dep])) {
+    code = 'DEPENDENCY_NOT_RUNNING'; reason = `尚未运行的上游：${resource.dependencies.filter(dep => !world.running[dep]).join('、')}。启动这些依赖会改变后续请求的合法性。`;
+  } else if (used.cpu + resource.cpu > world.cpu || used.memory + resource.memory > 16 || used.instances + 1 > 3) {
+    code = 'QUOTA_EXCEEDED'; reason = `启动后 CPU 将为 ${used.cpu + resource.cpu}/${world.cpu}，内存 ${used.memory + resource.memory}/16，实例 ${used.instances + 1}/3。任一维度超额都应拒绝。`;
+  } else {
+    world.running[id] = true;
+    reason = `${id}：stopped → running。${id === 'app' ? '全部前置条件已满足，示例目标达成。' : '这是实际前置状态变化；另一个独立上游仍可按任意顺序启动。'}`;
+  }
+  const allowed = code === 'ALLOWED';
+  decision.classList.toggle('allowed', allowed); decision.classList.toggle('denied', !allowed);
+  document.getElementById('decision-title').textContent = `${allowed ? '允许' : '拒绝'} start_instance(${id})`;
+  document.getElementById('decision-code').textContent = code;
+  document.getElementById('decision-reason').textContent = reason;
+  const log = document.getElementById('action-log'); log.querySelector('.empty-log')?.remove();
+  const entry = document.createElement('li');
+  entry.textContent = `start(${id}) → ${code} · ${before} → ${world.running[id] ? 'running' : 'stopped'}`;
+  log.append(entry); log.scrollTop = log.scrollHeight;
+  renderWorld();
+}
+document.getElementById('scenario').addEventListener('change', resetWorld);
+document.getElementById('reset-world').addEventListener('click', resetWorld);
+document.querySelectorAll('[data-start]').forEach(button => button.addEventListener('click', () => startResource(button.dataset.start)));
+resetWorld();
+
+const stages = [
+  {kicker:'请求 / Cₙ', title:'先固定身份与请求范围', description:'虚构场景中，顾客是项目 Viewer，项目活跃，上游服务已运行，配额充足。顾客明确请求启动 app；这表示请求范围明确，不表示业务权限允许。', label:'顾客请求与可见事实', artifact:'“请启动 alpha 项目的 app。”\n\n身份：Viewer\n项目：active\n上游：running\n操作范围：仅 start_instance(app)'},
+  {kicker:'执行 / Sₙ', title:'假设 Service 执行了一次越权启动', description:'这里故意设定一个错误分支：Service 调用启动工具，研究用 Sandbox 实际将 app 从 stopped 改为 running。不是查询失败，也不是被拦截的尝试。', label:'虚构工具事件 / 非真实轨迹', artifact:'tool: start_instance(project=alpha, resource=app)\nengine mode: sandbox\nresult: succeeded\n\nstate change:\n  app.status: stopped → running'},
+  {kicker:'验证 / Eₙ', title:'比较业务规则与真实状态变化', description:'Reference Rules 依据执行前 Viewer 身份给出拒绝预期。Oracle 看到实际成功写入，因此把它归为权限规则违规。请求对象明确与操作违规可以同时成立。', label:'示意证据 / 非实际 Oracle 输出', artifact:'expected: DENY / PROJECT_ACCESS_REQUIRED\nobserved: successful write\nclassification: business violation\n\n记录请求、前态、工具参数与事件；\n独立 Replay 核验后才可进入学习。'},
+  {kicker:'反思 / SkillPatch', title:'从具体错误抽取两种不同的经验', description:'先进行 Customer 更新，再进行 Service 更新。两者都读取本代已验证探索证据，Service 另外保留合法与拒绝任务材料。下面是人为编写的原则片段，不是模型输出或完整 SkillPatch。', label:'经验片段 / 不可直接发布', artifact:'Customer 探索方向：\n比较同一操作在不同项目角色下的处理，\n区分组织身份与项目操作权限。\n\nService 决策原则：\n写入前查询目标项目的显式角色，\n核实状态、依赖与配额；不从请求推定权限。'},
+  {kicker:'验收 / 角色不同', title:'将结构合法性与行为验收分开', description:'此示例假设 Customer 提案通过静态检查；Service 是否更新取决于原静态与动态 Gate。下方可切换假设结果，查看未通过或 NOOP 时为何仍使用旧版。', label:'候选选择 / 机制假设', artifact:''},
+  {kicker:'版本 / N → N+1', title:'下一代只加载实际选中的 Snapshot', description:'保留候选、判定和证据，不把未通过候选写成已接受版本。下一代由选中的 Customer 自主出题；训练后的独立评价只读加载这些版本，不再回传学习。', label:'下一代版本 / 机制假设', artifact:''}
 ];
-let step = 0;
-let timer = null;
-const nodes = [...document.querySelectorAll('[data-step]')];
-const progress = document.getElementById('loop-progress');
-const play = document.getElementById('play-loop');
-function showStep(index) {
-  step = Number(index);
-  nodes.forEach((node, i) => { node.classList.toggle('active', i === step); node.setAttribute('aria-pressed', String(i === step)); });
-  const [label, title, description] = steps[step];
-  document.getElementById('step-label').textContent = label;
-  document.getElementById('step-title').textContent = title;
-  document.getElementById('step-description').textContent = description;
-  document.getElementById('step-count').textContent = `${String(step + 1).padStart(2, '0')} / 06`;
-  progress.value = String(step);
+let stage = 0, timer = null;
+const stageButtons = [...document.querySelectorAll('[data-stage]')];
+const progress = document.getElementById('evolution-progress');
+const play = document.getElementById('play-evolution');
+function selectionText() {
+  const outcome = document.getElementById('service-outcome').value;
+  return {
+    accepted: {summary:'Customer 静态通过 → Cₙ₊₁；Service 验收通过 → Sₙ₊₁。', artifact:'Customer: static PASS → select Cₙ₊₁\nService: static + dynamic PASS → select Sₙ₊₁\n\n下一代：Cₙ₊₁ × Sₙ₊₁\n\n仅为验收通过分支的示意，\n不提供候选改善或泛化的真实证据。'},
+    rejected: {summary:'Customer 静态通过 → Cₙ₊₁；Service 动态未通过 → 保留 Sₙ。', artifact:'Customer: static PASS → select Cₙ₊₁\nService: dynamic REJECT → keep Sₙ\n\n下一代：Cₙ₊₁ × Sₙ\n候选保留用于审计，不进入下一代。'},
+    noop: {summary:'Customer 静态通过 → Cₙ₊₁；Service 返回 NOOP → 保留 Sₙ。', artifact:'Customer: static PASS → select Cₙ₊₁\nService: NOOP → keep Sₙ\n\n下一代：Cₙ₊₁ × Sₙ\n没有新 Service 版本，不制造虚假更新。'}
+  }[outcome];
+}
+function renderStage(index) {
+  stage = Number(index);
+  stageButtons.forEach((button,i) => { button.setAttribute('aria-selected',String(i === stage)); button.tabIndex = i === stage ? 0 : -1; });
+  document.querySelectorAll('[data-flow]').forEach(node => node.classList.toggle('active', node.dataset.flow.split(',').includes(String(stage))));
+  const item = stages[stage];
+  document.getElementById('stage-panel').setAttribute('aria-labelledby',`stage-${stage}`);
+  for (const field of ['kicker','title','description']) document.getElementById(`stage-${field}`).textContent = item[field];
+  document.getElementById('artifact-label').textContent = item.label;
+  document.getElementById('artifact-content').textContent = item.artifact || selectionText().artifact;
+  progress.value = String(stage); document.getElementById('evolution-count').textContent = `${stage + 1} / 6`;
+  document.getElementById('selected-versions').textContent = selectionText().summary;
+  document.getElementById('snapshot-versions').textContent = document.getElementById('service-outcome').value === 'accepted'
+    ? 'Cₙ₊₁ / Sₙ₊₁（假设均通过）' : 'Cₙ₊₁ / Sₙ（保留旧版）';
 }
 function pause() {
   clearInterval(timer); timer = null;
-  play.innerHTML = '播放流程 <span>▶</span>';
-  play.setAttribute('aria-pressed', 'false');
+  play.textContent = '播放过程 ▶'; play.setAttribute('aria-pressed','false');
 }
-nodes.forEach(node => node.addEventListener('click', () => { pause(); showStep(node.dataset.step); }));
-progress.addEventListener('input', () => { pause(); showStep(progress.value); });
 play.addEventListener('click', () => {
   if (timer) return pause();
-  play.innerHTML = '暂停流程 <span>Ⅱ</span>';
-  play.setAttribute('aria-pressed', 'true');
-  timer = setInterval(() => showStep((step + 1) % steps.length), 3500);
+  play.textContent = '暂停过程 Ⅱ'; play.setAttribute('aria-pressed','true');
+  timer = setInterval(() => renderStage((stage + 1) % stages.length), 4500);
 });
+progress.addEventListener('input', () => { pause(); renderStage(progress.value); });
+stageButtons.forEach((button,index) => {
+  button.addEventListener('click', () => { pause(); renderStage(index); });
+  button.addEventListener('keydown', event => {
+    let next;
+    if (event.key === 'ArrowRight') next = (index + 1) % stages.length;
+    else if (event.key === 'ArrowLeft') next = (index + stages.length - 1) % stages.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = stages.length - 1;
+    else return;
+    event.preventDefault(); pause(); renderStage(next); stageButtons[next].focus();
+  });
+});
+document.getElementById('service-outcome').addEventListener('change', () => { pause(); renderStage(5); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
-const loopObserver = new IntersectionObserver(entries => { if (!entries[0].isIntersecting) pause(); });
-loopObserver.observe(document.querySelector('.loop-figure'));
-const worlds = {
-  cloudops: {kicker:'CLOUD INFRASTRUCTURE', title:'CloudOps：云资源管理', description:'组织负责人不一定拥有项目操作权限。启动应用前，还要确认项目活跃、配额足够，以及它依赖的服务器已经运行。', tags:['项目角色','依赖 DAG','三维配额','账单与恢复'], doc:'benchmarks/cloudops-v0.1/README.md', map:['Organization','Identity & roles','Project state','Compute instance','Quota','Dependencies']},
-  saas: {kicker:'SUBSCRIPTIONS & ACCESS', title:'SaaS：订阅与成员管理', description:'成员生命周期、订阅、席位与账单彼此关联。一个合法请求可能有多条解决路径；操作顺序会改变后续步骤的可行性。', tags:['成员生命周期','订阅与席位','模拟支付','部分退款'], doc:'benchmarks/v0.2.0/README.md', map:['Organization','Membership','Subscription','Seats & access','Invoices','Payments']},
-  fulfillment: {kicker:'WAREHOUSE & FULFILLMENT', title:'FulfillmentOps：仓储履约', description:'仓库、库存、订单与运输构成可执行的履约世界。库存守恒和运输生命周期决定操作能否执行，真实状态变化由独立 Oracle 检查。', tags:['库存守恒','订单履约','运输生命周期','多步依赖'], doc:'benchmarks/fulfillment-v0.1/README.md', map:['Warehouse','Inventory','Orders','Fulfillment','Stock','Shipping']},
-  stayops: {kicker:'HOSPITALITY OPERATIONS', title:'StayOps：酒店运营', description:'按日期计算的房型库存与具体物理房间分配是不同概念。预订和入住需要同时考虑时间、资源关系与业务前置条件。', tags:['日期库存','物理房间','预订生命周期','资源分配'], doc:'benchmarks/stayops-v0.1/README.md', map:['Property','Dated inventory','Reservations','Room assignment','Room type','Physical rooms']}
-};
-function selectWorld(key) {
-  const world = worlds[key];
-  document.querySelectorAll('[data-world]').forEach(button => { const selected = button.dataset.world === key; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
-  const panel = document.getElementById('world-panel');
-  panel.setAttribute('aria-labelledby', `tab-${key}`);
-  document.getElementById('world-kicker').textContent = world.kicker;
-  document.getElementById('world-title').innerText = world.title;
-  document.getElementById('world-description').textContent = world.description;
-  document.getElementById('world-tags').replaceChildren(...world.tags.map(tag => { const span = document.createElement('span'); span.textContent = tag; return span; }));
-  document.getElementById('world-source').href = `https://github.com/hjy8848/Usami/blob/main/${world.doc}`;
-  document.getElementById('map-label').textContent = `${key.toUpperCase()} / RELATION MAP`;
-  ['map-root','map-left','map-right','map-target','map-dep-left','map-dep-right'].forEach((id,i) => document.getElementById(id).textContent = world.map[i]);
-}
-const studies = {
-  paired: {
-    code:'CUSTOMER-PAIRED-001', title:'Customer Skill 对照', description:'同一 Service、相同的 20 个初始世界与预算，每个世界由 C0 / C1 分别自主探索一次。只有 Customer Skill 不同。',
-    label:'Oracle 确认的成功业务违规次数',unit:'次 · 越高表示发现越多',max:20,bars:[['C0 × S0',0],['C1 × S0',20]],
-    takeaway:'20 次违规涉及权限、项目暂停、依赖三类首要规则，不能称为 20 种独立错误。查询失败增加，且部分目标上下文重复；未证明跨场景泛化。',
-    caveat:'历史候选比较，C1 当时未正式选中。有效测试采用当时的代理定义，不等于当前探针质量评价。', source:'customer-paired-001/REPORT.md'
-  },
-  repair: {
-    code:'SERVICE-REPAIR-001 / ISOLATED DIAGNOSTIC', title:'Service 候选修复与动态验收', description:'116 场总实验中的 80 场独立交叉诊断：20 个新世界 × 四种组合。C1 和 S1 均未通过当时的动态 Gate；候选只用于隔离比较。',
-    label:'Oracle 确认的成功业务违规次数',unit:'次 · 此处减少才是修复方向',max:20,bars:[['C0 × S0',8],['C1 × S0',15],['C0 × S1',3],['C1 × S1',12]],
-    takeaway:'C0 下违规从 8 次降至 3 次，C1 下从 15 次降至 12 次；但 S1 未稳定修复原始错误，并出现新的问题。候选数字改善不能代替 Gate 通过。',
-    caveat:'这是历史协议下的候选诊断，不能表述为正式共进化成功，也不能事后按新规则重新选择历史候选。',source:'service-repair-001/REPORT.md'
-  },
-  heldout: {
-    code:'MULTIGEN-HELDOUT-RECOVERY-002', title:'多代训练后的独立测试', description:'历史 v2 训练 A/B 各完成两代；最终 12 个陌生世界、每个世界一项合法与一项拒绝任务，三个 Service 标签共 72 场。四次正式 Service Reflection 均为 NOOP。',
-    label:'正确完成任务数（每组 24 场）',unit:'任务 · 越高越好',max:24,bars:[['S0',17],['A final',15],['B final',14]],
-    takeaway:'三组合法任务均为 12/12；正确拒绝分别为 5/12、3/12、2/12。实际使用同一 Skill 的运行波动不能解释成学习差异。没有形成新版 Service。',
-    caveat:'136 个完整 Trace 精确 Replay 通过。后续审计确认两条训练后交叉执行的依赖违规未进入 Reflection；见下方证据流向审计。当前 v3 已将这些交叉评估移出训练。',source:'multigen-heldout-recovery-002/FINAL_REPORT.md'
-  }
-};
-function selectStudy(key) {
-  const study = studies[key];
-  document.querySelectorAll('[data-study]').forEach(button => { const selected = button.dataset.study === key; button.setAttribute('aria-selected',String(selected)); button.tabIndex = selected ? 0 : -1; });
-  document.getElementById('study-panel').setAttribute('aria-labelledby',`tab-${key}`);
-  ['code','title','description','takeaway','caveat'].forEach(field => document.getElementById(`study-${field}`).textContent = study[field]);
-  document.getElementById('chart-label').textContent = study.label;
-  document.getElementById('chart-unit').textContent = study.unit;
-  document.getElementById('chart-max').textContent = study.max;
-  document.getElementById('study-source').href = `https://github.com/hjy8848/Usami/blob/main/experiments/vast_coevo/results/${study.source}`;
-  const rows = study.bars.map(([label,value],i) => {
-    const row = document.createElement('div'); row.className = 'bar-row';
-    const name = document.createElement('span'); name.textContent = label;
-    const track = document.createElement('div'); track.className = 'bar-track';
-    const bar = document.createElement('div'); bar.className = `bar${i % 2 ? ' accent' : ''}`; bar.style.width = `${value / study.max * 100}%`; track.append(bar);
-    const count = document.createElement('strong'); count.textContent = value;
-    row.append(name,track,count); return row;
-  });
-  document.getElementById('chart-bars').replaceChildren(...rows);
-}
-// Standard keyboard navigation for both tab lists, including Home / End.
-function wireTabs(selector, attribute, select) {
-  const buttons = [...document.querySelectorAll(selector)];
-  buttons.forEach((button,index) => {
-    button.addEventListener('click', () => select(button.dataset[attribute]));
-    button.addEventListener('keydown', event => {
-      let next;
-      if(event.key === 'ArrowRight') next = (index + 1) % buttons.length;
-      else if(event.key === 'ArrowLeft') next = (index + buttons.length - 1) % buttons.length;
-      else if(event.key === 'Home') next = 0;
-      else if(event.key === 'End') next = buttons.length - 1;
-      else return;
-      event.preventDefault(); select(buttons[next].dataset[attribute]); buttons[next].focus();
-    });
-  });
-}
-wireTabs('[data-world]', 'world', selectWorld);
-wireTabs('[data-study]', 'study', selectStudy);
+new IntersectionObserver(entries => { if (!entries[0].isIntersecting) pause(); }).observe(document.getElementById('evolution-example'));
+renderStage(0);

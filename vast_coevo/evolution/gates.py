@@ -90,6 +90,10 @@ class DynamicGate:
         if not all(callable(getattr(self.adapter, name, None)) for name in (
                 "customer_probes", "customer_probe_source_hashes", "customer_business_shape")):
             raise ValueError("adapter does not support independent Customer probe evaluation")
+        if self.policy.customer_quality.protocol == 'quality-gated-discovery-v2' and (
+                not callable(getattr(self.adapter, 'customer_probe_protocol', None)) or any(
+                    self.adapter.customer_probe_protocol(case.config) != 'cloudops-probes-v2' for case in cases)):
+            raise ValueError('QGD v2 requires structured read declarations before online validation')
         manifest = CustomerGateManifest(policy=self.policy.customer_quality,
             baseline_customer_hash=parent.snapshot_hash, candidate_customer_hash=candidate.snapshot_hash,
             service_hash=service.snapshot_hash, configs=tuple(case.config for case in cases),

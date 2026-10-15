@@ -45,9 +45,12 @@ class ExperimentPlan(FrozenModel):
     max_llm_calls: int = Field(default=500, ge=2, strict=True)
     max_tool_calls: int = Field(default=1000, ge=0, strict=True)
     policy: GatePolicy = Field(default_factory=GatePolicy)
+    customer_gate_version: Optional[Literal['legacy-v1', 'quality-gated-discovery-v1', 'quality-gated-discovery-v2']] = Field(
+        default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def registry(self):
+        self.check_gate_selection(require_explicit=False)
         ids = {p.config_id for p in self.profiles}
         tasks = {t.task_ref for t in self.service_tasks}
         if set(self.exploration + self.validation) - ids or {r.task_ref for r in self.regressions} - tasks:
@@ -55,6 +58,20 @@ class ExperimentPlan(FrozenModel):
         if any(p.split == "heldout" for p in self.profiles if p.config_id in self.exploration + self.validation):
             raise ValueError("heldout profiles cannot be selected for development")
         return self
+
+    def check_gate_selection(self, require_explicit=True):
+        if self.customer_gate_version is None:
+            if require_explicit: raise ValueError('new experiments must explicitly choose customer_gate_version')
+            return
+        quality = self.policy.customer_quality
+        if self.customer_gate_version == 'legacy-v1':
+            if quality is not None: raise ValueError('legacy gate conflicts with customer_quality configuration')
+        elif quality is None or quality.protocol != self.customer_gate_version:
+            raise ValueError('declared Customer gate version requires matching customer_quality configuration')
+        if self.customer_gate_version == 'quality-gated-discovery-v2' and any(
+                profile.read_probe_protocol != 'cloudops-read-probes-v1' for profile in self.profiles
+                if profile.config_id in self.validation + self.exploration):
+            raise ValueError('QGD v2 requires structured read probe protocol on exploration and validation profiles')
 
 
 def model_from_env(role, fallback=None):
@@ -106,6 +123,9 @@ def run_config(plan, adapter, customer, service, specs, run_id, generations=None
             raise ValueError("declared regression purpose differs from native task kind")
         task_cases.append(case(task.config_id, task.task_ref, regression.purpose))
     policy = plan.policy
+    if policy.customer_quality is not None and policy.customer_quality.protocol == 'quality-gated-discovery-v2':
+        if adapter.service_scope_risks(service):
+            raise ValueError('domain-specific Service guidance spans unverified domains; split or scope a new candidate first')
     if policy.customer_quality is not None:
         from .domains import initial_world
         excluded = set(policy.customer_excluded_world_hashes or ())
@@ -191,6 +211,15 @@ def main(argv=None):
                 return 0 if output["verified"] else 2
             if args.command == "reflect" and (Path(args.output).exists() or Path(args.output + ".started.json").exists()):
                 raise ValueError("Reflection output or in-flight marker already exists; no duplicate call performed")
+            if args.command == 'run':
+                preflight = ExperimentPlan.model_validate_json(Path(args.plan).read_text())
+                saved = root / 'runs' / args.id / 'config.json'
+                preflight.check_gate_selection(require_explicit=not saved.exists())
+                if saved.exists() and preflight.customer_gate_version is not None:
+                    existing = runs.load_config(args.id).policy.customer_quality
+                    actual = existing.protocol if existing is not None else 'legacy-v1'
+                    if preflight.customer_gate_version != actual:
+                        raise ValueError('resume gate version differs from frozen run')
             plan, adapter, store, archive, runs, customer, service, specs = context(args.plan, root)
             if args.command == "episode":
                 config = adapter.config_for(args.profile, specs["customer"], specs["service"], plan.budget)

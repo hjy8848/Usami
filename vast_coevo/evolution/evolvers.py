@@ -87,6 +87,10 @@ class Evolver:
             candidate = apply_patch(parent, reflection.patch, source=prefix + ".reflection")
             self.library_store.save(candidate, publish=False)
             fields["candidate_snapshot_hash"] = candidate.snapshot_hash
+            if (self.role == 'service' and gate_policy.customer_quality is not None and
+                    gate_policy.customer_quality.protocol == 'quality-gated-discovery-v2' and
+                    hasattr(self.adapter, 'service_scope_risks') and self.adapter.service_scope_risks(candidate)):
+                return EvolutionRecord(**fields, outcome='rejected', reasons=('domain_specific_service_guidance_crosses_scope',), consumption=costs)
             gate = DynamicGate(self.adapter, self.archive, gate_policy)
             if self.role == "customer":
                 result = gate.customer(parent, candidate, service, discovery_cases, prefix)

@@ -7,7 +7,7 @@ from ..models import EpisodeConfig
 
 
 class CustomerQualityPolicy(FrozenModel):
-    protocol: Literal['quality-gated-discovery-v1'] = 'quality-gated-discovery-v1'
+    protocol: Literal['quality-gated-discovery-v1', 'quality-gated-discovery-v2'] = 'quality-gated-discovery-v1'
     min_pairs: int = Field(default=20, ge=2, strict=True)
     min_requests: int = Field(default=30, ge=1, strict=True)
     min_assessable_rate: float = Field(default=0.8, ge=0, le=1, allow_inf_nan=False)
@@ -27,6 +27,8 @@ class ProbeAssessment(FrozenModel):
     turn_id: str
     customer_message: str
     declared_intents: Tuple[dict, ...] = ()
+    read_intents: Optional[Tuple[dict, ...]] = Field(default=None, exclude_if=lambda value: value is None)
+    information_value: Optional[Tuple[dict, ...]] = Field(default=None, exclude_if=lambda value: value is None)
     visible_ids: Tuple[str, ...] = ()
     prestate_hash: Hash
     probe_validity: Literal['valid', 'invalid', 'unresolved', 'censored']
@@ -41,7 +43,7 @@ class ProbeAssessment(FrozenModel):
 
 
 class ProbeEpisode(FrozenModel):
-    evaluator: Literal['cloudops-probes-v1'] = 'cloudops-probes-v1'
+    evaluator: Literal['cloudops-probes-v1', 'cloudops-probes-v2'] = 'cloudops-probes-v1'
     episode_id: str
     evidence_hash: Hash
     config: EpisodeConfig
@@ -56,6 +58,7 @@ class ProbeEpisode(FrozenModel):
     service_calls: int = Field(default=0, ge=0)
     tool_calls: int = Field(default=0, ge=0)
     total_tokens: Optional[int] = Field(default=None, ge=0)
+    cost_breakdown: Optional[dict] = Field(default=None, exclude_if=lambda value: value is None)
     termination: str
     replay_verified: bool
     injection_verified: bool
@@ -111,7 +114,7 @@ class CustomerGateManifest(FrozenModel):
 
 
 class CustomerQualityResult(FrozenModel):
-    protocol: Literal['quality-gated-discovery-v1'] = 'quality-gated-discovery-v1'
+    protocol: Literal['quality-gated-discovery-v1', 'quality-gated-discovery-v2'] = 'quality-gated-discovery-v1'
     decision: Literal['ACCEPT', 'REJECT', 'INCONCLUSIVE']
     reasons: Tuple[str, ...]
     manifest_hash: Hash

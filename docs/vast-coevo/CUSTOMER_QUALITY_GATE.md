@@ -1,5 +1,7 @@
 # Quality-Gated Discovery v1
 
+后续实现与新实验准备要求见 [协议 v2：只读探针、分角色成本与 Service 决策审计](PROBE_READINESS_V2.md)。本文保留 v1 定义；新实验入口现在要求明确声明 Gate 版本，不能通过缺省配置悄悄启动 legacy Gate。
+
 Customer 的目标是提出有效、可验证的探针，发现 Service 的决策错误。Service 工具调用量不是 Customer 的测试质量。本协议独立评价请求质量和 Service 实际行为，不改 Engine、Reference Rules、Oracle 或权限。
 
 状态：已实现 CloudOps 精确写意图的独立评估、配对三态动态 Gate、实际 Skill 注入核验及离线重建。阈值属于**待验证的研究配置**，不是经验上已成立的科学标准。本次没有调用真实模型、重评历史实验或接受 C1。下一次验收必须冻结政策后采集新的开发证据。

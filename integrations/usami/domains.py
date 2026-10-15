@@ -23,9 +23,12 @@ class UsamiProfile(BaseModel):
     # historical profile serialization and hashes.
     frozen_world: Optional[Dict[str, Any]] = Field(default=None, exclude_if=lambda value: value is None)
     customer_method: Literal["adaptive", "careful"] = "adaptive"
+    read_probe_protocol: Optional[Literal["cloudops-read-probes-v1"]] = Field(default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def unconditioned(self):
+        if self.read_probe_protocol is not None and self.domain != "cloudops":
+            raise ValueError("read probe protocol currently supports CloudOps only")
         if self.domain != "saas" and self.generator:
             raise ValueError("only SaaS has a configurable native generator")
         if self.generator.get("workflow") is not None:
@@ -164,6 +167,8 @@ def native_interaction_config(profile, config):
                                  tools=tools, budget=InteractionBudget(**limits))
     if profile.domain == "cloudops":
         from usami_cloudops.customer import InteractionConfig
+        if profile.read_probe_protocol is not None:
+            from .customer_protocol_v2 import InteractionConfig
         from usami_cloudops.service import Experiment, Budget
         experiment = Experiment(world=world, identity=profile.identity, mode=profile.mode,
                                 tools=tools, budget=Budget(**limits))
@@ -182,6 +187,8 @@ def interaction_session(profile, native_config, customer, service):
         return InteractionSession(native_config, customer, service)
     if profile.domain == "cloudops":
         from usami_cloudops.customer import InteractionSession
+        if profile.read_probe_protocol is not None:
+            from .customer_protocol_v2 import InteractionSession
         return InteractionSession(native_config, customer, service)
     import importlib
     session = importlib.import_module("usami_" + profile.domain + ".customer").CustomerSession
@@ -195,6 +202,8 @@ def native_trace(domain, payload, track):
         return (InteractionTrace if track == "discovery" else ServiceExecution).model_validate(payload)
     if domain == "cloudops":
         from usami_cloudops.customer import Interaction
+        if track == 'discovery' and payload.get('config', {}).get('read_probe_protocol') is not None:
+            from .customer_protocol_v2 import Interaction
         from usami_cloudops.service import Execution
         return (Interaction if track == "discovery" else Execution).model_validate(payload)
     from usami_harness.customer import Interaction
@@ -218,6 +227,9 @@ def replay_native(domain, trace, track):
         from usami.interaction import replay_interaction
         from usami.service import replay_execution
         return replay_interaction(trace) if track == "discovery" else replay_execution(trace)
+    if domain == 'cloudops' and track == 'discovery' and getattr(trace.config, 'read_probe_protocol', None) is not None:
+        from .customer_protocol_v2 import replay_interaction
+        return replay_interaction(trace)
     module = importlib.import_module("usami_" + domain + (".customer" if track == "discovery" else ".service"))
     return getattr(module, "replay_interaction" if track == "discovery" else "replay_execution")(trace)
 

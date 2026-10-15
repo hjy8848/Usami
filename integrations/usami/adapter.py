@@ -227,6 +227,10 @@ class UsamiAdapter:
     def customer_probe_source_hashes(self):
         return source_hashes()
 
+    def customer_probe_protocol(self, config):
+        profile, _, _, _, _ = self._resolve(config, public_only=True)
+        return 'cloudops-probes-v2' if profile.read_probe_protocol else 'cloudops-probes-v1'
+
     def customer_business_shape(self, config):
         if config.domain != "cloudops":
             raise ValueError("QGD v1 currently supports CloudOps Discovery only")
@@ -245,6 +249,19 @@ class UsamiAdapter:
         from .customer_probes import evaluate_cloudops
         trace = native_trace("cloudops", json.loads(artifact.native_trace_json), "discovery")
         return evaluate_cloudops(trace, evidence)
+
+    def service_scope_risks(self, snapshot):
+        from .service_audit import scope_audit
+        return scope_audit(snapshot)
+
+    def service_decision_audit(self, evidence):
+        if evidence.config.domain != 'cloudops': raise ValueError('write audit supports CloudOps only')
+        artifact = NativeArtifact.model_validate_json(Path(evidence.trace.path).read_text())
+        replay = self.replay(evidence, artifact.customer_snapshot, artifact.service_snapshot)
+        if not replay.verified: raise ValueError('Service audit failed exact replay: ' + replay.reason)
+        from .service_audit import audit_writes
+        trace = native_trace('cloudops', json.loads(artifact.native_trace_json), artifact.track)
+        return audit_writes(evidence, execution_of('cloudops', trace, artifact.track), artifact.service_snapshot)
 
     def forbidden_identifiers(self, config):
         _, world, _, _, _ = self._resolve(config, public_only=True)
@@ -362,6 +379,10 @@ class UsamiAdapter:
         payload["replay"] = replay.model_dump(mode="json")
         evidence = EpisodeEvidence.model_validate(payload)
         atomic_json(path.with_name("evidence.json"), evidence.model_dump(mode="json"), immutable=True)
+        if profile.domain == 'cloudops' and profile.read_probe_protocol is not None:
+            from .service_audit import audit_writes
+            atomic_json(path.with_name('service-decision-audit.json'),
+                audit_writes(evidence, execution_of('cloudops', trace, track), service), immutable=True)
         return evidence
 
     def _evidence(self, artifact, trace, ref, task=None):

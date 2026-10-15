@@ -1,0 +1,1 @@
+{"bootstrap_samples":4000,"bootstrap_seed":20261015,"confidence":0.95,"duplicate_margin":0.05,"max_cost_ratio":1.2,"min_assessable_rate":0.8,"min_cost_reduction":0.1,"min_pairs":20,"min_requests":30,"min_root_worlds":2,"min_valid_probe_rate":0.8,"protocol":"quality-gated-discovery-v2","quality_margin":0.05,"reliability_margin":0.05}

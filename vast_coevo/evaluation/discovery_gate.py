@@ -23,7 +23,7 @@ def summarize(rows):
             if probe.probe_validity == 'valid' and not probe.duplicate:
                 for key in probe.coverage: coverage.setdefault(key, set()).add(world)
     requests = len(probes)
-    return dict(episodes=len(rows), requests=requests, valid_probes=len(valid), assessable=assessable,
+    result = dict(episodes=len(rows), requests=requests, valid_probes=len(valid), assessable=assessable,
         invalid_probes=sum(probe.probe_validity == 'invalid' for probe in probes),
         unresolved_probes=sum(probe.probe_validity == 'unresolved' for probe in probes),
         censored_probes=sum(probe.probe_validity == 'censored' for probe in probes),
@@ -45,31 +45,40 @@ def summarize(rows):
         query_failures=sum(outcome.get('is_query') is True and outcome.get('success') is False
             for probe in probes for outcome in probe.observed_service_outcomes),
         terminations=dict(Counter(row.termination for row in rows)))
+    if any(row.cost_breakdown is not None for row in rows):
+        result['role_costs'] = {}
+        for role in ('customer', 'service'):
+            values = [row.cost_breakdown[role]['total_tokens'] if row.cost_breakdown else None for row in rows]
+            result['role_costs'][role + '_tokens'] = sum(values) if all(value is not None for value in values) else None
+        result['temporal_costs'] = [dict(episode_id=row.episode_id, **(row.cost_breakdown or {})) for row in rows]
+    return result
 
 
 def _paired_intervals(old, new, policy):
     """Resample whole paired worlds; preserve multiple requests per episode."""
     rng = random.Random(policy.bootstrap_seed)
-    keys = ('valid_probe_rate', 'protocol_error_rate', 'duplicate_rate', 'detection_rate', 'token_ratio', 'tool_ratio')
+    v2 = policy.protocol == 'quality-gated-discovery-v2'
+    keys = ('valid_probe_rate', 'protocol_error_rate', 'duplicate_rate', 'detection_rate', 'token_ratio', 'tool_ratio', 'service_token_ratio')
     values = {key: [] for key in keys}
     # Cache sufficient per-world counts; bootstrapping does not reparse traces.
     def row_counts(row):
         return (len(row.probes), sum(p.probe_validity == 'valid' for p in row.probes),
                 row.protocol_errors, row.customer_calls, sum(p.duplicate for p in row.probes),
-                _detected(row), row.total_tokens, row.tool_calls)
+                _detected(row), row.cost_breakdown['customer']['total_tokens'] if v2 else row.total_tokens, row.tool_calls,
+                row.cost_breakdown['service']['total_tokens'] if v2 else None)
     a, b = list(map(row_counts, old)), list(map(row_counts, new))
     for _ in range(policy.bootstrap_samples):
         indexes = [rng.randrange(len(old)) for _ in old]
         sums = []
         for side in (a, b):
             sums.append([None if any(side[i][col] is None for i in indexes) else sum(side[i][col] for i in indexes)
-                         for col in range(8)])
+                         for col in range(9)])
         left, right = sums
         values['valid_probe_rate'].append(right[1] / max(1, right[0]) - left[1] / max(1, left[0]))
         values['protocol_error_rate'].append(right[2] / max(1, right[3]) - left[2] / max(1, left[3]))
         values['duplicate_rate'].append(right[4] / max(1, right[0]) - left[4] / max(1, left[0]))
         values['detection_rate'].append((right[5] - left[5]) / len(old))
-        for name, column in (('token_ratio', 6), ('tool_ratio', 7)):
+        for name, column in (('token_ratio', 6), ('tool_ratio', 7), ('service_token_ratio', 8)):
             if left[column] is not None and right[column] is not None:
                 # Zero-baseline/positive-candidate cost is an unbounded increase.
                 values[name].append(right[column] / left[column] if left[column] else (1.0 if not right[column] else float('inf')))
@@ -82,6 +91,9 @@ def _paired_intervals(old, new, policy):
             # unknown/unbounded, which cannot satisfy the cost constraint.
             low, high = data[int(tail * (len(data)-1))], data[int((1-tail) * (len(data)-1))]
             if high != float('inf'): intervals[key] = (low, high)
+    if v2:
+        for old_key, new_key in (('token_ratio', 'customer_token_ratio'), ('tool_ratio', 'service_tool_ratio')):
+            if old_key in intervals: intervals[new_key] = intervals.pop(old_key)
     return intervals
 
 
@@ -91,7 +103,7 @@ def compare_customer_probes(manifest, baseline, candidate):
     candidate = tuple(ProbeEpisode.model_validate(row.model_dump(mode='json')) for row in candidate)
     old, new = summarize(baseline), summarize(candidate)
     def result(decision, reasons, intervals=None, improvements=()):
-        return CustomerQualityResult(decision=decision, reasons=tuple(reasons), manifest_hash=manifest.manifest_hash,
+        return CustomerQualityResult(protocol=manifest.policy.protocol, decision=decision, reasons=tuple(reasons), manifest_hash=manifest.manifest_hash,
             baseline=old, candidate=new, intervals=intervals or {}, improvements=tuple(improvements),
             baseline_reports=tuple(row.report_hash for row in baseline), candidate_reports=tuple(row.report_hash for row in candidate))
     if len(baseline) != len(candidate) or len(baseline) != len(manifest.configs):
@@ -104,6 +116,9 @@ def compare_customer_probes(manifest, baseline, candidate):
             return result('REJECT', ['pinned_pair_or_partition_mismatch'])
     if any(not row.replay_verified or not row.injection_verified for row in baseline + candidate):
         return result('REJECT', ['replay_or_skill_injection_not_verified'])
+    if manifest.policy.protocol == 'quality-gated-discovery-v2' and any(
+            row.evaluator != 'cloudops-probes-v2' or row.cost_breakdown is None for row in baseline + candidate):
+        return result('INCONCLUSIVE', ['v2_read_and_role_cost_evidence_required'])
     injected = {key for row in candidate for key in row.injected_skill_hashes}
     if set(manifest.required_candidate_skill_hashes) - injected:
         return result('INCONCLUSIVE', ['candidate_skill_not_exercised_in_actual_requests'])
@@ -125,7 +140,9 @@ def compare_customer_probes(manifest, baseline, candidate):
         low, high = intervals[key]
         if (high < -margin if direction == -1 else low > margin): reject.append(key + '_material_regression')
         elif (low < -margin if direction == -1 else high > margin): uncertain.append(key + '_noninferiority_unproven')
-    for key in ('token_ratio', 'tool_ratio'):
+    v2 = policy.protocol == 'quality-gated-discovery-v2'
+    token_key, tool_key = ('customer_token_ratio', 'service_tool_ratio') if v2 else ('token_ratio', 'tool_ratio')
+    for key in ((token_key, tool_key, 'service_token_ratio') if v2 else (token_key, tool_key)):
         if key not in intervals: uncertain.append(key + '_unknown_or_unbounded')
         elif intervals[key][0] > policy.max_cost_ratio: reject.append(key + '_material_regression')
         elif intervals[key][1] > policy.max_cost_ratio: uncertain.append(key + '_cost_bound_unproven')
@@ -143,8 +160,14 @@ def compare_customer_probes(manifest, baseline, candidate):
     stable_cover = {key for key, count in new['coverage_world_support'].items() if count >= policy.min_root_worlds}
     if no_detection_loss and old_cover <= new_cover and stable_cover - old_cover:
         improvements.append('replicated_valid_boundary_coverage_expanded')
-    if (no_detection_loss and old_cover <= new_cover and old_cover and
-            intervals['token_ratio'][1] <= 1 - policy.min_cost_reduction and intervals['tool_ratio'][1] <= 1):
+    comparable_exposure = not v2 or all(
+        len(right.probes) >= len(left.probes) and all(not row.protocol_errors and
+            not row.direct_discoveries and not row.incidental_discoveries and
+            not any(p.probe_validity == 'censored' for p in row.probes) and
+            not any(word in row.termination.lower() for word in ('error', 'invalid', 'interrupted', 'llm_budget', 'tool_budget', 'service_llm', 'service_tool'))
+            for row in (left, right)) for left, right in zip(baseline, candidate))
+    if (comparable_exposure and no_detection_loss and old_cover <= new_cover and old_cover and
+            intervals[token_key][1] <= 1 - policy.min_cost_reduction and intervals[tool_key][1] <= 1):
         improvements.append('paired_cost_reduced_with_preserved_discovery_and_coverage')
     if not improvements:
         return result('INCONCLUSIVE', ['no_robust_preregistered_improvement'], intervals)

@@ -27,6 +27,8 @@ python -m integrations.usami --root artifacts/vast-coevo history --id cloudops-l
 
 新 Customer 验收可显式启用 [Quality-Gated Discovery v1](docs/vast-coevo/CUSTOMER_QUALITY_GATE.md)：以独立探针有效性、规则级错误发现、业务覆盖与成本为依据，返回 ACCEPT / REJECT / INCONCLUSIVE，不再把 Service 工具操作量当作 Customer 出题质量。当前支持 CloudOps 精确写意图；纯自然语言查询保持待判定。研究阈值在调用模型前冻结，旧实验和已选版本不作事后改判。
 
+[实验准备协议 v2](docs/vast-coevo/PROBE_READINESS_V2.md) 增加独立结构化只读意图、污染状态优先分类、分角色与违规前后成本、逐写 Service 决策审计；新运行必须明确选择 Gate 版本。Service 违规仍由原 Sandbox 和独立 Oracle 暴露，不以自动拦截冒充修复。
+
 ## FulfillmentOps v0.1 与 StayOps v0.1
 
 独立的仓储履约与酒店运营世界，分别提供真实 World、Reference Rules、Engine、Oracle、Service/Customer 会话、冻结双 Track、全事件回放及真实模型 Pilot。FulfillmentOps 已冻结 338 个任务；StayOps 已冻结 302 个任务。库存守恒与运输生命周期、按日期房型库存与物理房间分配具有不同业务语义。开放 Customer 自主探索，不读取固定任务或参考解法。核心运行无需网页。

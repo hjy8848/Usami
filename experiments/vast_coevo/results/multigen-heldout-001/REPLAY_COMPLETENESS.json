@@ -1,0 +1,20 @@
+{
+  "status": "PARTIAL",
+  "complete_episode_replay_passed": 18,
+  "attempted_episodes": 20,
+  "incomplete_business_episodes": [
+    "g0.smoke-B.service.baseline.smoke-1",
+    "g0.smoke-A.cross.parent_parent.smoke-0"
+  ],
+  "incomplete_episodes_have_full_replay": false,
+  "wire_requests_with_known_results": 144,
+  "wire_requests_unknown_in_flight": 0,
+  "actual_usage_known_for_all_completed_wire_calls": true,
+  "actual_reflections": 3,
+  "reflections_reproduced_from_evolution_records": 2,
+  "reflection_reconstructed_from_real_request_and_response": 1,
+  "complete_service_gates_reproduced": 1,
+  "formal_training_generations": 0,
+  "heldout_episodes": 0,
+  "reason": "Budget admission stopped two Episodes mid-session before dispatching their next LLM request; wire prefixes remain, but no finalized native World trace was published for those Episodes."
+}

@@ -1,0 +1,32 @@
+{
+  "status": "DRAFT_ONLY_NOT_EXECUTED",
+  "basis": "8 completed development fixed-task Episodes; no heldout model outcomes",
+  "development_fixed_task_tokens": 261722,
+  "development_fixed_task_episodes": 8,
+  "mean_tokens": 32715.25,
+  "projected_288_task_tokens": 9421992,
+  "projection_is_not_an_observed_heldout_result": true,
+  "reason_initial_reallocation_needs_revision": "A 6,038,420-token heldout subcap is below the development-based point estimate.",
+  "remaining_after_old_study_and_connectivity": {
+    "calls": 4555,
+    "tokens": 24038420
+  },
+  "recommended_phase_caps": {
+    "smoke": {
+      "calls": 250,
+      "tokens": 2000000
+    },
+    "four_training_runs_each": {
+      "calls": 500,
+      "tokens": 3000000
+    },
+    "heldout": {
+      "calls": 2304,
+      "tokens": 10038420
+    }
+  },
+  "caps_fit_original_overall_budget": true,
+  "same_model_data_algorithms_metrics_and_samples": true,
+  "maximum_additional_smoke_attempts": 1,
+  "must_preregister_before_new_online_calls": true
+}

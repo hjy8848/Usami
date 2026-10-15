@@ -1,0 +1,48 @@
+{
+  "status": "PROPOSED_NOT_AUTHORIZED",
+  "reason": "Smoke 1,000,000-token subcap was underestimated; immutable study 001 stopped before formal training. No model outage or heldout feedback.",
+  "old_manifest_hash": "ca5aaf66332335cff6e962b691a4003686c9ca55669df6cfe850b69c29f03e58",
+  "spent_including_connectivity": {
+    "calls": 145,
+    "tokens": 961580
+  },
+  "overall_limits_unchanged": {
+    "calls": 4700,
+    "tokens": 25000000
+  },
+  "new_study_remaining_limits": {
+    "calls": 4555,
+    "tokens": 24038420
+  },
+  "new_phase_limits": {
+    "smoke": {
+      "calls": 250,
+      "tokens": 2000000
+    },
+    "each_of_four_training_runs": {
+      "calls": 500,
+      "tokens": 4000000
+    },
+    "heldout": {
+      "calls": 2304,
+      "tokens": 6038420
+    }
+  },
+  "unchanged": [
+    "model",
+    "initial_C0_S0",
+    "A_B_mechanism",
+    "3_generations",
+    "2_repetitions",
+    "24_heldout_worlds",
+    "288_heldout_tasks",
+    "metrics",
+    "statistics",
+    "Service_Gate"
+  ],
+  "maximum_additional_smoke_attempts": 1,
+  "retain_every_failed_attempt": true,
+  "no_old_smoke_skill_promoted_to_formal_training": true,
+  "heldout_performance_seen": false,
+  "requires_explicit_user_reply": true
+}

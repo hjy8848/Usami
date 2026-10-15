@@ -1,0 +1,10 @@
+{"run": "smoke-A", "status": "interrupted", "generations": 0, "error": "episode has no safely completed result: g0.smoke-A.cross.parent_parent.smoke-0"}
+{"run": "smoke-B", "status": "interrupted", "generations": 0, "error": "episode has no safely completed result: g0.smoke-B.service.baseline.smoke-1"}
+Traceback (most recent call last):
+  File "/Users/spring/RSI/Usami/experiments/vast_coevo/examples/multigen_heldout.py", line 440, in <module>
+    if __name__ == '__main__': main()
+  File "/Users/spring/RSI/Usami/experiments/vast_coevo/examples/multigen_heldout.py", line 436, in main
+    elif args.command == 'execute': execute(root, pinned(root))
+  File "/Users/spring/RSI/Usami/experiments/vast_coevo/examples/multigen_heldout.py", line 377, in execute
+    if any(r['report']['status'] != 'completed' for r in smoke): raise ValueError('development smoke did not complete')
+ValueError: development smoke did not complete

@@ -1,0 +1,11 @@
+{
+  "archive": "raw-evidence.tar.gz",
+  "sha256": "bc68625a56b899a3eed4402622362c11d83cfcd704db31e0fc52dadaeecec50f",
+  "bytes": 4169988,
+  "files": 928,
+  "complete_episodes": 18,
+  "partial_episodes": 2,
+  "formal_training_generations": 0,
+  "heldout_episodes": 0,
+  "contains_api_key": false
+}

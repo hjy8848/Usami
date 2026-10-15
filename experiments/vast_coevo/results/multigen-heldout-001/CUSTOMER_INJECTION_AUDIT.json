@@ -1,0 +1,40 @@
+{
+  "actual_new_skill_injections": [
+    {
+      "episode_id": "g0.smoke-B.selected_customer.smoke-0",
+      "call_id": "g0.smoke-B.selected_customer.smoke-0.customer.1",
+      "snapshot_hash": "e5679784875750d58ec57b5d94486617ffac418620ad594bce9581e3b80ce971",
+      "skills": [
+        {
+          "content_hash": "235ec2540cdb8cb08bec02f051d79de3b7f0f2134ac46f0fc224e221ba0479c2",
+          "id": "customer.permission_boundary_probe",
+          "version": 1
+        },
+        {
+          "content_hash": "ea704e65d0b6c149cb4f09f1239a52a331644607eac595b94b05d32d21a3108e",
+          "id": "customer.state_dependency",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "episode_id": "g0.smoke-B.selected_customer.smoke-0",
+      "call_id": "g0.smoke-B.selected_customer.smoke-0.customer.2",
+      "snapshot_hash": "e5679784875750d58ec57b5d94486617ffac418620ad594bce9581e3b80ce971",
+      "skills": [
+        {
+          "content_hash": "235ec2540cdb8cb08bec02f051d79de3b7f0f2134ac46f0fc224e221ba0479c2",
+          "id": "customer.permission_boundary_probe",
+          "version": 1
+        },
+        {
+          "content_hash": "ea704e65d0b6c149cb4f09f1239a52a331644607eac595b94b05d32d21a3108e",
+          "id": "customer.state_dependency",
+          "version": 1
+        }
+      ]
+    }
+  ],
+  "verified_by_native_replay": true,
+  "online_calls": 0
+}

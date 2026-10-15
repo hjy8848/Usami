@@ -121,11 +121,25 @@ def native_task(profile, task_profile):
         from usami_cloudops.goals import Task
         from usami_cloudops.rules import decide
         world, task = initial_world(profile), Task.model_validate(task_profile.frozen_task)
-        if task.kind != "policy_refusal" or task.initial_state_hash != world.state_hash or task.identity != profile.identity or task.identity not in world.users or len(task.capabilities) != 1:
-            raise ValueError("frozen task must be one certified refusal on its pinned world")
-        decision = decide(world, task.identity, task.capabilities[0])
-        if decision.allowed or decision.error_code != task.refusal_code:
-            raise ValueError("frozen refusal certificate differs from Reference rules")
+        if task.initial_state_hash != world.state_hash or task.identity != profile.identity or task.identity not in world.users or not task.capabilities:
+            raise ValueError("frozen task must match its pinned world and identity")
+        if task.kind == "policy_refusal":
+            if len(task.capabilities) != 1:
+                raise ValueError("frozen refusal requires one operation")
+            decision = decide(world, task.identity, task.capabilities[0])
+            if decision.allowed or decision.error_code != task.refusal_code:
+                raise ValueError("frozen refusal certificate differs from Reference rules")
+        else:
+            from usami_cloudops.goals import certify, execute
+            if task.goal.satisfied(world) or not task.witnesses:
+                raise ValueError("frozen completion requires an unsatisfied goal and an executable certificate")
+            for witness in task.witnesses:
+                if not witness.operations or any(op not in task.capabilities for op in witness.operations):
+                    raise ValueError("frozen witness exceeds exact task capabilities")
+                proof = execute(world, task.identity, witness.operations)
+                if (not task.goal.satisfied(proof.final_state) or not task.goal.frame_preserved(world, proof.final_state) or
+                        certify(world, task, witness.operations) != witness):
+                    raise ValueError("frozen completion certificate differs from Engine/Rules/Oracle/Replay")
         return world, task, None
     if profile.domain == "saas":
         from usami.world.generator import GeneratorConfig

@@ -12,7 +12,7 @@ from ..schema import digest
 from ..storage.runs import (BudgetExhausted, CrossExecution, GenerationRecord,
                             InterruptedRun, JournalError, OperationCompletion,
                             RunReport, RunStore)
-from .models import RunConfig
+from .models import EvolutionRecord, RunConfig
 
 
 class RecordedCallError(Exception):
@@ -203,7 +203,14 @@ class CoEvolutionController:
                                     prefix + ".current." + case.id) for case in config.exploration_cases)
                     self._check_main_evidence(current)
                     c_record = self.run_store.load_evolution(config.run_id, generation, "customer")
-                    if c_record is None:
+                    if c_record is None and not config.customer_updates:
+                        c_record = EvolutionRecord(generation=generation, role="customer",
+                            parent_customer_hash=customer.snapshot_hash, parent_service_hash=service.snapshot_hash,
+                            reflection=None, selected_snapshot_hash=customer.snapshot_hash, outcome="fixed",
+                            reasons=("customer_updates_disabled_by_preregistered_ablation",), consumption=Consumption(),
+                            customer_selection="customer-static-only-v1")
+                        c_ref = self.run_store.save_evolution(config.run_id, c_record)
+                    elif c_record is None:
                         client = _JournalClient(self.customer_client, self.run_store, config, prefix + ".customer.reflection")
                         reflector = CustomerReflector(client, config.customer_reflector_model)
                         c_record = Evolver("customer", journal, reflector, self.library_store,

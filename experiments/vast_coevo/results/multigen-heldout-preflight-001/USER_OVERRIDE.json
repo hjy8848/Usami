@@ -1,0 +1,10 @@
+{
+  "source": "direct human reply in this task",
+  "answer": "允许使用本地 RSI 继续",
+  "effect": "The failed dedicated workspace_info prerequisite is replaced by local /Users/spring/RSI/Usami identity verification for this experiment.",
+  "earlier_blocked_audit_preserved": true,
+  "provider_preflight": "PROVIDER_AVAILABILITY.json",
+  "provider_connectivity_calls": 1,
+  "provider_reported_total_tokens": 128,
+  "training_or_heldout_data_used_by_connectivity_check": false
+}

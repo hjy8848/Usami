@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "full_regression": {
+    "passed": 931,
+    "seconds": 252.14,
+    "exit_code": 0
+  },
+  "new_experiment_tests": 13,
+  "customer_selection": "static-only-v1",
+  "service_reflection_evolver_gates_unchanged": true,
+  "business_packages_unchanged": true,
+  "fixed_customer_control_skips_reflection_without_fake_noop": true,
+  "frozen_legal_tasks_use_original_engine_rules_oracle_replay": true,
+  "formal_online_experiment_started": false
+}

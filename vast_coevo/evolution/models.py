@@ -77,13 +77,13 @@ class EvolutionRecord(FrozenModel):
     role: SkillRole
     parent_customer_hash: Hash
     parent_service_hash: Hash
-    reflection: ReflectionRecord
+    reflection: Optional[ReflectionRecord]
     patch: Optional[SkillPatch] = None
     static_validation: Optional[StaticValidation] = None
     dynamic_validation: Optional[GateResult] = None
     candidate_snapshot_hash: Optional[Hash] = None
     selected_snapshot_hash: Hash
-    outcome: Literal["accepted", "rejected", "inconclusive", "noop"]
+    outcome: Literal["accepted", "rejected", "inconclusive", "noop", "fixed"]
     reasons: Tuple[str, ...] = ()
     consumption: Consumption
     domain_coverage: Optional[DomainCoverage] = Field(default=None, exclude_if=lambda value: value is None)
@@ -92,6 +92,14 @@ class EvolutionRecord(FrozenModel):
 
     @model_validator(mode="after")
     def static_only_selection(self):
+        if self.reflection is None:
+            if (self.role != "customer" or self.outcome != "fixed" or self.patch is not None or
+                    self.static_validation is not None or self.dynamic_validation is not None or
+                    self.candidate_snapshot_hash is not None or self.selected_snapshot_hash != self.parent_customer_hash or
+                    self.consumption != Consumption()):
+                raise ValueError("only a fixed Customer may skip Reflection, without patch, validation, cost or version change")
+        elif self.outcome == "fixed":
+            raise ValueError("fixed Customer must not fabricate a Reflection")
         if self.customer_selection is not None:
             if self.role != "customer" or self.dynamic_validation is not None:
                 raise ValueError("static-only Customer selection cannot carry a performance gate")
@@ -109,6 +117,7 @@ class RunConfig(FrozenModel):
     schema_version: Literal[1, 2] = 2
     customer_selection: Optional[Literal["customer-static-only-v1"]] = Field(
         default=None, exclude_if=lambda value: value is None)
+    customer_updates: bool = Field(default=True, exclude_if=lambda value: value is True, strict=True)
     run_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,95}$")
     generations: int = Field(default=1, ge=1, strict=True)
     exploration_cases: Tuple[ValidationCase, ...] = Field(min_length=1)
@@ -128,6 +137,8 @@ class RunConfig(FrozenModel):
             object.__setattr__(self, "customer_selection", "customer-static-only-v1")
         elif self.customer_selection is not None:
             raise ValueError("historical run v1 cannot declare static-only Customer selection")
+        if self.schema_version == 1 and not self.customer_updates:
+            raise ValueError("fixed Customer ablation requires run v2")
         from ..models import ModelSpec
         object.__setattr__(self, "customer_reflector_model", ModelSpec.model_validate(self.customer_reflector_model))
         object.__setattr__(self, "service_reflector_model", ModelSpec.model_validate(self.service_reflector_model))

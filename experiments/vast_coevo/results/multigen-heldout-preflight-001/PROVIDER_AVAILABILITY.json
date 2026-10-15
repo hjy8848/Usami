@@ -1,0 +1,54 @@
+{
+  "purpose": "connectivity-only; no business world or outcome used",
+  "automatic_retries": 0,
+  "calls": [
+    {
+      "url": "http://10.130.138.46:8010/v1/chat/completions",
+      "request": {
+        "model": "dashscope/qwen3.6-plus",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Reply with exactly OK."
+          }
+        ],
+        "temperature": 0,
+        "max_tokens": 32
+      },
+      "http_status": 200,
+      "response": {
+        "id": "chatcmpl-12c53221-c81f-9f63-900b-3dd8cee21790",
+        "created": 1792045810,
+        "model": "dashscope/qwen3.6-plus",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "OK",
+              "role": "assistant",
+              "reasoning_content": "Here's a thinking process:\n\n1.  **Analyze User Input:** The user said \"Reply with exactly OK.\"\n2.  **Identify Key Constraint:** The response must be *exactly* \"OK\" (case-sensitive, no extra text, no punctuation unless specified, but \"OK\" is standard).\n3.  **Formulate Response:** I will output just \"OK\".\n4.  **Verify Constraint:** Does it match exactly? Yes.\n5.  **Output Generation:** OK.✅",
+              "provider_specific_fields": {
+                "refusal": null
+              }
+            },
+            "provider_specific_fields": {}
+          }
+        ],
+        "usage": {
+          "completion_tokens": 113,
+          "prompt_tokens": 15,
+          "total_tokens": 128,
+          "completion_tokens_details": {
+            "reasoning_tokens": 108,
+            "text_tokens": 113
+          },
+          "prompt_tokens_details": {
+            "text_tokens": 15
+          }
+        }
+      }
+    }
+  ]
+}

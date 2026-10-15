@@ -1,0 +1,59 @@
+{
+  "status": "BLOCKED",
+  "phase": "phase-0",
+  "commit": "34482ac6178b6306dc4397c1ca2c82d9597626e7",
+  "local_repository": "/Users/spring/RSI/Usami",
+  "required_connector": "Codex with ChatGPT · RSI",
+  "workspace_info_confirmed": false,
+  "workspace_info_attempts": [
+    {
+      "stage": "initial",
+      "result": "MCP internal error -32603"
+    },
+    {
+      "stage": "after_local_connection_repair",
+      "result": "MCP internal error -32603"
+    }
+  ],
+  "local_connection_diagnostic": {
+    "workspace": "RSI",
+    "bridge": true,
+    "mcp": true,
+    "oauth": true,
+    "connection": true,
+    "note": "Local health checks do not satisfy the required remote workspace_info identity confirmation."
+  },
+  "customer_static_only_selection_confirmed_locally": true,
+  "customer_performance_call_absent_from_evolver": true,
+  "service_dynamic_gate_ast_unchanged_since": "7aa3f96",
+  "tests": {
+    "command": ".venv/bin/python -m pytest -q tests/test_customer_static_selection.py tests/test_vast_evolution.py tests/test_vast_controller.py tests/test_vast_domain_protocol.py tests/test_vast_skills.py tests/test_vast_real_gates.py",
+    "passed": 112,
+    "seconds": 50.36,
+    "exit_code": 0,
+    "log": "pytest-phase0.log"
+  },
+  "formal_manifest_frozen": false,
+  "live_llm_calls": 0,
+  "live_tokens": 0,
+  "training_episodes": 0,
+  "heldout_episodes": 0,
+  "heldout_results_viewed": false,
+  "h1_conclusion": null,
+  "h2_conclusion": null,
+  "pending_user_clarification": "May local RSI identity replace the unavailable required connector confirmation?",
+  "code_changed": false,
+  "historical_experiments_changed": false,
+  "checked_sources": {
+    "vast_coevo/evolution/evolvers.py": "28b9590123a6085f8646028890a06107780252b30c5bc5ef7554248f563320e3",
+    "vast_coevo/evolution/gates.py": "4b8a807a14e9d847e0d8cdb0c81dd840ae826190430cdcf19d165589281db24f",
+    "vast_coevo/evolution/models.py": "67d626a9b93d5a95c40933cbd3640003696ce6dc54bbc7de15f8a5e815068609",
+    "vast_coevo/evolution/controller.py": "111b8bcecb5cb747f0d8c3dd59d83e80f3418d0d304a321d02c569a158db4c4c",
+    "vast_coevo/skills/validation.py": "12d9423c614e511cf4f5ec9003b5cd8c8e412e5b8b4812641174c859fd46bb6d",
+    "integrations/usami/adapter.py": "cdffc2ca0379cfbff3c22b3de775c0a4a605663720506034880940a45359bb7a",
+    "integrations/usami/domains.py": "bed149ffe5b699c60da9874985ec26f5d786402ccf2cf7a70267f1ca9e64b61a",
+    "usami_cloudops/engine.py": "126c11298c31b879b5cdaf0e86f713448c53eef4b40390d03ed4fa124aa51601",
+    "usami_cloudops/rules.py": "046e85d0a2069e4a812758216cbfb7c7429f212b6692952d7d8b7537614c7cc4",
+    "usami_cloudops/oracle.py": "ee96f5e78fcd5d49284613e58d17f92c49d22cebf3f44bc30d0a2ae72f1f7f73"
+  }
+}

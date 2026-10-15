@@ -1,0 +1,4608 @@
+{
+  "schema_version": 1,
+  "source_root": "/Users/spring/RSI/Usami/experiments/vast_coevo/results/multigen-heldout-001",
+  "source_kind": "ledger",
+  "component_unit": "UTF-8 canonical JSON bytes, NOT tokens",
+  "usage_source": "original provider response; reasoning is a subset of output, never added again",
+  "online_calls": 0,
+  "runtime_modified": false,
+  "groups": {
+    "customer": {
+      "calls": 14,
+      "input_tokens": 69979,
+      "output_tokens": 15139,
+      "total_tokens": 85118,
+      "reasoning_tokens": 14061,
+      "wire_json_bytes": 292831,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "missing_usage_calls": 0,
+      "p50_input_tokens": 4946.0,
+      "p90_input_tokens": 5513.6,
+      "component_bytes": {
+        "system": 132496,
+        "skill": 39874,
+        "latest_user": 53089,
+        "tool_definitions": 0,
+        "request_framing_and_options": 1482,
+        "conversation_history": 65890
+      },
+      "injected_skills": {
+        "customer.state_dependency": 14,
+        "customer.permission_boundary_probe": 3
+      },
+      "by_call_ordinal": [],
+      "by_message_count": [
+        {
+          "message_count": 3,
+          "calls": 8,
+          "mean_input_tokens": 4861.25
+        },
+        {
+          "message_count": 5,
+          "calls": 6,
+          "mean_input_tokens": 5181.5
+        }
+      ]
+    },
+    "reflection_customer": {
+      "calls": 1,
+      "input_tokens": 14471,
+      "output_tokens": 1528,
+      "total_tokens": 15999,
+      "reasoning_tokens": 670,
+      "wire_json_bytes": 46548,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "missing_usage_calls": 0,
+      "p50_input_tokens": 14471.0,
+      "p90_input_tokens": 14471.0,
+      "component_bytes": {
+        "system": 2770,
+        "latest_user": 37129,
+        "tool_definitions": 6482,
+        "request_framing_and_options": 167
+      },
+      "injected_skills": {},
+      "by_call_ordinal": [],
+      "by_message_count": [
+        {
+          "message_count": 2,
+          "calls": 1,
+          "mean_input_tokens": 14471.0
+        }
+      ]
+    },
+    "reflection_service": {
+      "calls": 2,
+      "input_tokens": 76062,
+      "output_tokens": 3001,
+      "total_tokens": 79063,
+      "reasoning_tokens": 1558,
+      "wire_json_bytes": 227884,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "missing_usage_calls": 0,
+      "p50_input_tokens": 38031.0,
+      "p90_input_tokens": 39758.2,
+      "component_bytes": {
+        "system": 2208,
+        "latest_user": 213268,
+        "tool_definitions": 12074,
+        "request_framing_and_options": 334
+      },
+      "injected_skills": {},
+      "by_call_ordinal": [],
+      "by_message_count": [
+        {
+          "message_count": 2,
+          "calls": 2,
+          "mean_input_tokens": 38031.0
+        }
+      ]
+    },
+    "service": {
+      "calls": 127,
+      "input_tokens": 751382,
+      "output_tokens": 29890,
+      "total_tokens": 781272,
+      "reasoning_tokens": 19641,
+      "wire_json_bytes": 2757257,
+      "repeated_tool_payload_bytes": 1962,
+      "tool_json_whitespace_candidate_bytes": 51550,
+      "missing_usage_calls": 0,
+      "p50_input_tokens": 6335.0,
+      "p90_input_tokens": 7207.0,
+      "component_bytes": {
+        "system": 346583,
+        "skill": 328700,
+        "conversation_history": 374664,
+        "tool_results": 601494,
+        "latest_user": 45207,
+        "tool_definitions": 1042652,
+        "request_framing_and_options": 17957
+      },
+      "injected_skills": {
+        "service.state_contract": 127,
+        "service.policy_enforcement": 12
+      },
+      "by_call_ordinal": [],
+      "by_message_count": [
+        {
+          "message_count": 3,
+          "calls": 20,
+          "mean_input_tokens": 3844.95
+        },
+        {
+          "message_count": 5,
+          "calls": 12,
+          "mean_input_tokens": 5921.416666666667
+        },
+        {
+          "message_count": 6,
+          "calls": 4,
+          "mean_input_tokens": 5704.75
+        },
+        {
+          "message_count": 7,
+          "calls": 14,
+          "mean_input_tokens": 5698.928571428572
+        },
+        {
+          "message_count": 8,
+          "calls": 4,
+          "mean_input_tokens": 6699.0
+        },
+        {
+          "message_count": 9,
+          "calls": 15,
+          "mean_input_tokens": 5983.4
+        },
+        {
+          "message_count": 10,
+          "calls": 4,
+          "mean_input_tokens": 6798.0
+        },
+        {
+          "message_count": 11,
+          "calls": 14,
+          "mean_input_tokens": 6190.357142857143
+        },
+        {
+          "message_count": 12,
+          "calls": 2,
+          "mean_input_tokens": 6830.5
+        },
+        {
+          "message_count": 13,
+          "calls": 11,
+          "mean_input_tokens": 6919.272727272727
+        },
+        {
+          "message_count": 14,
+          "calls": 5,
+          "mean_input_tokens": 5330.4
+        },
+        {
+          "message_count": 15,
+          "calls": 10,
+          "mean_input_tokens": 7116.7
+        },
+        {
+          "message_count": 16,
+          "calls": 1,
+          "mean_input_tokens": 7043.0
+        },
+        {
+          "message_count": 17,
+          "calls": 11,
+          "mean_input_tokens": 6889.363636363636
+        }
+      ]
+    }
+  },
+  "calls": [
+    {
+      "id": "0077ad6211facfd5246c6bda98c1b531b9424b0234831caa08276c3acbd6c7bb",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/0077ad6211facfd5246c6bda98c1b531b9424b0234831caa08276c3acbd6c7bb.started.json",
+      "source_sha256": "db3874b57e3ee4ad9599e047485e51542f88ec48ccaa1688ec5b3b29c6742254",
+      "request_sha256": "fab3fe72a0440488e46537dd5b8afe4a53c10870a61065a5ef61962e696f73a2",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4667,
+      "output_tokens": 626,
+      "total_tokens": 5293,
+      "reasoning_tokens": 565,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "latest_user": 5793,
+        "tool_definitions": 0,
+        "request_framing_and_options": 105
+      },
+      "wire_json_bytes": 17395,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "0459cbc6fe9ed84c0254342b3012317bf090edea5fb9e0caa42411e6485e845f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/0459cbc6fe9ed84c0254342b3012317bf090edea5fb9e0caa42411e6485e845f.started.json",
+      "source_sha256": "0a7421b24a17fb3ef545f29c3dc63792820451c6b7d7340c2ad021424f0e5010",
+      "request_sha256": "2946b51062ace5c86490151d4d9a6c0c27781075823154b87aabd57d7c4622e8",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6560,
+      "output_tokens": 93,
+      "total_tokens": 6653,
+      "reasoning_tokens": 34,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 6248,
+        "tool_results": 6971,
+        "latest_user": 344,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 142
+      },
+      "wire_json_bytes": 26928,
+      "message_count": 10,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 612,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "05b96b588c6130b95ad1d825f9eb8cef57f888bc6f77001798c7dd9629648a02",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/05b96b588c6130b95ad1d825f9eb8cef57f888bc6f77001798c7dd9629648a02.started.json",
+      "source_sha256": "7876bdb709ef6a6301a1fc5f8fd895aa4305d1a30e3904c48909d176e5cfd523",
+      "request_sha256": "2178eda124d069191c1d474e35f499d4af7f144ad96750ba894501fe140f427a",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6863,
+      "output_tokens": 684,
+      "total_tokens": 7547,
+      "reasoning_tokens": 334,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 221,
+        "conversation_history": 3726,
+        "tool_results": 6971,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 140
+      },
+      "wire_json_bytes": 24281,
+      "message_count": 8,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 612,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "085cf0e653708d31107359095f43bc97b6c1bb27ce917b2df4c752163e82243f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/085cf0e653708d31107359095f43bc97b6c1bb27ce917b2df4c752163e82243f.started.json",
+      "source_sha256": "1e2d8c7237b3b3ab68c1531c852071d93f087ebb1306ca524ec5a0f7bfa0277a",
+      "request_sha256": "ea470db9173c0c8a2eadef682d8c2d6d04d6c2d5cf069d6799790bf2db916c82",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3831,
+      "output_tokens": 158,
+      "total_tokens": 3989,
+      "reasoning_tokens": 139,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 292,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 14223,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "0abe4317a0ea1c412bcfa684adf37e82a764b803b4f7abf73df5f77d8b1e99a9",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/0abe4317a0ea1c412bcfa684adf37e82a764b803b4f7abf73df5f77d8b1e99a9.started.json",
+      "source_sha256": "c539ef2908e9fccd43af2d62a689c01635741bf646b3dec451ec4bbd451775a3",
+      "request_sha256": "5473d323f9cf113b2b9e1e2dee0a636a9090105561b54271e9f8aea7d150a157",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4609,
+      "output_tokens": 870,
+      "total_tokens": 5479,
+      "reasoning_tokens": 795,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "latest_user": 5654,
+        "tool_definitions": 0,
+        "request_framing_and_options": 105
+      },
+      "wire_json_bytes": 17256,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "0b067fe328f2529cbb1793021dd3caa0682c15ad27d542b09bdff41e25e1f887",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/0b067fe328f2529cbb1793021dd3caa0682c15ad27d542b09bdff41e25e1f887.started.json",
+      "source_sha256": "afb1b4beead391a93288af4931cdf42d907b48f2ef184ba183ca628bf128bf00",
+      "request_sha256": "edf9e8b2565d60541577ddfa84efb1ec91f52f296509272d07992e633986b69d",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4640,
+      "output_tokens": 133,
+      "total_tokens": 4773,
+      "reasoning_tokens": 19,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 2089,
+        "tool_results": 1271,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 17142,
+      "message_count": 11,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 80,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "0d0bbb7db862c3fca42f60971ec4384c11ecb66ed1f9a2b4aefa48eae26559f1",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/0d0bbb7db862c3fca42f60971ec4384c11ecb66ed1f9a2b4aefa48eae26559f1.started.json",
+      "source_sha256": "22288d2d95dbe103114509faf62ec7a4d9322068a1320c43241c3f7589275c9c",
+      "request_sha256": "21c1bb30da805a341ef59323c517bffb12949b9386427d5c4aa74d35b5d5d692",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3702,
+      "output_tokens": 107,
+      "total_tokens": 3809,
+      "reasoning_tokens": 88,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 165,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13523,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "0e15291f2b2e75e53650c913950b4321c3dd796c0afa1d4871519460c84f2f10",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/0e15291f2b2e75e53650c913950b4321c3dd796c0afa1d4871519460c84f2f10.started.json",
+      "source_sha256": "75dc7ab6c85932e20f0181e7c974b334d3947d1f54bb2766e3ac7ad83b2fd77d",
+      "request_sha256": "abb01407535a2617f2928b8e380d6cf9f3db267fa87c60731b04efaa28280a92",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3739,
+      "output_tokens": 210,
+      "total_tokens": 3949,
+      "reasoning_tokens": 191,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13688,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "1001a963199a4f7f7b152a642a56ef7e18a20851565b17dba132cc04493ec99b",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/1001a963199a4f7f7b152a642a56ef7e18a20851565b17dba132cc04493ec99b.started.json",
+      "source_sha256": "c555a78a75483979f9075d10818ff28a3d448f4b14bd3ca1458da3f01e120f9f",
+      "request_sha256": "b0d6e11db23813c863c3917503c4eac92be261ce46f9ac143379312ee2fa5ec6",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6155,
+      "output_tokens": 151,
+      "total_tokens": 6306,
+      "reasoning_tokens": 92,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 2231,
+        "tool_results": 5780,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 21847,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 511,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "103acb001deabe493e94d9265ab0ec355dbf3f373b6fa4b208e47238ce943923",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/103acb001deabe493e94d9265ab0ec355dbf3f373b6fa4b208e47238ce943923.started.json",
+      "source_sha256": "5d9df41570489f243ddf9daefaa6cad4005ed513032f3e39492fd3f9f3a293ea",
+      "request_sha256": "ffc88a7170426366577abe2d303710bcd414d79c4712ffe42351034a87639dbf",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5106,
+      "output_tokens": 353,
+      "total_tokens": 5459,
+      "reasoning_tokens": 190,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 257,
+        "conversation_history": 4355,
+        "tool_results": 8343,
+        "tool_definitions": 2,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 18054,
+      "message_count": 17,
+      "tool_result_count": 10,
+      "repeated_tool_payload_bytes": 132,
+      "tool_json_whitespace_candidate_bytes": 689,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "10e5cc07e335a94cd260253181afaa54ae37e189563be34817bf170f6daa3254",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/10e5cc07e335a94cd260253181afaa54ae37e189563be34817bf170f6daa3254.started.json",
+      "source_sha256": "4ae8eb949ada4142848c81baf40003c63dc2a0d7c791a23384e9034549b97f4a",
+      "request_sha256": "76de40a5d1d25f20faf32eae1db723d7e6001917c273c4b975c42a9828eeaebd",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6282,
+      "output_tokens": 82,
+      "total_tokens": 6364,
+      "reasoning_tokens": 23,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "conversation_history": 2454,
+        "tool_results": 6098,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 22244,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 537,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "113d4fe21a4732282f9b074831e83ee5add6c5b082b6619dc9ff1a6fae570d84",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/113d4fe21a4732282f9b074831e83ee5add6c5b082b6619dc9ff1a6fae570d84.started.json",
+      "source_sha256": "95976871ab0d5de838ec260e4b992428fd4b8f7eb16473f7c67101f15278e1b3",
+      "request_sha256": "0cd87f4278f199f169269780df5c14529b0d198cef0dd7b9c58a486eda35ceb9",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4661,
+      "output_tokens": 133,
+      "total_tokens": 4794,
+      "reasoning_tokens": 19,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 2180,
+        "tool_results": 1271,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 17233,
+      "message_count": 11,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 80,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "1178c67b16e9aebf456e537a19f59cace1d4efdd339fb11d7c6f94ebb286e310",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/1178c67b16e9aebf456e537a19f59cace1d4efdd339fb11d7c6f94ebb286e310.started.json",
+      "source_sha256": "ece421f3234ca59cf8de4e7f21467a8136086c303929a536e98e61bb5bf7b380",
+      "request_sha256": "bf77e557d41a56f54713c2f500f0c9ec99b5fa1091d2d701ed1fcfb534ec1498",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5856,
+      "output_tokens": 178,
+      "total_tokens": 6034,
+      "reasoning_tokens": 121,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 979,
+        "tool_results": 5738,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20393,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 509,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "117b515e0eb7bda779ecb6fd3a6ca85abf7f72ce8befe9d9f1bcec5ffbd68d4f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/117b515e0eb7bda779ecb6fd3a6ca85abf7f72ce8befe9d9f1bcec5ffbd68d4f.started.json",
+      "source_sha256": "37081e2bd41ab6ace2ec96ce10676b26a9dc49914804aaf502fc675a247be34d",
+      "request_sha256": "f7acae7847d23dcd4b27cec9a0334eed1c164174aef1565d644be737eb841e9a",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6678,
+      "output_tokens": 99,
+      "total_tokens": 6777,
+      "reasoning_tokens": 17,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "conversation_history": 4789,
+        "tool_results": 6941,
+        "latest_user": 258,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 25933,
+      "message_count": 17,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 593,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "1222db30cbdbb09bc9bf015355670f8e403606e85285af654f5df8692a773980",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/1222db30cbdbb09bc9bf015355670f8e403606e85285af654f5df8692a773980.started.json",
+      "source_sha256": "948a3d33c123b98fb9d437ecd8ae986118d6c2b0c156d9cea34ed8b08447edf1",
+      "request_sha256": "3875b0ac989838b6fa80db4f174c697553069a5e65c2e426936758cb07447a43",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6596,
+      "output_tokens": 88,
+      "total_tokens": 6684,
+      "reasoning_tokens": 29,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 2936,
+        "tool_results": 6548,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 23166,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 563,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "14dfa243d318e7b6ff5006f805596142794cf8f980d391a02d3bab682e05b14a",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/14dfa243d318e7b6ff5006f805596142794cf8f980d391a02d3bab682e05b14a.started.json",
+      "source_sha256": "cb0424949d9b4347dc78dce07d81f5172cb3e07f9edc44dbebecf8fe7e29e814",
+      "request_sha256": "eea67aa291ed51ac333308c3e38c7ffc6f08cce3fe969f4833a510f7cd1c859d",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7674,
+      "output_tokens": 98,
+      "total_tokens": 7772,
+      "reasoning_tokens": 41,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 316,
+        "conversation_history": 3813,
+        "tool_results": 6818,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 27506,
+      "message_count": 13,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 581,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "151b7e3f82190c63917c397a517fa1e232798f8d1c39fd7545ba792e800f8c13",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/151b7e3f82190c63917c397a517fa1e232798f8d1c39fd7545ba792e800f8c13.started.json",
+      "source_sha256": "86bbc85579022bd9a1d580011d940c9a83a0f9935bb971118ce33ee6f0639331",
+      "request_sha256": "ebd6463ddb00742cd90ff81822c16092e9fac0bd6bdfe7adc49656e760483cff",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6439,
+      "output_tokens": 190,
+      "total_tokens": 6629,
+      "reasoning_tokens": 131,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "conversation_history": 2794,
+        "tool_results": 6368,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 22856,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 555,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "15c9b2218f8d031f42842cde44d7e7960c3d07e64c427560ad370b073485dc02",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/15c9b2218f8d031f42842cde44d7e7960c3d07e64c427560ad370b073485dc02.started.json",
+      "source_sha256": "7dd306086043f87485e5b63d3ae05e0cbce95bcc4530d85d7c809a501dc00389",
+      "request_sha256": "504afedbea9c8ec2612fc2e28d6e3070ccf1912b1be1384d23893db20e0fae2d",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7015,
+      "output_tokens": 228,
+      "total_tokens": 7243,
+      "reasoning_tokens": 18,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 9120,
+        "tool_results": 7084,
+        "latest_user": 379,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 29955,
+      "message_count": 17,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 601,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "1645b4e92fdc5b170363ef24251ad245b9c4ca8c339705da7bec8516d63c7880",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/1645b4e92fdc5b170363ef24251ad245b9c4ca8c339705da7bec8516d63c7880.started.json",
+      "source_sha256": "414f7481d158840c7a50fa809f005ceda2551be44e7ca81d122b1f1b765a75ee",
+      "request_sha256": "271ad5e95238f3fa30d6e4a3f33ed80779b904c93e43e163b6c492255e0d56e1",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3879,
+      "output_tokens": 273,
+      "total_tokens": 4152,
+      "reasoning_tokens": 106,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 416,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 14347,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "19043f2b5a33a7cc1214eaa4b9c76442c6980656e280e1bc730ed3fc8a17aae7",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/19043f2b5a33a7cc1214eaa4b9c76442c6980656e280e1bc730ed3fc8a17aae7.started.json",
+      "source_sha256": "d5f5a579a6ce54db7344d6c2f4acc28d35e02777c510c2cdf3e5dac0adfc8b75",
+      "request_sha256": "87e2f6bef27e0f9df5458ca9e4942a0b7cbe9774daa7012a88365709f30db6cc",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4760,
+      "output_tokens": 133,
+      "total_tokens": 4893,
+      "reasoning_tokens": 19,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 416,
+        "conversation_history": 2159,
+        "tool_results": 1271,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 17785,
+      "message_count": 11,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 80,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "1a0f729610c6f49a50e1b9c4fc9643ee0d69d28d86ca804c92a10f7126ec5459",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/1a0f729610c6f49a50e1b9c4fc9643ee0d69d28d86ca804c92a10f7126ec5459.started.json",
+      "source_sha256": "ce97403b381a29fa82eec49eb69b55ba292ac20e5dbc47c3bbe9d4e680f56f3b",
+      "request_sha256": "6d801b38b37bda7c8d6d63e99316532a56ec84c0aa553e83e44673fb965e08ff",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6977,
+      "output_tokens": 158,
+      "total_tokens": 7135,
+      "reasoning_tokens": 99,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 316,
+        "conversation_history": 1880,
+        "tool_results": 6097,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 24846,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 537,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "1a4daa7fd6379f5de40317b14e147adcdc2e24b23c2e668288918bfd34f4da99",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/1a4daa7fd6379f5de40317b14e147adcdc2e24b23c2e668288918bfd34f4da99.started.json",
+      "source_sha256": "7df01a35a6a30b7387e821d8e69b777a0dc4b6f764b3488184c3f1d73e8617b1",
+      "request_sha256": "de1f6963611424d37fa175ed2d3617bf738ce929fd240607c4c070d17fb56071",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4497,
+      "output_tokens": 99,
+      "total_tokens": 4596,
+      "reasoning_tokens": 40,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 1704,
+        "tool_results": 1090,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 16574,
+      "message_count": 9,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 72,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "1e145f744b61f36194b3ff73fd664f3ac952a8e075b8b26f8ef59d32e0017e0c",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/1e145f744b61f36194b3ff73fd664f3ac952a8e075b8b26f8ef59d32e0017e0c.started.json",
+      "source_sha256": "f67a3c22c0eb1986eeb042e2923c339a4854f2ffc0dd702f9b8ace859b14d70e",
+      "request_sha256": "224e7b3985112718d776c3805114d9a9a224bda80c6682adec8532a264d95658",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4617,
+      "output_tokens": 99,
+      "total_tokens": 4716,
+      "reasoning_tokens": 40,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 416,
+        "conversation_history": 1774,
+        "tool_results": 1090,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 17217,
+      "message_count": 9,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 72,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "201a4755edeb6b6f57e52b7c7beea0e2298276a1c556f986420c5a0ca79ce25c",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/201a4755edeb6b6f57e52b7c7beea0e2298276a1c556f986420c5a0ca79ce25c.started.json",
+      "source_sha256": "7802d1c59701f571ff4aa0b551b46408708344c6a5e6b102c82b4f4d219bfc69",
+      "request_sha256": "e98a9331fbd9244bf6e893e794fd94d4ded5a146ac3b88c76882f78bbc35e4f7",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4298,
+      "output_tokens": 176,
+      "total_tokens": 4474,
+      "reasoning_tokens": 117,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 1140,
+        "tool_results": 909,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 15827,
+      "message_count": 7,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 64,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "22480404e8fa03a37d2ffa54adf3951c8086734b79803c63e4431e2041bf5dd1",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/22480404e8fa03a37d2ffa54adf3951c8086734b79803c63e4431e2041bf5dd1.started.json",
+      "source_sha256": "b04e8f9cc3723e9965ef04d8933200eec345a75bb1bbb716c3ed6739c1855f50",
+      "request_sha256": "9c72bf41693976a702c9e1670ecc7918eab0f236de873b0b49fda2597aa40cb6",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6346,
+      "output_tokens": 206,
+      "total_tokens": 6552,
+      "reasoning_tokens": 147,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 2168,
+        "tool_results": 6367,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 22215,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 555,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "24aaadb70f4b70265f51c52a8cf7430e4468b5d4868156aff9f7477028efb08f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/24aaadb70f4b70265f51c52a8cf7430e4468b5d4868156aff9f7477028efb08f.started.json",
+      "source_sha256": "f8e834644c3c31972356074afef9b412fe2b54289824ae5e3a58b753807b7b84",
+      "request_sha256": "8fa3f8cb9786a7b45739f563dcf957839c342069a38c7057b544f88a3075fe63",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5872,
+      "output_tokens": 182,
+      "total_tokens": 6054,
+      "reasoning_tokens": 123,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 1085,
+        "tool_results": 5599,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20518,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 503,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "25862f39faee42cfcef1f58a19ebddf966d350fb45a5cd33dbd1213cece82cca",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/25862f39faee42cfcef1f58a19ebddf966d350fb45a5cd33dbd1213cece82cca.started.json",
+      "source_sha256": "d75444ad71b15e765a361d91cb86010ac87d916e97fc7487d43ea68b70699447",
+      "request_sha256": "9c388cb3208c0aeaeb7e86a9fba3aef71b2f5005482adaeb403ebd23c2c5e44a",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7043,
+      "output_tokens": 203,
+      "total_tokens": 7246,
+      "reasoning_tokens": 15,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 7366,
+        "tool_results": 7781,
+        "latest_user": 344,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 148
+      },
+      "wire_json_bytes": 28862,
+      "message_count": 16,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 666,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "26f07b986d9e83e84ee2c9a2c779f9e45e262f5b7387cfc5917ecb707867d849",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/26f07b986d9e83e84ee2c9a2c779f9e45e262f5b7387cfc5917ecb707867d849.started.json",
+      "source_sha256": "ff548323114eb1b6101155df5e1074fd23ad76ddfe00f469687ed885e5635ccf",
+      "request_sha256": "9ca88802c250ede0d1e03fe81670fb8c9da4d5bea931d3ad7f691dcaab7f726f",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6673,
+      "output_tokens": 316,
+      "total_tokens": 6989,
+      "reasoning_tokens": 257,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "conversation_history": 3675,
+        "tool_results": 6549,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 23920,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 563,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "2767a2f6c3fb63b302fe8d94b5ae5cb02bc54c7a7cbfb0dc224001283159f892",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/2767a2f6c3fb63b302fe8d94b5ae5cb02bc54c7a7cbfb0dc224001283159f892.started.json",
+      "source_sha256": "8da73451a54d5a68c6a5dc1c8a73ed595e6e0b87c06dfbbfb02831f325113244",
+      "request_sha256": "e584439dfa3c9ac87c7ba6291b8b2c0294fb36b982137aee38688a09a9826b0c",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5896,
+      "output_tokens": 1632,
+      "total_tokens": 7528,
+      "reasoning_tokens": 1559,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 5837,
+        "conversation_history": 12207,
+        "latest_user": 1301,
+        "tool_definitions": 0,
+        "request_framing_and_options": 107
+      },
+      "wire_json_bytes": 28916,
+      "message_count": 5,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.permission_boundary_probe",
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "2776b9335303a364eec6d68c7f7fef03b782cea2eaef7535cd68c93a19b10670",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/2776b9335303a364eec6d68c7f7fef03b782cea2eaef7535cd68c93a19b10670.started.json",
+      "source_sha256": "216ed748fa0f6b44ce0f20c36d8327091bcb9194e27dd616eeb8e8c237159269",
+      "request_sha256": "256ed8d25054bfbfbe46a2ea93577088b49d849358f59aff6960ceb634077101",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6757,
+      "output_tokens": 81,
+      "total_tokens": 6838,
+      "reasoning_tokens": 22,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 4695,
+        "tool_results": 6068,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 24603,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 61,
+      "tool_json_whitespace_candidate_bytes": 521,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "2b1433b0230d249d31842465392fe07ba51f0681646623a098926c1415e8f17e",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/2b1433b0230d249d31842465392fe07ba51f0681646623a098926c1415e8f17e.started.json",
+      "source_sha256": "412e3c553d5256972216fb0d8f9289ac4eeebd29453ed7cd4050583e6a74ee5f",
+      "request_sha256": "02339471136f7a3d164c94b1a8008523802a972f043c03d30f50ed921d3c0da7",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3735,
+      "output_tokens": 183,
+      "total_tokens": 3918,
+      "reasoning_tokens": 164,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13674,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "2b89a1a2d52f67114de5a3adbe741a99c3de19f81b573e2556dacd89f6401bd5",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/2b89a1a2d52f67114de5a3adbe741a99c3de19f81b573e2556dacd89f6401bd5.started.json",
+      "source_sha256": "c2184f3d6ed74c747950f4ec4506c0934da2e89cf2fd187a196b21f25482fff4",
+      "request_sha256": "0a7675a5d407c78c6e13aa8b151de175b99741bc9473ba2e04ffe57b126eca59",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3754,
+      "output_tokens": 412,
+      "total_tokens": 4166,
+      "reasoning_tokens": 340,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 378,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13736,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "2bc74b438ef3a0f2bfeef4199d0d5556e5c5bfd0b238faed4a6e7421c5d7e75b",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/2bc74b438ef3a0f2bfeef4199d0d5556e5c5bfd0b238faed4a6e7421c5d7e75b.started.json",
+      "source_sha256": "60d100863bf0828529a4aa6568eab9a94f4a4753286b8d0023a8ad2d141bdac4",
+      "request_sha256": "d77ef612b39d00588fb816cd551bfe4ea297a1119b174f07bea932dcb9089902",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5864,
+      "output_tokens": 633,
+      "total_tokens": 6497,
+      "reasoning_tokens": 523,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 221,
+        "conversation_history": 1140,
+        "tool_results": 5738,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20459,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 509,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "2c27d1af9a0f35e1b0648acc37bca13787884ea724c890ef9ca9b6765b5ec947",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/2c27d1af9a0f35e1b0648acc37bca13787884ea724c890ef9ca9b6765b5ec947.started.json",
+      "source_sha256": "2338abc27b9b5bc2a5e002895bf841b3292bb219a1069861f9136e380487d858",
+      "request_sha256": "e8aca233b1a6e5216cbd2de3a9a6326afc3fac69d3c293b139031fdcd9284861",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6538,
+      "output_tokens": 281,
+      "total_tokens": 6819,
+      "reasoning_tokens": 222,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 4821,
+        "tool_results": 7177,
+        "latest_user": 328,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 25698,
+      "message_count": 17,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 609,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "340ae8f871dcec56ad21e35f29942847dc3893efb0b32be6ceaf6b54a5b25feb",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/340ae8f871dcec56ad21e35f29942847dc3893efb0b32be6ceaf6b54a5b25feb.started.json",
+      "source_sha256": "e099d6452fb320b421e6165109d3cf9e5cd143342ac00e4f1630316880f2e456",
+      "request_sha256": "e125095716b6259242b8e46e29d951ac8e2467f9c3c6026c5140200e655ba020",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7091,
+      "output_tokens": 184,
+      "total_tokens": 7275,
+      "reasoning_tokens": 62,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 4350,
+        "tool_results": 7177,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 25213,
+      "message_count": 15,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 609,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "34d11d348b18b602b28ad417c369ebfc9497e46bbe8f125bd3a2228d85879345",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/34d11d348b18b602b28ad417c369ebfc9497e46bbe8f125bd3a2228d85879345.started.json",
+      "source_sha256": "8b2baeca721f1346bfbf7d38b8395bde8b850819ea3a79bed91dff65241846bd",
+      "request_sha256": "97fdf6fc98c33819ff8ed690f0dc7aed95c4fcf3f710f4e3b6ae2bf234f7ba1b",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3732,
+      "output_tokens": 212,
+      "total_tokens": 3944,
+      "reasoning_tokens": 98,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 304,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13662,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "35ac7ed7c97bc056291bc826f3711b688f3d112d6b401d45059ee2052a6c8c49",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/35ac7ed7c97bc056291bc826f3711b688f3d112d6b401d45059ee2052a6c8c49.started.json",
+      "source_sha256": "133e0adda3502cea8263d0a57025612f841f92c2b48c869240c3c39e126797c9",
+      "request_sha256": "fab3fe72a0440488e46537dd5b8afe4a53c10870a61065a5ef61962e696f73a2",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4667,
+      "output_tokens": 668,
+      "total_tokens": 5335,
+      "reasoning_tokens": 618,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "latest_user": 5793,
+        "tool_definitions": 0,
+        "request_framing_and_options": 105
+      },
+      "wire_json_bytes": 17395,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "36af2c1b80e45536b371b4787c9f499a9ddba186e01b59af9d23d68e7c2da757",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/36af2c1b80e45536b371b4787c9f499a9ddba186e01b59af9d23d68e7c2da757.started.json",
+      "source_sha256": "f6faec96afb6cabd24c73b6f2870bbe5dc26c0b9b8be13cf10470652ef65948c",
+      "request_sha256": "2914e5b21c30e958e20746de9868c7a966bbb0c98271204d333abe0b51447078",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6656,
+      "output_tokens": 584,
+      "total_tokens": 7240,
+      "reasoning_tokens": 527,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 4051,
+        "tool_results": 6212,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 24105,
+      "message_count": 13,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 122,
+      "tool_json_whitespace_candidate_bytes": 526,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "3736b9d87a436ce5c05c9c43a2176dcabe8dd1b9846da9cc289d7acd9a4ba56a",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/3736b9d87a436ce5c05c9c43a2176dcabe8dd1b9846da9cc289d7acd9a4ba56a.started.json",
+      "source_sha256": "e626774a57303148be8815c8b9778649679ceaaba9e72963107fc07379add4d0",
+      "request_sha256": "9795e49b029199e3c5c24292f5ebc1b14fcf1644d4446ba134ba9fcc92a4c723",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6801,
+      "output_tokens": 88,
+      "total_tokens": 6889,
+      "reasoning_tokens": 29,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 304,
+        "conversation_history": 4307,
+        "tool_results": 6338,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 142
+      },
+      "wire_json_bytes": 24314,
+      "message_count": 10,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 540,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "37c7b88dd2f24d650e70d4edcb052c29d41338d67f3adac2d0e5a0c01f0f614d",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/37c7b88dd2f24d650e70d4edcb052c29d41338d67f3adac2d0e5a0c01f0f614d.started.json",
+      "source_sha256": "cf562640263f14cb1de49c257b7f05d32275238bd3b27eb6bb88471e8f749a3b",
+      "request_sha256": "85abc8b76a16a68dd05a4e4dd9b2fe4062923166950f421c6818372453c686a0",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6548,
+      "output_tokens": 286,
+      "total_tokens": 6834,
+      "reasoning_tokens": 227,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 5436,
+        "tool_results": 7177,
+        "latest_user": 328,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 26313,
+      "message_count": 17,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 609,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "3a80b51187caefdb13f70898fe21ce451a53ea315ced370904b9e89168b9ba8e",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/3a80b51187caefdb13f70898fe21ce451a53ea315ced370904b9e89168b9ba8e.started.json",
+      "source_sha256": "10ac4e6fbea708dd5759f117c5b2e117f6a7a5d14a728174e52029d3e4e94769",
+      "request_sha256": "692f4414512b238a55264c844474b2da3b6b32bd6fa803a51d07ac055be28f18",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6141,
+      "output_tokens": 130,
+      "total_tokens": 6271,
+      "reasoning_tokens": 71,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 1689,
+        "tool_results": 6097,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 21464,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 537,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "3ee4844e2ca8b648ade3b9fdfa74d4aaf0a63fd5b02996ff25b02c0fa06a0961",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/3ee4844e2ca8b648ade3b9fdfa74d4aaf0a63fd5b02996ff25b02c0fa06a0961.started.json",
+      "source_sha256": "a68a85d607ebade5be4304005928ebe168dd8f14b02438ec57e7f8139cc6f84f",
+      "request_sha256": "d0c93b0c0afba3662a505e57b8749eaf0be140eae34f42dca67d44093445caca",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3778,
+      "output_tokens": 222,
+      "total_tokens": 4000,
+      "reasoning_tokens": 203,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13832,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "421f6fff46043d68da2bb4576c29be4b23eb9f1a2b24252551880f76aceca378",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/421f6fff46043d68da2bb4576c29be4b23eb9f1a2b24252551880f76aceca378.started.json",
+      "source_sha256": "1e897aa14732a02f2962f5a3941828968349a6bc52589598997034bdf4968592",
+      "request_sha256": "b0b573976fea999d9c20b3f21754c45bc314afe9d5e308112cc7a90d6316c961",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6217,
+      "output_tokens": 244,
+      "total_tokens": 6461,
+      "reasoning_tokens": 185,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "conversation_history": 2348,
+        "tool_results": 5919,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 21959,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 517,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "433ffbcd1c553f4ff0b5b4749bc3019269b67ce3e7dc4038d086f45dda012e75",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/433ffbcd1c553f4ff0b5b4749bc3019269b67ce3e7dc4038d086f45dda012e75.started.json",
+      "source_sha256": "3c15b3eb5e7d3bc4fae23525c2fb3db0af9874e194abab5e53b310053a13e8ea",
+      "request_sha256": "6313ffaf05bf7935e52ad2618f5aef48e87794fd1f864a191f51e497f136037e",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5173,
+      "output_tokens": 157,
+      "total_tokens": 5330,
+      "reasoning_tokens": 72,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "conversation_history": 7738,
+        "latest_user": 1577,
+        "tool_definitions": 0,
+        "request_framing_and_options": 107
+      },
+      "wire_json_bytes": 20919,
+      "message_count": 5,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "43dc52fa0c7258010db2cb037be3e7ea3c0b1436bb029a0bee0e2f1056deb8f3",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/43dc52fa0c7258010db2cb037be3e7ea3c0b1436bb029a0bee0e2f1056deb8f3.started.json",
+      "source_sha256": "385c36d7b1a7d64ac8f68af8d7ca8a15e973c5e88db01f8510e6b72dbdcaba91",
+      "request_sha256": "f9cf1442116de8e42ab49eb24fc67b5ad8eda7d4ef0c51246805b67f1049448b",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6959,
+      "output_tokens": 199,
+      "total_tokens": 7158,
+      "reasoning_tokens": 87,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 3746,
+        "tool_results": 7177,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 24609,
+      "message_count": 15,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 609,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "4561b2fd8b096b2f74432840486bbd105e9fd2b88acc2b12305222eb4f1b39b5",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/4561b2fd8b096b2f74432840486bbd105e9fd2b88acc2b12305222eb4f1b39b5.started.json",
+      "source_sha256": "40a9633c122df4d28cbb37b373a4e86c7f792f93bebc88323d7b2c935e2bfcf9",
+      "request_sha256": "fab3fe72a0440488e46537dd5b8afe4a53c10870a61065a5ef61962e696f73a2",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4667,
+      "output_tokens": 1721,
+      "total_tokens": 6388,
+      "reasoning_tokens": 1653,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "latest_user": 5793,
+        "tool_definitions": 0,
+        "request_framing_and_options": 105
+      },
+      "wire_json_bytes": 17395,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "45df48a536907af59e15c7a94bd4105de63cfa9a8c9233d3845e1bb3c5ea2179",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/45df48a536907af59e15c7a94bd4105de63cfa9a8c9233d3845e1bb3c5ea2179.started.json",
+      "source_sha256": "43790c35d468e8c90d7d132d0b0e78fe22e1bf86c2f3f62feda718f1145292c8",
+      "request_sha256": "60d4ea220205f6b785ea9a3e268b47000ef5dd189b7d7778c8c86ab809dfd282",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7504,
+      "output_tokens": 95,
+      "total_tokens": 7599,
+      "reasoning_tokens": 36,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 316,
+        "conversation_history": 3394,
+        "tool_results": 6548,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 26815,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 563,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "48bcca9aa9c7b2c4fadc269027e06b81b63998ea2ec3ea1085c00c8d5c73e784",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/48bcca9aa9c7b2c4fadc269027e06b81b63998ea2ec3ea1085c00c8d5c73e784.started.json",
+      "source_sha256": "477512f0e6bb2a4482e6d87b2ebec7c5b460bf342a2a0aebb1f560bd83563a3d",
+      "request_sha256": "2472650748a81c85b59d7c5ed26d2b7cd722300672428c2aa59e5712d039e106",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7233,
+      "output_tokens": 338,
+      "total_tokens": 7571,
+      "reasoning_tokens": 15,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 165,
+        "conversation_history": 3812,
+        "tool_results": 7781,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 25128,
+      "message_count": 15,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 666,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "4b1fe96ec31b058dda273dc626dff1978b04db06d8a19da458941a70a2bb3793",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/4b1fe96ec31b058dda273dc626dff1978b04db06d8a19da458941a70a2bb3793.started.json",
+      "source_sha256": "5cb71c5f8905c9068f299c2e601e4bf34ff2a11f250db73ea991394992a523e0",
+      "request_sha256": "4eb163b699cce6fe3735011c572584955d81a16039256d8e60c0ebfd6e168bdf",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6470,
+      "output_tokens": 185,
+      "total_tokens": 6655,
+      "reasoning_tokens": 107,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 8552,
+        "tool_results": 6819,
+        "latest_user": 379,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 29120,
+      "message_count": 15,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 581,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "4e0e6d5ccddf303270ee202b8ae6f572a6bb2c34156ec496948fa547e269e045",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/4e0e6d5ccddf303270ee202b8ae6f572a6bb2c34156ec496948fa547e269e045.started.json",
+      "source_sha256": "9ba8a6464c568a37ca0903becbd9aed0c84d14aa9682ea60464192a0c959d3e2",
+      "request_sha256": "69fa5cc79a6ba04878b33ff74d24cf2301cb92c393b06f5142a10d7e0b89b01f",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6457,
+      "output_tokens": 216,
+      "total_tokens": 6673,
+      "reasoning_tokens": 157,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 2679,
+        "tool_results": 6367,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 22726,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 555,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "4fa32c35667c24cc151c05fe88f4a7fab63f804eeedd7fc9bc5262508f0b66ec",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/4fa32c35667c24cc151c05fe88f4a7fab63f804eeedd7fc9bc5262508f0b66ec.started.json",
+      "source_sha256": "2c3bb13274d4eb902b385818b93175838ed2a970e6356f11d80af28ff415e6a1",
+      "request_sha256": "79e7683f495f879a1973f418276ed3e47206d0871ae61ff7bcfab67f01a5733f",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3780,
+      "output_tokens": 272,
+      "total_tokens": 4052,
+      "reasoning_tokens": 105,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13774,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "5107cbf3195c6d22d127eaa305dac87068395a46717dbb69a60567476497d2f5",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/5107cbf3195c6d22d127eaa305dac87068395a46717dbb69a60567476497d2f5.started.json",
+      "source_sha256": "db7390add65af09fd58571356dbb944fc7484c49ee08a1afe0d3b2da0ea19ce2",
+      "request_sha256": "7cbaa62d57643c46741955edbcc7c13f97e2e304e9a8d92d3d56736c0cf247c3",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5883,
+      "output_tokens": 290,
+      "total_tokens": 6173,
+      "reasoning_tokens": 231,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "conversation_history": 1089,
+        "tool_results": 5738,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20517,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 509,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "528a8e0969a61e4049f4b2148e8cdd18661ae329d543d7193ca66a13b2b6591d",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/528a8e0969a61e4049f4b2148e8cdd18661ae329d543d7193ca66a13b2b6591d.started.json",
+      "source_sha256": "52d4a9c5c49d1fdaea3a7f68eb228459397eb1aaed8c17fbbf5f4ac7006b1309",
+      "request_sha256": "530da5080901dea4c7f19c8a35fe60003eca6444a9042b2b199b07e019c7b815",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5976,
+      "output_tokens": 161,
+      "total_tokens": 6137,
+      "reasoning_tokens": 104,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 1526,
+        "tool_results": 5738,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20940,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 509,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "542393a4ced663f7d9d6cb18d8ef1f07b5bf1c8a8e9289fbdf1694c5b0b4c7d6",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/542393a4ced663f7d9d6cb18d8ef1f07b5bf1c8a8e9289fbdf1694c5b0b4c7d6.started.json",
+      "source_sha256": "69feef8c613c0a4f26766dde2fd359f9a3a9752e01c004e26c2b5cdee4317421",
+      "request_sha256": "96688a802b3734d63942800e387e7a1a8cb23ab0aeb6a53b9ef22d88c3f93fee",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6941,
+      "output_tokens": 413,
+      "total_tokens": 7354,
+      "reasoning_tokens": 207,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 378,
+        "conversation_history": 5071,
+        "tool_results": 6491,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 142
+      },
+      "wire_json_bytes": 25305,
+      "message_count": 10,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 569,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "5453e3181239010746b74ab04d4502c9ff1bb05fdb40519b457b7dbd0c655e7c",
+      "role": "reflection_service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/5453e3181239010746b74ab04d4502c9ff1bb05fdb40519b457b7dbd0c655e7c.started.json",
+      "source_sha256": "7c3c24aeb3d555f123fa73160d66aae412aff37759a0d2ce3d97e8e664c3f14c",
+      "request_sha256": "8fa82ee34874902c7252de0f8377912a72e0d313f5abcdddc473a683a528b62e",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 35872,
+      "output_tokens": 1483,
+      "total_tokens": 37355,
+      "reasoning_tokens": 861,
+      "error": false,
+      "component_bytes": {
+        "system": 1104,
+        "latest_user": 99955,
+        "tool_definitions": 6037,
+        "request_framing_and_options": 167
+      },
+      "wire_json_bytes": 107263,
+      "message_count": 2,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": []
+    },
+    {
+      "id": "55f4c3a8fa8a079c68c3ca9f6927472923650a1087fae580a8eadc3b4b6d4b4c",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/55f4c3a8fa8a079c68c3ca9f6927472923650a1087fae580a8eadc3b4b6d4b4c.started.json",
+      "source_sha256": "2ecac15c8ee8528d3fc683a192812f7189c872f0053e94a3e00200204c5fed9a",
+      "request_sha256": "677cef2eada3782500d27ef925cb693994316fcb7fb2eabfe6d150a65ab8d130",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6590,
+      "output_tokens": 280,
+      "total_tokens": 6870,
+      "reasoning_tokens": 223,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 316,
+        "conversation_history": 649,
+        "tool_results": 5738,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 23254,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 509,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "58efdc875fd5e7dd5152c4bf13e5bc8a78c695ace8437b22750edb91f6a8399a",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/58efdc875fd5e7dd5152c4bf13e5bc8a78c695ace8437b22750edb91f6a8399a.started.json",
+      "source_sha256": "c51af89f5e20458c4437f8f746f32061a4d54299479c8b956156b6df2e4343ef",
+      "request_sha256": "b81adfc920b9f8ac1b50a29586e5e9f8f5c6cd5db280b40f79203d35a7ea0e7b",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6139,
+      "output_tokens": 371,
+      "total_tokens": 6510,
+      "reasoning_tokens": 293,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 378,
+        "conversation_history": 2094,
+        "tool_results": 5957,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 138
+      },
+      "wire_json_bytes": 21790,
+      "message_count": 6,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 531,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "5b2ab4ff5c1c6e63014f46c003a7d6f760fa4b3c55a9e9a841e9657378b4d66b",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/5b2ab4ff5c1c6e63014f46c003a7d6f760fa4b3c55a9e9a841e9657378b4d66b.started.json",
+      "source_sha256": "d548c41ecbde19baeec76495577893a2f3fe511d7a5feef1eb8b4e82ccd9e668",
+      "request_sha256": "63b52a2f4b71f7f321845603246dea6ed956a6daba3a313b3a820d8f0964a7f1",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6287,
+      "output_tokens": 214,
+      "total_tokens": 6501,
+      "reasoning_tokens": 155,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 2621,
+        "tool_results": 5924,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 22383,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 516,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "5c6b9912725870c21fa55aaefc3eacbff698cdfda1fabf211d0f82207d31224d",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/5c6b9912725870c21fa55aaefc3eacbff698cdfda1fabf211d0f82207d31224d.started.json",
+      "source_sha256": "4b6e5e450175e29205e4d00dc48c4de63b296a9ad4bd67a6f11e6b5e2bf3ee59",
+      "request_sha256": "a6756d62cf503e23298e8159a14d4811b6e93caaa429a63615c08581cc6d4d86",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5747,
+      "output_tokens": 271,
+      "total_tokens": 6018,
+      "reasoning_tokens": 214,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 165,
+        "conversation_history": 612,
+        "tool_results": 5738,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 19875,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 509,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "5c97a29d28c4a2318b5fc4a77a4c180a35a22648a7bf5d2164a81dce4fa852b0",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/5c97a29d28c4a2318b5fc4a77a4c180a35a22648a7bf5d2164a81dce4fa852b0.started.json",
+      "source_sha256": "e3f37525eb7efbcca755016f156442957d5879e99b8a8d8bf8cea9c788b29ff1",
+      "request_sha256": "9922eaf96167030d426cb7c5699f4e24f6f474c97e18e3cee4a0b87761bca0c9",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7381,
+      "output_tokens": 181,
+      "total_tokens": 7562,
+      "reasoning_tokens": 18,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 257,
+        "conversation_history": 3681,
+        "tool_results": 7896,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 25202,
+      "message_count": 13,
+      "tool_result_count": 7,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 674,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "61c14855a9cace6d8fe013e736a8aebb1838770aeceed209150b8ab5a57bc744",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/61c14855a9cace6d8fe013e736a8aebb1838770aeceed209150b8ab5a57bc744.started.json",
+      "source_sha256": "0c38409a0ec32b5db62ca6c2776f141f2c06675a46cfe1b0e936e60896de4779",
+      "request_sha256": "a7a45fcf504eee0cdaeec2946a8a3fadf299ecd2c4124f738a174b20f75368ae",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7210,
+      "output_tokens": 250,
+      "total_tokens": 7460,
+      "reasoning_tokens": 191,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 316,
+        "conversation_history": 2463,
+        "tool_results": 6367,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 25701,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 555,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "62a8638ae8997aac4b1a52880f0cd3bc8cb6835569e2293f78898f4298881637",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/62a8638ae8997aac4b1a52880f0cd3bc8cb6835569e2293f78898f4298881637.started.json",
+      "source_sha256": "7f0f6ff0cd113f86b989a21f7ef3db17dcba61c24850e7b9cd6df00b6140e588",
+      "request_sha256": "d0c93b0c0afba3662a505e57b8749eaf0be140eae34f42dca67d44093445caca",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3778,
+      "output_tokens": 214,
+      "total_tokens": 3992,
+      "reasoning_tokens": 195,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13832,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "62dc799184a9de459a67a41962cac7ae8c416de9983d648e391dc52a8b35eb0e",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/62dc799184a9de459a67a41962cac7ae8c416de9983d648e391dc52a8b35eb0e.started.json",
+      "source_sha256": "1c54e3daaa9a1ba29c6d2d1ca177a1ad955f5ee80a98ac3338652d74e5fbba2d",
+      "request_sha256": "8d1bb340a462908ed23344a34cf1a7b1002271572065f213517d4fe9696242bf",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6244,
+      "output_tokens": 138,
+      "total_tokens": 6382,
+      "reasoning_tokens": 79,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 2162,
+        "tool_results": 6097,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 21937,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 537,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "63903a4c51693ba2f600a75cc6ee579e3706b5942eb06e3aa55e2df61e2b94e5",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/63903a4c51693ba2f600a75cc6ee579e3706b5942eb06e3aa55e2df61e2b94e5.started.json",
+      "source_sha256": "9078cd252222043e91422f16a8cf926d988da352fc2df3fde1d669b455b48ee5",
+      "request_sha256": "5d6d8facc0926fde2d93176a94ccb957760bea564fb8a3f668ae4bc375d9d1a5",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4518,
+      "output_tokens": 99,
+      "total_tokens": 4617,
+      "reasoning_tokens": 40,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 1795,
+        "tool_results": 1090,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 16665,
+      "message_count": 9,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 72,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "672425390ffceb1e8d4bed8049bfd6c4be74259f6a4a6adf64371daf72568fe0",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/672425390ffceb1e8d4bed8049bfd6c4be74259f6a4a6adf64371daf72568fe0.started.json",
+      "source_sha256": "5a573e4280e1f4b7fcd8e8bd7f675bd3a290e7cbd551bcd29a7731259a9fb6d7",
+      "request_sha256": "19cdbe147ff4a237ccba9b5dc4d7e11ac726ed2c4ff92fd22e6a70b275ef415e",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6964,
+      "output_tokens": 155,
+      "total_tokens": 7119,
+      "reasoning_tokens": 62,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 304,
+        "conversation_history": 4698,
+        "tool_results": 6608,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 144
+      },
+      "wire_json_bytes": 24977,
+      "message_count": 12,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 558,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "6745e31c87f4c6799773a3aa3176749930ae4f2f865eab387f49e34a5070df95",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/6745e31c87f4c6799773a3aa3176749930ae4f2f865eab387f49e34a5070df95.started.json",
+      "source_sha256": "9e804d624e33ba524b677f39eb54999117323b9b4e599717da3150d44e22e8d4",
+      "request_sha256": "abb01407535a2617f2928b8e380d6cf9f3db267fa87c60731b04efaa28280a92",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3739,
+      "output_tokens": 206,
+      "total_tokens": 3945,
+      "reasoning_tokens": 187,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13688,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "68e2f7c37b9dd5160b0996e5b1e6bf5e8848bd514ff99f0484e6106c19c48c60",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/68e2f7c37b9dd5160b0996e5b1e6bf5e8848bd514ff99f0484e6106c19c48c60.started.json",
+      "source_sha256": "3ab21f748e81bd62db013d32279f73c18ec7216be7805315b0fd1bb7958254da",
+      "request_sha256": "4d1e7d84ee4fd1e6d0c70786ff3de2221d33a0fa8882bac246ea07537ab96735",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4952,
+      "output_tokens": 286,
+      "total_tokens": 5238,
+      "reasoning_tokens": 199,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "conversation_history": 13093,
+        "latest_user": 1096,
+        "tool_definitions": 0,
+        "request_framing_and_options": 107
+      },
+      "wire_json_bytes": 25793,
+      "message_count": 5,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "6dd42c06980d7cb4cf2e0d6362d6a1c9b7da50b5a767e3415ec71ecf1d9fc157",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/6dd42c06980d7cb4cf2e0d6362d6a1c9b7da50b5a767e3415ec71ecf1d9fc157.started.json",
+      "source_sha256": "83113fe74f221d864d1068ce3d7dcbe0fce7455fa1bf6e9de8ad6f7fe65d1d26",
+      "request_sha256": "6725ee38e500c8c1dd95523e07dc9e11cfc1afad372b20a7b2e02ac6a782cc11",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7080,
+      "output_tokens": 78,
+      "total_tokens": 7158,
+      "reasoning_tokens": 19,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 165,
+        "conversation_history": 3483,
+        "tool_results": 7511,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 24527,
+      "message_count": 13,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 648,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "6e766c8beffba5a541e47230d0f2eab65f55e5c412d233f15c2c6f791ec8446f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/6e766c8beffba5a541e47230d0f2eab65f55e5c412d233f15c2c6f791ec8446f.started.json",
+      "source_sha256": "13ef5453a20e7da72f61d8cbbd5bf6bf1c2e1a02a64582a034424284130b7c2a",
+      "request_sha256": "8aa47e4fdc12422e795d69c1b6234de4bdd36d8ea983a9e41bd402e3238b3de1",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6098,
+      "output_tokens": 158,
+      "total_tokens": 6256,
+      "reasoning_tokens": 99,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 1881,
+        "tool_results": 5780,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 21497,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 511,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "72a0d181b8de599b089ba3110a0aaa4e5c5def3d48d5bb9333fedb9c8a95ae4a",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/72a0d181b8de599b089ba3110a0aaa4e5c5def3d48d5bb9333fedb9c8a95ae4a.started.json",
+      "source_sha256": "126d01f1c1047d97ef2cbc8a1ff6a0332eabc332c1791e675259b82724c27756",
+      "request_sha256": "3a050f4cc79346cba6731fe8173c299bd941babdcf2e1c5a15ccbc3dd8bbe1c7",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5872,
+      "output_tokens": 254,
+      "total_tokens": 6126,
+      "reasoning_tokens": 195,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 1085,
+        "tool_results": 5599,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20518,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 503,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "72c12808822f305122eedd17498a2d2b9d1a2877631c523756fa4110b68ce2fd",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/72c12808822f305122eedd17498a2d2b9d1a2877631c523756fa4110b68ce2fd.started.json",
+      "source_sha256": "1d2264f03581e8d19f6d5a1c2850b68a569dc556f16f9209e15fb0702787943c",
+      "request_sha256": "9f27fe2ea367e8faa430af07a44aacca87f3ac9b7a20fb6738aaa0a49f7f3de9",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6532,
+      "output_tokens": 93,
+      "total_tokens": 6625,
+      "reasoning_tokens": 34,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 3640,
+        "tool_results": 6068,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 23548,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 61,
+      "tool_json_whitespace_candidate_bytes": 521,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "7661e4e06b9d1007561d355bad169472db13ed16789fcbfa29f49df8634c5669",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/7661e4e06b9d1007561d355bad169472db13ed16789fcbfa29f49df8634c5669.started.json",
+      "source_sha256": "129d07bd8e9f8db191c2534b187f55125da887d3d7f575068dd2e21fe191aa21",
+      "request_sha256": "656011a76eec1c9217eca576dd5cc0abea8561053882e3965e0e49773d3c710a",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4388,
+      "output_tokens": 185,
+      "total_tokens": 4573,
+      "reasoning_tokens": 126,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 416,
+        "conversation_history": 1090,
+        "tool_results": 909,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 16350,
+      "message_count": 7,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 64,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "767f67704a86083d20de4372473dc4a4a0249c1e74988934b8180ee78f65c809",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/767f67704a86083d20de4372473dc4a4a0249c1e74988934b8180ee78f65c809.started.json",
+      "source_sha256": "d21ccdd222074b41ff892a3908f9532f73202fd775ef7b50eb9fdaed5f15d5fb",
+      "request_sha256": "6c2e9b0cd59be14ffcadc4f8e987e85536668892548f4b3250777f3b979b95d7",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6526,
+      "output_tokens": 185,
+      "total_tokens": 6711,
+      "reasoning_tokens": 52,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 292,
+        "conversation_history": 2660,
+        "tool_results": 6490,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 23381,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 567,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "771f7b41aff0e0e6ec5ba43515438b170afacf2a1e699f949e934a4781043fef",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/771f7b41aff0e0e6ec5ba43515438b170afacf2a1e699f949e934a4781043fef.started.json",
+      "source_sha256": "787445cdb5eef3422d074e6502f8254adc908fe41c90a1409d28aa2401fd6859",
+      "request_sha256": "fd487936b1b05ddda66acbcf98419c2dc60806683e5f72047feeba61b9c97586",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5035,
+      "output_tokens": 172,
+      "total_tokens": 5207,
+      "reasoning_tokens": 90,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 416,
+        "conversation_history": 2679,
+        "tool_results": 1820,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 146
+      },
+      "wire_json_bytes": 18857,
+      "message_count": 14,
+      "tool_result_count": 7,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 116,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "775503b4d0604f739c9ce696b289ed465df4e1466b6ff5107a4871790a3543b6",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/775503b4d0604f739c9ce696b289ed465df4e1466b6ff5107a4871790a3543b6.started.json",
+      "source_sha256": "38e0fc942a8536cfb0d847d75704009633ecdb61c4032ceb51e81ec30a2a65ed",
+      "request_sha256": "13f9a98d52ee1d0f2714ac522669074c57a73ddb69e727d6f614a864e4fe6b03",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7691,
+      "output_tokens": 79,
+      "total_tokens": 7770,
+      "reasoning_tokens": 22,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 8625,
+        "tool_results": 6500,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 28971,
+      "message_count": 17,
+      "tool_result_count": 7,
+      "repeated_tool_payload_bytes": 244,
+      "tool_json_whitespace_candidate_bytes": 536,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "79214e7d726468c1528af95de9e91fbf17f36692aabf1e7f89997cbd76e745f3",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/79214e7d726468c1528af95de9e91fbf17f36692aabf1e7f89997cbd76e745f3.started.json",
+      "source_sha256": "04034ff8e3cbc7c47fd3304b92daa621c0c238a4b30ac9a8446fbe9d6b8a5750",
+      "request_sha256": "9d0e82d10500b11d7cbb11e1b48b5890876382b0353892fdc7d5c528beca1d91",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7271,
+      "output_tokens": 78,
+      "total_tokens": 7349,
+      "reasoning_tokens": 21,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 6705,
+        "tool_results": 6356,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 26905,
+      "message_count": 15,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 183,
+      "tool_json_whitespace_candidate_bytes": 531,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "7ee3487d3f217f0851a46c5d2632a0ada88e7731bb9d58ea685e48b156572bef",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/7ee3487d3f217f0851a46c5d2632a0ada88e7731bb9d58ea685e48b156572bef.started.json",
+      "source_sha256": "391c256942695649c8bac1998b1c43e069ecf2920a5856dc0ef5e3153549b187",
+      "request_sha256": "649faa619bd183ae1f512e7a9691ad758e7f646aad3a9dd0eb893bbe70ae79b0",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5531,
+      "output_tokens": 1621,
+      "total_tokens": 7152,
+      "reasoning_tokens": 1557,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 5837,
+        "latest_user": 5793,
+        "tool_definitions": 0,
+        "request_framing_and_options": 105
+      },
+      "wire_json_bytes": 21199,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.permission_boundary_probe",
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "81e179a94675e5b73a5f88fd1dc95f6a832be7fd3dec814e459d441920d83af2",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/81e179a94675e5b73a5f88fd1dc95f6a832be7fd3dec814e459d441920d83af2.started.json",
+      "source_sha256": "9c6ed251c02843e0857d2368ae6ab732d26b471f2fa2e1d3248a785dcab2b039",
+      "request_sha256": "2591fc2ce721ac0c66fc91ef09b1bff72f24f967955f072902590736a9039f46",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6890,
+      "output_tokens": 295,
+      "total_tokens": 7185,
+      "reasoning_tokens": 160,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "conversation_history": 4814,
+        "tool_results": 6157,
+        "latest_user": 379,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 142
+      },
+      "wire_json_bytes": 27906,
+      "message_count": 10,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 532,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "8377afa9aadcf9c7f5385f056b133541078e32d0a22c718a798be59f8bf1f8e5",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/8377afa9aadcf9c7f5385f056b133541078e32d0a22c718a798be59f8bf1f8e5.started.json",
+      "source_sha256": "323018e932831f7e9e222a63fb4c852cf7195552429930fa59705b274af3b772",
+      "request_sha256": "6810d54e6bf07904d20a09c2d0e419f221ab0f42038d69c4c60ffbeb0046d0c1",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6759,
+      "output_tokens": 93,
+      "total_tokens": 6852,
+      "reasoning_tokens": 36,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 3327,
+        "tool_results": 6818,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 23829,
+      "message_count": 13,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 581,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "8513647a62164fdb299680fced8805a55e7afcd1e7176498c4614a02cbf28fbc",
+      "role": "reflection_customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/8513647a62164fdb299680fced8805a55e7afcd1e7176498c4614a02cbf28fbc.started.json",
+      "source_sha256": "8ee2b0e3ed43d21b5a23b4007c68007cb20f73d4eda5dc932be64a95676c242a",
+      "request_sha256": "c8898b5623474a5e0b59e6a68ebbab0cf3d0487482ac18647980038a0ee8a249",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 14471,
+      "output_tokens": 1528,
+      "total_tokens": 15999,
+      "reasoning_tokens": 670,
+      "error": false,
+      "component_bytes": {
+        "system": 2770,
+        "latest_user": 37129,
+        "tool_definitions": 6482,
+        "request_framing_and_options": 167
+      },
+      "wire_json_bytes": 46548,
+      "message_count": 2,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": []
+    },
+    {
+      "id": "88525965b8f6f9b5786309ac8a6ed5ae943c06d115e46f487a2e3b85ed84d541",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/88525965b8f6f9b5786309ac8a6ed5ae943c06d115e46f487a2e3b85ed84d541.started.json",
+      "source_sha256": "ac2b36140b15892e42383b7c9b136749607f1905671b3cb10a4c313bdc9c4563",
+      "request_sha256": "d8788af35174320ff6d94f463ede74c2a08bddcf44fbdab06b52f5d3806e4164",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6887,
+      "output_tokens": 97,
+      "total_tokens": 6984,
+      "reasoning_tokens": 40,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 3917,
+        "tool_results": 6818,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 24419,
+      "message_count": 13,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 581,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "8c6fc780dcedcfc9c249141cc2350686e7e0320f289ffe00b89e2edfc422f443",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/8c6fc780dcedcfc9c249141cc2350686e7e0320f289ffe00b89e2edfc422f443.started.json",
+      "source_sha256": "b73780f10ede278f7e5940c8bf6f0ce7e181c4eca21c76fde88e77000ee57af6",
+      "request_sha256": "3bf9821b5b96b548fa3e70f7b114f974c965ed0cd1494dbe4d64f238238f0a39",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4637,
+      "output_tokens": 133,
+      "total_tokens": 4770,
+      "reasoning_tokens": 19,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 2080,
+        "tool_results": 1271,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 17133,
+      "message_count": 11,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 80,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "8cb290608f1a593f9ffe791b70aebb1d67e61778c45046a6cbad70ca0fe2b09c",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/8cb290608f1a593f9ffe791b70aebb1d67e61778c45046a6cbad70ca0fe2b09c.started.json",
+      "source_sha256": "d5ed0c059cb969c7825dc99345f6b0c77a990d0f0065bc3af95a585298716092",
+      "request_sha256": "417d47fc7ab8db1d09c2d62f6d1bac5e09e2def7fb5e07c91335160ffeaf544a",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4940,
+      "output_tokens": 736,
+      "total_tokens": 5676,
+      "reasoning_tokens": 661,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "conversation_history": 12213,
+        "latest_user": 830,
+        "tool_definitions": 0,
+        "request_framing_and_options": 107
+      },
+      "wire_json_bytes": 24647,
+      "message_count": 5,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "8d4c5b8dc78cad6b30f50d975ddb6626a1c9e395945609a758dfbe08e43fa6d5",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/8d4c5b8dc78cad6b30f50d975ddb6626a1c9e395945609a758dfbe08e43fa6d5.started.json",
+      "source_sha256": "5e8fbdbf976865ea30897321b58011fed30b6c0fbfaee67bb33a6ecb7ce16818",
+      "request_sha256": "d0c93b0c0afba3662a505e57b8749eaf0be140eae34f42dca67d44093445caca",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3778,
+      "output_tokens": 214,
+      "total_tokens": 3992,
+      "reasoning_tokens": 195,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13832,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "8f5e54d96cdeaa69fda828bc255cd616f0ec5a2eff555626f024c8c832a93d51",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/8f5e54d96cdeaa69fda828bc255cd616f0ec5a2eff555626f024c8c832a93d51.started.json",
+      "source_sha256": "60da737f035efb9a5c87de98f0e9f0297fb3efc1d0fc52083629b624a4e42736",
+      "request_sha256": "8c62eca4c48b650e3d47554681bbc2959719a1a24b3b96a8b87ed3d03efd36d3",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5887,
+      "output_tokens": 288,
+      "total_tokens": 6175,
+      "reasoning_tokens": 231,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "conversation_history": 1172,
+        "tool_results": 5738,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20600,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 509,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "8ff04657b1f4a9958eb09ee21a231b5e697e195ab1bcc6d6faec5676ccf78e82",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/8ff04657b1f4a9958eb09ee21a231b5e697e195ab1bcc6d6faec5676ccf78e82.started.json",
+      "source_sha256": "960b719d57a972e9dcfe95a170b70204feca6fedd8aa24dc55461bfbf85c86eb",
+      "request_sha256": "c17f814d98e62f252e920c03b6e9f996d08f567c3104da3a613f1e5eed8a74a7",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5000,
+      "output_tokens": 482,
+      "total_tokens": 5482,
+      "reasoning_tokens": 384,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "conversation_history": 12952,
+        "latest_user": 985,
+        "tool_definitions": 0,
+        "request_framing_and_options": 107
+      },
+      "wire_json_bytes": 25541,
+      "message_count": 5,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "918f79c0bf6ced15d3134e75fac0a971ff4ad536126c236c0eeba8371464d070",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/918f79c0bf6ced15d3134e75fac0a971ff4ad536126c236c0eeba8371464d070.started.json",
+      "source_sha256": "c2b3234da09b4ab3c73fd2242483b05d6342cc99e961344ebd91abb3bea16cda",
+      "request_sha256": "54512a76b621f83027610344824fd603b3c45e44e3ac6432713b275a70120551",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4915,
+      "output_tokens": 133,
+      "total_tokens": 5048,
+      "reasoning_tokens": 35,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 2609,
+        "tool_results": 1820,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 146
+      },
+      "wire_json_bytes": 18214,
+      "message_count": 14,
+      "tool_result_count": 7,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 116,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "929a0995755e02f5cffecb4957d061be0cbea41642ba76392061e164aceaeec8",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/929a0995755e02f5cffecb4957d061be0cbea41642ba76392061e164aceaeec8.started.json",
+      "source_sha256": "71cd35c1f0f21e9a97ae5e237df047e4f426f0e4a27fb73d1b30199d6acd1d9f",
+      "request_sha256": "4ef1658614b216f203104b98405779aad6a6c2599ade8e9083b2eab67d2d55dc",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7879,
+      "output_tokens": 329,
+      "total_tokens": 8208,
+      "reasoning_tokens": 145,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 316,
+        "conversation_history": 4254,
+        "tool_results": 7177,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 28308,
+      "message_count": 15,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 609,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "94358df0c9671b0b330731bac3312583cc7c828426ea9fae504aa8fe9c0abed3",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/94358df0c9671b0b330731bac3312583cc7c828426ea9fae504aa8fe9c0abed3.started.json",
+      "source_sha256": "99d655a51d0b79ef47040e301d194165c5f7398bf001b9046c629736d1d37d54",
+      "request_sha256": "032ff8381868e5889953c432c4e4ea7bbfc6690e67ab8d01c6f426c05f5c60e8",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6815,
+      "output_tokens": 217,
+      "total_tokens": 7032,
+      "reasoning_tokens": 51,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 257,
+        "conversation_history": 2862,
+        "tool_results": 6676,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 23159,
+      "message_count": 9,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 587,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "94fc550f71fd4cb8083890ce6ab70169f2bc53b343a0097459795ed0055d529f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/94fc550f71fd4cb8083890ce6ab70169f2bc53b343a0097459795ed0055d529f.started.json",
+      "source_sha256": "f27192e19a7e811f35703955cf37c3c714573e684ee901070f44aa9baac62cf8",
+      "request_sha256": "33b4010958731d2474f60f7472cdf9c823d10381a3d3b8384db29960aa5b992a",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4533,
+      "output_tokens": 212,
+      "total_tokens": 4745,
+      "reasoning_tokens": 138,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 330,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 16879,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "95e6490ae4d522a02cce72216f3986a6fb184da81282ceaf9b493bb9fae30216",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/95e6490ae4d522a02cce72216f3986a6fb184da81282ceaf9b493bb9fae30216.started.json",
+      "source_sha256": "ead3b3c409a782d55afeca8eeed9f5f10a0f4900e9954adc06b105fb8a481bf4",
+      "request_sha256": "da5f6b16b2112891f4789ef32d16e5d5db1ff92815093aa9fe75d43866845e0b",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6697,
+      "output_tokens": 82,
+      "total_tokens": 6779,
+      "reasoning_tokens": 23,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 6657,
+        "tool_results": 7152,
+        "latest_user": 344,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 144
+      },
+      "wire_json_bytes": 27520,
+      "message_count": 12,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 620,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "987f5fce47fbbbeb1d3ebe4ae9fe4f04aa3542e4c3c6f78e127f5af7a597166e",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/987f5fce47fbbbeb1d3ebe4ae9fe4f04aa3542e4c3c6f78e127f5af7a597166e.started.json",
+      "source_sha256": "2ec657c4053b4a729efb0d09286b997cfc63b2dc00179bc43ebea7fde556df15",
+      "request_sha256": "bee67384e3fc4dc2bf84a04204c5eec008cc44d276bd261218db325a25544e50",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6834,
+      "output_tokens": 74,
+      "total_tokens": 6908,
+      "reasoning_tokens": 17,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 8793,
+        "tool_results": 6724,
+        "latest_user": 379,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 29266,
+      "message_count": 15,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 573,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "9b8b41959c9178807c603433f192a57bd4a623456674d3a166b8bedd047ba124",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/9b8b41959c9178807c603433f192a57bd4a623456674d3a166b8bedd047ba124.started.json",
+      "source_sha256": "971d2e37840f0c63b69a8f856b40ed85eac261c7af9e279979d3d2e22be95ab9",
+      "request_sha256": "02339471136f7a3d164c94b1a8008523802a972f043c03d30f50ed921d3c0da7",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3735,
+      "output_tokens": 303,
+      "total_tokens": 4038,
+      "reasoning_tokens": 284,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13674,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "9cd838089d9e672d300e368263da71c901f586de3a02236164678869c75a53b9",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/9cd838089d9e672d300e368263da71c901f586de3a02236164678869c75a53b9.started.json",
+      "source_sha256": "f43e92be958940693ac62df826bd458a556021a15052284bbd63eb2aab968ab3",
+      "request_sha256": "bdfcbbb128f235c808a84b53d19687f36bcc13ce7d66a85df7cd198f6223ef17",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6170,
+      "output_tokens": 141,
+      "total_tokens": 6311,
+      "reasoning_tokens": 82,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 2239,
+        "tool_results": 5780,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 21855,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 511,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "9e5adcdda026d16ed5bf88393ee80e6fc6dc3214e5163344414595d7f2341f6f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/9e5adcdda026d16ed5bf88393ee80e6fc6dc3214e5163344414595d7f2341f6f.started.json",
+      "source_sha256": "45f1a5b67072679cad9951997d641a2b72e9d97de2f7b92fafe864b28429729a",
+      "request_sha256": "76e41d4334447636ae9404dcd791b7384fb1dcc01eef92ba468bf3ffe55bdb43",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5761,
+      "output_tokens": 758,
+      "total_tokens": 6519,
+      "reasoning_tokens": 595,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 257,
+        "conversation_history": 794,
+        "tool_results": 5599,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20010,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 503,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "9ea0b494d42527eaef72d74253897bfcf55cd2a106706bdff4efff7704a35fb8",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/9ea0b494d42527eaef72d74253897bfcf55cd2a106706bdff4efff7704a35fb8.started.json",
+      "source_sha256": "116fdd36d0d15609de720cc4a164b64433b7f72c8b6e7d76ebebc2440fe4278a",
+      "request_sha256": "c37fa6a9bb9ef3572d06fd7cf5e85eb9c9d8bdca8cf0aa68344a7a51cbb610b9",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4912,
+      "output_tokens": 149,
+      "total_tokens": 5061,
+      "reasoning_tokens": 53,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 2600,
+        "tool_results": 1820,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 146
+      },
+      "wire_json_bytes": 18205,
+      "message_count": 14,
+      "tool_result_count": 7,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 116,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "9f5c0234d4cd668290988cc232124a11e31c42bd104b7a82a30160a15fb13cd6",
+      "role": "reflection_service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/9f5c0234d4cd668290988cc232124a11e31c42bd104b7a82a30160a15fb13cd6.started.json",
+      "source_sha256": "3e88773b60918a3d4582c0326b6b4be089dd4d40789ccd32aecfb68046d65e11",
+      "request_sha256": "aa7c42be3d33cc62591a69aba36e6d9037a2ad19d0195296eb7765209351d040",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 40190,
+      "output_tokens": 1518,
+      "total_tokens": 41708,
+      "reasoning_tokens": 697,
+      "error": false,
+      "component_bytes": {
+        "system": 1104,
+        "latest_user": 113313,
+        "tool_definitions": 6037,
+        "request_framing_and_options": 167
+      },
+      "wire_json_bytes": 120621,
+      "message_count": 2,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": []
+    },
+    {
+      "id": "a70dd43be0bb6cf8968db4069d04bacd0935df57e806895481238e2b149f3950",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/a70dd43be0bb6cf8968db4069d04bacd0935df57e806895481238e2b149f3950.started.json",
+      "source_sha256": "67722c4c537c1baa618127a5622b925bfb99367a8fd8e538ad7bb49753fc664a",
+      "request_sha256": "4961b78b4765eb6840f4ecc4737bf25d048c74ad28c13adea78b59c240879625",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6533,
+      "output_tokens": 317,
+      "total_tokens": 6850,
+      "reasoning_tokens": 258,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 165,
+        "conversation_history": 2082,
+        "tool_results": 6971,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 22582,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 612,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "a762ecd557cebcf74d2b0a391d2ebdce202c9f637c17658a09f9c9de88f2645b",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/a762ecd557cebcf74d2b0a391d2ebdce202c9f637c17658a09f9c9de88f2645b.started.json",
+      "source_sha256": "d6cc3204be1a235304eeac754db5ecbe560d15d165253edb46a533787c577009",
+      "request_sha256": "32f857259e970115747954cd1ede1e9ac0d311a85214b35a571a8d97ea698753",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3727,
+      "output_tokens": 154,
+      "total_tokens": 3881,
+      "reasoning_tokens": 135,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 257,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13615,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "a81e228a73d3062afaa301d35cceabca62a74cf92f26f4067fed715fa82f2edd",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/a81e228a73d3062afaa301d35cceabca62a74cf92f26f4067fed715fa82f2edd.started.json",
+      "source_sha256": "abea8b234a8ce297e0488d4f95ee0784d9c100dcce0f156f880aa994eae2a950",
+      "request_sha256": "a58b79e44a5802f77d8a49c4964cbb65b9c549d991c81d4471c3247b3ba599b5",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6342,
+      "output_tokens": 416,
+      "total_tokens": 6758,
+      "reasoning_tokens": 357,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 2885,
+        "tool_results": 5924,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 22647,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 516,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "a90f9b41846114c3f10f3ab0df04ae7039ff030a98d2547ab5860c584e7e714d",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/a90f9b41846114c3f10f3ab0df04ae7039ff030a98d2547ab5860c584e7e714d.started.json",
+      "source_sha256": "186e0618fd433821742a320490917c8d3207968601ef0d845932a6159aa4d158",
+      "request_sha256": "b992d460cce251a2f3d93bba038cd9bf11afb69c0de70604d896b84ab54eb695",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6894,
+      "output_tokens": 79,
+      "total_tokens": 6973,
+      "reasoning_tokens": 22,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 165,
+        "conversation_history": 3138,
+        "tool_results": 7152,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 23821,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 620,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "a91adfef651d9455406e96abe243e1fe8a94ecd631f59fbf532b5f739dd83e8d",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/a91adfef651d9455406e96abe243e1fe8a94ecd631f59fbf532b5f739dd83e8d.started.json",
+      "source_sha256": "fe579d39aaf99c5cf6e6c8e0547d994240238c980eed285807ee18e640cd7bcb",
+      "request_sha256": "096eeba4cb14d23bf06842a25ed33ec61d5a477ed46ecfd6d3228fc98ad056b9",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6789,
+      "output_tokens": 200,
+      "total_tokens": 6989,
+      "reasoning_tokens": 141,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 4779,
+        "tool_results": 6068,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 24687,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 61,
+      "tool_json_whitespace_candidate_bytes": 521,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "aa11ff5ea0e6af2818628d1bba8e7b0867e7827ca93d9c9af5837346a1a333c8",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/aa11ff5ea0e6af2818628d1bba8e7b0867e7827ca93d9c9af5837346a1a333c8.started.json",
+      "source_sha256": "0a783d0069c451b2b88a486dd1693ba064454a36dd09f4e8ab14ceeab6bbc106",
+      "request_sha256": "5f4a33d47946557fa68eb485e7e95a3211be200b615afc249a128975f0aa290a",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4038,
+      "output_tokens": 135,
+      "total_tokens": 4173,
+      "reasoning_tokens": 116,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 304,
+        "conversation_history": 875,
+        "tool_results": 419,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 138
+      },
+      "wire_json_bytes": 14959,
+      "message_count": 6,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 23,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "b303abf244be141d6de6e37fc24e0f79aea752d803661cf31dd6c2f4700c4d9f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/b303abf244be141d6de6e37fc24e0f79aea752d803661cf31dd6c2f4700c4d9f.started.json",
+      "source_sha256": "b38bfb7e0c4776768bd398dfd7f0f0a25cd9fd0bfa9d65405c315752eb253584",
+      "request_sha256": "79e7683f495f879a1973f418276ed3e47206d0871ae61ff7bcfab67f01a5733f",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3780,
+      "output_tokens": 272,
+      "total_tokens": 4052,
+      "reasoning_tokens": 105,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13774,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "b5097d6783392b77538193f7d682d98d4cae2372b164586ef89a9b71ec109e43",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/b5097d6783392b77538193f7d682d98d4cae2372b164586ef89a9b71ec109e43.started.json",
+      "source_sha256": "8ea62cdb01a197bdcbdb2a3ea0b822db464064c6810b68a28726d932fb375024",
+      "request_sha256": "6d01f395073aa60b7964adf54be4faeeeb6e5ddd1900b3b5b403d7ae4062fa81",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5473,
+      "output_tokens": 2282,
+      "total_tokens": 7755,
+      "reasoning_tokens": 2210,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 5837,
+        "latest_user": 5654,
+        "tool_definitions": 0,
+        "request_framing_and_options": 105
+      },
+      "wire_json_bytes": 21060,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.permission_boundary_probe",
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "b61080cc995e7e27d8d9632de171d1ff9622208cf42fc6fdb26b689f793da17d",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/b61080cc995e7e27d8d9632de171d1ff9622208cf42fc6fdb26b689f793da17d.started.json",
+      "source_sha256": "839590999437bb89ef91f133d40aa8cff8690d92a23d9f379de58cb2a0ff4049",
+      "request_sha256": "98c615cd061ba56dae00c91cbbd8ada1524d6ff3ece642e5e245e70ab2f608c2",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4494,
+      "output_tokens": 99,
+      "total_tokens": 4593,
+      "reasoning_tokens": 40,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 1694,
+        "tool_results": 1090,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 16564,
+      "message_count": 9,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 72,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "b89cdbfc0e3ebebe979d9fe78d91ec84cdec869cc03c35874aabecc6ea864983",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/b89cdbfc0e3ebebe979d9fe78d91ec84cdec869cc03c35874aabecc6ea864983.started.json",
+      "source_sha256": "6e8cba7eb374afd073e210218c070bb02ecf181cec325c8aee1d38aba244a6db",
+      "request_sha256": "30b54aca899369114aa5d0e87e180b9fbeb34efd1cba34ecfa2538028ad0f098",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4936,
+      "output_tokens": 149,
+      "total_tokens": 5085,
+      "reasoning_tokens": 53,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 2700,
+        "tool_results": 1820,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 146
+      },
+      "wire_json_bytes": 18305,
+      "message_count": 14,
+      "tool_result_count": 7,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 116,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "b8fc3aea49ab0011d23a1bd7513465bd9d14a0db48889c989d00268dd7910c30",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/b8fc3aea49ab0011d23a1bd7513465bd9d14a0db48889c989d00268dd7910c30.started.json",
+      "source_sha256": "8a249c74be61e2278d210905873c3e6a859d32de55474b91a48d8a50b2d0ba61",
+      "request_sha256": "25f457941f1449596c0cfc2dfca795f8ae8e4c90f83c83871e59918edaff1568",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6703,
+      "output_tokens": 82,
+      "total_tokens": 6785,
+      "reasoning_tokens": 25,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 9254,
+        "tool_results": 6994,
+        "latest_user": 379,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 29999,
+      "message_count": 17,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 591,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "b9f0e6b6af0662cc925adbc1c1f42e1479d4182a736d13441b79e5cb50967e5f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/b9f0e6b6af0662cc925adbc1c1f42e1479d4182a736d13441b79e5cb50967e5f.started.json",
+      "source_sha256": "5ebb3cca98c39cd468ebb68968771472660990fc2481baec5a28909ea0985951",
+      "request_sha256": "ea73dbb613565bbc059363068ec3cb852dcaedc9551d9fb7261405715d17f5e3",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3713,
+      "output_tokens": 213,
+      "total_tokens": 3926,
+      "reasoning_tokens": 194,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 221,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13579,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "ba21e60ed0680f3ee2071700225dd693d5f3eba9956468c052f83d79705595f6",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/ba21e60ed0680f3ee2071700225dd693d5f3eba9956468c052f83d79705595f6.started.json",
+      "source_sha256": "6262f082f172d00572ac4907873408e42c8b60ddf184ad20138b9e533e700a81",
+      "request_sha256": "f5e3fedb0757d0897fc2adb1e0dc7ced3b1cf8f603374d8db62042f79285158e",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6323,
+      "output_tokens": 95,
+      "total_tokens": 6418,
+      "reasoning_tokens": 38,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 292,
+        "conversation_history": 2227,
+        "tool_results": 6134,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 22590,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 539,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "bf64e5c0ad6215085f1b841f2e39599fabdb02e146e128acb73917949314d5c5",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/bf64e5c0ad6215085f1b841f2e39599fabdb02e146e128acb73917949314d5c5.started.json",
+      "source_sha256": "e02de76604c8fad22253efb9aad6c43d0f9eb4be237e099401c3e626d4b6437d",
+      "request_sha256": "8b4a58e6dda6a1055de5f7e3bdfb3f4f96973e7f10cd15f66f227c77f34d465d",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7205,
+      "output_tokens": 455,
+      "total_tokens": 7660,
+      "reasoning_tokens": 398,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 6362,
+        "tool_results": 6356,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 26562,
+      "message_count": 15,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 183,
+      "tool_json_whitespace_candidate_bytes": 531,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "bfcf8d50e5d73471362e9e95f68ead17d923e1a49ec759007bdff946bea14e23",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/bfcf8d50e5d73471362e9e95f68ead17d923e1a49ec759007bdff946bea14e23.started.json",
+      "source_sha256": "d2b85577cfc479c27a4654f202e2a2dfae2df623c4debf2cd663a6379f28ddf3",
+      "request_sha256": "90b68668107f737abbba729d11af65afe68daaf0227b54771223ee65b8d19838",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5880,
+      "output_tokens": 231,
+      "total_tokens": 6111,
+      "reasoning_tokens": 172,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 1191,
+        "tool_results": 5599,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20624,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 503,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "c06412b7c374c07d33d02c682a48b9960d09f1ed152fad8d12ed361b381c8977",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/c06412b7c374c07d33d02c682a48b9960d09f1ed152fad8d12ed361b381c8977.started.json",
+      "source_sha256": "4826824611c75ea74057058d77e1fb9c26af6a3d0a775c5fab9337ebd2ae00af",
+      "request_sha256": "fab3fe72a0440488e46537dd5b8afe4a53c10870a61065a5ef61962e696f73a2",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4667,
+      "output_tokens": 1820,
+      "total_tokens": 6487,
+      "reasoning_tokens": 1724,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "latest_user": 5793,
+        "tool_definitions": 0,
+        "request_framing_and_options": 105
+      },
+      "wire_json_bytes": 17395,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "c1a31db5d9dd0f4724a3e40bcb930c87cd5779e03a8128825d56590cc6e8d26d",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/c1a31db5d9dd0f4724a3e40bcb930c87cd5779e03a8128825d56590cc6e8d26d.started.json",
+      "source_sha256": "21c0f6836264f75ae276bb3d89cbee26281660343527a949264fd043b52aa92f",
+      "request_sha256": "e116c529bccf63697f4a9b85a3ab4cf1698f9a9ee9a87a2982ad39d7717552d9",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3877,
+      "output_tokens": 164,
+      "total_tokens": 4041,
+      "reasoning_tokens": 90,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 474,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 14405,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "c2d51619d61a6c54a9b61950ecfffca8eb4eb8cc0ea89fc08b23ef0e37605b2e",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/c2d51619d61a6c54a9b61950ecfffca8eb4eb8cc0ea89fc08b23ef0e37605b2e.started.json",
+      "source_sha256": "eac1f9f5077000e07d0aa61bbbbec41e6fb41c3406d415ceb46cf4b282d148da",
+      "request_sha256": "eddde37f401f835e08d7d5fa08adfc6a87c433519f159e4016ac7e01fc2a4a82",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6114,
+      "output_tokens": 167,
+      "total_tokens": 6281,
+      "reasoning_tokens": 102,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 292,
+        "conversation_history": 1453,
+        "tool_results": 5958,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 21638,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 531,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "c4c240fab36cc849e9d03e0de5d81dd2a1244ed0d40bc7336cbedb41d52d5dda",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/c4c240fab36cc849e9d03e0de5d81dd2a1244ed0d40bc7336cbedb41d52d5dda.started.json",
+      "source_sha256": "b3c8610cba34b7fbcba0840fdd28529a02e76c6128e62d66c74c545c18c9d34a",
+      "request_sha256": "2ee46baae86b25eb3f7df246b96c08fa289a8e8f24e901acee61f5b14be4fbca",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6979,
+      "output_tokens": 443,
+      "total_tokens": 7422,
+      "reasoning_tokens": 216,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "conversation_history": 4982,
+        "tool_results": 6549,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 25227,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 563,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "c588589bf4dea0e72513743c04ddea71649d2ab46e23ba5d6cb2907a228d0837",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/c588589bf4dea0e72513743c04ddea71649d2ab46e23ba5d6cb2907a228d0837.started.json",
+      "source_sha256": "dde0bc2b3c147b1faa3dd50c930b130cfa097ae7ebbb431446b6c7e35506cee0",
+      "request_sha256": "a5a1ca860811b80e2b4b83f113da620cee652a51a7249a27431f64c36f3786c9",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6854,
+      "output_tokens": 82,
+      "total_tokens": 6936,
+      "reasoning_tokens": 25,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 7006,
+        "tool_results": 7422,
+        "latest_user": 344,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 146
+      },
+      "wire_json_bytes": 28141,
+      "message_count": 14,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 638,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "c65274c52f265f78544aeb9b0ede8c1f0e39d73db0d42cb54b94e0e9dc051605",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/c65274c52f265f78544aeb9b0ede8c1f0e39d73db0d42cb54b94e0e9dc051605.started.json",
+      "source_sha256": "157d31bb65beee6e8a467d9fcbf5e7eb603fdd92c7530b886acce99a9f0442be",
+      "request_sha256": "a489fde8fd9b817675e16faf54c5e6e07b7b6fe6dbaf1333b6f3d9cd96dd2d36",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6536,
+      "output_tokens": 336,
+      "total_tokens": 6872,
+      "reasoning_tokens": 279,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "conversation_history": 3448,
+        "tool_results": 6189,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 23331,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 535,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "c9e01cfed1eacec4bea054a8269cbfa4af012f09ce66a757ac01492f72282236",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/c9e01cfed1eacec4bea054a8269cbfa4af012f09ce66a757ac01492f72282236.started.json",
+      "source_sha256": "87284de23a12a61f394ebed205809b61d92cdf3ee7cade323b0dfbc74eb6a2d8",
+      "request_sha256": "2174d8d4da8cc832885b459c2f24f4a07f2477b883dc8de060d2b0f93ac7e448",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6558,
+      "output_tokens": 276,
+      "total_tokens": 6834,
+      "reasoning_tokens": 219,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 378,
+        "conversation_history": 3729,
+        "tool_results": 6132,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 140
+      },
+      "wire_json_bytes": 23602,
+      "message_count": 8,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 541,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "cbcd4d05f0d33c27d204d0949164e95e7d1edf0a9bf423fa72525e940a39e6f8",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/cbcd4d05f0d33c27d204d0949164e95e7d1edf0a9bf423fa72525e940a39e6f8.started.json",
+      "source_sha256": "c54a4c8e18f1eea4aa1c2861e84e6ae1715d10b51739f7265ddc7af8e6e11529",
+      "request_sha256": "68e200f3321d2dac33fa40e4e8ecdf8eccac3b08f1568510f2dae14228ebb3b8",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6335,
+      "output_tokens": 147,
+      "total_tokens": 6482,
+      "reasoning_tokens": 88,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "conversation_history": 3829,
+        "tool_results": 6490,
+        "latest_user": 258,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 24518,
+      "message_count": 13,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 567,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "ccafb8822eb5a2ae4bab18f107cfa7f2597fa0fc733315d7deae296bf652954c",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/ccafb8822eb5a2ae4bab18f107cfa7f2597fa0fc733315d7deae296bf652954c.started.json",
+      "source_sha256": "0d7a898d4d6573e409bf2fdc60c6a68e33fda4e24390c4c34e2169dc02c375f8",
+      "request_sha256": "4c0ca6e4415ce914004a1cca833ab4190caec6182e89821f7133b776d35f0b13",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6125,
+      "output_tokens": 136,
+      "total_tokens": 6261,
+      "reasoning_tokens": 79,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 165,
+        "conversation_history": 1580,
+        "tool_results": 6097,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 21204,
+      "message_count": 7,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 537,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "d083030d480893dad5c2641e627739ef57ca982e055b9cd058f5f02ac083ccf6",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/d083030d480893dad5c2641e627739ef57ca982e055b9cd058f5f02ac083ccf6.started.json",
+      "source_sha256": "421f00d1774e5bb897d477563cf80cbfdcb1f6a614f399e42fc100051572399b",
+      "request_sha256": "bfefef72867cd9280984d6e4c0aa083f571e892266d6e342a14105e26f74a686",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4288,
+      "output_tokens": 162,
+      "total_tokens": 4450,
+      "reasoning_tokens": 103,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 1052,
+        "tool_results": 909,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 15739,
+      "message_count": 7,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 64,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "d0bfc4f1e0e2845a078574962a4b2d6edc0a32ae9f8461912125973232cf9a33",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/d0bfc4f1e0e2845a078574962a4b2d6edc0a32ae9f8461912125973232cf9a33.started.json",
+      "source_sha256": "a912cc38afb40ec7a01564c43d85415e693009fb6959c67702056914ce45ed33",
+      "request_sha256": "ec8593c6913282448966f77d4168dff9879e82cf3509b26f90e0c9762141d047",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7699,
+      "output_tokens": 79,
+      "total_tokens": 7778,
+      "reasoning_tokens": 22,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 8705,
+        "tool_results": 6356,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 28905,
+      "message_count": 15,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 183,
+      "tool_json_whitespace_candidate_bytes": 531,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "da8b57fb3a42f5a2ec93a170c1a6f5b584ad47e96622122512ff8ae185c2bf86",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/da8b57fb3a42f5a2ec93a170c1a6f5b584ad47e96622122512ff8ae185c2bf86.started.json",
+      "source_sha256": "d011c22f8c2ffaa92bc1c90b8e7a829802c1f3fd71f2835bce6d43f7f55a73d4",
+      "request_sha256": "1e793321ce7cbfaf387cf47bb0567275859dd2878c524e4496483930af255384",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7380,
+      "output_tokens": 741,
+      "total_tokens": 8121,
+      "reasoning_tokens": 674,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 7035,
+        "tool_results": 6500,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 27381,
+      "message_count": 17,
+      "tool_result_count": 7,
+      "repeated_tool_payload_bytes": 244,
+      "tool_json_whitespace_candidate_bytes": 536,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "daabfe920b5ba09f901adc91c61e6004d754e10038a6d6ace5d9db3abd0c8870",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/daabfe920b5ba09f901adc91c61e6004d754e10038a6d6ace5d9db3abd0c8870.started.json",
+      "source_sha256": "5f1e5e19266873acaa9cedec6df12082b38bf711be1f8332c0e93adfb94b2863",
+      "request_sha256": "4cb458f4ee876e0f2e9924e834945a1905b211e581af8e56ca1f3b9d77c3407f",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7809,
+      "output_tokens": 301,
+      "total_tokens": 8110,
+      "reasoning_tokens": 282,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 9050,
+        "tool_results": 6500,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 29396,
+      "message_count": 17,
+      "tool_result_count": 7,
+      "repeated_tool_payload_bytes": 244,
+      "tool_json_whitespace_candidate_bytes": 536,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "dc48e3d8086db2e9bc36d1ee6b484a127058a400c6100ca587ec2fb23fa37119",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/dc48e3d8086db2e9bc36d1ee6b484a127058a400c6100ca587ec2fb23fa37119.started.json",
+      "source_sha256": "504d9bde219dd54ebe719d65f1ac261df5db16715523504c0609b8e5871207c5",
+      "request_sha256": "f8aebe1cadbbfefb9a965bf487c9c939e22e1252a022de27d771892d349a0815",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6911,
+      "output_tokens": 110,
+      "total_tokens": 7021,
+      "reasoning_tokens": 51,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 5094,
+        "tool_results": 7781,
+        "latest_user": 304,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 26551,
+      "message_count": 17,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 666,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "e03068373ece9fd09c07e2edb30cad0cf82cdb3aa68af0061408106da67bd35c",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/e03068373ece9fd09c07e2edb30cad0cf82cdb3aa68af0061408106da67bd35c.started.json",
+      "source_sha256": "984838109332f96e5e4c28768687e87bf445ca4c3dd5dcc392a9c07d760b473f",
+      "request_sha256": "2b052618ddc3da2c3c9366418b74a203832b562497d63af5b3d7ad8a347ea004",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6869,
+      "output_tokens": 305,
+      "total_tokens": 7174,
+      "reasoning_tokens": 246,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 5041,
+        "tool_results": 6212,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 25095,
+      "message_count": 13,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 122,
+      "tool_json_whitespace_candidate_bytes": 526,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "e0f779c2fa694bb46681437372d151b913c7f9af18671d72f0443bfecc0a464e",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/e0f779c2fa694bb46681437372d151b913c7f9af18671d72f0443bfecc0a464e.started.json",
+      "source_sha256": "54f8bc703b0b1884136aaaaec90a174edd119f70dd92e6d189ab97159dc57735",
+      "request_sha256": "24ee4a38cc3c970026408fd7d920521c9fa47ca914d2ca0862f0f0d575b27319",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6702,
+      "output_tokens": 487,
+      "total_tokens": 7189,
+      "reasoning_tokens": 428,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 330,
+        "conversation_history": 993,
+        "tool_results": 5887,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 138
+      },
+      "wire_json_bytes": 23762,
+      "message_count": 6,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 514,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "e430b6f08120556034515a3639ec4e8082f3afca8b2b9e81e18f86477984fde0",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/e430b6f08120556034515a3639ec4e8082f3afca8b2b9e81e18f86477984fde0.started.json",
+      "source_sha256": "2f83768b70d47534709844c6949ee5701696427b40d06fad69d2cc30279478fa",
+      "request_sha256": "0d49fb845e82b3284e7a6b75017a822de92daac7a6979f82629cf2590396a2f1",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6526,
+      "output_tokens": 77,
+      "total_tokens": 6603,
+      "reasoning_tokens": 18,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "conversation_history": 4447,
+        "tool_results": 6671,
+        "latest_user": 258,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 147
+      },
+      "wire_json_bytes": 25319,
+      "message_count": 15,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 575,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "e4a38afc751c5d4bff0a267d61f5513206897c541f98185e974b9fd72f9a6583",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/e4a38afc751c5d4bff0a267d61f5513206897c541f98185e974b9fd72f9a6583.started.json",
+      "source_sha256": "4d2b3b7d49467444155e7b546d31ba21e75bb97e539def2f4dae751bc45772b4",
+      "request_sha256": "1b7d434cdb3193042f73fecac990a8d6371ddf7ccbb09850508eb89bd64b1b60",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4529,
+      "output_tokens": 123,
+      "total_tokens": 4652,
+      "reasoning_tokens": 104,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 316,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 16865,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "e6ec5b70a9065b45efcf7a11dd9a93d20bdfd06630871b019465c51835ff4864",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/e6ec5b70a9065b45efcf7a11dd9a93d20bdfd06630871b019465c51835ff4864.started.json",
+      "source_sha256": "4748ed1df01e8a5b14865028da2c857d80ec788d5846dcbbb909343fd7845122",
+      "request_sha256": "48d6bbd572bdb188a462f6afc2f0dc27d0f56c9dfdda902a509f2517220bc235",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7264,
+      "output_tokens": 260,
+      "total_tokens": 7524,
+      "reasoning_tokens": 141,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "latest_user": 330,
+        "conversation_history": 3221,
+        "tool_results": 6157,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 140
+      },
+      "wire_json_bytes": 26262,
+      "message_count": 8,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 532,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "e8d6086c00e9aafd4776ce208f87ca7c28ae9d029a51dcac95653c453fbb9b0c",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/e8d6086c00e9aafd4776ce208f87ca7c28ae9d029a51dcac95653c453fbb9b0c.started.json",
+      "source_sha256": "5c4070f34dba935720ed9bfcde998b2bf80e02455a0ced653f8c08c2154e9ea3",
+      "request_sha256": "b2deffad9986005b6540027c34ce967843cb0893e0cec01abd92b60c6999d9be",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4288,
+      "output_tokens": 165,
+      "total_tokens": 4453,
+      "reasoning_tokens": 106,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "conversation_history": 1043,
+        "tool_results": 909,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 139
+      },
+      "wire_json_bytes": 15730,
+      "message_count": 7,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 64,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "e9130c3e06a599ff6312d2a24378a323d71818ca89f362f2934bd0e26f5703d2",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/e9130c3e06a599ff6312d2a24378a323d71818ca89f362f2934bd0e26f5703d2.started.json",
+      "source_sha256": "936a0f84263cf4e5f0412725f8b8fefd5bc8eb4e4c14c2a536af9be907e73e7e",
+      "request_sha256": "2309d314752550c4c44f809818c366c8fd11b16b04c2f477c44fdde4f7808b46",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6111,
+      "output_tokens": 646,
+      "total_tokens": 6757,
+      "reasoning_tokens": 587,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 304,
+        "conversation_history": 1560,
+        "tool_results": 6157,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 140
+      },
+      "wire_json_bytes": 21384,
+      "message_count": 8,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 532,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "e95ec87aa1b611526b5f5137ea58b3702c391eba6356fd3ca3d48693a0a6e267",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/e95ec87aa1b611526b5f5137ea58b3702c391eba6356fd3ca3d48693a0a6e267.started.json",
+      "source_sha256": "25c69ebd7f6f20eba1cc08ab20f1c5752bfe39a2a15d258fe5b1870907226eb4",
+      "request_sha256": "945df8d69b2b2272c331ef864318dcc3b3811329c9da40f77d11f54b837700c8",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6337,
+      "output_tokens": 389,
+      "total_tokens": 6726,
+      "reasoning_tokens": 332,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 2925,
+        "tool_results": 5924,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 141
+      },
+      "wire_json_bytes": 22687,
+      "message_count": 9,
+      "tool_result_count": 3,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 516,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "eb3ba0e1dc9ccb477874c11edce73f591ffbbf5674c30b9a560ab5d34465096e",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/eb3ba0e1dc9ccb477874c11edce73f591ffbbf5674c30b9a560ab5d34465096e.started.json",
+      "source_sha256": "eea225394518df1c1a12dd88a57651a2bdac53fd41c720e574eae39669a16653",
+      "request_sha256": "0fd73572d9140de08ab87af6bb4b9450941d0be3f5c341f974a773425ee5733c",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5940,
+      "output_tokens": 865,
+      "total_tokens": 6805,
+      "reasoning_tokens": 729,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 474,
+        "conversation_history": 757,
+        "tool_results": 5748,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 138
+      },
+      "wire_json_bytes": 20913,
+      "message_count": 6,
+      "tool_result_count": 2,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 508,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "eb4f1f1c2cdce206294192fcf0a371732fb2be0c42131bbecb432622e236f982",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/eb4f1f1c2cdce206294192fcf0a371732fb2be0c42131bbecb432622e236f982.started.json",
+      "source_sha256": "f04a1666adc99e7a2230729789caa2ccb93c57cee2c398352ebcdd99fa48ff9d",
+      "request_sha256": "2b64b4324a2ab927f314ec59c388b652c18c732b5f26b1244b469a8082e36139",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7404,
+      "output_tokens": 604,
+      "total_tokens": 8008,
+      "reasoning_tokens": 465,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 5410,
+        "conversation_history": 5856,
+        "tool_results": 7177,
+        "latest_user": 328,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 149
+      },
+      "wire_json_bytes": 29924,
+      "message_count": 17,
+      "tool_result_count": 6,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 609,
+      "skill_ids": [
+        "service.policy_enforcement",
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "edd1193a8c46d532d4474eac4d2d4d28208fe09fde66e51f6246cfbb2ac259cc",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/edd1193a8c46d532d4474eac4d2d4d28208fe09fde66e51f6246cfbb2ac259cc.started.json",
+      "source_sha256": "dda69ed3b3d01352d3e67446f6dc4d86aebb2326255427713182bc539b5ade95",
+      "request_sha256": "79e7683f495f879a1973f418276ed3e47206d0871ae61ff7bcfab67f01a5733f",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 3780,
+      "output_tokens": 282,
+      "total_tokens": 4062,
+      "reasoning_tokens": 115,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 416,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 135
+      },
+      "wire_json_bytes": 13774,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "eea139a48972386ff1ed09281c578a03169275bc8870fa8ee1e3b7ae0c9909d3",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/eea139a48972386ff1ed09281c578a03169275bc8870fa8ee1e3b7ae0c9909d3.started.json",
+      "source_sha256": "15bb7a54fa210e03d898e92336d0de4c36f5eefc6d66a70724eeb416ac808ed3",
+      "request_sha256": "240a8199b7f500cfb5b034a67a9dcd524ef4c8090277a40608a25608a85e9304",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5869,
+      "output_tokens": 136,
+      "total_tokens": 6005,
+      "reasoning_tokens": 79,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2792,
+        "latest_user": 292,
+        "conversation_history": 909,
+        "tool_results": 5599,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 137
+      },
+      "wire_json_bytes": 20733,
+      "message_count": 5,
+      "tool_result_count": 1,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 503,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "ef2049bc5bc0effb9c6dc64b8a562c29bc38a82023be0a6d745d3416e85bee9f",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/ef2049bc5bc0effb9c6dc64b8a562c29bc38a82023be0a6d745d3416e85bee9f.started.json",
+      "source_sha256": "56c10301ab0ad3475767372bb245bbc06c6f71ffe615c419927496d58ecc2e41",
+      "request_sha256": "97d4918f6867be6ee541cadd8e7a2eb71b588d3e6b5e35f18604d56763cccba1",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7064,
+      "output_tokens": 650,
+      "total_tokens": 7714,
+      "reasoning_tokens": 469,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 330,
+        "conversation_history": 5223,
+        "tool_results": 6819,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 25740,
+      "message_count": 13,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 581,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "f191cc27ed67cea5a738d00f31e74c5bc1d50046e0580249b296c01c0dc8b168",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/f191cc27ed67cea5a738d00f31e74c5bc1d50046e0580249b296c01c0dc8b168.started.json",
+      "source_sha256": "039e1f0d2e25a5cbd84868d724306c0223c4fa13308ada768a43839893c879c5",
+      "request_sha256": "f50f59c37713c260300fd52109a075a9aec97848f46bad2ba62b6ece477f1df9",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6387,
+      "output_tokens": 399,
+      "total_tokens": 6786,
+      "reasoning_tokens": 321,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "conversation_history": 7202,
+        "tool_results": 6549,
+        "latest_user": 379,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 27498,
+      "message_count": 13,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 563,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "f871a75f14aa6def3816fa8335b44a7c87ae389e671306b0f62f1a084613e80d",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/f871a75f14aa6def3816fa8335b44a7c87ae389e671306b0f62f1a084613e80d.started.json",
+      "source_sha256": "9ef6bd0499c6f9754f5cfa0572708c55bbed04609f2a90b1115dc9de6ea7ae84",
+      "request_sha256": "5473d323f9cf113b2b9e1e2dee0a636a9090105561b54271e9f8aea7d150a157",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 4609,
+      "output_tokens": 1915,
+      "total_tokens": 6524,
+      "reasoning_tokens": 1817,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "latest_user": 5654,
+        "tool_definitions": 0,
+        "request_framing_and_options": 105
+      },
+      "wire_json_bytes": 17256,
+      "message_count": 3,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "fc43845647d9bb2f76a2712f7d164b2a3ba48760a9bc75f625cf09e0b17f1ca8",
+      "role": "customer",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/fc43845647d9bb2f76a2712f7d164b2a3ba48760a9bc75f625cf09e0b17f1ca8.started.json",
+      "source_sha256": "6a9b2bd94061006f3e382a2cb0fd3b69e023a42f844eb1a913f7089ac60ebf91",
+      "request_sha256": "f3f08f4d5422999571c55ea0dd45922c2421d69a631381628932b20c8c91ef3a",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 5128,
+      "output_tokens": 323,
+      "total_tokens": 5451,
+      "reasoning_tokens": 247,
+      "error": false,
+      "component_bytes": {
+        "system": 9464,
+        "skill": 2033,
+        "conversation_history": 7687,
+        "latest_user": 1373,
+        "tool_definitions": 0,
+        "request_framing_and_options": 107
+      },
+      "wire_json_bytes": 20664,
+      "message_count": 5,
+      "tool_result_count": 0,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 0,
+      "skill_ids": [
+        "customer.state_dependency"
+      ]
+    },
+    {
+      "id": "ff5c6f619a7ec6a86a6fa16ef135b6ef8687a8c898df811cd708e23d7b4d1659",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/ff5c6f619a7ec6a86a6fa16ef135b6ef8687a8c898df811cd708e23d7b4d1659.started.json",
+      "source_sha256": "4d2d4c19d163d76f94f142e6249d5d8f00e85b471bcad080641e889e69d05f05",
+      "request_sha256": "3ea677ed25174390f3d4b2a49d68bc678f37d0e8c3ba16354f8737fda8255bba",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 6717,
+      "output_tokens": 95,
+      "total_tokens": 6812,
+      "reasoning_tokens": 36,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 316,
+        "conversation_history": 3498,
+        "tool_results": 6548,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 143
+      },
+      "wire_json_bytes": 23728,
+      "message_count": 11,
+      "tool_result_count": 4,
+      "repeated_tool_payload_bytes": 0,
+      "tool_json_whitespace_candidate_bytes": 563,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    },
+    {
+      "id": "ffcf04e48942107ab6c37b43960c5cc085ae8c0ef5b07a5bc5dac2f503332ef8",
+      "role": "service",
+      "call_ordinal": null,
+      "source": "wire-ledger/calls/ffcf04e48942107ab6c37b43960c5cc085ae8c0ef5b07a5bc5dac2f503332ef8.started.json",
+      "source_sha256": "c70b2e397f7091c2dd1a4ed67dc45c779f7bcb00c9fc9d1cc18c1cc9486c3045",
+      "request_sha256": "20962c83e85e74c186ab5faf503387be1b610a650e5f70c1004b4006dc17dabb",
+      "model": "dashscope/qwen3.6-plus",
+      "input_tokens": 7020,
+      "output_tokens": 648,
+      "total_tokens": 7668,
+      "reasoning_tokens": 591,
+      "error": false,
+      "component_bytes": {
+        "system": 2729,
+        "skill": 2219,
+        "latest_user": 474,
+        "conversation_history": 5727,
+        "tool_results": 6212,
+        "tool_definitions": 8275,
+        "request_framing_and_options": 145
+      },
+      "wire_json_bytes": 25781,
+      "message_count": 13,
+      "tool_result_count": 5,
+      "repeated_tool_payload_bytes": 122,
+      "tool_json_whitespace_candidate_bytes": 526,
+      "skill_ids": [
+        "service.state_contract"
+      ]
+    }
+  ]
+}

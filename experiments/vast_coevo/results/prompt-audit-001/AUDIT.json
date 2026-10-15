@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source_commit": "d55238f69f9296ed26b33ca80efc111e5f4fa087",
+  "online_calls": 0,
+  "production_modified": false,
+  "tests_passed": 67,
+  "files": {
+    "experiments/vast_coevo/examples/audit_prompt_context.py": "a82191c5ec572885803af9b8bc05bae306ebf3353e4547c71d57f78958ac0bfe",
+    "tests/test_prompt_context_audit.py": "2217675914db76440a25a4173e1f92da75493e2534c5f4bf2719db00f2fecfe9",
+    "experiments/vast_coevo/results/prompt-audit-001/service-repair.json": "2560f186b7febd13a3122b56f2fd641e852815e584e120da9c38a65821970c27",
+    "experiments/vast_coevo/results/prompt-audit-001/multigen-smoke.json": "c7f31035eb4cf30755559a2a46abea8b46346aa43da72c2cbec4ada44931e76d",
+    "experiments/vast_coevo/results/prompt-audit-001/REPORT.md": "d5ce19b9a8ace757839cef8dc929c2f7a8502f99274204070a9ecae78cdfa7c6"
+  }
+}

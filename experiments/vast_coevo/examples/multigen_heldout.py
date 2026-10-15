@@ -112,8 +112,8 @@ def prepare(root, small=False):
         budgets = {'smoke': dict(calls=250, tokens=2_000_000),
                    'r0-A': dict(calls=400, tokens=2_500_000), 'r0-B': dict(calls=400, tokens=2_500_000),
                    'heldout': dict(calls=576, tokens=3_000_000)}
-    m = dict(protocol='vast-multigen-heldout-small-v2' if small else 'vast-multigen-heldout-v1', run_id=root.name,
-        max_workers=4 if small else 2, repetitions=repetitions, generations=generations,
+    m = dict(protocol='vast-multigen-recursive-small-v3' if small else 'vast-multigen-recursive-v3', run_id=root.name,
+        training_protocol='recursive-training-v1', max_workers=4 if small else 2, repetitions=repetitions, generations=generations,
         initial_snapshots={k: v.snapshot_hash for k, v in libraries.items()},
         model=model.model_dump(mode='json'), provider_seed=None, customer_selection='customer-static-only-v1',
         arms={'A': 'fixed C0; no Customer Reflection', 'B': 'Customer Reflection + Static Gate only'},
@@ -122,6 +122,8 @@ def prepare(root, small=False):
         discovery_budget=DISC.model_dump(mode='json'), task_budget=TASK.model_dump(mode='json'),
         service_gate_policy={}, customer_diagnostics=False, heldout_jobs=heldout_jobs,
         budget=dict(calls=2000 if small else 4700, tokens=10_000_000 if small else 25_000_000, buckets=budgets),
+        removed_comparison_episodes_per_generation_per_arm=5,
+        token_savings='measure usage from actual runs; no online run in this implementation task',
         budget_matching='same episode opportunities, models and per-run hard caps; A unused Customer Reflection budget is not reassigned',
         estimates=dict(training_episodes_upper_bound=36 * repetitions * generations, smoke_episodes_upper_bound=36,
             heldout_episodes=heldout_jobs, calls_upper_bound=sum(v["calls"] for v in budgets.values()),
@@ -169,7 +171,7 @@ def prepare(root, small=False):
 Manifest hash：{m['manifest_hash']}。源码 commit：{m['code_commit']}。
 
 H1：S_A / S_B 的全新 Held-out 正确率高于 S0。H2（主对比）：S_B 高于 S_A。
-CloudOps Sandbox；A 固定 Customer，B 每代 Customer 静态选择；两组复用原 Controller、Service Reflection、Static/Dynamic Gate、四组交叉执行和精确 Replay。
+CloudOps Sandbox；A 固定 Customer，B 每代 Customer 静态选择；两组复用Controller v3 单链训练、原 Service Reflection、Static/Dynamic Gate 和精确 Replay；不含更新后比较探索或四组交叉执行。
 {repetitions} 次独立训练世界重复 × 2 组 × {generations} 代。每次重复内 A/B 配对同一 Exploration 和 Development 世界；每代恢复世界初态。
 Smoke 使用独立开发世界各运行 A/B 一代，不参与正式训练；不能要求真实模型一定提出有效更新，NOOP/静态拒绝如实保存。
 
@@ -210,7 +212,7 @@ def one_run(root, m, ledger, ident, arm, profile_ids, generations, bucket):
             task_ref=task_ref, purpose=purpose)
     tasks = tuple(case(profile_ids[1], t['task_ref'], 'legal_completion' if t['frozen_task']['kind'] == 'completion' else 'correct_refusal')
         for t in m['service_tasks'] if t['config_id'] == profile_ids[1])
-    config = RunConfig(run_id=ident, generations=generations, customer_updates=arm == 'B',
+    config = RunConfig(schema_version=3 if m.get('training_protocol') == 'recursive-training-v1' else 2, run_id=ident, generations=generations, customer_updates=arm == 'B',
         exploration_cases=(case(profile_ids[0]),), validation_cases=(case(profile_ids[1]),), service_task_cases=tasks,
         customer_reflector_model=model, service_reflector_model=model, max_llm_calls=500, max_tool_calls=1800,
         initial_customer_hash=c.snapshot_hash, initial_service_hash=s.snapshot_hash)

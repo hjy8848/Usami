@@ -64,8 +64,8 @@ def test_two_successive_customer_updates_reach_service_and_next_generation(tmp_p
     for generation in range(2):
         selected = report.generations[generation].selected_customer_hash
         service_input = json.loads(service_client.calls[generation]["messages"][1]["content"])
-        selected_evidence = [row for row in service_input["evidence"] if ".selected_customer." in row["episode_id"]]
-        assert selected_evidence and all(row["customer_snapshot_hash"] == selected for row in selected_evidence)
+        selected_evidence = [row for row in service_input["evidence"] if ".current." in row["episode_id"]]
+        assert selected_evidence and all(row["customer_snapshot_hash"] == report.generations[generation].parent_customer_hash for row in selected_evidence)
         assert runs.load_evolution(config.run_id, generation, "service").parent_customer_hash == selected
         assert all(row.customer_hash == selected for row in report.generations[generation].crossings
                    if row.pairing.startswith("selected_"))
@@ -82,6 +82,7 @@ def test_historical_config_roundtrips_but_cannot_resume_under_new_selection(tmp_
     raw = current.model_dump(mode="json")
     raw["schema_version"] = 1
     raw.pop("customer_selection")
+    raw.pop("training_protocol", None)
     historical = RunConfig.model_validate(raw)
     assert historical.model_dump(mode="json") == raw
     assert digest(historical) == digest(raw)

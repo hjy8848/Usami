@@ -1,5 +1,7 @@
 # VAST-CoEvo v1.0 — 实现与验收报告
 
+当前默认训练为 [RunConfig v3 单链递归协议](RECURSIVE_TRAINING.md)：移除训练中的 selected 比较探索和四组 cross；交叉评估为独立只读入口。历史协议/实验保留原解释，Skill/Reflection/Service Gate 不变。
+
 > 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。下文中的 Customer 性能 Gate 是历史机制或显式诊断，不能决定当前 Customer 版本。Service 动态验收保持原样；历史结果不改判。
 
 

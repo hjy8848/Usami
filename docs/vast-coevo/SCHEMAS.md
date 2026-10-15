@@ -1,5 +1,7 @@
 # VAST-CoEvo Schema 与声明式 Skill
 
+当前默认训练为 [RunConfig v3 单链递归协议](RECURSIVE_TRAINING.md)：移除训练中的 selected 比较探索和四组 cross；交叉评估为独立只读入口。历史协议/实验保留原解释，Skill/Reflection/Service Gate 不变。
+
 > 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。下文中的 Customer 性能 Gate 是历史机制或显式诊断，不能决定当前 Customer 版本。Service 动态验收保持原样；历史结果不改判。
 
 
@@ -111,3 +113,5 @@ Usami 完整原始 Trace 存为明确附属证据，不用任意私有字典代�
 
 
 Episode track 明确区分 `discovery`、`service_task` 和 `failure_regression`。原始业务/模型轨迹通过 `ArtifactRef(path, sha256)` 引用；原请求与实际 wire request 分别保存，错误响应也保存原 JSON。ReflectionInput 硬拒绝 held-out Evidence；EvolutionRecord 将原始反思、静态/动态门槛、候选与选中快照以及消费关联。完整可用入口见 [实验说明](../../experiments/vast_coevo/README.md)。
+
+RunConfig v3 固定 `training_protocol=recursive-training-v1`、Customer 静态选择；GenerationRecord v2 只记录共享 `current_evidence`，`selected_customer_evidence` 与 `crossings` 必须为空。v1/v2 配置及 v1 代际记录继续可读，旧序列化不新增协议字段，hash 不变。此训练版本与只读探针/SkillPatch 的版本独立。

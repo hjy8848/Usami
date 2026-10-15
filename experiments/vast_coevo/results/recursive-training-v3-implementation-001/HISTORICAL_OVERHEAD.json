@@ -1,0 +1,193 @@
+{
+  "scope": "historical v2 removed-step costs only; not a measured v3 saving",
+  "episodes": 20,
+  "calls": 148,
+  "input_tokens": 870014,
+  "output_tokens": 70961,
+  "total_tokens": 940975,
+  "tool_calls": 140,
+  "rows": [
+    {
+      "episode_id": "g1.r0-A.cross.parent_selected.repeat-0-0",
+      "evidence_hash": "a7b554707acb4209c41f6429294a9481738d4ac8fbec523c07de8ba1ea658796",
+      "calls": 10,
+      "input_tokens": 60810,
+      "output_tokens": 4830,
+      "total_tokens": 65640,
+      "tool_calls": 7
+    },
+    {
+      "episode_id": "g1.r0-A.selected_customer.repeat-0-0",
+      "evidence_hash": "d5a43fa84ddc889e1ee0d818ffb2c1e90f101b55c4112599c40c9635f0fce484",
+      "calls": 8,
+      "input_tokens": 46223,
+      "output_tokens": 3617,
+      "total_tokens": 49840,
+      "tool_calls": 9
+    },
+    {
+      "episode_id": "g0.r0-A.cross.parent_parent.repeat-0-0",
+      "evidence_hash": "68387aa87669abe3a4205b1fe63beca46753e92fdd4500226baac454f309d9a1",
+      "calls": 10,
+      "input_tokens": 55609,
+      "output_tokens": 2797,
+      "total_tokens": 58406,
+      "tool_calls": 7
+    },
+    {
+      "episode_id": "g0.r0-A.cross.parent_selected.repeat-0-0",
+      "evidence_hash": "444c764111cc64af682195088b843f062719cedff0224b6bc7199de44304206d",
+      "calls": 9,
+      "input_tokens": 50931,
+      "output_tokens": 2964,
+      "total_tokens": 53895,
+      "tool_calls": 5
+    },
+    {
+      "episode_id": "g1.r0-A.cross.parent_parent.repeat-0-0",
+      "evidence_hash": "9d3aa51c2dc93edbf157a3df17c6dafd3f458c821cd9e767185cab5e2fc143c8",
+      "calls": 5,
+      "input_tokens": 28452,
+      "output_tokens": 2035,
+      "total_tokens": 30487,
+      "tool_calls": 10
+    },
+    {
+      "episode_id": "g0.r0-A.selected_customer.repeat-0-0",
+      "evidence_hash": "de7321880c9f50c3ea7911e8acdaa76dd6879f8a230bd1dac7ef02a8712fb54b",
+      "calls": 10,
+      "input_tokens": 57377,
+      "output_tokens": 4542,
+      "total_tokens": 61919,
+      "tool_calls": 7
+    },
+    {
+      "episode_id": "g1.r0-A.cross.selected_selected.repeat-0-0",
+      "evidence_hash": "1e1e6db69f94bb515e1e5b17014adefb27bef1573e66692bf68b7d60965cc14a",
+      "calls": 10,
+      "input_tokens": 59156,
+      "output_tokens": 5429,
+      "total_tokens": 64585,
+      "tool_calls": 8
+    },
+    {
+      "episode_id": "g0.r0-A.cross.selected_parent.repeat-0-0",
+      "evidence_hash": "ebe498f0c04648620e3465276fc7852e6819d21d6f4a07d4b9d6ddb9b08bb5b0",
+      "calls": 5,
+      "input_tokens": 28659,
+      "output_tokens": 2095,
+      "total_tokens": 30754,
+      "tool_calls": 10
+    },
+    {
+      "episode_id": "g1.r0-A.cross.selected_parent.repeat-0-0",
+      "evidence_hash": "7cac5d238aaedbe8ee8add23e213a38b21230bfb405b35fbe663f3abf71b1398",
+      "calls": 9,
+      "input_tokens": 53369,
+      "output_tokens": 3833,
+      "total_tokens": 57202,
+      "tool_calls": 7
+    },
+    {
+      "episode_id": "g0.r0-A.cross.selected_selected.repeat-0-0",
+      "evidence_hash": "14f7160ccb70c407c74f140ba8ec55f366cf134f09c7ba70245ba1ace066ea54",
+      "calls": 10,
+      "input_tokens": 57226,
+      "output_tokens": 4867,
+      "total_tokens": 62093,
+      "tool_calls": 7
+    },
+    {
+      "episode_id": "g1.r0-B.cross.selected_selected.repeat-0-0",
+      "evidence_hash": "65f1285d55af37db173a70f437d749b54f2950ff9fe0eed5efbc5f2df46ab212",
+      "calls": 8,
+      "input_tokens": 49521,
+      "output_tokens": 7566,
+      "total_tokens": 57087,
+      "tool_calls": 9
+    },
+    {
+      "episode_id": "g1.r0-B.cross.selected_parent.repeat-0-0",
+      "evidence_hash": "b01e5ce126e2e829f341c2a680a27cc414bb56cbfd9fa5b63bd389a4a9bebc03",
+      "calls": 9,
+      "input_tokens": 61894,
+      "output_tokens": 4604,
+      "total_tokens": 66498,
+      "tool_calls": 10
+    },
+    {
+      "episode_id": "g1.r0-B.cross.parent_parent.repeat-0-0",
+      "evidence_hash": "f6a8f1b7c771cd1c0a0fbb73089510f75995e00aa610081292498dcabcb0a776",
+      "calls": 1,
+      "input_tokens": 4553,
+      "output_tokens": 769,
+      "total_tokens": 5322,
+      "tool_calls": 0
+    },
+    {
+      "episode_id": "g0.r0-B.cross.selected_parent.repeat-0-0",
+      "evidence_hash": "6001a4367f684da8d7c826772033ed1d8c122a22ec15f19c0849e6faf2f7866e",
+      "calls": 10,
+      "input_tokens": 60330,
+      "output_tokens": 4376,
+      "total_tokens": 64706,
+      "tool_calls": 10
+    },
+    {
+      "episode_id": "g0.r0-B.cross.selected_selected.repeat-0-0",
+      "evidence_hash": "fe4dcaed67bdd969d55c1cc69e371871a2ef1112bba25d21ec1d05f18476a849",
+      "calls": 7,
+      "input_tokens": 39940,
+      "output_tokens": 1762,
+      "total_tokens": 41702,
+      "tool_calls": 10
+    },
+    {
+      "episode_id": "g1.r0-B.selected_customer.repeat-0-0",
+      "evidence_hash": "5490b457b46e0455399bccb61b59ed9c323a5f1e891b884195f80804a41ba099",
+      "calls": 1,
+      "input_tokens": 4879,
+      "output_tokens": 1033,
+      "total_tokens": 5912,
+      "tool_calls": 0
+    },
+    {
+      "episode_id": "g0.r0-B.selected_customer.repeat-0-0",
+      "evidence_hash": "f5e26e52906aaf1653b7550dc4dd90a1f242ecb5dd951943266aae792bbabf55",
+      "calls": 6,
+      "input_tokens": 33532,
+      "output_tokens": 1574,
+      "total_tokens": 35106,
+      "tool_calls": 10
+    },
+    {
+      "episode_id": "g0.r0-B.cross.parent_parent.repeat-0-0",
+      "evidence_hash": "e0b819b4632d60a8a737dfab1bb1f12c48868d49c225820a29f39a8e6426fc96",
+      "calls": 1,
+      "input_tokens": 4553,
+      "output_tokens": 657,
+      "total_tokens": 5210,
+      "tool_calls": 0
+    },
+    {
+      "episode_id": "g0.r0-B.cross.parent_selected.repeat-0-0",
+      "evidence_hash": "3595f801b1d534e8694576b37dd4f3c084cc53fc79f24093ba3e92796fd43be9",
+      "calls": 9,
+      "input_tokens": 52485,
+      "output_tokens": 6466,
+      "total_tokens": 58951,
+      "tool_calls": 6
+    },
+    {
+      "episode_id": "g1.r0-B.cross.parent_selected.repeat-0-0",
+      "evidence_hash": "1834407848faeb54f4d5705ddaaabf391028a8ffec270732a077080ff9e08875",
+      "calls": 10,
+      "input_tokens": 60515,
+      "output_tokens": 5145,
+      "total_tokens": 65660,
+      "tool_calls": 8
+    }
+  ],
+  "new_online_calls": 0,
+  "new_measured_token_savings": null
+}

@@ -102,7 +102,7 @@ class StoredEvolution(FrozenModel):
 
 
 class GenerationRecord(FrozenModel):
-    schema_version: Literal[1] = 1
+    schema_version: Literal[1, 2] = 1
     generation: int = Field(ge=0, strict=True)
     parent_customer_hash: Hash
     parent_service_hash: Hash
@@ -117,6 +117,8 @@ class GenerationRecord(FrozenModel):
 
     @model_validator(mode="after")
     def seal(self):
+        if self.schema_version == 2 and (self.selected_customer_evidence or self.crossings):
+            raise ValueError("recursive generation cannot contain selected-Customer comparison or crossings")
         expected = digest(self.model_dump(mode="json", exclude={"record_hash"}))
         if self.record_hash and self.record_hash != expected:
             raise ValueError("generation record hash mismatch")

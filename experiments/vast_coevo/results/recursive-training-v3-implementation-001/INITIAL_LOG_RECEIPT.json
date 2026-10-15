@@ -1,0 +1,6 @@
+{
+  "file": "pytest-initial-development.log.gz",
+  "uncompressed_sha256": "58e8d017f36bee1b6e93c8160dbf15cfe88eb8108e7e0195483991431fd2ecc2",
+  "raw_bytes_preserved": true,
+  "reason": "preserve original pytest failure output including whitespace"
+}

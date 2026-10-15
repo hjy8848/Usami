@@ -113,9 +113,11 @@ class EvolutionRecord(FrozenModel):
 
 
 class RunConfig(FrozenModel):
-    # v1 remains readable/hash stable; execution requires its original code.
-    schema_version: Literal[1, 2] = 2
+    # v1/v2 remain readable and hash stable. v3 is the single recursive chain.
+    schema_version: Literal[1, 2, 3] = 3
     customer_selection: Optional[Literal["customer-static-only-v1"]] = Field(
+        default=None, exclude_if=lambda value: value is None)
+    training_protocol: Optional[Literal["recursive-training-v1"]] = Field(
         default=None, exclude_if=lambda value: value is None)
     customer_updates: bool = Field(default=True, exclude_if=lambda value: value is True, strict=True)
     run_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,95}$")
@@ -133,10 +135,14 @@ class RunConfig(FrozenModel):
 
     @model_validator(mode="after")
     def fixed_models(self):
-        if self.schema_version == 2:
+        if self.schema_version in (2, 3):
             object.__setattr__(self, "customer_selection", "customer-static-only-v1")
         elif self.customer_selection is not None:
             raise ValueError("historical run v1 cannot declare static-only Customer selection")
+        if self.schema_version == 3:
+            object.__setattr__(self, "training_protocol", "recursive-training-v1")
+        elif self.training_protocol is not None:
+            raise ValueError("historical runs cannot declare the new recursive protocol")
         if self.schema_version == 1 and not self.customer_updates:
             raise ValueError("fixed Customer ablation requires run v2")
         from ..models import ModelSpec

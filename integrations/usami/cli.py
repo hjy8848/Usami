@@ -47,6 +47,7 @@ class ExperimentPlan(FrozenModel):
     policy: GatePolicy = Field(default_factory=GatePolicy)
     customer_gate_version: Optional[Literal['legacy-v1', 'quality-gated-discovery-v1', 'quality-gated-discovery-v2']] = Field(
         default=None, exclude_if=lambda value: value is None)
+    training_protocol: Optional[Literal['recursive-training-v1']] = Field(default=None, exclude_if=lambda value: value is None)
     customer_selection: Optional[Literal['customer-static-only-v1']] = Field(
         default=None, exclude_if=lambda value: value is None)
 
@@ -140,7 +141,7 @@ def run_config(plan, adapter, customer, service, specs, run_id, generations=None
                       if profile.domain == "cloudops" and (profile.split == "heldout" or profile.config_id in plan.exploration))
         policy = policy.model_copy(update={"customer_excluded_world_hashes": tuple(sorted(excluded)),
                                            "customer_excluded_business_shapes": tuple(sorted(shapes))})
-    return RunConfig(run_id=run_id, generations=generations or plan.generations,
+    return RunConfig(schema_version=3, run_id=run_id, generations=generations or plan.generations,
                      exploration_cases=tuple(case(key) for key in plan.exploration),
                      validation_cases=tuple(case(key) for key in plan.validation), service_task_cases=tuple(task_cases),
                      customer_reflector_model=specs["customer_reflector"], service_reflector_model=specs["service_reflector"],
@@ -180,6 +181,13 @@ def main(argv=None):
     run = commands.add_parser("run", help="run or resume one or multiple alternating generations")
     run.add_argument("--id", required=True)
     run.add_argument("--generations", type=int)
+    cross = commands.add_parser("evaluate-cross", help="independent read-only Customer/Service Snapshot comparisons; no Reflection")
+    cross.add_argument("--pair", action="append", required=True, help="LABEL:CUSTOMER_HASH:SERVICE_HASH; hashes are printed by history")
+    cross.add_argument("--profile", action="append", required=True)
+    cross.add_argument("--training-run", action="append", required=True, help="completed source run; excludes its training/Gate worlds")
+    cross.add_argument("--purpose", choices=("development-diagnostic", "frozen-heldout"), required=True)
+    cross.add_argument("--output", required=True, help="new independent log directory")
+    cross.add_argument("--id", required=True)
     history = commands.add_parser("history", help="inspect saved generation history")
     history.add_argument("--id", required=True)
     restore = commands.add_parser("restore", help="branch a historical snapshot into a new run")
@@ -208,6 +216,36 @@ def main(argv=None):
         else:
             if not args.plan:
                 raise ValueError("--plan is required")
+            if args.command == "evaluate-cross":
+                from vast_coevo.evaluation.cross import evaluate_cross
+                plan = ExperimentPlan.model_validate_json(Path(args.plan).read_text())
+                destination = Path(args.output).resolve()
+                if destination == root or any(destination == root/name or root/name in destination.parents
+                        for name in ('runs','libraries','evidence','native')):
+                    raise ValueError('evaluation must use an independent output directory')
+                excluded=set(); model_pairs=set()
+                for ident in args.training_run:
+                    source=runs.load_config(ident); report=runs.load_report(ident)
+                    if report.status!='completed' or len(report.generations)!=source.generations or runs.history(ident)!=report.generations:
+                        raise ValueError('evaluation requires completed source training')
+                    cases=source.exploration_cases+source.validation_cases+source.service_task_cases
+                    excluded.update(c.config.initial_world_hash for c in cases)
+                    model_pairs.update((digest(c.config.customer_model),digest(c.config.service_model)) for c in cases)
+                if len(model_pairs)!=1:raise ValueError('source training models differ')
+                if plan.customer_model is None or plan.service_model is None or (digest(plan.customer_model),digest(plan.service_model)) not in model_pairs:
+                    raise ValueError('evaluation plan must pin the same Agent models as training')
+                profiles=[p for p in plan.profiles if p.config_id in args.profile]
+                if {p.config_id for p in profiles}!=set(args.profile):raise ValueError('unregistered evaluation profile')
+                pairs={}
+                for choice in args.pair:
+                    label,ch,sh=choice.split(':')
+                    if label in pairs:raise ValueError('duplicate pairing label')
+                    pairs[label]=(store.load(ch),store.load(sh))
+                evaluation_adapter=UsamiAdapter(destination/'native',profiles)
+                configs=tuple(evaluation_adapter.config_for(p.config_id,plan.customer_model,plan.service_model,plan.budget) for p in profiles)
+                output=evaluate_cross(evaluation_adapter,pairs,configs,destination,evaluation_id=args.id,
+                    purpose=args.purpose,excluded_world_hashes=excluded,max_llm_calls=plan.max_llm_calls,max_tool_calls=plan.max_tool_calls)
+                print(json.dumps(output,ensure_ascii=False,indent=2));return 0
             if args.command == "replay":
                 # Offline replay does not need model environment or credentials.
                 plan = ExperimentPlan.model_validate_json(Path(args.plan).read_text())
@@ -224,10 +262,12 @@ def main(argv=None):
                 saved = root / 'runs' / args.id / 'config.json'
                 if saved.exists():
                     existing = runs.load_config(args.id)
-                    if existing.schema_version != 2:
-                        raise ValueError('historical run v1 requires its original code; use a new run ID')
+                    if existing.schema_version != 3:
+                        raise ValueError('historical training protocol requires its archived code; use a new v3 run ID')
                     if preflight.customer_selection != existing.customer_selection:
                         raise ValueError('resume Customer selection differs from frozen run')
+                elif preflight.training_protocol != 'recursive-training-v1':
+                    raise ValueError('new runs must explicitly choose training_protocol=recursive-training-v1')
                 elif preflight.customer_selection != 'customer-static-only-v1':
                     raise ValueError('new experiments must explicitly choose customer_selection=customer-static-only-v1')
             plan, adapter, store, archive, runs, customer, service, specs = (

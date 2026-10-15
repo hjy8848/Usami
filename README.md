@@ -10,6 +10,8 @@ v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World 
 
 新增独立算法层 **Verification-Guided Adversarial Co-Evolution of Customer Exploration and Service Decision Skills**。冻结 Customer/Service 模型权重，以结构化 Skill、单次 Reflection、真实开发集验证、不可变快照和回滚实现 Customer-first / Service-second 交替更新。Usami 继续独立负责业务环境与 Oracle；所有四域依赖限制在 `integrations/usami`。H1/H2/H3 的泛化与共进化收益仍需正式实验检验。
 
+当前默认训练采用 [v3 单链递归协议](docs/vast-coevo/RECURSIVE_TRAINING.md)：每代只进行正常自主交互，再学习并保存版本；交叉比较是训练后的独立可选评估。
+
 阅读 [研究 Roadmap](docs/vast-coevo/ROADMAP.md)、[方法与验收门槛](docs/vast-coevo/METHOD.md)、[架构边界](docs/vast-coevo/ARCHITECTURE.md)、[Schema](docs/vast-coevo/SCHEMAS.md) 和 [运行与验证记录](docs/vast-coevo/IMPLEMENTATION.md)。
 
 ```bash

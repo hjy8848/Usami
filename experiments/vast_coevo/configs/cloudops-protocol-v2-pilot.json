@@ -101,5 +101,6 @@
     "timeout_seconds": 90.0,
     "trust_env": false
   },
-  "customer_selection": "customer-static-only-v1"
+  "customer_selection": "customer-static-only-v1",
+  "training_protocol": "recursive-training-v1"
 }

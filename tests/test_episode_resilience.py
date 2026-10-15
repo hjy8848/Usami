@@ -22,7 +22,7 @@ def invalid_customer(evidence, **changes):
 
 
 def test_resume_retains_failure_and_does_not_repeat_completed_operations(tmp_path):
-    controller, config, adapter, c, s, libraries, archive, runs = setup_run(tmp_path)
+    controller, config, adapter, c, s, libraries, archive, runs = setup_run(tmp_path, caps={"schema_version":2})
     original = adapter._run
     bad_id = 'g0.'+config.run_id+'.cross.parent_parent.explore'
     def failing(config, customer, service, episode_id, *args, **kwargs):
@@ -45,7 +45,7 @@ def test_resume_retains_failure_and_does_not_repeat_completed_operations(tmp_pat
 
 
 def test_policy_does_not_swallow_unknown_service_or_unverified_errors(tmp_path):
-    controller,config,adapter,c,s,libraries,archive,runs=setup_run(tmp_path)
+    controller,config,adapter,c,s,libraries,archive,runs=setup_run(tmp_path, caps={"schema_version":2})
     e=adapter.run_episode(config.exploration_cases[0].config,libraries.load(config.initial_customer_hash),
                           libraries.load(config.initial_service_hash),'fixture')
     good=invalid_customer(e)
@@ -61,7 +61,7 @@ def test_policy_does_not_swallow_unknown_service_or_unverified_errors(tmp_path):
 
 @pytest.mark.parametrize('stage', ['current', 'selected_customer', 'cross.parent_parent'])
 def test_known_customer_error_is_local_in_each_main_phase(tmp_path, stage):
-    _,config,adapter,c,s,libraries,archive,runs=setup_run(tmp_path)
+    _,config,adapter,c,s,libraries,archive,runs=setup_run(tmp_path, caps={"schema_version":2})
     original=adapter._run
     bad_id='g0.'+config.run_id+'.'+stage+'.explore'
     def failing(config, customer, service, episode_id, *args, **kwargs):
@@ -77,7 +77,7 @@ def test_known_customer_error_is_local_in_each_main_phase(tmp_path, stage):
 
 
 def test_second_turn_invalid_customer_reply_with_role_grouped_calls(tmp_path):
-    _,config,adapter,c,s,libraries,archive,runs=setup_run(tmp_path)
+    _,config,adapter,c,s,libraries,archive,runs=setup_run(tmp_path, caps={"schema_version":2})
     e=adapter.run_episode(config.exploration_cases[0].config,libraries.load(config.initial_customer_hash),
                           libraries.load(config.initial_service_hash),'fixture')
     bad=invalid_customer(e)

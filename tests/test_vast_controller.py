@@ -142,7 +142,7 @@ def setup_run(tmp_path, generations=2, caps=None, customer_modes=("add", "reject
     return controller, config, adapter, c_client, s_client, libraries, archive, runs
 
 
-def test_two_generations_commit_reject_noop_version_inheritance_and_crossings(tmp_path):
+def test_two_generations_commit_reject_noop_recursive_version_inheritance(tmp_path):
     controller, config, adapter, customer, service, libraries, archive, runs = setup_run(tmp_path)
     report = controller.run(config)
     assert report.status == "completed", report.error
@@ -155,9 +155,8 @@ def test_two_generations_commit_reject_noop_version_inheritance_and_crossings(tm
     assert runs.load_evolution(config.run_id, 1, "customer").outcome == "rejected"
     assert all(runs.load_evolution(config.run_id, g, "service").outcome == "noop" for g in range(2))
     assert len(customer.calls) == len(service.calls) == 2
-    assert all(len(g.crossings) == 4 for g in report.generations)
-    assert all({row.pairing for row in g.crossings} == {"parent_parent", "selected_parent", "parent_selected", "selected_selected"}
-               for g in report.generations)
+    assert all(not g.crossings and not g.selected_customer_evidence and g.schema_version == 2 for g in report.generations)
+    assert not any(".cross." in ident or ".selected_customer." in ident for ident in adapter.calls)
     assert report.consumption.reflection_calls == 4
     assert report.consumption.tool_calls == len(adapter.calls)
     assert len(archive.query()) == len(adapter.calls)
@@ -231,7 +230,7 @@ def test_failure_regression_is_journalled_service_only_and_replayed_on_resume(tm
     regressions = [runs.completion(config.run_id, start.operation_id)
                    for start in runs.operation_starts(config.run_id)
                    if start.kind == "episode" and ".failure." in start.operation_id]
-    assert len(regressions) == 4
+    assert len(regressions) == 2
     assert all(value.evidence.track == "failure_regression" for value in regressions)
     assert all(value.consumption.customer_llm_calls == 0 for value in regressions)
     counts = len(adapter.calls), len(customer.calls), len(service.calls)
@@ -270,7 +269,7 @@ def test_global_caps_reserve_before_actual_operations(tmp_path):
 
 def test_interrupted_partial_generation_preserves_actual_selected_customer_on_resume(tmp_path):
     controller, config, adapter, customer, _, _, _, _ = setup_run(
-        tmp_path, generations=1, interrupt=lambda operation: ".selected_customer." in operation)
+        tmp_path, generations=1, interrupt=lambda operation: ".service.reflection-task." in operation)
     first = controller.run(config)
     assert first.status == "interrupted" and not first.generations
     assert first.selected_customer_hash != config.initial_customer_hash
@@ -283,7 +282,7 @@ def test_interrupted_partial_generation_preserves_actual_selected_customer_on_re
 
 
 def test_budget_stop_after_static_customer_selection_does_not_repeat_reflection(tmp_path):
-    controller, config, adapter, customer, service, _, _, runs = setup_run(tmp_path, caps={"max_llm_calls": 6})
+    controller, config, adapter, customer, service, _, _, runs = setup_run(tmp_path, caps={"max_llm_calls": 4})
     first = controller.run(config)
     assert first.status == "budget_exhausted"
     assert first.consumption.llm_calls == 3

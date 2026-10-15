@@ -37,6 +37,7 @@ from vast_coevo.storage.runs import RunStore
 from usami_cloudops.models import World, WRITES
 from multigen_worlds import sample
 from multigen_budget import CallLedger
+from episode_resilience import ResilientController, POLICY as RESILIENCE_POLICY
 
 DISC = Budget(max_customer_turns=2, max_customer_llm_calls=2, max_service_llm_calls=8, max_service_tool_calls=10)
 TASK = Budget(max_customer_turns=1, max_customer_llm_calls=0, max_service_llm_calls=8, max_service_tool_calls=12)
@@ -141,11 +142,13 @@ def prepare(root, small=False):
         failure_policy='no retry; failed or incomplete smoke/training blocks heldout; evaluation failures retained; budget/provider stops are BLOCKED',
         source_hashes=source_hashes(), driver_hashes={str(p.relative_to(REPO)): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in [Path(__file__), Path(__file__).with_name('multigen_worlds.py'), Path(__file__).with_name('multigen_budget.py'),
-                      Path(__file__).with_name('compare_customer_performance.py')]},
+                      Path(__file__).with_name('compare_customer_performance.py'), Path(__file__).with_name('episode_resilience.py')]},
         code_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip(),
         connector_override='user explicitly authorized local RSI identity on 2026-10-15',
         provider_preflight='one 32-output-token connectivity call; separate preflight record, not training or heldout')
     if small:
+        m['episode_error_policy'] = RESILIENCE_POLICY
+        m['failure_policy'] = 'recorded replayable Customer output errors fail only their Episode; unknown outcomes, Service errors, integrity and spending failures halt; no retries'
         m['amendment'] = dict(parent_run='multigen-heldout-001',
             reason='user authorized reduced experiment and max_workers=4 before any formal training or heldout',
             prior_actual_calls=145, prior_actual_tokens=961580,
@@ -179,7 +182,7 @@ Smoke 使用独立开发世界各运行 A/B 一代，不参与正式训练；不
 主差异 B-A，另报告 A-S0、B-S0。按运行和世界配对层级 Bootstrap（10000 次，seed=2026101707），3 对比 Bonferroni 98.3333% 同时区间；最小实质改善 10 个百分点，合法完成非劣界 -5 个百分点。实质改善判定需差异区间下界 >0、点差≥0.10、合法区间下界≥-0.05。业务违规、授权错误和成本单独报告。
 同 Snapshot 的随机表现差异不能归因为进化。{m['analysis']['limitations']}。有目的世界样本不代表整个真实业务分布。
 
-任何未知在途调用、预算不足或 Smoke/训练中止均保留记录并 BLOCKED；无自动重试、事后改题、挑选候选或改 Gate。先冻结最终 Snapshot，再执行全部预注册 Held-out，不将其结果送入任何 Reflector。
+错误隔离策略：{m.get('episode_error_policy', 'strict-main-errors-v1')}。已记录、可回放的 Customer 输出错误在启用隔离时保留为单场失败；任何未知在途调用、预算不足或其余 Smoke/训练中止均保留记录并 BLOCKED；无自动重试、事后改题、挑选候选或改 Gate。先冻结最终 Snapshot，再执行全部预注册 Held-out，不将其结果送入任何 Reflector。
 完整配置、来源、数据、估计与规则均以同目录 MANIFEST.json 为准；协议文件及 Manifest 在首次正式在线调用前不可变保存。
 '''
     atomic_json(root / 'PROTOCOL_REGISTRATION.json', {'manifest_hash': m['manifest_hash'], 'protocol_sha256': hashlib.sha256(protocol.encode()).hexdigest()}, immutable=True)
@@ -212,7 +215,8 @@ def one_run(root, m, ledger, ident, arm, profile_ids, generations, bucket):
         customer_reflector_model=model, service_reflector_model=model, max_llm_calls=500, max_tool_calls=1800,
         initial_customer_hash=c.snapshot_hash, initial_service_hash=s.snapshot_hash)
     clients = [ledger.client(model, 'reflection_' + role, ident + '.reflection.' + role, bucket) for role in ('customer', 'service')]
-    try: report = CoEvolutionController(adapter, *clients, store, archive, runs).run(config)
+    controller = ResilientController if m.get('episode_error_policy') == RESILIENCE_POLICY else CoEvolutionController
+    try: report = controller(adapter, *clients, store, archive, runs).run(config)
     finally:
         for client in clients: client.close()
     records = []
@@ -379,6 +383,50 @@ def replay(root, m):
     return value
 
 
+def finish_evaluation(root, m, ledger, runs):
+    final = {row['id']: row['report']['selected_service_hash'] for row in runs}
+    final['S0'] = m['initial_snapshots']['S0']
+    atomic_json(root / 'FINAL_SNAPSHOTS.json', final, immutable=True)
+    versions = {}
+    for label, key in final.items():
+        path = root / 'libraries' / 'S0.json' if label == 'S0' else root / 'work' / label / 'libraries' / 'snapshots' / (key + '.json')
+        versions[label] = LibrarySnapshot.model_validate_json(path.read_text())
+        if versions[label].snapshot_hash != key: raise ValueError('final snapshot hash mismatch')
+    c = LibrarySnapshot.model_validate_json((root / 'libraries' / 'C0.json').read_text())
+    adapter = registry(root / 'evaluation', m, ledger, 'heldout', m['heldout_profiles'])
+    jobs = [(r, label, t) for r in range(m['repetitions']) for label in ('S0', 'A', 'B')
+        for t in m['service_tasks'] if t['config_id'] in m['heldout_profiles']]
+    random.Random(2026101709).shuffle(jobs)
+    results = []
+    def job(item):
+        r, label, task = item
+        service = versions['S0' if label == 'S0' else 'r' + str(r) + '-' + label]
+        return evaluate_job(root, m, adapter, c, service, r, label, task)
+    with ThreadPoolExecutor(max_workers=m['max_workers']) as pool:
+        for row in pool.map(job, jobs):
+            results.append(row)
+            atomic_json(root / 'HELDOUT_PROGRESS.json', {'rows': results})
+    aggregates = {}
+    for label in ('S0', 'A', 'B'):
+        rows = [r for r in results if r['service'] == label]
+        aggregates[label] = dict(episodes=len(rows), correctness=sum(r['correct'] for r in rows) / len(rows),
+            legal_completion=sum(r['correct'] for r in rows if r['kind'] == 'legal') / (len(rows) / 2),
+            correct_refusal=sum(r['correct'] for r in rows if r['kind'] == 'refusal') / (len(rows) / 2),
+            business_violation_episodes=sum(bool(r['successful_business_violations']) for r in rows),
+            unauthorized_write_episodes=sum(bool(r['unauthorized_successful_writes']) for r in rows))
+    by_family = {}
+    for row in results:
+        key = row['service'] + ':' + row['family']
+        values = by_family.setdefault(key, dict(tasks=0, correct=0, violations=0, unauthorized_writes=0))
+        values['tasks'] += 1; values['correct'] += int(row['correct'])
+        values['violations'] += row['successful_business_violations']
+        values['unauthorized_writes'] += row['unauthorized_successful_writes']
+    atomic_json(root / 'HELDOUT_RESULTS.json', {'rows': results, 'aggregate': aggregates, 'by_family': by_family}, immutable=True)
+    atomic_json(root / 'STATISTICAL_ANALYSIS.json', analyze(m, results), immutable=True)
+    audit = replay(root, m)
+    atomic_json(root / 'STATUS.json', {'status': 'EXECUTED', 'ledger': ledger.state, 'replay': audit}, immutable=True)
+
+
 def execute(root, m):
     os.environ.setdefault('USAMI_LLM_KEYCHAIN_SERVICE', 'litellm')
     os.environ.setdefault('USAMI_LLM_KEYCHAIN_ACCOUNT', 'litellm-api-key')
@@ -401,47 +449,7 @@ def execute(root, m):
                 runs += batch
                 atomic_json(root / 'EVOLUTION_SUMMARY.json', {'runs': runs, 'ledger': ledger.state})
                 if any(row['report']['status'] != 'completed' for row in batch): raise ValueError('formal training incomplete; heldout remains sealed')
-            final = {row['id']: row['report']['selected_service_hash'] for row in runs}
-            final['S0'] = m['initial_snapshots']['S0']
-            atomic_json(root / 'FINAL_SNAPSHOTS.json', final, immutable=True)
-            versions = {}
-            for label, key in final.items():
-                path = root / 'libraries' / 'S0.json' if label == 'S0' else root / 'work' / label / 'libraries' / 'snapshots' / (key + '.json')
-                versions[label] = LibrarySnapshot.model_validate_json(path.read_text())
-                if versions[label].snapshot_hash != key: raise ValueError('final snapshot hash mismatch')
-            c = LibrarySnapshot.model_validate_json((root / 'libraries' / 'C0.json').read_text())
-            adapter = registry(root / 'evaluation', m, ledger, 'heldout', m['heldout_profiles'])
-            jobs = [(r, label, t) for r in range(m['repetitions']) for label in ('S0', 'A', 'B')
-                for t in m['service_tasks'] if t['config_id'] in m['heldout_profiles']]
-            random.Random(2026101709).shuffle(jobs)
-            results = []
-            def job(item):
-                r, label, task = item
-                service = versions['S0' if label == 'S0' else 'r' + str(r) + '-' + label]
-                return evaluate_job(root, m, adapter, c, service, r, label, task)
-            with ThreadPoolExecutor(max_workers=m['max_workers']) as pool:
-                for row in pool.map(job, jobs):
-                    results.append(row)
-                    atomic_json(root / 'HELDOUT_PROGRESS.json', {'rows': results})
-            aggregates = {}
-            for label in ('S0', 'A', 'B'):
-                rows = [r for r in results if r['service'] == label]
-                aggregates[label] = dict(episodes=len(rows), correctness=sum(r['correct'] for r in rows) / len(rows),
-                    legal_completion=sum(r['correct'] for r in rows if r['kind'] == 'legal') / (len(rows) / 2),
-                    correct_refusal=sum(r['correct'] for r in rows if r['kind'] == 'refusal') / (len(rows) / 2),
-                    business_violation_episodes=sum(bool(r['successful_business_violations']) for r in rows),
-                    unauthorized_write_episodes=sum(bool(r['unauthorized_successful_writes']) for r in rows))
-            by_family = {}
-            for row in results:
-                key = row['service'] + ':' + row['family']
-                values = by_family.setdefault(key, dict(tasks=0, correct=0, violations=0, unauthorized_writes=0))
-                values['tasks'] += 1; values['correct'] += int(row['correct'])
-                values['violations'] += row['successful_business_violations']
-                values['unauthorized_writes'] += row['unauthorized_successful_writes']
-            atomic_json(root / 'HELDOUT_RESULTS.json', {'rows': results, 'aggregate': aggregates, 'by_family': by_family}, immutable=True)
-            atomic_json(root / 'STATISTICAL_ANALYSIS.json', analyze(m, results), immutable=True)
-            audit = replay(root, m)
-            atomic_json(root / 'STATUS.json', {'status': 'EXECUTED', 'ledger': ledger.state, 'replay': audit}, immutable=True)
+            finish_evaluation(root, m, ledger, runs)
         except BaseException as exc:
             atomic_json(root / 'STATUS.json', {'status': 'BLOCKED', 'error': type(exc).__name__ + ': ' + str(exc), 'ledger': ledger.state}, immutable=True)
             raise

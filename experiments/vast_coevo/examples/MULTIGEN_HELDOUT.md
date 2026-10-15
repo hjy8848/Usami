@@ -58,3 +58,10 @@
 .venv/bin/python experiments/vast_coevo/examples/multigen_heldout.py prepare --small --root experiments/vast_coevo/results/multigen-heldout-small-001
 .venv/bin/python experiments/vast_coevo/examples/multigen_heldout.py execute --root experiments/vast_coevo/results/multigen-heldout-small-001
 ```
+
+
+## 已记录 Customer 输出错误的故障隔离与恢复
+
+`episode_resilience.py` 仅在 discovery / CUSTOMER_OUTPUT_INVALID / Replay verified / 最后一个 Customer 调用已有完整 response 且无 transport error 时，将影响限制为 Episode 失败。它不修改任何 Evidence、输出解析或 Service Gate。未知调用、证据异常、Service 错误保持阻断。新 small Manifest 显式选择此策略；历史 Manifest 缺省继续原严格语义。
+
+`recover_multigen.py prepare --parent ... --root ...` 复制日志到新目录、保留父 Manifest/状态/完整归档、核验原生源码未变，并注册恢复策略。`execute` 复用全部已完成操作（包括失败 Episode），不会重试，也不再运行 Smoke。原 A 组完成结果只回放，B 从未执行操作继续；再冻结最终 Snapshot 并进行原 72 场 Held-out。预算沿用累计账本，总上限不增加。该结果应称为修订协议续跑，不能改写父实验 BLOCKED 状态。

@@ -136,6 +136,8 @@ class CoEvolutionController:
         from .evolvers import Evolver
 
         config = RunConfig.model_validate(config.model_dump(mode="json"))
+        if config.schema_version != 2:
+            raise ValueError("historical run v1 requires its original code; create a new v2 run for static-only Customer selection")
         config_hash = digest(config)
         # Configuration mismatch refuses reuse before overwriting a previous report.
         self.run_store.initialize(config)

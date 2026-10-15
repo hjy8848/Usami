@@ -1,5 +1,8 @@
 # VAST-CoEvo 架构与依赖边界
 
+> 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。下文中的 Customer 性能 Gate 是历史机制或显式诊断，不能决定当前 Customer 版本。Service 动态验收保持原样；历史结果不改判。
+
+
 [路线图](ROADMAP.md) · [方法](METHOD.md) · [Schema](SCHEMAS.md) · [实现与验收](IMPLEMENTATION.md)
 
 ## 依赖方向

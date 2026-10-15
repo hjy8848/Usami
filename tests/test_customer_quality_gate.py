@@ -253,7 +253,7 @@ def test_unreplicated_new_rule_and_unexercised_skill_inconclusive():
     assert result.reasons == ('candidate_skill_not_exercised_in_actual_requests',)
 
 
-def test_evolver_keeps_parent_for_inconclusive_candidate(tmp_path):
+def test_evolver_accepts_static_candidate_without_running_configured_quality_diagnostics(tmp_path):
     from vast_coevo.evolution.evolvers import CustomerEvolver
     from vast_coevo.reflection.reflector import CustomerReflector
     from vast_coevo.skills.library import LibraryStore
@@ -285,19 +285,33 @@ def test_evolver_keeps_parent_for_inconclusive_candidate(tmp_path):
     result = CustomerEvolver(adapter, CustomerReflector(reflector, SPEC), store, archive, policy).update(
         0, customer, service, (evidence,), (case,), episode_prefix='quality-evolution')
     assert result.static_validation.passed
-    assert result.outcome == 'inconclusive'
-    assert result.selected_snapshot_hash == customer.snapshot_hash
-    assert result.candidate_snapshot_hash != customer.snapshot_hash
-    assert result.dynamic_validation.customer_quality.decision == 'INCONCLUSIVE'
+    assert result.outcome == 'accepted'
+    assert result.selected_snapshot_hash == result.candidate_snapshot_hash != customer.snapshot_hash
+    assert result.dynamic_validation is None
+    assert result.customer_selection == 'customer-static-only-v1'
     assert len(reflector.requests) == 1
+    assert not (archive.root / 'customer-quality').exists()
+    # Explicit diagnostics still save a real QGD INCONCLUSIVE, independently
+    # of the already published/static-selected Customer record.
+    selected = store.load(result.selected_snapshot_hash)
+    before = result.model_dump(mode='json')
+    diagnostic_policy = policy.model_copy(update={
+        'customer_excluded_world_hashes': (evidence.config.initial_world_hash,),
+        'customer_excluded_business_shapes': (adapter.customer_business_shape(evidence.config),)})
+    diagnosis = DynamicGate(adapter, archive, diagnostic_policy).customer(
+        customer, selected, service, (case,), 'explicit-quality-diagnostic')
+    assert diagnosis.customer_quality.decision == 'INCONCLUSIVE'
+    assert not diagnosis.passed and result.model_dump(mode='json') == before
+    assert store.load(result.selected_snapshot_hash) == selected
     manifest_path = next((archive.root / 'customer-quality').glob('*/manifest.json'))
-    manifest = CustomerGateManifest.model_validate_json(manifest_path.read_text())
-    assert evidence.config.initial_world_hash in manifest.excluded_world_hashes
-    bad_case = ValidationCase(id='leak', config=config)
-    with pytest.raises(ValueError, match='overlap learning'):
-        CustomerEvolver(adapter, CustomerReflector(reflector, SPEC), store, archive, policy).update(
-            0, customer, service, (evidence,), (bad_case,), episode_prefix='quality-leak')
-    assert len(reflector.requests) == 1  # reject data leakage before Reflection
+    assert evidence.config.initial_world_hash in CustomerGateManifest.model_validate_json(
+        manifest_path.read_text()).excluded_world_hashes
+    # QGD-only world exclusion cannot veto static-only selection. Development
+    # partition/replay/static safety are still checked by the Evolver.
+    repeated = CustomerEvolver(adapter, CustomerReflector(reflector, SPEC), store, archive, policy).update(
+        0, customer, service, (evidence,), (ValidationCase(id='same-world', config=config),),
+        episode_prefix='quality-evolution')
+    assert repeated.selected_snapshot_hash == result.selected_snapshot_hash
 
 
 def test_business_structure_ignores_names_ids_order_and_seeds():

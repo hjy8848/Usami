@@ -304,18 +304,26 @@ def test_evolver_performs_one_patch_for_each_action(tmp_path, action):
             assert chosen.skills[0].version == (2 if action == "UPDATE" else 1)
 
 
-def test_rejected_candidate_does_not_reserve_skill_version_and_remains_inspectable(tmp_path):
-    adapter, archive, store, customer, service, case, _ = setup(tmp_path)
-    adapter.customer_mode = "regress"
-    first = PatchClient(proposal(customer, skill=customer_skill(description="First rejected contents.")))
-    rejected = CustomerEvolver(adapter, CustomerReflector(first, MODEL), store, archive).update(0, customer, service, (), (case,))
-    assert rejected.outcome == "rejected" and rejected.selected_snapshot_hash == customer.snapshot_hash
+def test_rejected_service_candidate_does_not_reserve_skill_version_and_remains_inspectable(tmp_path):
+    adapter, archive, store, customer, service, case, tasks = setup(tmp_path)
+    source = adapter.emit(case.config, customer, service, "known-error", ("successful_business_violation",))
+    def skill(description):
+        raw = service_skill().model_dump(mode="json", exclude={"content_hash"})
+        raw["description"] = description
+        return type(service_skill()).model_validate(raw)
+    adapter.service_mode = "unrepaired"
+    first = PatchClient(proposal(service, skill=skill("First rejected contents.")))
+    rejected = ServiceEvolver(adapter, ServiceReflector(first, MODEL), store, archive).update(
+        0, customer, service, (source,), (case,), tasks)
+    assert rejected.outcome == "rejected" and rejected.selected_snapshot_hash == service.snapshot_hash
+    assert "known_business_failure_not_repaired" in rejected.reasons
     assert store.load(rejected.candidate_snapshot_hash).skills[0].description == "First rejected contents."
-    publication = tmp_path / "libraries" / "skills" / "customer" / "customer.capacity" / "1.json"
+    publication = tmp_path / "libraries" / "skills" / "service" / "service.capacity" / "1.json"
     assert not publication.exists()
-    adapter.customer_mode = "improve"
-    second = PatchClient(proposal(customer, skill=customer_skill(description="Later accepted contents.")))
-    accepted = CustomerEvolver(adapter, CustomerReflector(second, MODEL), store, archive).update(1, customer, service, (), (case,))
+    adapter.service_mode = "repair"
+    second = PatchClient(proposal(service, skill=skill("Later accepted contents.")))
+    accepted = ServiceEvolver(adapter, ServiceReflector(second, MODEL), store, archive).update(
+        1, customer, service, (source,), (case,), tasks)
     assert accepted.outcome == "accepted"
     assert publication.exists()
     assert store.load(accepted.selected_snapshot_hash).skills[0].description == "Later accepted contents."

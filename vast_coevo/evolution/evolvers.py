@@ -1,4 +1,4 @@
-"""Single-patch evolution with deterministic gates and immutable rollback."""
+"""Single-patch evolution: static Customer selection, gated Service selection."""
 from __future__ import annotations
 import json
 
@@ -30,21 +30,6 @@ class Evolver:
                 raise ValueError("evolution evidence failed independent replay: " + checked.reason)
         cases = tuple(discovery_cases) + tuple(service_task_cases)
         gate_policy = self.policy
-        if self.role == "customer" and self.policy.customer_quality is not None:
-            if (any(case.config.domain != "cloudops" for case in discovery_cases) or
-                    any(row.config.domain != "cloudops" for row in evidence) or
-                    not callable(getattr(self.adapter, "customer_business_shape", None))):
-                raise ValueError("QGD v1 requires a CloudOps Customer probe adapter")
-            excluded = set(self.policy.customer_excluded_world_hashes or ())
-            excluded.update(row.config.initial_world_hash for row in evidence)
-            if any(case.config.initial_world_hash in excluded for case in discovery_cases):
-                raise ValueError("QGD validation worlds overlap learning or excluded evidence")
-            shapes = set(self.policy.customer_excluded_business_shapes or ())
-            shapes.update(self.adapter.customer_business_shape(row.config) for row in evidence)
-            if any(self.adapter.customer_business_shape(case.config) in shapes for case in discovery_cases):
-                raise ValueError("QGD validation business structures overlap learning or excluded evidence")
-            gate_policy = self.policy.model_copy(update={"customer_excluded_world_hashes": tuple(sorted(excluded)),
-                                                        "customer_excluded_business_shapes": tuple(sorted(shapes))})
         if not discovery_cases:
             raise ValueError("evolution requires at least one Discovery validation case")
         if any(case.config.partition != "development" for case in cases):
@@ -72,6 +57,8 @@ class Evolver:
         fields = dict(generation=generation, role=self.role, parent_customer_hash=customer.snapshot_hash,
                       parent_service_hash=service.snapshot_hash, reflection=reflection, patch=reflection.patch,
                       selected_snapshot_hash=parent.snapshot_hash)
+        if self.role == "customer":
+            fields["customer_selection"] = "customer-static-only-v1"
         if reflection.error or reflection.patch is None:
             return EvolutionRecord(**fields, outcome="rejected", reasons=(reflection.error or "missing_patch",), consumption=costs)
         declared = reflection.patch.skill.scope.domains if reflection.patch.skill is not None else ()
@@ -87,15 +74,19 @@ class Evolver:
             candidate = apply_patch(parent, reflection.patch, source=prefix + ".reflection")
             self.library_store.save(candidate, publish=False)
             fields["candidate_snapshot_hash"] = candidate.snapshot_hash
+            if self.role == "customer":
+                # Publication still verifies immutable contents/version collisions.
+                # Performance diagnostics have no place in this selection path.
+                self.library_store.save(candidate)
+                fields["selected_snapshot_hash"] = candidate.snapshot_hash
+                return EvolutionRecord(**fields, outcome="accepted",
+                                       reasons=("static_gate_passed_snapshot_updated",), consumption=costs)
             if (self.role == 'service' and gate_policy.customer_quality is not None and
                     gate_policy.customer_quality.protocol == 'quality-gated-discovery-v2' and
                     hasattr(self.adapter, 'service_scope_risks') and self.adapter.service_scope_risks(candidate)):
                 return EvolutionRecord(**fields, outcome='rejected', reasons=('domain_specific_service_guidance_crosses_scope',), consumption=costs)
             gate = DynamicGate(self.adapter, self.archive, gate_policy)
-            if self.role == "customer":
-                result = gate.customer(parent, candidate, service, discovery_cases, prefix)
-            else:
-                result = gate.service(customer, parent, candidate, discovery_cases, service_task_cases, evidence, prefix)
+            result = gate.service(customer, parent, candidate, discovery_cases, service_task_cases, evidence, prefix)
             fields["dynamic_validation"] = result
             validated = result.validated_domains or ()
             fields["domain_coverage"] = DomainCoverage(declared_domains=declared, validated_domains=validated,

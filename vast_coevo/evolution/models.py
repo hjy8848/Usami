@@ -26,8 +26,8 @@ class ValidationCase(FrozenModel):
 
 
 class GatePolicy(FrozenModel):
-    # None is the historical v1 protocol. Explicit opt-in prevents changing
-    # past run hashes or retrospectively selecting a candidate on heldout data.
+    # Customer policies are retained for explicit diagnostics and old records.
+    # They never control Customer selection in RunConfig v2 / current Evolver.
     customer_quality: Optional[CustomerQualityPolicy] = Field(default=None, exclude_if=lambda value: value is None)
     customer_excluded_world_hashes: Optional[Tuple[Hash, ...]] = Field(default=None, exclude_if=lambda value: value is None)
     customer_excluded_business_shapes: Optional[Tuple[Hash, ...]] = Field(default=None, exclude_if=lambda value: value is None)
@@ -87,10 +87,28 @@ class EvolutionRecord(FrozenModel):
     reasons: Tuple[str, ...] = ()
     consumption: Consumption
     domain_coverage: Optional[DomainCoverage] = Field(default=None, exclude_if=lambda value: value is None)
+    customer_selection: Optional[Literal["customer-static-only-v1"]] = Field(
+        default=None, exclude_if=lambda value: value is None)
+
+    @model_validator(mode="after")
+    def static_only_selection(self):
+        if self.customer_selection is not None:
+            if self.role != "customer" or self.dynamic_validation is not None:
+                raise ValueError("static-only Customer selection cannot carry a performance gate")
+            if self.outcome == "inconclusive":
+                raise ValueError("diagnostic uncertainty cannot be a static-only selection outcome")
+            if self.outcome == "accepted" and (self.static_validation is None or
+                    not self.static_validation.passed or self.candidate_snapshot_hash is None or
+                    self.selected_snapshot_hash != self.candidate_snapshot_hash):
+                raise ValueError("static-only acceptance requires static PASS and the exact candidate snapshot")
+        return self
 
 
 class RunConfig(FrozenModel):
-    schema_version: Literal[1] = 1
+    # v1 remains readable/hash stable; execution requires its original code.
+    schema_version: Literal[1, 2] = 2
+    customer_selection: Optional[Literal["customer-static-only-v1"]] = Field(
+        default=None, exclude_if=lambda value: value is None)
     run_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,95}$")
     generations: int = Field(default=1, ge=1, strict=True)
     exploration_cases: Tuple[ValidationCase, ...] = Field(min_length=1)
@@ -106,6 +124,10 @@ class RunConfig(FrozenModel):
 
     @model_validator(mode="after")
     def fixed_models(self):
+        if self.schema_version == 2:
+            object.__setattr__(self, "customer_selection", "customer-static-only-v1")
+        elif self.customer_selection is not None:
+            raise ValueError("historical run v1 cannot declare static-only Customer selection")
         from ..models import ModelSpec
         object.__setattr__(self, "customer_reflector_model", ModelSpec.model_validate(self.customer_reflector_model))
         object.__setattr__(self, "service_reflector_model", ModelSpec.model_validate(self.service_reflector_model))
@@ -113,7 +135,7 @@ class RunConfig(FrozenModel):
             raise ValueError("Discovery worlds cannot contain task references")
         if any(c.task_ref is None for c in self.service_task_cases):
             raise ValueError("Service regression cases require native task references")
-        if self.policy.customer_quality is not None:
+        if self.schema_version == 1 and self.policy.customer_quality is not None:
             from ..evaluation.customer import CustomerGateManifest
             excluded = set(self.policy.customer_excluded_world_hashes or ())
             excluded.update(case.config.initial_world_hash for case in self.exploration_cases)

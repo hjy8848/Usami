@@ -57,6 +57,11 @@ class DynamicGate:
         return self._save(row, case.config, customer, service)
 
     def customer(self, parent, candidate, service, cases, prefix):
+        """Explicit paired diagnostics; never publishes or selects a snapshot.
+
+        May run real model episodes. The historical passed/decision fields are
+        diagnostic verdicts only; current CustomerEvolver does not call here.
+        """
         if self.policy.customer_quality is not None:
             return self._quality_customer(parent, candidate, service, tuple(cases), prefix)
         baseline, proposed = [], []
@@ -120,8 +125,8 @@ class DynamicGate:
         quality = compare_customer_probes(manifest, old_reports, new_reports)
         atomic_json(destination / "result.json", quality, immutable=True)
         legacy = self._result(metrics(baseline), metrics(proposed), [], baseline, proposed)
-        # Legacy tool metrics remain diagnostics only. Selection is exclusively
-        # the three-state request-level decision in this versioned protocol.
+        # Both legacy metrics and the three-state QGD verdict are diagnostics.
+        # Current Customer selection is exclusively StaticSkillGate-based.
         return legacy.model_copy(update={"passed": quality.decision == "ACCEPT", "reasons": quality.reasons,
                                          "customer_quality": quality})
 

@@ -100,5 +100,6 @@
     "schema_version": 1,
     "timeout_seconds": 90.0,
     "trust_env": false
-  }
+  },
+  "customer_selection": "customer-static-only-v1"
 }

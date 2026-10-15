@@ -26,7 +26,7 @@ def scoped_skill(version=1, domains=DOMAINS):
 
 
 @pytest.mark.parametrize("omit", ["scope", "domains", "nothing"])
-def test_update_inherits_four_domains_and_validates_only_executed_domain(tmp_path, omit):
+def test_update_inherits_four_domains_without_claiming_performance_validation(tmp_path, omit):
     parent = LibrarySnapshot(role="customer", skills=(scoped_skill(),))
     adapter, archive, store, customer, service, case, _ = setup(tmp_path, customer=parent)
     raw = proposal(parent, "UPDATE", skill=scoped_skill(2)).model_dump(mode="json")
@@ -43,9 +43,10 @@ def test_update_inherits_four_domains_and_validates_only_executed_domain(tmp_pat
     assert result.reflection.scope_resolution.source == "parent_skill"
     assert result.reflection.proposal_protocol_version == 2
     assert result.domain_coverage.declared_domains == DOMAINS
-    assert result.domain_coverage.validated_domains == result.dynamic_validation.validated_domains == ("generic",)
-    assert result.domain_coverage.unvalidated_domains == ("other", "third", "fourth")
-    assert len(adapter.calls) == 2 and len(client.requests) == 1
+    assert result.domain_coverage.validated_domains == ()
+    assert result.dynamic_validation is None
+    assert result.domain_coverage.unvalidated_domains == DOMAINS
+    assert adapter.calls == [] and len(client.requests) == 1
     assert {store.load(result.selected_snapshot_hash).skills[0].scope.domains} == {DOMAINS}
     # The original model response is never replaced by the normalized patch.
     assert json.loads(result.reflection.call.response["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"]) == raw
@@ -81,7 +82,7 @@ def test_add_omits_domains_and_receives_only_experiment_scope(tmp_path):
     assert result.outcome == "accepted"
     assert result.reflection.scope_resolution.source == "experiment_policy"
     assert result.patch.skill.scope.domains == ("generic",)
-    assert result.domain_coverage.unvalidated_domains == ()
+    assert result.domain_coverage.unvalidated_domains == ("generic",)
 
 
 def test_explicit_domain_order_is_not_an_applicability_change(tmp_path):
@@ -93,7 +94,7 @@ def test_explicit_domain_order_is_not_an_applicability_change(tmp_path):
     assert result.outcome == "accepted"
     assert result.patch == patch  # preserve the supplied valid hash and raw list order
     assert set(result.domain_coverage.declared_domains) == set(DOMAINS)
-    assert result.domain_coverage.validated_domains == ("generic",)
+    assert result.domain_coverage.validated_domains == ()
 
 
 @pytest.mark.parametrize("domains", [("typo",), ("generic", "other"), ("*",)])

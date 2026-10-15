@@ -47,6 +47,8 @@ class ExperimentPlan(FrozenModel):
     policy: GatePolicy = Field(default_factory=GatePolicy)
     customer_gate_version: Optional[Literal['legacy-v1', 'quality-gated-discovery-v1', 'quality-gated-discovery-v2']] = Field(
         default=None, exclude_if=lambda value: value is None)
+    customer_selection: Optional[Literal['customer-static-only-v1']] = Field(
+        default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def registry(self):
@@ -91,14 +93,15 @@ def model_from_env(role, fallback=None):
                      timeout_seconds=settings.timeout_seconds, trust_env=settings.trust_env)
 
 
-def context(plan_path, root):
+def context(plan_path, root, publish_libraries=True):
     plan_path, root = Path(plan_path).resolve(), Path(root).resolve()
     plan = ExperimentPlan.model_validate_json(plan_path.read_text(encoding="utf-8"))
     customer = LibrarySnapshot.model_validate_json((plan_path.parent / plan.customer_library).read_text())
     service = LibrarySnapshot.model_validate_json((plan_path.parent / plan.service_library).read_text())
     store = LibraryStore(root / "libraries")
-    store.save(customer)
-    store.save(service)
+    if publish_libraries:
+        store.save(customer)
+        store.save(service)
     adapter = UsamiAdapter(root / "native", plan.profiles, plan.service_tasks)
     archive = EvidenceArchive(root / "evidence")
     runs = RunStore(root / "runs")
@@ -186,6 +189,11 @@ def main(argv=None):
     restore.add_argument("--generations", type=int)
     replay = commands.add_parser("replay", help="offline exact skill/wire/native/oracle replay")
     replay.add_argument("--evidence", required=True)
+    diagnose = commands.add_parser("diagnose-customer", help="optional paired Customer diagnostics; spends model budget, never selects skills")
+    diagnose.add_argument("--id", required=True)
+    diagnose.add_argument("--baseline", required=True, help="exact Customer snapshot hash")
+    diagnose.add_argument("--candidate", required=True, help="exact Customer snapshot hash")
+    diagnose.add_argument("--service", required=True, help="fixed Service snapshot hash")
     args = parser.parse_args(argv)
     root = Path(args.root).resolve()
     store, archive, runs = LibraryStore(root / "libraries"), EvidenceArchive(root / "evidence"), RunStore(root / "runs")
@@ -214,14 +222,54 @@ def main(argv=None):
             if args.command == 'run':
                 preflight = ExperimentPlan.model_validate_json(Path(args.plan).read_text())
                 saved = root / 'runs' / args.id / 'config.json'
-                preflight.check_gate_selection(require_explicit=not saved.exists())
-                if saved.exists() and preflight.customer_gate_version is not None:
-                    existing = runs.load_config(args.id).policy.customer_quality
-                    actual = existing.protocol if existing is not None else 'legacy-v1'
-                    if preflight.customer_gate_version != actual:
-                        raise ValueError('resume gate version differs from frozen run')
-            plan, adapter, store, archive, runs, customer, service, specs = context(args.plan, root)
-            if args.command == "episode":
+                if saved.exists():
+                    existing = runs.load_config(args.id)
+                    if existing.schema_version != 2:
+                        raise ValueError('historical run v1 requires its original code; use a new run ID')
+                    if preflight.customer_selection != existing.customer_selection:
+                        raise ValueError('resume Customer selection differs from frozen run')
+                elif preflight.customer_selection != 'customer-static-only-v1':
+                    raise ValueError('new experiments must explicitly choose customer_selection=customer-static-only-v1')
+            plan, adapter, store, archive, runs, customer, service, specs = (
+                context(args.plan, root, False) if args.command == "diagnose-customer" else context(args.plan, root))
+            if args.command == "diagnose-customer":
+                # Deliberately separate from evolution: no publish, selection,
+                # Reflection or rollback API is available to this execution.
+                from vast_coevo.evolution.gates import DynamicGate
+                from vast_coevo.evolution.controller import _JournalAdapter
+                from vast_coevo.storage.runs import RunHalt
+                from .adapter import source_hashes
+                baseline = store.load(args.baseline)
+                candidate = store.load(args.candidate)
+                fixed_service = store.load(args.service)
+                if (baseline.role, candidate.role, fixed_service.role) != ('customer', 'customer', 'service'):
+                    raise ValueError('diagnostic snapshot roles do not match')
+                config = run_config(plan, adapter, baseline, fixed_service, specs, args.id)
+                diagnostic_store = RunStore(root / 'diagnostics')
+                diagnostic_store.initialize(config)
+                destination = diagnostic_store.run_path(args.id) / 'result.json'
+                with diagnostic_store.lock(args.id):
+                    if destination.exists():
+                        raise ValueError('diagnostic already recorded; inspect its result or replay evidence, no repeat performed')
+                    metadata = dict(schema_version=1, purpose='customer-diagnostics-only', selection_authority=False,
+                        protocol=plan.policy.customer_quality.protocol if plan.policy.customer_quality else 'legacy-v1',
+                        baseline_hash=baseline.snapshot_hash, candidate_hash=candidate.snapshot_hash,
+                        service_hash=fixed_service.snapshot_hash, config_hash=digest(config), source_hashes=source_hashes())
+                    atomic_json(destination.parent / 'manifest.json', metadata, immutable=True)
+                    journal = _JournalAdapter(adapter, diagnostic_store, archive, config)
+                    try:
+                        result = DynamicGate(journal, archive, config.policy).customer(
+                            baseline, candidate, fixed_service, config.validation_cases, 'diagnostic.' + args.id)
+                    except (Exception, RunHalt) as exc:
+                        output = dict(**metadata, status='failed', error=type(exc).__name__ + ': ' + str(exc),
+                            consumption=diagnostic_store.consumption(args.id).model_dump(mode='json'),
+                            pending_operations=diagnostic_store.pending(args.id))
+                        atomic_json(destination, output, immutable=True)
+                        raise ValueError('diagnostic failed; record saved at ' + str(destination)) from exc
+                    output = dict(**metadata, status='completed', result=result.model_dump(mode='json'),
+                        consumption=diagnostic_store.consumption(args.id).model_dump(mode='json'))
+                    atomic_json(destination, output, immutable=True)
+            elif args.command == "episode":
                 config = adapter.config_for(args.profile, specs["customer"], specs["service"], plan.budget)
                 evidence = adapter.run_episode(config, customer, service, args.id)
                 archive.save(evidence)

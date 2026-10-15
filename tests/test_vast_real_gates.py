@@ -25,7 +25,7 @@ from test_vast_usami import SPEC, LIMITS, ScriptedClient, answer, call, librarie
     ("fulfillment", "paid_fulfillment", "stock_refusal"),
     ("stayops", "booking_confirmation", "deposit_refusal"),
 ])
-def test_both_evolvers_accept_only_after_real_failure_and_normal_task_gates(tmp_path, domain, legal, refusal):
+def test_customer_static_selection_and_service_real_failure_and_normal_task_gates(tmp_path, domain, legal, refusal):
     identity = "user_001" if domain == "saas" else "u2" if domain == "cloudops" else "u0"
     profile = UsamiProfile(config_id=domain + "-real-gate", domain=domain, seed=42, identity=identity, mode="sandbox")
     tasks = [ServiceTaskProfile(task_ref=domain + "." + kind, config_id=profile.config_id, scenario=scenario)
@@ -91,10 +91,10 @@ def test_both_evolvers_accept_only_after_real_failure_and_normal_task_gates(tmp_
     c_record = CustomerEvolver(adapter, CustomerReflector(c_client, SPEC), store, archive).update(
         0, customer, service, (source,), cases, task_cases, domain + ".customer")
     assert c_record.outcome == "accepted", c_record.reasons
-    assert c_record.dynamic_validation.passed and len(c_client.requests) == 1
+    assert c_record.dynamic_validation is None and len(c_client.requests) == 1
     assert c_record.domain_coverage.declared_domains == domains
-    assert c_record.domain_coverage.validated_domains == (domain,)
-    assert c_record.domain_coverage.unvalidated_domains == tuple(value for value in domains if value != domain)
+    assert c_record.domain_coverage.validated_domains == ()
+    assert c_record.domain_coverage.unvalidated_domains == domains
     selected_customer = store.load(c_record.selected_snapshot_hash)
 
     s_raw = service.skills[0].model_dump(mode="json", exclude={"content_hash"})

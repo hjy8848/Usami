@@ -282,7 +282,7 @@ def test_interrupted_partial_generation_preserves_actual_selected_customer_on_re
     assert before == (len(adapter.calls), len(customer.calls))
 
 
-def test_budget_stop_inside_candidate_validation_does_not_repeat_reflection(tmp_path):
+def test_budget_stop_after_static_customer_selection_does_not_repeat_reflection(tmp_path):
     controller, config, adapter, customer, service, _, _, runs = setup_run(tmp_path, caps={"max_llm_calls": 6})
     first = controller.run(config)
     assert first.status == "budget_exhausted"
@@ -295,6 +295,8 @@ def test_budget_stop_inside_candidate_validation_does_not_repeat_reflection(tmp_
     assert counts == (len(adapter.calls), len(customer.calls))
     assert first.consumption == second.consumption
     assert len(runs.operation_starts(config.run_id)) == 2
+    assert first.selected_customer_hash != config.initial_customer_hash
+    assert second.selected_customer_hash == first.selected_customer_hash
 
 
 def test_restore_creates_explicit_new_run_and_preserves_old_history(tmp_path):

@@ -25,9 +25,9 @@ python -m integrations.usami --root artifacts/vast-coevo history --id cloudops-l
 
 [提案协议 v2](docs/vast-coevo/PROTOCOL.md) 将策略适用范围与实际验证覆盖分开：UPDATE 的领域由程序继承，模型无需重复生成；单领域验证不会误拒通用策略，也不会冒充跨领域验证。历史实验与判定保留原样。
 
-新 Customer 验收可显式启用 [Quality-Gated Discovery v1](docs/vast-coevo/CUSTOMER_QUALITY_GATE.md)：以独立探针有效性、规则级错误发现、业务覆盖与成本为依据，返回 ACCEPT / REJECT / INCONCLUSIVE，不再把 Service 工具操作量当作 Customer 出题质量。当前支持 CloudOps 精确写意图；纯自然语言查询保持待判定。研究阈值在调用模型前冻结，旧实验和已选版本不作事后改判。
+Customer 现在采用 [Static-Only Selection](docs/vast-coevo/CUSTOMER_STATIC_ONLY.md)：单次 Reflection 提案通过原静态校验与不可变内容校验后即可更新版本，性能指标不参与接受或回滚；更新成功不表示能力提高。Service 继续执行原有静态与动态验收。
 
-[实验准备协议 v2](docs/vast-coevo/PROBE_READINESS_V2.md) 增加独立结构化只读意图、污染状态优先分类、分角色与违规前后成本、逐写 Service 决策审计；新运行必须明确选择 Gate 版本。Service 违规仍由原 Sandbox 和独立 Oracle 暴露，不以自动拦截冒充修复。
+QGD v1/v2 与独立探针评价保留为显式诊断，默认进化过程不运行 Customer 配对性能测试。只读探针、污染分类、分角色成本和逐写 Service 审计仍可使用。新运行固定 `customer-static-only-v1` 协议，历史记录不改判。
 
 ## FulfillmentOps v0.1 与 StayOps v0.1
 

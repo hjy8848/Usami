@@ -1,5 +1,8 @@
 # VAST-CoEvo v1.0 — 实现与验收报告
 
+> 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。下文中的 Customer 性能 Gate 是历史机制或显式诊断，不能决定当前 Customer 版本。Service 动态验收保持原样；历史结果不改判。
+
+
 ## 1.0.2 Customer 经验方向修正（2026-10-14）
 
 [方向修正与真实对照](CUSTOMER_GOAL.md) 已明确 Customer 的 Service 考察目标，在单次反思内加入五项自检，提供可审计的双方行为/工具结果/独立 Oracle 视图。旧 Skill/Snapshot/Patch、授权边界和收益阈值保持兼容。全量回归 **840 passed in 230.25s**，Core wheel 构建成功。

@@ -1,5 +1,8 @@
 # Quality-Gated Discovery v1
 
+> 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。下文中的 Customer 性能 Gate 是历史机制或显式诊断，不能决定当前 Customer 版本。Service 动态验收保持原样；历史结果不改判。
+
+
 后续实现与新实验准备要求见 [协议 v2：只读探针、分角色成本与 Service 决策审计](PROBE_READINESS_V2.md)。本文保留 v1 定义；新实验入口现在要求明确声明 Gate 版本，不能通过缺省配置悄悄启动 legacy Gate。
 
 Customer 的目标是提出有效、可验证的探针，发现 Service 的决策错误。Service 工具调用量不是 Customer 的测试质量。本协议独立评价请求质量和 Service 实际行为，不改 Engine、Reference Rules、Oracle 或权限。

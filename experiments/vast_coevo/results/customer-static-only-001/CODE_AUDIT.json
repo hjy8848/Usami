@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "baseline_commit": "7aa3f96cb8a12b708a19a3da26bb570ec8eb9ef6",
+  "protected_tracked_paths_unchanged": [
+    "usami/",
+    "usami_cloudops/",
+    "usami_fulfillment/",
+    "usami_stayops/",
+    "usami_harness/",
+    "vast_coevo/skills/",
+    "vast_coevo/reflection/",
+    "vast_coevo/evaluation/",
+    "vast_coevo/evidence/",
+    "vast_coevo/storage/",
+    "experiments/vast_coevo/results/"
+  ],
+  "service_dynamic_gate_ast_sha256": "aa1dfcc8ab83ff8d42709e1f4b6b15b795e040c6f20de372f37adbb320ecbe02",
+  "service_preflight_ast_unchanged": true,
+  "service_dynamic_call_ast_unchanged": true,
+  "online_experiments": 0,
+  "historical_results_modified": false,
+  "verification": {
+    "full_suite_command": ".venv/bin/python -m pytest -q",
+    "passed": 918,
+    "duration_seconds": 244.14,
+    "exit_code": 0,
+    "log": "pytest.log",
+    "git_diff_check": "PASS",
+    "live_llm_calls": 0
+  }
+}

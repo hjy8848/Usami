@@ -44,9 +44,11 @@
 2. 独立 Replay 核验开发证据。正式 held-out 证据不能进入 Reflection 或候选选择；隐藏 Oracle 不进入执行 Agent 请求。
 3. Reflector 只调用一次模型、只允许一个 Patch，异常和格式错误不重试。Service 反思还包含实际正常任务预检，避免只学习如何拒绝。
 4. 程序补全范围并检查 Schema、父版本、角色、版本号、工具、指令边界和具体资源标识；文本安全检查是启发式，实际权限由 Session/Engine 执行。
-5. 在相同开发 Cases 上分别执行父版与候选，固定另一角色，保存真实工具、状态变化、Oracle 和 Replay 证据。
-6. 历史 Customer v1 Gate 检查确认的独特发现、合法动作、执行错误与授权异常是否退步。新开发实验可显式启用 [Quality-Gated Discovery v1](CUSTOMER_QUALITY_GATE.md)，独立评估请求质量、直接发现、覆盖与成本，并支持证据不足；旧工具事件数不参与新协议选中判断。Service Gate 检查已知失败修复、新失败、正常任务完成、正确拒绝和授权。历史协议默认允许部分指标持平，因此“accepted”不能直接解释为显著进步。
-7. 通过后发布新不可变 Snapshot；失败则保留旧选中版本，同时保存候选及拒绝原因。Controller 按 Customer → Service 顺序交替，并保存父/新 Customer 与父/新 Service 的四组交叉执行，便于区分双方更新的影响。
+5. Customer 静态通过后，校验内容与版本发布冲突，直接选中新不可变 Snapshot；不进行配对性能验收。NOOP 不生成版本，静态失败保留旧版。记录 `customer_selection=customer-static-only-v1`、`static_gate_passed_snapshot_updated`；动态验证为空，不能声称能力提升或跨域验证。
+6. Service 仍按相同开发 Cases 对照父版/候选，检查已知失败修复、新失败、正常任务完成、正确拒绝与授权。通过原动态 Gate 才发布；否则保留旧版。此阶段使用实际选中的 Customer。
+7. Controller 按 Customer → Service 顺序交替，并保存父/新 Customer 与父/新 Service 的四组交叉执行。这些证据供研究分析，不对 Customer 作性能回滚。QGD 及工具事件评价仅通过显式诊断入口运行，其 ACCEPT / REJECT / INCONCLUSIVE 没有版本选择权。
+
+运行选择协议单独版本化为 RunConfig v2；提案协议仍为 v2，Skill / Library / Reflection 保持原格式。历史 RunConfig v1 可读取、验 hash、离线 Replay；继续运行它必须使用原始源码。详见 [当前选择与诊断入口](CUSTOMER_STATIC_ONLY.md)。
 
 调用前写不可变操作日志并预留预算，完成后保存实际成本。已完成步骤可恢复；外部结果不明的在途调用停止，避免无意重复实验。代码、配置、请求、轨迹与 Snapshot 的 hash 共同约束复现。
 

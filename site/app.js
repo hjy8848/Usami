@@ -167,3 +167,32 @@ document.getElementById('service-outcome').addEventListener('change', () => { pa
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
 new IntersectionObserver(entries => { if (!entries[0].isIntersecting) pause(); }).observe(document.getElementById('evolution-example'));
 renderStage(0);
+
+// Rule relationships, not a live model execution or a prescribed Discovery task.
+const boundaries = {
+  billing: {title:'支付成功，只完成了恢复链的一步', description:'项目暂停且账单未支付。支付成功后仍须显式恢复项目；启动实例还需要项目角色、运行依赖与足够配额。', path:'查询账单 → 支付 → 恢复项目 → 核实角色与依赖 → 启动', tools:'get_invoice · pay_invoice · resume_project · start_instance'},
+  access: {title:'组织 Owner，不等于项目 Operator', description:'组织负责人可以管理项目并授予项目角色，但计算操作仍要求显式 Admin 或 Operator 身份。访问管理与资源操作是不同权限；需要新增授权时，必须先获得精确写入许可。', path:'查询成员 → 确认项目角色 → 必要时请求授权 → 授予角色 → 执行业务', tools:'get_project_members · grant_project_access · start_instance'},
+  quota: {title:'资源配额同时约束三个维度', description:'CPU、内存和运行实例数量都必须满足配额，降低配额也不能低于当前用量。权限和授权允许时，可以选择扩大配额，或先安全停止不再需要的实例；路径取决于业务目标。', path:'查询配额与用量 → 选择扩容或释放资源 → 核实依赖与授权 → 启动', tools:'get_project · list_instances · change_project_quota · stop_instance'},
+  lifecycle: {title:'启动、停止和删除，有不同的先后条件', description:'启动要求直接依赖已运行；停止上游前，先停止运行中的下游。删除还要求目标已停止且入向依赖已解除；修改依赖时，下游必须停止，关系须保持项目内无环。', path:'查询依赖 → 停止下游 → 停止目标 → 解除入向引用 → 删除', tools:'get_instance · stop_instance · detach_dependency · delete_instance'}
+};
+const boundaryButtons = [...document.querySelectorAll('[data-boundary]')];
+function renderBoundary(key) {
+  const item = boundaries[key];
+  for (const field of ['title','description','path','tools']) document.getElementById(`boundary-${field}`).textContent = item[field];
+  document.getElementById('boundary-panel').setAttribute('aria-labelledby', `boundary-${key}`);
+  boundaryButtons.forEach(button => { const selected = button.dataset.boundary === key; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
+  document.querySelectorAll('[data-atlas]').forEach(node => node.classList.toggle('active',node.dataset.atlas.split(',').includes(key)));
+}
+boundaryButtons.forEach((button,index) => {
+  button.addEventListener('click',()=>renderBoundary(button.dataset.boundary));
+  button.addEventListener('keydown',event=>{
+    let next;
+    if(event.key==='ArrowRight') next=(index+1)%boundaryButtons.length;
+    else if(event.key==='ArrowLeft') next=(index+boundaryButtons.length-1)%boundaryButtons.length;
+    else if(event.key==='Home') next=0;
+    else if(event.key==='End') next=boundaryButtons.length-1;
+    else return;
+    event.preventDefault(); renderBoundary(boundaryButtons[next].dataset.boundary); boundaryButtons[next].focus();
+  });
+});
+renderBoundary('billing');

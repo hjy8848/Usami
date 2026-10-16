@@ -23,6 +23,7 @@ from integrations.usami.domains import UsamiProfile, ServiceTaskProfile, model_s
 from .backend import SearchBackend
 from .discovery import DiscoveryBank
 from .compiler import source_group
+from .attribution import static_context, known_contracts
 
 
 class DesignerPlan(FrozenModel):
@@ -156,8 +157,10 @@ class DesignerServiceController:
         record={'parent_hash':parent.snapshot_hash,'selected_hash':parent.snapshot_hash,'reflection':reflection,'outcome':'rejected'}
         if reflection['error'] or reflection['patch'] is None:return record
         patch=SkillPatch.model_validate(reflection['patch'])
-        forbidden={key for a in self.bank.anchors.values() for collection in ('projects','instances','access','users','invoices') for key in a.world[collection]}
-        static=StaticSkillGate(allowed_tools=('submit_challenge',),allowed_domains=('cloudops',),forbidden_identifiers=forbidden).validate(parent,patch)
+        context=static_context(self.bank.anchors.values())
+        record['static_context']=context
+        atomic_json(self.root/f'{prefix}.designer-static.json',context,immutable=True)
+        static=StaticSkillGate(allowed_tools=context['allowed_tools'],allowed_domains=context['allowed_domains'],forbidden_identifiers=context['forbidden_identifiers']).validate(parent,patch)
         record['static']=static.model_dump(mode='json')
         if not static.passed:return record
         if patch.action=='NOOP':record['outcome']='noop';return record
@@ -174,7 +177,7 @@ class DesignerServiceController:
             for label,snapshot,bank,rows in [('parent',parent,old_bank,old),('candidate',candidate,new_bank,new)]:
                 rows.append(self.backend.trial(snapshot,self.service,[anchor],bank,f'{prefix}.designer-gate.{label}.{index}',
                                                 self.plan.strategy,self.plan.random_seed+index))
-        known={r.root_key for r in self.bank.records if r.root_key}
+        known=known_contracts(self.bank.anchors.values(),self.bank.records)
         decision=compare(parent.snapshot_hash,candidate.snapshot_hash,[t.discovery for t in old],[t.discovery for t in new],
             self.backend.costs(old),self.backend.costs(new),self.plan.search_policy,known,groups)
         record['known_roots']=sorted(known);record['paired_groups']=groups

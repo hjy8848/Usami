@@ -50,7 +50,7 @@
   "max_llm_calls": 300,
   "max_tool_calls": 500,
   "search_policy": {
-    "version": "designer-paired-v1",
+    "version": "designer-paired-v2",
     "min_pairs": 8,
     "min_sources": 4,
     "bootstrap_samples": 2000,

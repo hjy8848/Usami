@@ -67,12 +67,12 @@ Designer 不提交完整 World 或 witness。Compiler 从来源复制世界，�
 | `candidate_new_root_cause` | 疑似规则根因，尚未满足归因和复测要求 |
 | `confirmed_new_root_cause` | 符合下述保守的规则级确认约定 |
 
-指纹复用原 `VerifiedFailure`、Reference Code 和归一化前置状态。候选规则键为领域、操作类型与已注册 Reference 规则码；**指纹不同不能增加根因数量**。实际额外越权行为仍保留在 Oracle 证据和业务违规总数中，但与 Customer 精确目标直接触发的发现分开统计，不用于冒充 Designer 的直接发现能力。
+指纹复用原 `VerifiedFailure`、Reference Code 和归一化前置状态。候选规则键为领域、操作类型与错误契约（结果类型及规则码）；**指纹不同不能增加根因数量**。实际额外越权行为与 Customer 精确目标直接触发的发现分开统计，不自动变成 Designer 的直接发现奖励。
 
-自动确认仅覆盖有明确原规则码的直接违规，并要求：
+当前归因采用 `decision-contract-v2`。候选键区分错误执行（原 Reference Code / 转换不匹配）和 Oracle 事件确认的 `FALSE_REJECTION`；Reference 允许时 Code 为 `None` 不再阻止登记错误拒绝。键只是错误契约分组。规则边界确认要求：
 
-1. 相同 Service Snapshot 下存在独立、已正确执行的来源。
-2. 执行身份、目标操作及业务能力范围一致；只有一个世界字段发生受控变化，Reference 从允许变为禁止。
+1. 相同 Service Snapshot 下存在独立、已正确处理的对照；可以来自正确锚点，也可以来自任一分支已经实际执行且 Replay 的正确案例。
+2. 执行身份、目标操作及业务能力范围一致；只有一个世界字段发生变化，Reference 的允许/禁止预期相反。两个方向对称，不要求来源必须是正确题。
 3. 至少两场不同 Episode 的真实、已 Replay 直接错误执行。已有任务上下文不一致、前缀污染、只有文字猜测、只有一次失败或只有指纹变化时，保留候选状态。
 
 这是明确且有限的「规则边界归因」约定，不声称证明了模型内部心理原因或所有复杂多步因果机制；不满足该约定的真实错误不会被删除，只是不获得独立新根因确认。
@@ -88,9 +88,17 @@ Designer Reflector 只学习如何选下一次有信息量的测试：如何选�
 - 至少 8 对、至少 4 个结构来源；等价名称/ID/seed 世界按现有 `business_shape()` 聚类，重复调用不扩大独立样本数。
 - 有效场景率、触发率最多下降 0.05；重复率最多增加 0.05。
 - LLM/工具调用及 Token 成本上限比值 1.25；缺少 provider Token 用量时证据不足，不把它记为 0。
-- 固定种子的来源簇 Bootstrap，默认 2000 次、95% 区间；只有经确认的直接规则错误检出获得保守发现收益，收益下界必须大于 0。
+- `designer-paired-v2` 冻结两个分别报告的端点：新增且经确认的直接规则根因检出，以及独立复测的直接错误边界检出。错题分支可以凭后者获得收益，不能冒充新根因。
+- 每个来源簇内，同一根因/业务边界最多计一次；边界复用目标操作的匿名业务签名，换 ID、重复请求、无关项目状态变化不增加覆盖。源锚点已含的错误契约进入已知集合。
+- 固定种子的来源簇 Bootstrap，默认 2000 次；对两个预注册端点做 Bonferroni 尾概率调整（总体名义 95%），至少一个端点配对收益的下界大于 0 才接受。两个端点的 credit、区间和成本全部留档；小样本 Bootstrap 不等于显著泛化证明。
 
 违反质量/成本门槛为 REJECT；样本、归因、成本或稳健增益不足为 INCONCLUSIVE；两者都保留父 Snapshot，候选及全部验证记录留档。只有 ACCEPT 才发布并选中新 Designer。参数是预注册工程政策，不是已经证实的科学标准。
+
+无正确对照时，错题分支可取得 `reproducible_failure` / `controlled_reproduction`，同时保持根因候选；获得自己的实际正确对照后也可确认规则边界。改变无关条件后仍犯错不等于证明那个条件就是根因，也不声称实现了自动最小因果集搜索。
+
+只有文字拒绝或任务未完成、没有可判定 Oracle 错误事件时，保留 `task_incomplete` 诊断，不伪造已验证错误。额外越权成功写入单列 `scope_violations`，包括只有授权异常而无业务违规的情况；没有受控诱发证据，不自动归因给 Designer 的直接目标。普通查询失败不计发现。
+
+静态检查冻结完整 DiscoveryBank 的锚点 Hash、禁止标识、工具和领域到 `gN.designer-static.json`。Replay 从初始任务及各代训练证据重建完整记忆，使用同一输入复算；不以提示词引用的锚点子集替代完整记忆。已知错误契约集合也独立重算。
 
 Service 阶段不调用 Designer Gate，仍使用原 `ServiceEvolver` / `ServiceReflector` / `DynamicGate.service`。本代真实错误通过原 `EpisodeEvidence` 进入 Service Reflection，正常任务和正确拒绝的 preflight / 回归也保留，不能用一律拒绝通过验收。
 
@@ -164,3 +172,13 @@ PYTHONDONTWRITEBYTECODE=1 .venv/bin/python experiments/vast_coevo/examples/desig
 - 初次全量检查发现 Designer Reflector 错误依赖业务包，已改为 Core 内的严格响应解析；最终回归在源码清单稳定后执行。打包临时文件曾干扰一轮源码 pin 检查，该轮中止，不作为通过证据。
 
 掌控摘要：**已实现** CloudOps Designer–Compiler–固定 Customer–Service 的训练/反馈/选择/重放闭环；**已测试** 的是协议与真实业务执行机制；**未验证** 的是实际 LLM 的发现能力提升、Service 修复收益与跨世界泛化。自动根因确认仅限上述规则边界约定，其他复杂错误保持候选状态。
+
+## 反馈修正 v2（2026-10-17）
+
+修正 e5650da 中归因/奖励不对称和静态检查重放输入不一致的问题。默认选择政策与示例 plan 改为 `designer-paired-v2`，发现记录标明 `decision-contract-v2`；角色封装协议仍为 `designer-service-v1`。旧选择公式 `designer-paired-v1` 仍可显式使用，不能把新归因重算当成旧实验结果；精确历史 Replay 继续要求原提交源码，历史实验记录不修改。
+
+未执行在线模型实验或新的 Held-out。错误拒绝测试使用原 Engine 已有的 `refuse` 语义及独立 Oracle/Replay，不给 Service 新增拒绝工具、不修改 Service 行为；原生对话里只有文字拒绝时仍保留未解决任务诊断，不能凭文本推断已验证错误。
+
+针对性回归：`tests/test_designer_feedback_v2.py`、`tests/test_designer_service.py`、`tests/test_vast_boundary.py` 合计 **36 项通过，94.10 秒**。新增测试包括纯错题分支的实际配对检出收益（新根因数仍为 0）、自身正确对照、错误拒绝的规则边界、重复 credit 上限、无关状态不扩覆盖、只存在于完整记忆的静态禁止 ID、篡改冻结输入拒绝，以及实际额外越权操作的独立记录与 Replay。示例 plan 校验确认选择 `designer-paired-v2`。
+
+完整回归：`PYTHONDONTWRITEBYTECODE=1 .venv/bin/pytest -q -x`，**1013 项通过，381.23 秒**。本轮没有修改任何四领域业务包、原 Service Evolver/Gate/Reflector 或历史实验结果，也没有增加在线验收场次、追加 Reflection 或调用真实模型。

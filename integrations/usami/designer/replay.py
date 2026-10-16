@@ -17,6 +17,8 @@ from integrations.usami.adapter import _recorded_wire_client
 from integrations.usami.domains import model_settings
 from .backend import Trial
 from .compiler import Anchor, source_group
+from .attribution import static_context, known_contracts
+from .discovery import anchor_from
 from .controller import DesignerPlan, DesignerServiceController, feedback_for
 
 
@@ -44,12 +46,20 @@ def verify_selections(root, manifest, report, adapter, store):
     assembly=SimpleNamespace(plan=plan,adapter=adapter,task_case=lambda ref,purpose=None:
         DesignerServiceController.task_case(SimpleNamespace(plan=plan,adapter=adapter),ref,purpose))
     discovery,tasks=DesignerServiceController.validation(assembly)
+    learned={};learned_discoveries=[]
+    def learn(e):
+        try:a=anchor_from(adapter,e)
+        except ValueError:return
+        learned[a.anchor_hash]=a
+    for ref in plan.initial_tasks:learn(evidence['seed.'+ref])
     for row in report['generations']:
         g=row['generation'];saved=json.loads((root/f'g{g}.json').read_text())
         if saved!=row:raise ValueError('generation report differs from immutable checkpoint')
         if (row['parent_designer'],row['parent_service'],row['customer_hash'])!=(designer.snapshot_hash,service.snapshot_hash,customer.snapshot_hash):
             raise ValueError('cross-generation role/parent mismatch')
         training=[trials[h] for h in row['training']]
+        for t in training:
+            if t.evidence:learn(t.evidence);learned_discoveries.append(t.discovery)
         if any((t.designer_hash,t.customer_hash,t.service_hash)!=(designer.snapshot_hash,customer.snapshot_hash,service.snapshot_hash) for t in training):
             raise ValueError('generation executed an unselected actor')
         record=row['designer'];reflection=record['reflection']
@@ -59,8 +69,11 @@ def verify_selections(root, manifest, report, adapter, store):
             if replay!=reflection:raise ValueError('Designer Reflection replay differs')
             if reflection['patch'] is not None:
                 patch=SkillPatch.model_validate(reflection['patch'])
-                forbidden={key for t in training for a in t.anchors for collection in ('projects','instances','access','users','invoices') for key in a['world'][collection]}
-                static=StaticSkillGate(allowed_tools=('submit_challenge',),allowed_domains=('cloudops',),forbidden_identifiers=forbidden).validate(designer,patch)
+                context=static_context(learned.values())
+                frozen=json.loads((root/f'g{g}.designer-static.json').read_text())
+                if context!=record.get('static_context') or frozen!=context:
+                    raise ValueError('Designer static validation inputs differ from complete verified memory')
+                static=StaticSkillGate(allowed_tools=context['allowed_tools'],allowed_domains=context['allowed_domains'],forbidden_identifiers=context['forbidden_identifiers']).validate(designer,patch)
                 if static.model_dump(mode='json')!=record.get('static'):raise ValueError('Designer static gate differs')
                 if static.passed and patch.action!='NOOP':
                     candidate=apply_patch(designer,patch,f'g{g}.designer-reflection')
@@ -71,6 +84,7 @@ def verify_selections(root, manifest, report, adapter, store):
                             raise ValueError('Designer pairing changed sources, strategy, seeds or counterpart')
                         if (a.designer_hash,b.designer_hash)!=(designer.snapshot_hash,candidate.snapshot_hash):raise ValueError('Designer pairing snapshot mismatch')
                     if record['paired_groups']!=[source_group(Anchor.model_validate(t.anchors[0])) for t in old]:raise ValueError('source cluster definition differs')
+                    if record['known_roots']!=known_contracts(learned.values(),learned_discoveries):raise ValueError('pre-validation known contracts differ')
                     result=compare(designer.snapshot_hash,candidate.snapshot_hash,[t.discovery for t in old],[t.discovery for t in new],
                         backend.costs(old),backend.costs(new),plan.search_policy,record['known_roots'],record['paired_groups'])
                     if result.model_dump(mode='json')!=record['dynamic']:raise ValueError('Designer dynamic selection differs')

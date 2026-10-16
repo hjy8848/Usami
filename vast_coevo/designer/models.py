@@ -10,7 +10,7 @@ Status = Literal['construction_failed', 'valid_not_triggered', 'triggered_correc
 
 
 class SearchPolicy(FrozenModel):
-    version: Literal['designer-paired-v1'] = 'designer-paired-v1'
+    version: Literal['designer-paired-v1', 'designer-paired-v2'] = 'designer-paired-v2'
     min_pairs: int = Field(default=8, ge=4, strict=True)
     min_sources: int = Field(default=4, ge=2, strict=True)
     bootstrap_samples: int = Field(default=2000, ge=100, strict=True)
@@ -40,6 +40,13 @@ class Discovery(FrozenModel):
     root_key: Optional[Hash] = None
     root_state: Literal['none', 'candidate', 'confirmed'] = 'none'
     root_reason: str = ''
+    attribution_version: Optional[Literal['decision-contract-v2']] = Field(default=None, exclude_if=lambda v: v is None)
+    failure_kind: Optional[Literal['erroneous_execution', 'false_rejection', 'scope_violation', 'task_incomplete']] = Field(default=None, exclude_if=lambda v: v is None)
+    scope_violations: Optional[int] = Field(default=None, ge=0, exclude_if=lambda v: v is None)
+    contract: Optional[dict] = Field(default=None, exclude_if=lambda v: v is None)
+    controlled_reproduction: Optional[bool] = Field(default=None, exclude_if=lambda v: v is None)
+    reproducible_failure: Optional[bool] = Field(default=None, exclude_if=lambda v: v is None)
+    coverage_key: Optional[Hash] = Field(default=None, exclude_if=lambda v: v is None)
     duplicate: bool = False
     service_hash: Hash
     replay_verified: bool = True

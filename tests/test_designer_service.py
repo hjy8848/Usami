@@ -73,8 +73,8 @@ def single_task(config_id,seed,ref):
     return profile,source
 
 
-def setup_backend(tmp_path):
-    profile,task=single_task('seed',42,'initial')
+def setup_backend(tmp_path,seed=42):
+    profile,task=single_task('seed',seed,'initial')
     clients={}
     factory=lambda spec,role,phase:clients[role]
     ledger=Ledger(tmp_path/'logs',1000,1000,factory)

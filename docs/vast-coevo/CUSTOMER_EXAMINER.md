@@ -16,7 +16,7 @@ Customer 不再只是在预设世界中提问的顾客。显式启用 `usami-exa
 - 不能改 seed、clock、领域 / 版本、SaaS rules、生成器来源等非实体字段。
 - 不能改写旧模型回复、事件或 Oracle。构造阶段的权限不是执行阶段的业务权限。
 
-构造接口为一次 Function Calling：`submit_exam`。工具 Schema 内嵌当前领域的 World、Operation 和逐操作参数模型，不让模型猜字段。最多一次 Customer 调用，不自动修补或重试；最多 512 个实体、64 个能力与 64 步证明，证明还受工具预算限制。
+构造接口为一次 Function Calling：`submit_exam`。请求使用兼容思考模式的 `tool_choice: auto`；返回后仍严格要求恰好一个完整的 `submit_exam`，不会接受普通文本、多个调用或自动重试。工具 Schema 内嵌当前领域的 World、Operation 和逐操作参数模型，不让模型猜字段。最多一次 Customer 调用，不自动修补或重试；最多 512 个实体、64 个能力与 64 步证明，证明还受工具预算限制。
 
 提交 `world / identity / message / kind / capabilities / goal / witness / refusal_operation / rationale`：
 

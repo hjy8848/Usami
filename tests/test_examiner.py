@@ -64,6 +64,7 @@ def test_four_domain_construction_actual_execution_and_exact_replay(tmp_path,dom
     assert evidence.consumption.service_llm_calls==2
     assert adapter.replay(evidence,c,s).verified
     assert len(clients['customer'].requests)==1 and len(clients['service'].requests)==2
+    assert clients['customer'].requests[0]['tool_choice'] == 'auto'
     raw=json.loads(Path(evidence.trace.path).read_text())
     trace=native_trace(domain,raw['native_trace'],'discovery')
     assert trace.proposal
@@ -278,4 +279,22 @@ def test_witness_cannot_reuse_single_use_write_authority(tmp_path):
     adapter.client_factory = lambda spec, role, *_: clients[role]
     evidence = adapter.run_episode(config, empty_snapshot('customer'), empty_snapshot('service'), 'repeated-grant')
     assert evidence.termination == 'construction_error' and evidence.replay.verified
+    assert not clients['service'].requests
+
+
+@pytest.mark.parametrize('malformed', ['wrong_tool', 'multiple_calls', 'missing_fields'])
+def test_auto_tool_choice_still_requires_one_complete_submission(tmp_path, malformed):
+    adapter, config, proposal, clients = setup_exam(tmp_path)
+    if malformed == 'wrong_tool':
+        calls = [call('wrong', 'other_function', proposal)]
+    elif malformed == 'multiple_calls':
+        calls = [call('one', 'submit_exam', proposal), call('two', 'submit_exam', proposal)]
+    else:
+        calls = [call('missing', 'submit_exam', {'rationale': 'Not a complete exam.'})]
+    clients['customer'] = ScriptedClient(SPEC, [answer(calls=calls)])
+    adapter.client_factory = lambda spec, role, *_: clients[role]
+    evidence = adapter.run_episode(config, empty_snapshot('customer'), empty_snapshot('service'), malformed)
+    assert evidence.termination == 'construction_error'
+    assert evidence.replay.verified
+    assert len(clients['customer'].requests) == 1
     assert not clients['service'].requests

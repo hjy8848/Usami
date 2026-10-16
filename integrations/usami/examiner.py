@@ -317,7 +317,8 @@ def run_exam(config,customer,service,freeze_observer=None):
         'verified_development_history':[history_for_model(item) for item in config.history],'max_entities':512,'max_capabilities':64,'max_witness_steps':min(64,config.episode['budget']['max_service_tool_calls'])}
     tool={'type':'function','function':{'name':'submit_exam','description':'Submit one fully specified scene and task for native validation and freezing.','parameters':proposal_schema(config)}}
     request=customer.settings.request([{'role':'system','content':prompt},{'role':'user','content':json.dumps(context,ensure_ascii=False,sort_keys=True)}],[tool])
-    request['tool_choice']={'type':'function','function':{'name':'submit_exam'}}
+    # Keep ModelSettings' portable auto mode: thinking providers reject forced
+    # function objects. Acceptance below still requires exactly one submit_exam.
     record=LLMRecord(request=copy.deepcopy(request)); proposal=None;certificate={};error=None;world=template;received=False
     try:
         record.response=customer.complete(copy.deepcopy(request));received=True

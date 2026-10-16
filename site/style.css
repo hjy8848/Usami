@@ -382,3 +382,26 @@ footer { padding-top: 28px; padding-bottom: 35px; }
 .freedom-grid h3 { font: 22px var(--serif); color: #40583a; margin: 16px 0 12px; }
 .freedom-grid p { font-size: 13px; line-height: 1.9; color: #738068; margin: 0; }
 @media(max-width:760px) { .atlas-tabs { gap: 12px; flex-wrap: wrap; }.boundary-panel { grid-template-columns: 1fr; }.boundary-sequence { border-left: 0; padding-left: 0; }.freedom-grid { grid-template-columns: 1fr; }.freedom-grid > div + div { border-left: 0; padding-left: 0; } }
+
+/* Examiner construction is separate from business execution. */
+.examiner-editor { padding: 26px; background: #edf2e4; }
+.examiner-heading { display:flex;justify-content:space-between;align-items:center;margin-bottom:22px; }
+#draft-status { font: 11px var(--mono);color:#6a8054; }
+.examiner-fields { display:grid;grid-template-columns:repeat(4,1fr);gap:18px; }
+.examiner-fields label { display:flex;flex-direction:column;gap:9px;font-size:11px;color:#778669; }
+.examiner-fields select { width:100%;min-width:0;font-size:12px; }
+.examiner-running { border:0;border-top:1px solid #d3ddc5;padding:16px 0 0;margin:22px 0;display:flex;gap:23px;align-items:center;font-size:12px;color:#61734f; }
+.examiner-running legend { padding:0 10px 0 0;font-size:10px;color:#8a997b; }
+.examiner-running span { font-size:11px;color:#89967c; }
+.examiner-submit { display:flex;gap:22px;align-items:center; }
+#freeze-exam { background:#3b5b40;border:0;border-radius:5px;color:#f5f6ed;padding:13px 20px;font-size:12px;white-space:nowrap; }
+#exam-validation { margin:0;font-size:12px;color:#637951; }
+#exam-validation.invalid { color:#a0533e; }
+.examiner-snapshot { margin-top:20px;color:#7b896c;font-size:11px; }
+.examiner-snapshot summary { cursor:pointer; }
+.examiner-snapshot pre { font-size:11px;line-height:1.7;max-height:240px;overflow:auto;background:#f7f9f0;padding:16px; }
+.exam-paper { padding:24px 26px;border-top:1px solid #dbe3d0;border-bottom:1px solid #dbe3d0;background:#faf9f2; }
+.exam-paper h3 { font:22px/1.6 var(--serif);color:#405637;margin:12px 0; }
+.exam-paper p { font-size:12px;color:#7b866f;margin:8px 0 0; }
+button:disabled { opacity:.4;cursor:not-allowed; }
+@media(max-width:850px) { .examiner-fields { grid-template-columns:repeat(2,1fr); }.examiner-running,.examiner-submit { flex-wrap:wrap; } }

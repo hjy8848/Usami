@@ -6,82 +6,99 @@ const resources = {
   cache: {cpu: 1, memory: 2, dependencies: []},
   app: {cpu: 2, memory: 4, dependencies: ['db', 'cache']}
 };
-const presets = {
-  normal: {role: 'Operator', project: 'active', cpu: 8},
-  viewer: {role: 'Viewer', project: 'active', cpu: 8},
-  suspended: {role: 'Operator', project: 'suspended', cpu: 8},
-  quota: {role: 'Operator', project: 'active', cpu: 4}
-};
-let world;
+let world, frozenTask = null;
 const decision = document.querySelector('.decision-output');
+const examFields = [...document.querySelectorAll('.examiner-editor select, .examiner-editor input')];
+const dependencies = {
+  parallel: {db:[], cache:[], app:['db','cache']},
+  chain: {db:[], cache:['db'], app:['cache']},
+  independent: {db:[], cache:[], app:[]}
+};
+function readDraft() {
+  return {role:document.getElementById('exam-role').value, project:document.getElementById('exam-project').value,
+    invoice:document.getElementById('exam-invoice').value, topology:document.getElementById('exam-topology').value,
+    cpu:Number(document.getElementById('exam-cpu').value), memory:Number(document.getElementById('exam-memory').value),
+    limit:Number(document.getElementById('exam-limit').value), goal:document.getElementById('exam-goal').value,
+    running:{db:document.getElementById('exam-db').checked,cache:document.getElementById('exam-cache').checked,app:false}};
+}
 function usage() {
-  return Object.keys(resources).filter(id => world.running[id]).reduce((sum, id) => ({
-    cpu: sum.cpu + resources[id].cpu,
-    memory: sum.memory + resources[id].memory,
-    instances: sum.instances + 1
-  }), {cpu: 0, memory: 0, instances: 0});
+  return Object.keys(resources).filter(id=>world.running[id]).reduce((sum,id)=>({cpu:sum.cpu+resources[id].cpu,memory:sum.memory+resources[id].memory,instances:sum.instances+1}),{cpu:0,memory:0,instances:0});
+}
+function applyDependencies() {
+  for (const id of Object.keys(resources)) resources[id].dependencies=[...dependencies[world.topology][id]];
+  const dbEdge=document.getElementById('edge-db'), cacheEdge=document.getElementById('edge-cache');
+  dbEdge.style.display=cacheEdge.style.display=world.topology==='independent'?'none':'';
+  dbEdge.setAttribute('d',world.topology==='chain'?'M225 71H275':'M145 105V138Q145 149 157 149H239Q250 149 250 161V183');
+  document.getElementById('dependency-note').textContent={parallel:'db、cache 先运行，app 才能启动',chain:'db → cache → app，按链式顺序启动',independent:'资源独立，可分别启动'}[world.topology];
+  document.getElementById('task-map-description').textContent={parallel:'app 依赖 db 与 cache，两个上游独立。',chain:'cache 依赖 db，app 依赖 cache。',independent:'三个资源彼此独立，没有依赖边。'}[world.topology];
 }
 function renderWorld() {
-  for (const id of Object.keys(resources)) {
-    const node = document.getElementById(`node-${id}`);
-    node.classList.toggle('running', world.running[id]);
-    node.querySelector('.resource-status').textContent = world.running[id] ? 'running' : 'stopped';
+  applyDependencies();
+  for(const id of Object.keys(resources)) {
+    const node=document.getElementById(`node-${id}`); node.classList.toggle('running',world.running[id]);
+    node.querySelector('.resource-status').textContent=world.running[id]?'running':'stopped';
   }
-  const used = usage();
-  document.getElementById('project-state').textContent = world.project.toUpperCase();
-  document.getElementById('actor-role').textContent = world.role;
-  document.getElementById('cpu-usage').textContent = `${used.cpu} / ${world.cpu}`;
-  document.getElementById('memory-usage').textContent = `${used.memory} / 16`;
-  document.getElementById('instance-usage').textContent = `${used.instances} / 3`;
-  const goal = document.getElementById('goal-status');
-  goal.textContent = world.running.app ? '示例目标已完成：app 正在运行。' : '目标未完成：app 尚未运行。';
-  goal.classList.toggle('complete', world.running.app);
+  const used=usage();
+  document.getElementById('project-state').textContent=world.project.toUpperCase();
+  document.getElementById('actor-role').textContent=world.role;
+  document.getElementById('cpu-usage').textContent=`${used.cpu} / ${world.cpu}`;
+  document.getElementById('memory-usage').textContent=`${used.memory} / ${world.memory}`;
+  document.getElementById('instance-usage').textContent=`${used.instances} / ${world.limit}`;
+  const complete=world.goal==='all'?Object.values(world.running).every(Boolean):world.running.app;
+  const goal=document.getElementById('goal-status'); goal.textContent=!frozenTask?'草稿：先校验并冻结题目':complete?'目标已完成':'目标未完成'; goal.classList.toggle('complete',Boolean(frozenTask&&complete));
 }
-function resetWorld() {
-  world = {...presets[document.getElementById('scenario').value], running: {db: false, cache: false, app: false}};
-  renderWorld();
-  decision.classList.remove('denied', 'allowed');
-  document.getElementById('decision-title').textContent = '等待操作';
-  document.getElementById('decision-code').textContent = '—';
-  document.getElementById('decision-reason').textContent = '初态已恢复。三项资源均为 stopped；切换条件不会继承上一场景的状态。';
-  const empty = document.createElement('li'); empty.className = 'empty-log'; empty.textContent = '尚无操作';
-  document.getElementById('action-log').replaceChildren(empty);
+function clearExecution() {
+  decision.classList.remove('denied','allowed');
+  document.getElementById('decision-title').textContent=frozenTask?'等待操作':'尚未冻结';
+  document.getElementById('decision-code').textContent='—';
+  document.getElementById('decision-reason').textContent=frozenTask?'执行从冻结初态开始。按业务规则与授权范围选择动作。':'配置条件后，系统先检查世界是否合法，再将题目交给 Service。';
+  const item=document.createElement('li'); item.className='empty-log'; item.textContent='尚无操作';document.getElementById('action-log').replaceChildren(item);
 }
+function validateDraft() {
+  const errors=[],used=usage();
+  if(world.project==='active'&&world.invoice!=='paid') errors.push('活跃项目的当前账单必须已支付。');
+  if(world.project==='suspended'&&Object.values(world.running).some(Boolean)) errors.push('暂停项目不能有运行实例。');
+  for(const id of Object.keys(resources)) if(world.running[id]&&resources[id].dependencies.some(dep=>!world.running[dep])) errors.push(`${id} 正在运行，但它的依赖尚未运行。`);
+  if(used.cpu>world.cpu||used.memory>world.memory||used.instances>world.limit) errors.push('初始运行用量超过配额。');
+  return errors;
+}
+function draftChanged() {
+  frozenTask=null;world=readDraft();renderWorld();clearExecution();
+  document.getElementById('draft-status').textContent='草稿 / 未冻结';
+  document.getElementById('exam-request').textContent='请先校验并冻结题目';
+  document.querySelectorAll('[data-start], #reset-world').forEach(b=>b.disabled=true);
+  document.getElementById('exam-snapshot').textContent=JSON.stringify({domain:'cloudops',identity:'u_demo',project_id:'alpha',...world,dependencies:dependencies[world.topology]},null,2);
+  const errors=validateDraft();
+  const status=document.getElementById('exam-validation');status.textContent=errors.length?errors.join(' '):'初态检查通过；可冻结为独立题目。';status.classList.toggle('invalid',errors.length>0);
+}
+function freezeExam() {
+  draftChanged();if(validateDraft().length) return;
+  frozenTask=JSON.parse(JSON.stringify(world));
+  document.getElementById('draft-status').textContent='已冻结 / 可执行';
+  document.getElementById('exam-request').textContent=world.goal==='all'?'请启动 alpha 项目的 db、cache 和 app。':'请启动 alpha 项目的 app。';
+  document.getElementById('exam-validation').textContent='已固定身份、初态、目标与授权范围。修改配置将生成新草稿。';
+  document.querySelectorAll('[data-start], #reset-world').forEach(b=>b.disabled=false);renderWorld();clearExecution();
+}
+function resetWorld() { if(!frozenTask)return;world=JSON.parse(JSON.stringify(frozenTask));renderWorld();clearExecution(); }
 function startResource(id) {
-  const before = world.running[id] ? 'running' : 'stopped';
-  const resource = resources[id], used = usage();
-  let code = 'ALLOWED', reason;
-  // Match the selected Reference Rules' check order: role before running/no-op,
-  // then project, direct dependencies, CPU/memory/count quota.
-  if (world.role !== 'Operator') {
-    code = 'PROJECT_ACCESS_REQUIRED'; reason = '当前身份为 Viewer，不能启动计算资源。明确提出请求不会增加项目权限。';
-  } else if (world.running[id]) {
-    reason = `${id} 已经运行；此操作不产生新的状态变化，也不增加测试覆盖。`;
-  } else if (world.project !== 'active') {
-    code = 'PROJECT_SUSPENDED'; reason = '项目处于 suspended 状态。给定授权范围不允许修改项目状态，应拒绝本次启动。';
-  } else if (resource.dependencies.some(dep => !world.running[dep])) {
-    code = 'DEPENDENCY_NOT_RUNNING'; reason = `尚未运行的上游：${resource.dependencies.filter(dep => !world.running[dep]).join('、')}。启动这些依赖会改变后续请求的合法性。`;
-  } else if (used.cpu + resource.cpu > world.cpu || used.memory + resource.memory > 16 || used.instances + 1 > 3) {
-    code = 'QUOTA_EXCEEDED'; reason = `启动后 CPU 将为 ${used.cpu + resource.cpu}/${world.cpu}，内存 ${used.memory + resource.memory}/16，实例 ${used.instances + 1}/3。任一维度超额都应拒绝。`;
-  } else {
-    world.running[id] = true;
-    reason = `${id}：stopped → running。${id === 'app' ? '全部前置条件已满足，示例目标达成。' : '这是实际前置状态变化；另一个独立上游仍可按任意顺序启动。'}`;
-  }
-  const allowed = code === 'ALLOWED';
-  decision.classList.toggle('allowed', allowed); decision.classList.toggle('denied', !allowed);
-  document.getElementById('decision-title').textContent = `${allowed ? '允许' : '拒绝'} start_instance(${id})`;
-  document.getElementById('decision-code').textContent = code;
-  document.getElementById('decision-reason').textContent = reason;
-  const log = document.getElementById('action-log'); log.querySelector('.empty-log')?.remove();
-  const entry = document.createElement('li');
-  entry.textContent = `start(${id}) → ${code} · ${before} → ${world.running[id] ? 'running' : 'stopped'}`;
-  log.append(entry); log.scrollTop = log.scrollHeight;
-  renderWorld();
+  if(!frozenTask)return;
+  const before=world.running[id]?'running':'stopped',resource=resources[id],used=usage();let code='ALLOWED',reason;
+  if(!['Operator','Admin'].includes(world.role)){code='PROJECT_ACCESS_REQUIRED';reason='当前执行身份只有 Viewer 权限。考官可以配置这道题，但 Service 不能因此获得额外权限。';}
+  else if(world.running[id]) reason=`${id} 已经运行，本次没有新状态变化。`;
+  else if(world.project!=='active'){code='PROJECT_SUSPENDED';reason='项目暂停。题目未授权付款或恢复项目，应解释条件并拒绝启动。';}
+  else if(resource.dependencies.some(dep=>!world.running[dep])){code='DEPENDENCY_NOT_RUNNING';reason=`尚未运行的上游：${resource.dependencies.filter(dep=>!world.running[dep]).join('、')}。`;}
+  else if(used.cpu+resource.cpu>world.cpu||used.memory+resource.memory>world.memory||used.instances+1>world.limit){code='QUOTA_EXCEEDED';reason=`启动后 CPU ${used.cpu+resource.cpu}/${world.cpu}，内存 ${used.memory+resource.memory}/${world.memory}，实例 ${used.instances+1}/${world.limit}。题目未授权修改配额。`;}
+  else{world.running[id]=true;reason=`${id}：stopped → running。后续操作将在这个新状态下判定。`;}
+  const allowed=code==='ALLOWED';decision.classList.toggle('allowed',allowed);decision.classList.toggle('denied',!allowed);
+  document.getElementById('decision-title').textContent=`${allowed?'允许':'拒绝'} start_instance(${id})`;
+  document.getElementById('decision-code').textContent=code;document.getElementById('decision-reason').textContent=reason;
+  const log=document.getElementById('action-log');log.querySelector('.empty-log')?.remove();const entry=document.createElement('li');entry.textContent=`start(${id}) → ${code} · ${before} → ${world.running[id]?'running':'stopped'}`;log.append(entry);renderWorld();
 }
-document.getElementById('scenario').addEventListener('change', resetWorld);
-document.getElementById('reset-world').addEventListener('click', resetWorld);
-document.querySelectorAll('[data-start]').forEach(button => button.addEventListener('click', () => startResource(button.dataset.start)));
-resetWorld();
+examFields.forEach(field=>field.addEventListener('change',draftChanged));
+document.getElementById('freeze-exam').addEventListener('click',freezeExam);
+document.getElementById('reset-world').addEventListener('click',resetWorld);
+document.querySelectorAll('[data-start]').forEach(b=>b.addEventListener('click',()=>startResource(b.dataset.start)));
+draftChanged();
 
 // Two authored trajectories illustrate the research motivation, not live inference.
 const traceExamples = {
@@ -90,7 +107,7 @@ const traceExamples = {
     hypothesis: '它是否忽略了依赖检查？',
     clue: '轨迹已暴露一次依赖违规。Customer 进一步检验 Service 是否只忽略了某个资源，还是遗漏了依赖检查方法。',
     challenge: '改变依赖结构，再测试',
-    next: '选择 app → cache → db 的链式依赖场景，提出对象与授权明确的启动请求，检验 Service 是否检查完整依赖链。'
+    next: '构造 app → cache → db 的链式依赖场景，提出对象与授权明确的启动请求，检验 Service 是否检查完整依赖链。'
   },
   success: {
     record: '查询实例与依赖，重复查询状态\n启动 db → 启动 cache → 启动 app\n最终完成目标，Oracle 未检出违规\n轨迹线索：重复确认依赖状态',
@@ -108,12 +125,12 @@ document.getElementById('trace-source').addEventListener('change', event => {
 });
 
 const stages = [
-  {kicker:'请求 / Cₙ', title:'先固定条件与请求范围', description:'沿用依赖测试：顾客为 Operator，项目活跃、配额充足，cache 已运行而 db 未运行。请求仅授权启动 app；Service 应解释依赖条件，并在需要额外写操作时确认授权。', label:'顾客请求与可见事实', artifact:'“请启动 alpha 项目的 app。”\n\n身份：Operator\n项目：active\n上游：db stopped / cache running\n操作范围：仅 start_instance(app)'},
+  {kicker:'出题 / Cₙ', title:'考官构造场景，校验后冻结题目', description:'Customer 全局配置 Operator 身份、活跃项目和充足配额，设置 cache 运行、db 停止，组合“只启动 app”的请求。系统校验初态后冻结，Service 通过工具查询事实并作答。', label:'考官配置与题面', artifact:'“请启动 alpha 项目的 app。”\n\n身份：Operator\n项目：active\n上游：db stopped / cache running\n操作范围：仅 start_instance(app)'},
   {kicker:'执行 / Sₙ', title:'Service 跳过依赖，启动了 app', description:'示例中 Service 调用启动工具，Sandbox 将 app 从 stopped 改为 running。记录工具参数、返回结果与状态变化，交给独立 Oracle 核验。', label:'工具事件 / 机制示例', artifact:'tool: start_instance(project=alpha, resource=app)\nengine mode: sandbox\nresult: succeeded\n\nstate change:\n  app.status: stopped → running'},
   {kicker:'验证 / Eₙ', title:'比较业务规则与真实状态变化', description:'Reference Rules 依据执行前 db 尚未运行的事实给出拒绝预期。Oracle 看到 app 实际启动成功，确认依赖规则违规。对象与请求明确，并不意味着操作符合业务条件。', label:'Oracle 判定 / 机制示例', artifact:'expected: DENY / DEPENDENCY_NOT_RUNNING\nobserved: successful write\nclassification: business violation\n\n记录请求、前态、工具参数与事件；\n独立 Replay 核验后才可进入学习。'},
   {kicker:'反思 / SkillPatch', title:'从具体错误抽取两种不同的经验', description:'先进行 Customer 更新，再进行 Service 更新。两者都读取本代已验证探索证据，Service 另外保留合法与拒绝任务材料。两类经验分别形成测试策略与业务决策策略。', label:'Skill 原则片段', artifact:'Customer 探索方向：\n改变依赖结构并比较操作顺序，\n检验是否遗漏了深层前置条件。\n\nService 决策原则：\n启动前核实完整依赖与运行状态；\n需要额外写操作时先确认授权。'},
   {kicker:'验收 / 角色不同', title:'将结构合法性与行为验收分开', description:'Customer 提案通过静态检查后更新；Service 候选经过静态与动态 Gate。下方可切换通过、拒绝与 NOOP 分支，查看下一代实际加载的版本。', label:'候选选择 / 机制示例', artifact:''},
-  {kicker:'版本 / N → N+1', title:'下一代只加载实际选中的 Snapshot', description:'保存候选、选择结果与来源证据。下一代使用选中的 Customer 与 Service Skill 继续交互；训练后的独立评价只读加载这些版本。', label:'下一代版本 / 机制示例', artifact:''}
+  {kicker:'版本 / N → N+1', title:'下一代只加载实际选中的 Snapshot', description:'保存候选、选择结果与来源证据。下一代 Customer 用选中的 Skill 构造挑战，Service 用选中的 Skill 应试；训练后的独立评价只读加载这些版本。', label:'下一代版本 / 机制示例', artifact:''}
 ];
 let stage = 0, timer = null;
 const stageButtons = [...document.querySelectorAll('[data-stage]')];

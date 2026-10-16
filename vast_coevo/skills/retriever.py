@@ -33,7 +33,7 @@ class RetrievalResult(FrozenModel):
 
 class SkillRetriever:
     def __init__(self, role: SkillRole, max_skills: int = 4, max_chars: int = 6000):
-        if role not in ("customer", "service"):
+        if role not in ("customer", "service", "designer"):
             raise ValueError("unknown skill role")
         if type(max_skills) is not int or max_skills < 0 or type(max_chars) is not int or max_chars < 0:
             raise ValueError("retrieval budgets must be nonnegative integers")

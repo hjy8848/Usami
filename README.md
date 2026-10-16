@@ -10,6 +10,8 @@ v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World 
 
 ## VAST-CoEvo v1.0
 
+新增可显式启用的 [Designer–Service v1](docs/vast-coevo/DESIGNER_SERVICE_V1.md)：Designer 从已验证的正确/错误执行中提出局部场景变换，由 Compiler 使用原 Reference / Engine / Oracle 证明并冻结；固定正常 Customer 自主多轮交互，Designer 与 Service 分别更新 Skill。Designer 必须通过公平配对动态验收，Service 继续使用原验收机制。提供 CloudOps plan、独立评价及离线 Replay；本次实现没有开展真实模型效果实验。旧 Customer–Service 与 Examiner 协议继续保留。
+
 新增独立算法层 **Verification-Guided Adversarial Co-Evolution of Customer Exploration and Service Decision Skills**。冻结 Customer/Service 模型权重，以结构化 Skill、单次 Reflection、真实开发集验证、不可变快照和回滚实现 Customer-first / Service-second 交替更新。Usami 继续独立负责业务环境与 Oracle；所有四域依赖限制在 `integrations/usami`。H1/H2/H3 的泛化与共进化收益仍需正式实验检验。
 
 当前默认训练采用 [v3 单链递归协议](docs/vast-coevo/RECURSIVE_TRAINING.md)：每代只进行正常自主交互，再学习并保存版本；交叉比较是训练后的独立可选评估。

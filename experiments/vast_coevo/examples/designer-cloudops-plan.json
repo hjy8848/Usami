@@ -1,0 +1,174 @@
+{
+  "protocol": "designer-service-v1",
+  "strategy": "bidirectional",
+  "random_seed": 731,
+  "generations": 2,
+  "trials_per_generation": 2,
+  "designer_validation_pairs": 8,
+  "designer_model": {
+    "schema_version": 1,
+    "model": "your-openai-compatible-model",
+    "base_url": "http://127.0.0.1:4000/v1",
+    "options": {
+      "temperature": 0,
+      "max_tokens": 8192
+    },
+    "timeout_seconds": 180.0,
+    "trust_env": false
+  },
+  "customer_model": {
+    "schema_version": 1,
+    "model": "your-openai-compatible-model",
+    "base_url": "http://127.0.0.1:4000/v1",
+    "options": {
+      "temperature": 0,
+      "max_tokens": 8192
+    },
+    "timeout_seconds": 180.0,
+    "trust_env": false
+  },
+  "service_model": {
+    "schema_version": 1,
+    "model": "your-openai-compatible-model",
+    "base_url": "http://127.0.0.1:4000/v1",
+    "options": {
+      "temperature": 0,
+      "max_tokens": 8192
+    },
+    "timeout_seconds": 180.0,
+    "trust_env": false
+  },
+  "designer_reflector_model": null,
+  "service_reflector_model": null,
+  "budget": {
+    "max_customer_turns": 3,
+    "max_customer_llm_calls": 3,
+    "max_service_llm_calls": 8,
+    "max_service_tool_calls": 12,
+    "max_format_recoveries": 0
+  },
+  "max_llm_calls": 300,
+  "max_tool_calls": 500,
+  "search_policy": {
+    "version": "designer-paired-v1",
+    "min_pairs": 8,
+    "min_sources": 4,
+    "bootstrap_samples": 2000,
+    "bootstrap_seed": 731,
+    "confidence": 0.95,
+    "max_valid_rate_drop": 0.05,
+    "max_trigger_rate_drop": 0.05,
+    "max_duplicate_rate_increase": 0.05,
+    "require_token_usage": true,
+    "max_token_cost_ratio": 1.25,
+    "max_call_cost_ratio": 1.25
+  },
+  "service_policy": {
+    "customer_allow_equal": true,
+    "service_allow_equal_without_failure": true,
+    "require_known_failure_reproduction": true,
+    "require_legal_tasks": true,
+    "require_refusal_tasks": true
+  },
+  "profiles": [
+    {
+      "config_id": "dev-731",
+      "domain": "cloudops",
+      "seed": 731,
+      "identity": "u0",
+      "mode": "sandbox",
+      "split": "dev",
+      "generator": {},
+      "customer_method": "adaptive"
+    },
+    {
+      "config_id": "dev-1734",
+      "domain": "cloudops",
+      "seed": 1734,
+      "identity": "u0",
+      "mode": "sandbox",
+      "split": "dev",
+      "generator": {},
+      "customer_method": "adaptive"
+    },
+    {
+      "config_id": "fixed-dialogue",
+      "domain": "cloudops",
+      "seed": 2753,
+      "identity": "u0",
+      "mode": "sandbox",
+      "split": "dev",
+      "generator": {},
+      "fixed_task_spec": {
+        "kind": "completion",
+        "goal": {
+          "atoms": [
+            {
+              "collection": "instances",
+              "entity": "p0_db",
+              "field": "status",
+              "value": "running"
+            }
+          ],
+          "allowed_changes": {
+            "instances/p0_db": [
+              "status"
+            ]
+          }
+        },
+        "reference_code": null
+      },
+      "fixed_customer_brief": {
+        "protocol": "fixed-customer-v1",
+        "need": "Please start my project database.",
+        "constraints": [],
+        "capabilities": [
+          {
+            "name": "start_instance",
+            "project_id": "p0",
+            "resource_id": "p0_db",
+            "params": {}
+          }
+        ]
+      },
+      "customer_method": "adaptive"
+    }
+  ],
+  "tasks": [
+    {
+      "task_ref": "legal-731",
+      "config_id": "dev-731",
+      "scenario": "dependency_boot"
+    },
+    {
+      "task_ref": "refusal-731",
+      "config_id": "dev-731",
+      "scenario": "viewer_refusal"
+    },
+    {
+      "task_ref": "legal-1734",
+      "config_id": "dev-1734",
+      "scenario": "dependency_boot"
+    },
+    {
+      "task_ref": "refusal-1734",
+      "config_id": "dev-1734",
+      "scenario": "viewer_refusal"
+    }
+  ],
+  "initial_tasks": [
+    "legal-731",
+    "refusal-731",
+    "legal-1734",
+    "refusal-1734"
+  ],
+  "validation_profiles": [
+    "fixed-dialogue"
+  ],
+  "legal_tasks": [
+    "legal-731"
+  ],
+  "refusal_tasks": [
+    "refusal-1734"
+  ]
+}

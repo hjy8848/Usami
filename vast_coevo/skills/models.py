@@ -9,7 +9,7 @@ from pydantic import ConfigDict, Field, StringConstraints, field_validator, mode
 from ..schema import FrozenModel, digest
 
 
-SkillRole = Literal["customer", "service"]
+SkillRole = Literal["customer", "service", "designer"]
 NonemptyText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=4000)]
 SkillId = Annotated[str, StringConstraints(pattern=r"^[A-Za-z][A-Za-z0-9_.-]{0,127}$")]
 Hash = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
@@ -92,12 +92,21 @@ class DecisionSkill(_Skill):
     recovery: Steps
 
 
-Skill = Annotated[Union[ExplorationSkill, DecisionSkill], Field(discriminator="type")]
+class DesignerSkill(_Skill):
+    """Test selection guidance, deliberately distinct from in-world Customer skills."""
+    type: Literal["design"] = "design"
+    selection: Steps
+    transformations: Steps
+    interpretation: Steps
+    stop: Steps
+
+
+Skill = Annotated[Union[ExplorationSkill, DecisionSkill, DesignerSkill], Field(discriminator="type")]
 SkillType = Skill
 
 
-def skill_role(skill: Union[ExplorationSkill, DecisionSkill]) -> SkillRole:
-    return "customer" if isinstance(skill, ExplorationSkill) else "service"
+def skill_role(skill: Union[ExplorationSkill, DecisionSkill, DesignerSkill]) -> SkillRole:
+    return "designer" if isinstance(skill, DesignerSkill) else "customer" if isinstance(skill, ExplorationSkill) else "service"
 
 
 def _patch_schema_constraints(schema):
@@ -116,7 +125,7 @@ def _patch_schema_constraints(schema):
                 "properties": {"type": {"const": kind}},
             }}},
         }
-        for role, kind in (("customer", "exploration"), ("service", "decision"))
+        for role, kind in (("customer", "exploration"), ("service", "decision"), ("designer", "design"))
     ] + [
         {
             "if": {"properties": {"action": {"const": "REMOVE"}}, "required": ["action"]},

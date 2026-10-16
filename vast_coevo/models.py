@@ -100,7 +100,7 @@ class ReplayResult(FrozenModel):
 class ModelCall(FrozenModel):
     schema_version: Literal[1] = 1
     id: str = Field(min_length=1)
-    role: Literal["customer", "service", "customer_reflector", "service_reflector"]
+    role: Literal["customer", "service", "customer_reflector", "service_reflector", "designer", "designer_reflector"]
     model: ModelSpec
     base_request: Dict[str, JsonValue]
     request: Dict[str, JsonValue]

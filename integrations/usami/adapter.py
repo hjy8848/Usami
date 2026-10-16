@@ -475,6 +475,9 @@ class UsamiAdapter:
         if getattr(trace,"version",None)=="usami-examiner-v1":
             from .examiner import score
             metrics = score(trace)
+        if artifact.profile.fixed_customer_brief is not None:
+            from .designer.dialogue import score_execution
+            metrics = score_execution(execution, artifact.profile.fixed_task_spec)
         if artifact.profile.examiner_protocol is not None:
             from .examiner import binding
             initial=execution.world_trace.initial_state

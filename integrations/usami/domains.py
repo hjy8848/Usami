@@ -22,12 +22,23 @@ class UsamiProfile(BaseModel):
     # Optional preregistered state, never a goal/witness. Omission preserves
     # historical profile serialization and hashes.
     frozen_world: Optional[Dict[str, Any]] = Field(default=None, exclude_if=lambda value: value is None)
+    fixed_task_spec: Optional[Dict[str, Any]] = Field(default=None, exclude_if=lambda value: value is None)
+    fixed_customer_brief: Optional[Dict[str, Any]] = Field(default=None, exclude_if=lambda value: value is None)
     customer_method: Literal["adaptive", "careful"] = "adaptive"
     examiner_protocol: Optional[Literal["usami-examiner-v1"]] = Field(default=None, exclude_if=lambda value: value is None)
     read_probe_protocol: Optional[Literal["cloudops-read-probes-v1"]] = Field(default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def unconditioned(self):
+        if self.fixed_customer_brief is not None:
+            if self.domain != "cloudops" or self.examiner_protocol is not None or self.read_probe_protocol is not None:
+                raise ValueError("fixed Customer dialogue is a separate CloudOps protocol")
+            from .designer.dialogue import CustomerBrief
+            CustomerBrief.model_validate(self.fixed_customer_brief)
+            if self.fixed_task_spec is None:
+                raise ValueError("fixed Customer requires a frozen independently scored task")
+        elif self.fixed_task_spec is not None:
+            raise ValueError("fixed task scoring requires the fixed Customer protocol")
         if self.examiner_protocol is not None:
             if self.split == "heldout" or self.read_probe_protocol is not None:
                 raise ValueError("examiner construction is development-only and separate from the read-probe protocol")
@@ -208,6 +219,9 @@ def native_interaction_config(profile, config):
 
 
 def interaction_session(profile, native_config, customer, service):
+    if profile.fixed_customer_brief is not None:
+        from .designer.dialogue import FixedCustomerInteraction
+        return FixedCustomerInteraction(native_config, customer, service, profile.fixed_customer_brief)
     if profile.domain == "saas":
         from usami.interaction import InteractionSession
         return InteractionSession(native_config, customer, service)
@@ -255,6 +269,9 @@ def customer_records_of(domain, trace):
 
 def replay_native(domain, trace, track):
     import importlib
+    if getattr(trace, "version", None) == "cloudops-fixed-customer-v1":
+        # Outer adapter reconstructs the complete fixed-policy Customer and wire calls.
+        return replay_native_failure(domain, execution_of(domain, trace))
     if getattr(trace,"version",None)=="usami-examiner-v1":
         # The outer adapter replays construction, exact injected requests and
         # Service separately; this checks the unchanged Engine/Oracle trace.

@@ -201,7 +201,11 @@ class CoEvolutionController:
                 for generation in range(len(history), config.generations):
                     parent_customer, parent_service = customer, service
                     prefix = "g" + str(generation) + "." + config.run_id
-                    current = tuple(journal.run_episode(case.config, customer, service,
+                    seeds = ()
+                    if hasattr(self.adapter, "prepare_examiner_generation"):
+                        previous = tuple(self.archive.load(h) for h in history[-1].current_evidence) if history else ()
+                        seeds = self.adapter.prepare_examiner_generation(journal, config, generation, customer, service, previous, prefix)
+                    current = seeds + tuple(journal.run_episode(case.config, customer, service,
                                     prefix + ".current." + case.id) for case in config.exploration_cases)
                     self._check_main_evidence(current)
                     c_record = self.run_store.load_evolution(config.run_id, generation, "customer")

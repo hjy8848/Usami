@@ -191,6 +191,9 @@ class EpisodeEvidence(FrozenModel):
     config: EpisodeConfig
     track: Literal["discovery", "service_task", "failure_regression"] = "discovery"
     task_ref: Optional[str] = None
+    # An authoring episode starts from a template, then freezes its execution scene.
+    execution_initial_world_hash: Optional[Hash] = Field(default=None, exclude_if=lambda value: value is None)
+    execution_identity: Optional[str] = Field(default=None, exclude_if=lambda value: value is None)
     customer_snapshot_hash: Hash
     service_snapshot_hash: Hash
     model_calls: Tuple[ModelCall, ...] = ()

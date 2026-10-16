@@ -20,7 +20,15 @@ def reflection_view(evidence, trace, domain, track):
     raw = execution.model_dump(mode="json")
     prefix = "/native_trace" + ("/service_execution" if domain in {"saas", "cloudops"} else "/service") if track == "discovery" else "/native_trace"
     requests, replies = [], []
-    if domain == "saas":
+    if getattr(trace,"version",None)=="usami-examiner-v1":
+        prefix = "/native_trace/service_execution"
+        if trace.proposal is not None:
+            from .examiner import service_message
+            p=trace.proposal
+            requests.append(dict(turn_id="exam",message=service_message(p),declared_write_intents=p.capabilities,
+                accepted_write_grants=p.capabilities,authorization_source="native_session_input",
+                source_refs=("/native_trace/proposal",)))
+    elif domain == "saas":
         for index, turn in enumerate(trace.model_dump(mode="json").get("turns", []) if track == "discovery" else []):
             prepared, service = turn["prepared"], turn["service"]
             customer = prepared["customer"]
@@ -69,7 +77,7 @@ def operation_rows(domain, trace, track="discovery"):
     execution = execution_of(domain, trace, track)
     if domain != "saas":
         return [dict(row) for row in execution.oracle["operations"]]
-    if track == "discovery":
+    if track == "discovery" and getattr(trace,"version",None)!="usami-examiner-v1":
         audits = trace.operation_audits
     else:
         from usami.interaction.runner import audit_operations

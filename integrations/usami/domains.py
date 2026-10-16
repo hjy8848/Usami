@@ -23,10 +23,14 @@ class UsamiProfile(BaseModel):
     # historical profile serialization and hashes.
     frozen_world: Optional[Dict[str, Any]] = Field(default=None, exclude_if=lambda value: value is None)
     customer_method: Literal["adaptive", "careful"] = "adaptive"
+    examiner_protocol: Optional[Literal["usami-examiner-v1"]] = Field(default=None, exclude_if=lambda value: value is None)
     read_probe_protocol: Optional[Literal["cloudops-read-probes-v1"]] = Field(default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def unconditioned(self):
+        if self.examiner_protocol is not None:
+            if self.split == "heldout" or self.read_probe_protocol is not None:
+                raise ValueError("examiner construction is development-only and separate from the read-probe protocol")
         if self.read_probe_protocol is not None and self.domain != "cloudops":
             raise ValueError("read probe protocol currently supports CloudOps only")
         if self.domain != "saas" and self.generator:
@@ -34,13 +38,17 @@ class UsamiProfile(BaseModel):
         if self.generator.get("workflow") is not None:
             raise ValueError("Discovery cannot be conditioned on a fixed task or witness")
         if self.frozen_world is not None:
-            if self.domain != "cloudops":
-                raise ValueError("frozen world profiles currently support only CloudOps")
-            from usami_cloudops.models import World
-            from usami_cloudops.rules import invariants
-            world = World.model_validate(self.frozen_world)
-            if world.seed != self.seed or self.identity not in world.users or invariants(world):
-                raise ValueError("frozen CloudOps world is invalid or differs from seed/identity")
+            from .examiner import binding
+            b = binding(self.domain)
+            world = b.World.model_validate(self.frozen_world)
+            if world.seed != self.seed or self.identity not in world.users or b.invariants(world):
+                raise ValueError("frozen world is invalid or differs from seed/identity")
+            if self.domain == "saas":
+                if self.examiner_protocol is None:
+                    raise ValueError("frozen SaaS profiles require the examiner runtime; legacy Discovery uses its generator")
+                from usami.world.generator import GeneratorConfig
+                if world.rules != GeneratorConfig.model_validate(self.generator).rules:
+                    raise ValueError("frozen SaaS world differs from configured rules")
         # Validate the actual generator now, before a model can be called.
         if self.domain == "saas":
             from usami.world.generator import GeneratorConfig
@@ -71,8 +79,8 @@ def initial_world(profile):
         # Revalidate the potentially mutable mapping and return a fresh World
         # for each Session, including concurrent paired executions and Replay.
         checked = UsamiProfile.model_validate(profile.model_dump(mode="json"))
-        from usami_cloudops.models import World
-        return World.model_validate(checked.frozen_world)
+        from .examiner import binding
+        return binding(profile.domain).World.model_validate(checked.frozen_world)
     if profile.domain == "saas":
         from usami.world.generator import GeneratorConfig
         return module.generate_world(profile.seed, GeneratorConfig.model_validate(profile.generator))
@@ -167,6 +175,10 @@ def model_settings(spec):
 
 def native_interaction_config(profile, config):
     world = initial_world(profile)
+    if profile.examiner_protocol is not None:
+        from .examiner import ExamConfig
+        return ExamConfig(domain=profile.domain, template=world.model_dump(mode="json"),
+                          profile=profile.model_dump(mode="json"), episode=config.model_dump(mode="json"))
     tools = list(config.tools)
     b = config.budget
     limits = dict(max_customer_turns=b.max_customer_turns,
@@ -210,6 +222,9 @@ def interaction_session(profile, native_config, customer, service):
 
 
 def native_trace(domain, payload, track):
+    if track == "discovery" and payload.get("version") == "usami-examiner-v1":
+        from .examiner import ExamTrace
+        return ExamTrace.model_validate(payload)
     if domain == "saas":
         from usami.interaction.models import InteractionTrace
         from usami.service.runner import ServiceExecution
@@ -228,15 +243,22 @@ def native_trace(domain, payload, track):
 def execution_of(domain, trace, track="discovery"):
     if track != "discovery":
         return trace
+    if getattr(trace, "version", None) == "usami-examiner-v1":
+        from .examiner import execution_of as exam_execution
+        return exam_execution(trace)
     return trace.service_execution if domain in {"saas", "cloudops"} else trace.service
 
 
 def customer_records_of(domain, trace):
-    return trace.customer_records if domain in {"saas", "cloudops"} else trace.customer_llm_records
+    return trace.customer_records if domain in {"saas", "cloudops"} or getattr(trace,"version",None)=="usami-examiner-v1" else trace.customer_llm_records
 
 
 def replay_native(domain, trace, track):
     import importlib
+    if getattr(trace,"version",None)=="usami-examiner-v1":
+        # The outer adapter replays construction, exact injected requests and
+        # Service separately; this checks the unchanged Engine/Oracle trace.
+        return replay_native_failure(domain, execution_of(domain,trace))
     if domain == "saas":
         from usami.interaction import replay_interaction
         from usami.service import replay_execution
@@ -336,6 +358,13 @@ def task_score(domain, task, execution, budget):
 
 
 def failure_inputs(domain, original_interaction):
+    if getattr(original_interaction,"version",None)=="usami-examiner-v1":
+        execution=execution_of(domain,original_interaction)
+        if domain=="saas":
+            from .examiner import service_message
+            p=original_interaction.proposal
+            return [{"turn_id":"exam","customer":{"identity":p.identity,"message":service_message(p),"authorizations":p.capabilities},"exam_config":original_interaction.config.model_dump(mode="json"),"exam_proposal":p.model_dump(mode="json")}]
+        return execution.inputs
     """Trusted Customer declarations, not operations inferred from Service output."""
     if domain == "saas":
         return [{"turn_id": turn.prepared.turn_id,
@@ -346,6 +375,11 @@ def failure_inputs(domain, original_interaction):
 
 def run_native_failure(profile, native_config, service, inputs):
     """Re-run a frozen Customer testcase using the original persistent Service."""
+    if inputs and "exam_config" in inputs[0]:
+        from .examiner import ExamConfig, Proposal, binding, session
+        cfg=ExamConfig.model_validate(inputs[0]["exam_config"])
+        p=Proposal.model_validate(inputs[0]["exam_proposal"])
+        return session(cfg,p,binding(cfg.domain).World.model_validate(p.world),service)
     if profile.domain == "saas":
         from usami.service import ServiceSession, CustomerInput
         session = ServiceSession(native_config, service, defer_initial_turn=True)

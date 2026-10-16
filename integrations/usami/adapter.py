@@ -127,6 +127,53 @@ class UsamiAdapter:
         if any(task.config_id not in self._profiles for task in tasks):
             raise ValueError("Service task references a missing profile")
         self.client_factory = client_factory or self._default_client
+        self._examiner_history = {}
+
+    def examiner_enabled(self, config):
+        return self._profiles[config.config_id].examiner_protocol is not None
+
+    def _history_item(self, evidence):
+        evidence = EpisodeEvidence.model_validate(evidence.model_dump(mode="json"))
+        if evidence.config.partition != "development" or not evidence.replay.verified:
+            raise ValueError("examiner may learn only from verified development evidence")
+        artifact = NativeArtifact.model_validate_json(Path(evidence.trace.path).read_text())
+        if artifact.profile.split == "heldout" or not self.replay(evidence, artifact.customer_snapshot, artifact.service_snapshot).verified:
+            raise ValueError("examiner history failed independent source replay")
+        trace = native_trace(evidence.config.domain,json.loads(artifact.native_trace_json),artifact.track)
+        execution = execution_of(evidence.config.domain,trace,artifact.track)
+        return {"evidence":evidence.model_dump(mode="json"), "service_execution":execution.model_dump(mode="json"),
+                "events":[row.model_dump(mode="json") for row in evidence.events]}
+
+    def prepare_examiner_generation(self, journal, run, generation, customer, service, previous, prefix):
+        domains = {c.config.domain for c in run.exploration_cases if self.examiner_enabled(c.config)}
+        if not domains:
+            return ()
+        if run.schema_version != 3 or any(self.examiner_enabled(c.config) for c in run.validation_cases):
+            raise ValueError("examiner needs recursive v3 and frozen, non-authoring Service validation worlds")
+        seeds = ()
+        if not previous:
+            cases = tuple(c for c in run.service_task_cases if c.config.domain in domains)
+            if domains - {c.config.domain for c in cases}:
+                raise ValueError("each examiner domain needs an initial development Service task")
+            seeds = tuple(journal.run_service_task(c.config,c.task_ref,customer,service,prefix+".seed-task."+c.id) for c in cases)
+        source = seeds or previous
+        self._examiner_history = {domain:[self._history_item(row) for row in source if row.config.domain==domain][-8:] for domain in domains}
+        if any(not self._examiner_history[d] for d in domains):
+            raise ValueError("missing verified previous task trajectory for an examiner domain")
+        return seeds
+
+    def assert_frozen_service_validation(self, cases):
+        if any(self.examiner_enabled(case.config) for case in cases):
+            raise ValueError("Service validation must use frozen non-authoring profiles")
+
+    def _check_examiner_history(self, history, domain=None):
+        rebuilt=[]
+        for item in history:
+            if domain is not None and item["evidence"]["config"]["domain"] != domain:
+                raise ValueError("examiner history belongs to another domain")
+            rebuilt.append(self._history_item(EpisodeEvidence.model_validate(item["evidence"])))
+        if rebuilt != history:
+            raise ValueError("examiner history differs from verified source trajectories")
 
     @staticmethod
     def _default_client(spec, role, config, episode_id):
@@ -302,6 +349,8 @@ class UsamiAdapter:
     def run_episode(self, config, customer, service, episode_id):
         profile, _, _, _, _ = self._resolve(config)
         native_config = native_interaction_config(profile, config)
+        if profile.examiner_protocol is not None:
+            native_config.history = copy.deepcopy(self._examiner_history.get(profile.domain, []))
         return self._run(config, profile, native_config, customer, service, episode_id, "discovery")
 
     def run_service_task(self, config, task_ref, customer, service, episode_id):
@@ -355,7 +404,13 @@ class UsamiAdapter:
             if track == "discovery":
                 customer_inner = self.client_factory(config.customer_model, "customer", config, episode_id)
                 customer_client = self._runtime(customer_inner, "customer", customer, config, episode_id, journal=True)
-                trace = interaction_session(profile, native_config, customer_client, service_client).run()
+                if profile.examiner_protocol is not None:
+                    from .examiner import run_exam
+                    self._check_examiner_history(native_config.history,profile.domain)
+                    trace = run_exam(native_config,customer_client,service_client,
+                        freeze_observer=lambda payload: atomic_json(path.with_name("exam-frozen.json"),payload,immutable=True))
+                else:
+                    trace = interaction_session(profile, native_config, customer_client, service_client).run()
             elif track == "service_task":
                 trace = run_native_service(profile, native_config, service_client, message, operations)
             else:
@@ -417,6 +472,15 @@ class UsamiAdapter:
         else:
             termination = execution.status
         metrics = task_score(domain, task, execution, artifact.config.budget) if task is not None else {}
+        if getattr(trace,"version",None)=="usami-examiner-v1":
+            from .examiner import score
+            metrics = score(trace)
+        if artifact.profile.examiner_protocol is not None:
+            from .examiner import binding
+            initial=execution.world_trace.initial_state
+            initial=binding(domain).World.model_validate(initial) if isinstance(initial,dict) else initial
+            identity=execution.experiment.customer.identity if domain=="saas" else execution.experiment.identity
+            metrics.update(execution_initial_world_hash=initial.state_hash,execution_identity=identity)
         return EpisodeEvidence(episode_id=artifact.episode_id, config=artifact.config, track=track,
                                task_ref=artifact.task_profile.task_ref if artifact.task_profile else None,
                                customer_snapshot_hash=artifact.customer_snapshot.snapshot_hash,
@@ -472,7 +536,16 @@ class UsamiAdapter:
                 clients[role] = (inner, self._runtime(inner, role, snapshot, evidence.config, evidence.episode_id))
             if artifact.track == "discovery":
                 native_config = native_interaction_config(profile, evidence.config)
-                rebuilt = interaction_session(profile, native_config, clients["customer"][1], clients["service"][1]).run()
+                if profile.examiner_protocol is not None:
+                    from .examiner import run_exam
+                    self._check_examiner_history(trace.config.history,profile.domain)
+                    frozen=json.loads(Path(evidence.trace.path).with_name("exam-frozen.json").read_text())
+                    if digest(frozen)!=trace.construction_hash:
+                        raise ValueError("pre-execution frozen exam differs from construction record")
+                    native_config.history = copy.deepcopy(trace.config.history)
+                    rebuilt = run_exam(native_config,clients["customer"][1],clients["service"][1])
+                else:
+                    rebuilt = interaction_session(profile, native_config, clients["customer"][1], clients["service"][1]).run()
             elif artifact.track == "service_task":
                 native_config, message, operations = native_service_config(profile, evidence.config, world, task, generator)
                 rebuilt = run_native_service(profile, native_config, clients["service"][1], message, operations)
@@ -508,5 +581,5 @@ class UsamiAdapter:
                 raise ValueError("generic event, failure, task score or budget evidence differs from native evidence")
             reason = "Original CustomerSession and native Service/World replay verified using the recorded interruption." if interruption_bridge else ""
             return ReplayResult(verified=True, reason=reason, request_count=len(artifact.model_calls), native_trace_hash=evidence.native_trace_hash)
-        except (ValueError, TypeError, KeyError, OSError) as exc:
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as exc:
             return ReplayResult(verified=False, reason=str(exc))

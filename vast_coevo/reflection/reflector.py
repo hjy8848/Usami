@@ -193,6 +193,13 @@ class Reflector:
             "Repair verified decision failures while preserving legal completion and correct refusal. "
             "When evidence offers no justified change, emit NOOP. Never invent a verified failure."
         )
+        if self.role == "customer" and value.interaction_views and any(
+                isinstance(context, dict) and context.get("examiner_protocol") == "usami-examiner-v1"
+                for view in value.interaction_views for context in view.customer_visible_context):
+            objective += (" In examiner episodes, Customer globally constructs scenes before execution. "
+                          "Learn reusable scene-construction and test-design strategies under fixed native invariants, "
+                          "then freeze the world, execution identity, goal and exact capabilities. "
+                          "Construction authority never changes Service permissions or the Oracle.")
         instruction = (
             "You are the " + self.role + " Skill Reflector. Frozen weights; one Reflection and one Patch only. "
             + objective + " Return exactly one ADD, UPDATE, REMOVE or NOOP patch via submit_skill_patch. "

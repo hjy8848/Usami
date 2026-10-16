@@ -131,6 +131,8 @@ class DynamicGate:
                                          "customer_quality": quality})
 
     def service(self, customer, parent, candidate, discovery_cases, task_cases, failures, prefix):
+        if hasattr(self.adapter, "assert_frozen_service_validation"):
+            self.adapter.assert_frozen_service_validation(tuple(discovery_cases) + tuple(task_cases))
         baseline, proposed = [], []
         failure_sources = [row for row in failures if row.failures]
         if any(row.config.partition != "development" for row in failure_sources):

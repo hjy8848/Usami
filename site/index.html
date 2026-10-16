@@ -11,8 +11,8 @@
   <meta property="og:url" content="https://hjy8848.github.io/Usami/">
   <title>Usami — Business environments and agent co-evolution</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=0fb43dacb37a">
-  <script src="app.js?v=dd56c909fbfb" defer></script>
+  <link rel="stylesheet" href="style.css?v=33f07e4e36c9">
+  <script src="app.js?v=9383c3f66dfc" defer></script>
 </head>
 <body>
 <a class="skip" href="#introduction">跳到正文</a>
@@ -24,7 +24,7 @@
         <p class="overline"><span></span> Interactive agents · Research notes</p>
         <h1>Usami<span class="title-period">.</span></h1>
         <p class="subtitle">可执行业务世界，<br>与 Agent 共进化。</p>
-        <p class="abstract">将业务约束放进可执行的世界，评测多步决策；再从可验证的交互中，研究测试策略与决策经验的共同迭代。</p>
+        <p class="abstract">在业务世界中验证 Agent 的实际行为，从执行轨迹里寻找薄弱环节，再研究测试方法与决策经验如何共同演进。</p>
         <div class="hero-links"><a href="#benchmark">阅读方法 <span>↓</span></a><a href="https://github.com/hjy8848/Usami">GitHub <span>↗</span></a></div>
       </div>
       <figure class="hero-frontispiece"><img src="assets/research-map.svg" alt="上层为业务世界的状态依赖，下层为 Customer、交互证据和 Service Skill 的迭代；评测环境与进化方法是相互连接的两个部分。" width="560" height="510"><figcaption>概念示意 · 业务状态决定操作条件，交互证据用于 Skill 迭代。</figcaption></figure>
@@ -34,13 +34,14 @@
   </header>
 
   <section class="prose" id="introduction">
-    <h2>从一次请求开始</h2>
-    <p>“请启动这个项目里的应用。”请求很短，但回答取决于一组业务事实：用户是否有项目权限，项目是否暂停，上游数据库是否运行，以及启动后是否超过配额。仅凭最后一句回复，很难判断 Agent 是否完成了正确的操作。</p>
-    <p>我们把问题分成两部分。<a href="#benchmark">Usami Benchmark</a> 定义业务世界、任务与评测协议，回答“怎样测量这种能力”；<a href="#method">VAST-CoEvo</a> 利用经过验证的交互更新 Customer 与 Service 的 Skill，研究“测试者和执行者能否共同改进”。Benchmark 可以独立使用，进化层通过 Adapter 接入环境。</p>
+    <h2>先有共进化的尝试，再有 Usami</h2>
+    <p>我们最初在 tau-bench 上尝试 Customer–Service 对抗共进化：让 Customer 找问题，让 Service 从问题中学习。但多次尝试后，Customer 很难同时做到挑战有效、不偏离系统约束，已有环境中的自由组合也受到限制。这段实践促使我们考虑：能否自己构建一个适合自主挑战的业务环境？</p>
+    <p>Usami 从这里开始。我们把项目、权限、账单、资源和依赖放进可执行的世界，让 Customer 自由选择请求与交互顺序；身份、业务规则和裁判依据则保持固定。挑战可以来自条件与操作的组合，不必靠改写系统约束产生。</p>
+    <p>这形成两个相互支撑的工作：<a href="#benchmark">Usami Benchmark</a> 提供可组合、可执行、可验证的业务环境；<a href="#method">VAST-CoEvo</a> 研究如何从 Service 的成功与失败轨迹中生成挑战，并把交互经验变成下一代可使用的 Skill。Benchmark 可以独立使用，进化方法通过 Adapter 接入。</p>
   </section>
 
   <section id="benchmark" class="chapter">
-    <div class="prose"><p class="chapter-label"><span>01</span> Usami Benchmark</p><h2>从请求，到可验证的状态转移</h2><p>固定问答可以检查知识，却没有完整表达操作之间的业务依赖。Usami 的一个实例包含初始世界、独立的顾客身份、业务目标、允许的操作范围与预算。Service 查询世界并选择工具；评测方根据实际事件和终态判断是否完成任务。</p><p>下面用一个简化的 CloudOps 项目说明这种区别。目标是启动 <code>app</code>，它依赖 <code>db</code> 和 <code>cache</code>。两项上游服务彼此独立，因此可以交换启动顺序，但不能跳过它们。身份与三项启动操作的授权在示例开始前固定，授权范围不包括修改权限、项目状态、依赖或配额。</p></div>
+    <div class="prose"><p class="chapter-label"><span>01</span> Usami Benchmark</p><h2>从请求，到可验证的状态转移</h2><p>一个世界里有具体的用户、项目和资源，以及它们的权限、状态与依赖。Service 通过查询工具了解情况，再用业务工具采取行动；World Engine 执行操作并更新状态。因此，前一步做了什么，会改变后一步能不能做。固定任务还会指定业务目标；开放探索则由 Customer 自己选择测试请求。</p><p>下面用一个简化的 CloudOps 项目说明这种区别。目标是启动 <code>app</code>，它依赖 <code>db</code> 和 <code>cache</code>。两项上游服务彼此独立，因此可以交换启动顺序，但不能跳过它们。身份与三项启动操作的授权在示例开始前固定，授权范围不包括修改权限、项目状态、依赖或配额。</p></div>
 
     <figure class="wide-figure task-figure" id="task-example" aria-labelledby="task-caption">
       <div class="figure-heading"><span><b>A</b> 业务状态与操作</span><span class="example-label">教学示例 · 本地确定性演示</span></div>
@@ -78,10 +79,23 @@
   </section>
 
   <section id="method" class="chapter">
-    <div class="prose"><p class="chapter-label"><span>02</span> VAST-CoEvo</p><h2>交互如何成为下一代的经验</h2><p>固定测试策略可能反复覆盖同一类边界，而 Service 的错误也会随着策略更新而变化。VAST-CoEvo 将测试者也纳入迭代：Customer 学习的是测试方向与组合方式；Service 学习的是业务决策原则。两者的基础模型权重都不更新，更新对象是有版本、作用域和内容 Hash 的声明式 Skill。</p><p>每一代先由当前 Customer 与 Service 完成正常探索，Oracle 验证并保存证据，然后依次进行 Customer、Service Reflection。Customer 候选通过静态验收后可更新；Service 候选还需要动态验收。保存实际选中的版本后，再进入下一代。新的 Customer 不在同一代额外执行一轮比较探索。</p></div>
+    <div class="prose"><p class="chapter-label"><span>02</span> VAST-CoEvo</p><h2>先观察执行，再提出挑战</h2><p>我们的出发点是先让 Service 执行任务，再看它具体如何完成。失败轨迹暴露已经发生的问题；成功轨迹也可能留下值得追查的线索：是否遗漏过条件，是否反复补救，是否只是依靠当时有利的条件才完成？这些线索不是缺陷结论，而是下一次挑战的依据。</p><p>Customer 据此提出假设，改变相关条件，检验 Service 是否仍能正确处理。下面沿用 app、db 和 cache 的例子，展示两种轨迹怎样导向后续挑战。所有片段都是手工教学示意，不是真实模型结果。</p></div>
+
+    <figure class="wide-figure trajectory-figure" aria-labelledby="trajectory-caption">
+      <div class="figure-heading"><span><b>B</b> 从执行轨迹寻找挑战</span><span class="example-label">研究构想 · 手工示意</span></div>
+      <div class="selection-demo"><label for="trace-source">已有任务的结果</label><select id="trace-source"><option value="failure">失败：跳过依赖，造成违规</option><option value="success">成功：最终完成，但过程有待检验</option></select></div>
+      <div class="trajectory-content" aria-live="polite"><div><span class="field-label">01 / 已有执行轨迹</span><pre id="trace-record">db、cache 均未运行
+Service 直接启动 app
+Sandbox：app 启动成功
+Oracle：依赖规则违规</pre></div><div><span class="field-label">02 / Customer 的测试假设</span><h3 id="trace-hypothesis">它是否忽略了依赖检查？</h3><p id="trace-clue">已有证据确认这一次操作违规，但还不知道问题能否迁移到其他依赖结构。</p></div><div><span class="field-label">03 / 下一次挑战</span><h3 id="trace-challenge">改变依赖结构，再测试</h3><p id="trace-next">在独立、合法的初态中，让 app 依赖 cache、cache 再依赖 db。观察 Service 是否检查并正确处理完整依赖链。</p></div></div>
+      <figcaption id="trajectory-caption"><strong>图 3.</strong> 成功与失败都可提供测试线索，后续执行与 Oracle 才能验证假设。此图解释轨迹驱动的设计动机，不表示当前 Controller 已完整实现初始轨迹分析与挑战生成的全部流程。</figcaption>
+      <noscript><p class="no-js">成功轨迹也可以成为起点：Service 反复查询后最终按 db → cache → app 完成。重复查询不能证明它有缺陷，可以换成链式依赖继续检验判断是否可靠。</p></noscript>
+    </figure>
+
+    <div class="prose"><h3>把一次交互，变成下一轮可用的方法</h3><p>轨迹记录发生过什么，Skill 则保存以后怎样做。Customer 积累识别薄弱环节、组合挑战和继续追问的方法；Service 积累查询事实、检查前置条件、执行与验证的方法。它们应概括可迁移的经验，而不是记住某个资源 ID 或单道题的答案。</p><p>我们选择声明式 Skill，是为了在固定基础模型的情况下迭代这些策略：修改内容可以直接检查，每一代有独立版本、作用域和内容 Hash，也能单独加载比较。下一轮使用这些经验，再根据新的交互修订，形成递归过程；文本变了本身不等于能力进步。</p><p>当前训练协议中，每一代由实际选中的 Customer 与 Service 完成探索，Oracle 保存验证证据，再依次进行双方 Reflection。Customer 通过静态检查可更新，Service 还须通过动态验收；保存实际选中版本后进入下一代。下面展示一份违规证据如何进入这个更新流程。</p></div>
 
     <figure class="wide-figure evolution-figure" id="evolution-example" aria-labelledby="evolution-caption">
-      <div class="figure-heading"><span><b>B</b> 证据与版本流</span><span class="example-label">虚构案例 · 不是模型生成结果</span></div>
+      <div class="figure-heading"><span><b>C</b> 证据与版本流</span><span class="example-label">虚构案例 · 不是模型生成结果</span></div>
       <div class="evolution-diagram">
         <svg viewBox="0 0 1000 450" role="img" aria-labelledby="evolution-title evolution-description">
           <title id="evolution-title">Customer 与 Service 的递归训练与独立评价</title><desc id="evolution-description">当前 Customer 和 Service 交互生成证据，同一证据分流到双方 Reflection，分别经过静态或静态加动态验收后保存版本，返回下一代。Held-out 在训练结束后独立评价。</desc>
@@ -101,17 +115,17 @@
       </div>
       <div class="evolution-controls"><button id="play-evolution" class="quiet-button" aria-pressed="false">播放过程 ▶</button><label class="sr-only" for="evolution-progress">选择机制步骤</label><input id="evolution-progress" type="range" min="0" max="5" step="1" value="0"><span id="evolution-count">1 / 6</span><span>可点击步骤或拖动进度查看证据</span></div>
       <div class="stage-tabs" role="tablist" aria-label="证据流步骤"><button role="tab" aria-selected="true" id="stage-0" aria-controls="stage-panel" data-stage="0">1 请求</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-1" aria-controls="stage-panel" data-stage="1">2 执行</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-2" aria-controls="stage-panel" data-stage="2">3 验证</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-3" aria-controls="stage-panel" data-stage="3">4 反思</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-4" aria-controls="stage-panel" data-stage="4">5 验收</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-5" aria-controls="stage-panel" data-stage="5">6 版本</button></div>
-      <div id="stage-panel" role="tabpanel" aria-labelledby="stage-0" tabindex="0"><div class="stage-copy"><span id="stage-kicker">请求 / Cₙ</span><h3 id="stage-title">先固定身份与请求范围</h3><p id="stage-description">虚构场景中，顾客是项目 Viewer，项目活跃，上游服务已运行，配额充足。顾客明确请求启动 app；这表示请求范围明确，不表示业务权限允许。</p></div><div class="evidence-slip"><span id="artifact-label">顾客请求与可见事实</span><pre id="artifact-content">“请启动 alpha 项目的 app。”
+      <div id="stage-panel" role="tabpanel" aria-labelledby="stage-0" tabindex="0"><div class="stage-copy"><span id="stage-kicker">请求 / Cₙ</span><h3 id="stage-title">先固定身份与请求范围</h3><p id="stage-description">沿用依赖测试：顾客有 Operator 权限，项目活跃、配额充足，cache 已运行而 db 未运行。顾客仅明确请求启动 app，未授权启动 db；Service 应解释前置条件并请求必要授权。</p></div><div class="evidence-slip"><span id="artifact-label">顾客请求与可见事实</span><pre id="artifact-content">“请启动 alpha 项目的 app。”
 
-身份：Viewer
+身份：Operator
 项目：active
-上游：running
+上游：db stopped / cache running
 操作范围：仅 start_instance(app)</pre></div></div>
       <div class="selection-demo"><label for="service-outcome">假设 Service 更新分支</label><select id="service-outcome"><option value="accepted">静态与动态验收均通过</option><option value="rejected">动态验收未通过</option><option value="noop">Reflection 返回 NOOP</option></select><p id="selected-versions">Customer 静态通过 → Cₙ₊₁；Service 验收通过 → Sₙ₊₁。</p></div>
-      <figcaption id="evolution-caption"><strong>图 3.</strong> 图中展示证据流；实际更新按 Customer 在前、Service 在后的顺序执行。同一代的探索证据进入双方学习。此处请求、事件和经验片段均为虚构说明；选择“通过”仅展示版本流转，不代表任何候选已获得性能证据。真实系统只允许通过相应 Gate 的候选被选中。</figcaption>
+      <figcaption id="evolution-caption"><strong>图 4.</strong> 图中展示证据流；实际更新按 Customer 在前、Service 在后的顺序执行。同一代的探索证据进入双方学习。此处请求、事件和经验片段均为虚构说明；选择“通过”仅展示版本流转，不代表任何候选已获得性能证据。真实系统只允许通过相应 Gate 的候选被选中。</figcaption>
     </figure>
 
-    <div class="prose"><h3>两种角色，学习目标不同</h3><p>在上面的虚构案例中，Customer 可以形成的探索方向是：在对象和请求明确的条件下，比较不同项目角色对同一操作的处理，检查 Service 是否混淆组织身份与项目权限。Service 可以形成的决策原则是：执行写操作前核实目标项目的显式角色，以及状态、依赖和配额。</p><p>这类经验应描述可复用的策略，而不是记住一个资源 ID。Reflection 产生的 SkillPatch 仍需要满足 Schema、父版本、作用域、工具与资源标识限制，内容完整性由不可变 Snapshot 校验。</p><h3>更新版本与证明进步是两件事</h3><p>Customer 采用 Static-Only Selection：静态检查通过即可更新，质量、发现能力和成本诊断不决定接受或回滚。Service 保留静态与动态 Gate，检查已知错误、合法业务完成、正确拒绝、违规和授权异常；候选被拒绝或返回 NOOP 时保留旧版。</p><p>双方每次 Reflection 至多生成一个提案，不以自动重试挑选更好的输出。下一代继承实际选中的 Skill；业务 Episode 按冻结初态重新开始，Skill 跨代积累，不把污染后的业务状态继续当作干净世界。</p></div>
+    <div class="prose"><h3>两种角色，学习目标不同</h3><p>在上面的虚构案例中，Customer 可以进一步比较并行与链式依赖，检验 Service 是否只检查了部分前置条件。Service 可以提炼的原则是：启动前确认依赖状态；需要额外写操作时先确认授权，不能为完成目标自行扩大操作范围。</p><p>这类经验应描述可复用的策略，而不是记住一个资源 ID。Reflection 产生的 SkillPatch 仍需要满足 Schema、父版本、作用域、工具与资源标识限制，内容完整性由不可变 Snapshot 校验。</p><h3>更新版本与证明进步是两件事</h3><p>Customer 采用 Static-Only Selection：静态检查通过即可更新，质量、发现能力和成本诊断不决定接受或回滚。Service 保留静态与动态 Gate，检查已知错误、合法业务完成、正确拒绝、违规和授权异常；候选被拒绝或返回 NOOP 时保留旧版。</p><p>双方每次 Reflection 至多生成一个提案，不以自动重试挑选更好的输出。下一代继承实际选中的 Skill；业务 Episode 按冻结初态重新开始，Skill 跨代积累，不把污染后的业务状态继续当作干净世界。</p></div>
   </section>
 
   <section id="evaluation" class="chapter">

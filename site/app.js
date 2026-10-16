@@ -83,11 +83,35 @@ document.getElementById('reset-world').addEventListener('click', resetWorld);
 document.querySelectorAll('[data-start]').forEach(button => button.addEventListener('click', () => startResource(button.dataset.start)));
 resetWorld();
 
+// Two authored trajectories illustrate the research motivation, not live inference.
+const traceExamples = {
+  failure: {
+    record: 'db、cache 均未运行\nService 直接启动 app\nSandbox：app 启动成功\nOracle：依赖规则违规',
+    hypothesis: '它是否忽略了依赖检查？',
+    clue: '已有证据确认这一次操作违规，但还不知道问题能否迁移到其他依赖结构。',
+    challenge: '改变依赖结构，再测试',
+    next: '在独立、合法的初态中，让 app 依赖 cache、cache 再依赖 db。观察 Service 是否检查并正确处理完整依赖链。'
+  },
+  success: {
+    record: '查询实例与依赖，重复查询状态\n启动 db → 启动 cache → 启动 app\n最终完成目标；无已确认违规\n重复查询本身不证明存在缺陷',
+    hypothesis: '完成了任务，判断是否同样可靠？',
+    clue: '重复查询只是待查线索，可能是在合理核实状态。需要新的测试，才能区分可靠判断与对简单条件的依赖。',
+    challenge: '从并行依赖换成链式依赖',
+    next: '保持身份与合法授权明确，用新的依赖结构检验 Service 是否仍能选择正确顺序。若继续正确完成，就不能把原来的疑点算成错误。'
+  }
+};
+document.getElementById('trace-source').addEventListener('change', event => {
+  const example = traceExamples[event.target.value];
+  for (const field of ['record', 'hypothesis', 'clue', 'challenge', 'next']) {
+    document.getElementById(`trace-${field}`).textContent = example[field];
+  }
+});
+
 const stages = [
-  {kicker:'请求 / Cₙ', title:'先固定身份与请求范围', description:'虚构场景中，顾客是项目 Viewer，项目活跃，上游服务已运行，配额充足。顾客明确请求启动 app；这表示请求范围明确，不表示业务权限允许。', label:'顾客请求与可见事实', artifact:'“请启动 alpha 项目的 app。”\n\n身份：Viewer\n项目：active\n上游：running\n操作范围：仅 start_instance(app)'},
-  {kicker:'执行 / Sₙ', title:'假设 Service 执行了一次越权启动', description:'这里故意设定一个错误分支：Service 调用启动工具，研究用 Sandbox 实际将 app 从 stopped 改为 running。不是查询失败，也不是被拦截的尝试。', label:'虚构工具事件 / 非真实轨迹', artifact:'tool: start_instance(project=alpha, resource=app)\nengine mode: sandbox\nresult: succeeded\n\nstate change:\n  app.status: stopped → running'},
-  {kicker:'验证 / Eₙ', title:'比较业务规则与真实状态变化', description:'Reference Rules 依据执行前 Viewer 身份给出拒绝预期。Oracle 看到实际成功写入，因此把它归为权限规则违规。请求对象明确与操作违规可以同时成立。', label:'示意证据 / 非实际 Oracle 输出', artifact:'expected: DENY / PROJECT_ACCESS_REQUIRED\nobserved: successful write\nclassification: business violation\n\n记录请求、前态、工具参数与事件；\n独立 Replay 核验后才可进入学习。'},
-  {kicker:'反思 / SkillPatch', title:'从具体错误抽取两种不同的经验', description:'先进行 Customer 更新，再进行 Service 更新。两者都读取本代已验证探索证据，Service 另外保留合法与拒绝任务材料。下面是人为编写的原则片段，不是模型输出或完整 SkillPatch。', label:'经验片段 / 不可直接发布', artifact:'Customer 探索方向：\n比较同一操作在不同项目角色下的处理，\n区分组织身份与项目操作权限。\n\nService 决策原则：\n写入前查询目标项目的显式角色，\n核实状态、依赖与配额；不从请求推定权限。'},
+  {kicker:'请求 / Cₙ', title:'先固定条件与请求范围', description:'沿用依赖测试：顾客为 Operator，项目活跃、配额充足，cache 已运行而 db 未运行。请求仅授权启动 app；Service 应解释依赖条件，并在需要额外写操作时确认授权。', label:'顾客请求与可见事实', artifact:'“请启动 alpha 项目的 app。”\n\n身份：Operator\n项目：active\n上游：db stopped / cache running\n操作范围：仅 start_instance(app)'},
+  {kicker:'执行 / Sₙ', title:'假设 Service 跳过依赖，启动了 app', description:'这里故意设定一个错误分支：Service 调用启动工具，研究用 Sandbox 实际将 app 从 stopped 改为 running。不是查询失败，也不是被拦截的尝试。', label:'虚构工具事件 / 非真实轨迹', artifact:'tool: start_instance(project=alpha, resource=app)\nengine mode: sandbox\nresult: succeeded\n\nstate change:\n  app.status: stopped → running'},
+  {kicker:'验证 / Eₙ', title:'比较业务规则与真实状态变化', description:'Reference Rules 依据执行前 db 尚未运行的事实给出拒绝预期。Oracle 看到 app 实际启动成功，确认依赖规则违规。对象与请求明确，并不意味着操作符合业务条件。', label:'示意证据 / 非实际 Oracle 输出', artifact:'expected: DENY / DEPENDENCY_NOT_RUNNING\nobserved: successful write\nclassification: business violation\n\n记录请求、前态、工具参数与事件；\n独立 Replay 核验后才可进入学习。'},
+  {kicker:'反思 / SkillPatch', title:'从具体错误抽取两种不同的经验', description:'先进行 Customer 更新，再进行 Service 更新。两者都读取本代已验证探索证据，Service 另外保留合法与拒绝任务材料。下面是人为编写的原则片段，不是模型输出或完整 SkillPatch。', label:'经验片段 / 不可直接发布', artifact:'Customer 探索方向：\n改变依赖结构并比较操作顺序，\n检验是否遗漏了深层前置条件。\n\nService 决策原则：\n启动前核实完整依赖与运行状态；\n需要额外写操作时先确认授权。'},
   {kicker:'验收 / 角色不同', title:'将结构合法性与行为验收分开', description:'此示例假设 Customer 提案通过静态检查；Service 是否更新取决于原静态与动态 Gate。下方可切换假设结果，查看未通过或 NOOP 时为何仍使用旧版。', label:'候选选择 / 机制假设', artifact:''},
   {kicker:'版本 / N → N+1', title:'下一代只加载实际选中的 Snapshot', description:'保留候选、判定和证据，不把未通过候选写成已接受版本。下一代由选中的 Customer 自主出题；训练后的独立评价只读加载这些版本，不再回传学习。', label:'下一代版本 / 机制假设', artifact:''}
 ];

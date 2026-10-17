@@ -40,7 +40,7 @@ class Discovery(FrozenModel):
     root_key: Optional[Hash] = None
     root_state: Literal['none', 'candidate', 'confirmed'] = 'none'
     root_reason: str = ''
-    attribution_version: Optional[Literal['decision-contract-v2']] = Field(default=None, exclude_if=lambda v: v is None)
+    attribution_version: Optional[Literal['decision-contract-v2','frozen-task-attribution-v1']] = Field(default=None, exclude_if=lambda v: v is None)
     failure_kind: Optional[Literal['erroneous_execution', 'false_rejection', 'scope_violation', 'task_incomplete']] = Field(default=None, exclude_if=lambda v: v is None)
     scope_violations: Optional[int] = Field(default=None, ge=0, exclude_if=lambda v: v is None)
     contract: Optional[dict] = Field(default=None, exclude_if=lambda v: v is None)

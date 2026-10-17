@@ -59,6 +59,7 @@ def boundary_contrast(scene, service_hash, records, contexts, contract):
 
 
 def anchor_contract(anchor):
+    if anchor.facts.get('task_decisions'):return {'kind':'false_rejection','code':'FALSE_REJECTION'}
     expected = anchor.facts['expected']
     for raw in anchor.facts['events']:
         from vast_coevo.models import VerifiedEvent

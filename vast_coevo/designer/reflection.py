@@ -60,12 +60,12 @@ def _patch_arguments(response):
     return data
 
 
-def reflect(client, model, library, feedback, prefix):
+def reflect(client, model, library, feedback, prefix, objective=OBJECTIVE):
     schema=SkillPatch.model_json_schema();schema['properties']['role']['const']='designer'
     for name in ('DesignerSkill',):
         schema['$defs'][name]['required']=[k for k in schema['$defs'][name]['required'] if k!='scope']
     scope=schema['$defs']['Scope'];scope['required']=[k for k in scope.get('required',[]) if k!='domains']
-    request={**model.options,'model':model.model,'messages':[{'role':'system','content':OBJECTIVE},
+    request={**model.options,'model':model.model,'messages':[{'role':'system','content':objective},
              {'role':'user','content':json.dumps({'library':library.model_dump(mode='json'),'verified_feedback':feedback},ensure_ascii=False,sort_keys=True)}],
              'tools':[{'type':'function','function':{'name':'submit_designer_patch','description':'One Designer Skill update.', 'parameters':schema}}],
              'tool_choice':'auto','n':1,'stream':False}

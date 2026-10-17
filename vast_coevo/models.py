@@ -185,6 +185,18 @@ class VerifiedFailure(FrozenModel):
         return self
 
 
+class TaskDecision(FrozenModel):
+    """Task-level decision proof, deliberately not an Engine operation event."""
+    protocol: Literal['frozen-task-decision-v1']='frozen-task-decision-v1'
+    kind: Literal['false_rejection']='false_rejection'
+    operation: Dict[str, JsonValue]
+    before_hash: Hash
+    claimed_code: str
+    model_call_id: str
+    response_hash: Hash
+    turn_id: str
+
+
 class EpisodeEvidence(FrozenModel):
     schema_version: Literal[1] = 1
     episode_id: str
@@ -200,6 +212,7 @@ class EpisodeEvidence(FrozenModel):
     injections: Tuple[InjectionRecord, ...] = ()
     events: Tuple[VerifiedEvent, ...] = ()
     failures: Tuple[VerifiedFailure, ...] = ()
+    task_decisions: Optional[Tuple[TaskDecision,...]] = Field(default=None, exclude_if=lambda v: v is None)
     consumption: Consumption
     termination: str
     trace: ArtifactRef

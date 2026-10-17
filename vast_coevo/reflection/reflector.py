@@ -151,6 +151,8 @@ class Reflector:
                                     legal_task_success=e.legal_task_success, correct_refusal=e.correct_refusal,
                                     messages=[dict(role=c.role, request_messages=c.base_request.get("messages", []),
                                                    response=c.response, error=c.error) for c in e.model_calls]) for e in value.evidence]
+        for row,e in zip(payload['evidence'],value.evidence):
+            if e.task_decisions is not None:row['task_decisions']=[d.model_dump(mode='json') for d in e.task_decisions]
         if self.role == "customer":
             views = value.interaction_views if value.interaction_views is not None else tuple(wire_view(row) for row in value.evidence)
             record_fields.update(customer_goal_version="service-examination-v1", prepared_interaction_views=views,

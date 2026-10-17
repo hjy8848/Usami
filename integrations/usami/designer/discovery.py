@@ -132,5 +132,5 @@ class DiscoveryBank:
         return row
 
     def fork(self, root):
-        bank=DiscoveryBank(root); bank.anchors=dict(self.anchors); bank.records=list(self.records); bank.contexts=dict(self.contexts)
+        bank=type(self)(root); bank.anchors=dict(self.anchors); bank.records=list(self.records); bank.contexts=dict(self.contexts)
         return bank

@@ -13,7 +13,7 @@ from vast_coevo.skills.models import SkillPatch
 from vast_coevo.skills.validation import StaticSkillGate
 from vast_coevo.designer.models import Ablation, SearchPolicy
 from vast_coevo.designer.evaluation import compare, summarize
-from vast_coevo.designer.reflection import reflect
+from vast_coevo.designer.reflection import reflect, OBJECTIVE
 from vast_coevo.evolution.models import ValidationCase, GatePolicy
 from vast_coevo.evolution.evolvers import ServiceEvolver
 from vast_coevo.reflection.reflector import ServiceReflector
@@ -121,8 +121,14 @@ def feedback_for(backend, training):
 
 
 class DesignerServiceController:
+    backend_type=SearchBackend
+    bank_type=DiscoveryBank
+    reflector_objective=OBJECTIVE
+    def prepare_run(self):pass
+    def group_for(self,anchor):return source_group(anchor)
+    def static_inputs(self):return static_context(self.bank.anchors.values())
     def __init__(self, root, plan, designer, customer, service, factory):
-        self.root=Path(root);self.plan=DesignerPlan.model_validate(plan.model_dump(mode='json'))
+        self.root=Path(root);self.plan=type(plan).model_validate(plan.model_dump(mode='json'))
         self.designer=LibrarySnapshot.model_validate(designer.model_dump(mode='json'))
         self.customer=LibrarySnapshot.model_validate(customer.model_dump(mode='json'))
         self.service=LibrarySnapshot.model_validate(service.model_dump(mode='json'))
@@ -133,9 +139,9 @@ class DesignerServiceController:
         raw=UsamiAdapter(self.root/'native',plan.profiles,plan.tasks,
             lambda spec,role,config,episode_id:self.ledger.client(spec,role,episode_id))
         self.adapter=MeteredAdapter(raw,self.ledger,self.archive)
-        self.backend=SearchBackend(self.root,self.adapter,self.customer,plan.customer_model,plan.service_model,plan.designer_model,
+        self.backend=self.backend_type(self.root,self.adapter,self.customer,plan.customer_model,plan.service_model,plan.designer_model,
             plan.budget,self.ledger.client,self.ledger)
-        self.bank=DiscoveryBank(self.root/'memory');self.history=[]
+        self.bank=self.bank_type(self.root/'memory');self.history=[]
 
     def task_case(self, ref, purpose=None):
         task=self.adapter._tasks[ref]
@@ -153,11 +159,11 @@ class DesignerServiceController:
             return {'outcome':'fixed','parent_hash':parent.snapshot_hash,'selected_hash':parent.snapshot_hash,'reflection':None}
         feedback=feedback_for(self.backend,training)
         model=self.plan.designer_reflector_model or self.plan.designer_model
-        reflection=reflect(self.ledger.client(model,'designer_reflector',prefix+'.designer-reflection'),model,parent,feedback,prefix)
+        reflection=reflect(self.ledger.client(model,'designer_reflector',prefix+'.designer-reflection'),model,parent,feedback,prefix,objective=self.reflector_objective)
         record={'parent_hash':parent.snapshot_hash,'selected_hash':parent.snapshot_hash,'reflection':reflection,'outcome':'rejected'}
         if reflection['error'] or reflection['patch'] is None:return record
         patch=SkillPatch.model_validate(reflection['patch'])
-        context=static_context(self.bank.anchors.values())
+        context=self.static_inputs()
         record['static_context']=context
         atomic_json(self.root/f'{prefix}.designer-static.json',context,immutable=True)
         static=StaticSkillGate(allowed_tools=context['allowed_tools'],allowed_domains=context['allowed_domains'],forbidden_identifiers=context['forbidden_identifiers']).validate(parent,patch)
@@ -173,7 +179,7 @@ class DesignerServiceController:
         new_bank=self.bank.fork(self.root/'validation'/prefix/'candidate-memory')
         old=[];new=[];groups=[]
         for index in range(self.plan.designer_validation_pairs if anchors else 0):
-            anchor=anchors[index%len(anchors)];groups.append(source_group(anchor))
+            anchor=anchors[index%len(anchors)];groups.append(self.group_for(anchor))
             for label,snapshot,bank,rows in [('parent',parent,old_bank,old),('candidate',candidate,new_bank,new)]:
                 rows.append(self.backend.trial(snapshot,self.service,[anchor],bank,f'{prefix}.designer-gate.{label}.{index}',
                                                 self.plan.strategy,self.plan.random_seed+index))
@@ -203,6 +209,7 @@ class DesignerServiceController:
         for snapshot in initial.values():self.store.save(snapshot)
         status='completed';error=None
         try:
+            self.prepare_run()
             for ref in self.plan.initial_tasks:
                 case=self.task_case(ref)
                 evidence=self.adapter.run_service_task(case.config,ref,self.customer,self.service,'seed.'+ref)

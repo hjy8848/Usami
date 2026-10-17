@@ -18,7 +18,14 @@ def native_factory(model, role, phase):
 
 
 def replay_run(root):
-    root=Path(root);manifest=json.loads((root/'manifest.json').read_text());plan=DesignerPlan.model_validate(manifest['plan'])
+    root=Path(root);manifest=json.loads((root/'manifest.json').read_text())
+    frozen=manifest['plan']['protocol']=='frozen-task-discovery-v1'
+    if frozen:
+        from integrations.usami.frozen.controller import FrozenPlan,preparation
+        from integrations.usami.frozen.pool import WorldPool
+        from integrations.usami.frozen.backend import FrozenSearchBackend
+        from integrations.usami.frozen.composer import FrozenTask
+    plan=(FrozenPlan if frozen else DesignerPlan).model_validate(manifest['plan'])
     if manifest['source_pins']!=source_hashes():raise ValueError('original source snapshot required')
     artifacts=[NativeArtifact.model_validate_json(p.read_text()) for p in (root/'native'/'episodes').glob('*/native.json')]
     profiles={p.config_id:p for p in plan.profiles}
@@ -27,7 +34,11 @@ def replay_run(root):
     store=LibraryStore(root/'libraries');initial=manifest['initial']
     customer=LibrarySnapshot.model_validate(initial['customer'])
     ledger=Ledger(root/'offline',plan.max_llm_calls,plan.max_tool_calls,lambda *_: (_ for _ in ()).throw(ValueError('Replay must not call a model')))
-    backend=SearchBackend(root,adapter,customer,plan.customer_model,plan.service_model,plan.designer_model,plan.budget,ledger.client,ledger)
+    backend=(FrozenSearchBackend if frozen else SearchBackend)(root,adapter,customer,plan.customer_model,plan.service_model,plan.designer_model,plan.budget,ledger.client,ledger)
+    if frozen:
+        pool=WorldPool(plan.world_specs);data=preparation(plan.world_specs,plan.budget);pool.verify_saved(root)
+        if json.loads((root/'world-pool-audit.json').read_text())!=data['audit']:raise ValueError('world pool coverage audit differs')
+        backend.configure(pool,[FrozenTask.model_validate(s).checked() for s in data['catalog']],plan.max_prompt_worlds)
     checked=[]
     for p in (root/'native'/'episodes').glob('*/evidence.json'):
         evidence=EpisodeEvidence.model_validate_json(p.read_text());result=adapter.replay(evidence,store.load(evidence.customer_snapshot_hash),store.load(evidence.service_snapshot_hash))
@@ -61,7 +72,12 @@ def main(argv=None):
     if args.command=='replay':result=replay_run(args.root)
     else:
         if not args.plan:parser.error('--plan required')
-        plan=DesignerPlan.model_validate_json(Path(args.plan).read_text())
+        raw=json.loads(Path(args.plan).read_text())
+        frozen=raw.get('protocol')=='frozen-task-discovery-v1'
+        if frozen:
+            from integrations.usami.frozen.controller import FrozenPlan,FrozenController
+        plan_type=FrozenPlan if frozen else DesignerPlan
+        plan=plan_type.model_validate(raw)
         if args.models_from_env:
             from integrations.usami.cli import model_from_env
             data=plan.model_dump(mode='json')
@@ -69,11 +85,11 @@ def main(argv=None):
                 data[role+'_model']=model_from_env(role).model_dump(mode='json')
             data['designer_reflector_model']=model_from_env('designer_reflector',fallback=ModelSpec.model_validate(data['designer_model'])).model_dump(mode='json')
             data['service_reflector_model']=model_from_env('service_reflector',fallback=ModelSpec.model_validate(data['service_model'])).model_dump(mode='json')
-            plan=DesignerPlan.model_validate(data)
-        if args.strategy:plan=DesignerPlan.model_validate({**plan.model_dump(mode='json'),'strategy':args.strategy})
+            plan=plan_type.model_validate(data)
+        if args.strategy:plan=plan_type.model_validate({**plan.model_dump(mode='json'),'strategy':args.strategy})
         load=lambda path,role:LibrarySnapshot.model_validate_json(Path(path).read_text()) if path else empty_snapshot(role)
         if args.command=='run':
-            result=DesignerServiceController(args.root,plan,load(args.designer_library,'designer'),load(args.customer_library,'customer'),load(args.service_library,'service'),native_factory).run()
+            result=(FrozenController if frozen else DesignerServiceController)(args.root,plan,load(args.designer_library,'designer'),load(args.customer_library,'customer'),load(args.service_library,'service'),native_factory).run()
         else:
             from .evaluation import evaluate
             if not args.source_run or not args.designer_hash or not args.service_hash:parser.error('evaluation requires source run and exact D/S hashes')

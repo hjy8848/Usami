@@ -1,5 +1,7 @@
 # Designer–Service v1
 
+本页描述历史 World Editing 协议。新的出题机制见 [Frozen-World Task Discovery](FROZEN_TASK_DISCOVERY.md)，新协议不允许 Designer 改世界；两者的实验记录不能混用。
+
 研究主线是「从错题里发现并放大，从正确题里引导犯错」。本协议将场景设计和正常顾客分开，不改变业务系统。协议名为 `designer-service-v1`；旧 Examiner、Customer Static-Only 及历史证据不迁移、不改写。
 
 ## 实际角色与执行顺序

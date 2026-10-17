@@ -12,7 +12,7 @@ from vast_coevo.reflection.reflector import ServiceReflector
 from vast_coevo.evolution.evolvers import ServiceEvolver
 from vast_coevo.evidence.archive import EvidenceArchive
 from vast_coevo.designer.evaluation import compare
-from vast_coevo.designer.reflection import reflect
+from vast_coevo.designer.reflection import reflect,OBJECTIVE
 from integrations.usami.adapter import _recorded_wire_client
 from integrations.usami.domains import model_settings
 from .backend import Trial
@@ -30,7 +30,13 @@ def recorded_client(call, model):
 
 
 def verify_selections(root, manifest, report, adapter, store):
-    root=Path(root);plan=DesignerPlan.model_validate(manifest['plan'])
+    root=Path(root);frozen=manifest['plan']['protocol']=='frozen-task-discovery-v1'
+    if frozen:
+        from integrations.usami.frozen.controller import FrozenPlan,frozen_static_inputs,OBJECTIVE as FROZEN_OBJECTIVE
+        from integrations.usami.frozen.pool import WorldPool
+        from integrations.usami.frozen.discovery import frozen_anchor_from
+    plan=(FrozenPlan if frozen else DesignerPlan).model_validate(manifest['plan'])
+    pool=WorldPool(plan.world_specs) if frozen else None
     trials={t.trial_hash:t for t in (Trial.model_validate_json(p.read_text()).checked() for p in (root/'trials').glob('*/trial.json'))}
     evidence={e.episode_id:e for e in (EpisodeEvidence.model_validate_json(p.read_text()) for p in (root/'native'/'episodes').glob('*/evidence.json'))}
     initial=manifest['initial'];customer=store.load(initial['customer']['snapshot_hash'])
@@ -48,7 +54,7 @@ def verify_selections(root, manifest, report, adapter, store):
     discovery,tasks=DesignerServiceController.validation(assembly)
     learned={};learned_discoveries=[]
     def learn(e):
-        try:a=anchor_from(adapter,e)
+        try:a=(frozen_anchor_from if frozen else anchor_from)(adapter,e)
         except ValueError:return
         learned[a.anchor_hash]=a
     for ref in plan.initial_tasks:learn(evidence['seed.'+ref])
@@ -65,13 +71,13 @@ def verify_selections(root, manifest, report, adapter, store):
         record=row['designer'];reflection=record['reflection']
         if reflection is not None:
             model=plan.designer_reflector_model or plan.designer_model
-            replay=reflect(recorded_client(reflection['call'],model),model,designer,feedback_for(backend,training),f'g{g}')
+            replay=reflect(recorded_client(reflection['call'],model),model,designer,feedback_for(backend,training),f'g{g}',objective=FROZEN_OBJECTIVE if frozen else OBJECTIVE)
             if replay!=reflection:raise ValueError('Designer Reflection replay differs')
             if reflection['patch'] is not None:
                 patch=SkillPatch.model_validate(reflection['patch'])
-                context=static_context(learned.values())
-                frozen=json.loads((root/f'g{g}.designer-static.json').read_text())
-                if context!=record.get('static_context') or frozen!=context:
+                context=frozen_static_inputs(learned.values(),pool) if frozen else static_context(learned.values())
+                static_frozen=json.loads((root/f'g{g}.designer-static.json').read_text())
+                if context!=record.get('static_context') or static_frozen!=context:
                     raise ValueError('Designer static validation inputs differ from complete verified memory')
                 static=StaticSkillGate(allowed_tools=context['allowed_tools'],allowed_domains=context['allowed_domains'],forbidden_identifiers=context['forbidden_identifiers']).validate(designer,patch)
                 if static.model_dump(mode='json')!=record.get('static'):raise ValueError('Designer static gate differs')
@@ -83,7 +89,12 @@ def verify_selections(root, manifest, report, adapter, store):
                         if (a.anchors,a.strategy,a.random_seed,a.customer_hash,a.service_hash)!=(b.anchors,b.strategy,b.random_seed,b.customer_hash,b.service_hash):
                             raise ValueError('Designer pairing changed sources, strategy, seeds or counterpart')
                         if (a.designer_hash,b.designer_hash)!=(designer.snapshot_hash,candidate.snapshot_hash):raise ValueError('Designer pairing snapshot mismatch')
-                    if record['paired_groups']!=[source_group(Anchor.model_validate(t.anchors[0])) for t in old]:raise ValueError('source cluster definition differs')
+                    if frozen:
+                        by_hash={e.evidence_hash:e for e in evidence.values()}
+                        world_groups={e.world_hash:e.structure_hash for e in pool.entries.values()}
+                        expected_groups=[world_groups[by_hash[t.anchors[0]['evidence_hash']].config.initial_world_hash] for t in old]
+                    else:expected_groups=[source_group(Anchor.model_validate(t.anchors[0])) for t in old]
+                    if record['paired_groups']!=expected_groups:raise ValueError('source cluster definition differs')
                     if record['known_roots']!=known_contracts(learned.values(),learned_discoveries):raise ValueError('pre-validation known contracts differ')
                     result=compare(designer.snapshot_hash,candidate.snapshot_hash,[t.discovery for t in old],[t.discovery for t in new],
                         backend.costs(old),backend.costs(new),plan.search_policy,record['known_roots'],record['paired_groups'])

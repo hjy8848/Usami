@@ -21,11 +21,16 @@ def evaluate(root, plan, source_run, designer_hash, service_hash, factory):
     if old_seeds & {p.seed for p in plan.profiles}:raise ValueError('evaluation must use independently frozen worlds')
     store=LibraryStore(source/'libraries');d=store.load(designer_hash);s=store.load(service_hash);c=store.load(report['fixed_customer'])
     # A deliberately separate output and no invocation of controller.run/update.
-    experiment=DesignerServiceController(root,plan,d,c,s,factory)
+    controller_type=DesignerServiceController
+    if plan.protocol=='frozen-task-discovery-v1':
+        from integrations.usami.frozen.controller import FrozenController
+        controller_type=FrozenController
+    experiment=controller_type(root,plan,d,c,s,factory)
     root.mkdir(parents=True,exist_ok=False)
     atomic_json(root/'evaluation-manifest.json',{'purpose':'development_diagnostic','plan':plan,'source_run':str(source),
         'designer_hash':designer_hash,'service_hash':service_hash,'customer_hash':c.snapshot_hash,'reflection':False},immutable=True)
     for snapshot in (d,c,s):experiment.store.save(snapshot)
+    experiment.prepare_run()
     for ref in plan.initial_tasks:
         case=experiment.task_case(ref)
         evidence=experiment.adapter.run_service_task(case.config,ref,c,s,'evaluation.seed.'+ref)
@@ -36,6 +41,9 @@ def evaluate(root, plan, source_run, designer_hash, service_hash, factory):
     result={'status':'completed','purpose':'development_diagnostic','reflection_calls':0,'selection_changes':0,
             'designer_hash':d.snapshot_hash,'service_hash':s.snapshot_hash,'customer_hash':c.snapshot_hash,
             'metrics':summarize([t.discovery for t in rows],experiment.backend.costs(rows)),'trials':[t.trial_hash for t in rows]}
+    from integrations.usami.costs import _sum
+    from types import SimpleNamespace
+    result['cost']=_sum([SimpleNamespace(response=r['response']) for r in experiment.ledger.logs],experiment.ledger.tools)
     for t in rows:experiment.backend.replay(t,d,s,root/'offline'/t.trial_hash)
     result['replay_verified']=True
     atomic_json(root/'evaluation-report.json',result,immutable=True);return result

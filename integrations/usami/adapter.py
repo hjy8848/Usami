@@ -478,6 +478,10 @@ class UsamiAdapter:
         if artifact.profile.fixed_customer_brief is not None:
             from .designer.dialogue import score_execution
             metrics = score_execution(execution, artifact.profile.fixed_task_spec)
+        if domain=='cloudops' and ((artifact.profile.fixed_task_spec or {}).get('task_protocol')=='frozen-task-discovery-v1' or
+                (artifact.task_profile is not None and (artifact.task_profile.frozen_task or {}).get('family','').startswith('frozen_'))):
+            from .frozen.task_oracle import decisions
+            metrics['task_decisions']=decisions(execution,artifact.model_calls)
         if artifact.profile.examiner_protocol is not None:
             from .examiner import binding
             initial=execution.world_trace.initial_state

@@ -77,9 +77,42 @@ def _certificate(adapter,trace,event,control,changed,operation,kind,intervention
     return row
 
 
+def _commitment_candidates(event,before,after):
+    """An actual later Customer revision cancels an actual earlier commitment."""
+    if event.kind!='customer' or event.payload.get('setup'):return []
+    if after.interaction.revision<=before.interaction.revision:return []
+    return [(c.operation,{'customer_event_id':event.id,'prior_consent_turn_id':c.turn_id}) for c in before.interaction.consents]
+
+
+def _partial_candidates(adapter,trace,states):
+    # Pair a genuine correct refusal with an earlier real, legal state transition.
+    # A mere guessed reason, blocked tool call or text claim is insufficient.
+    from .oracle import evaluate
+    report=evaluate(adapter,trace)
+    if report['status']!='pass':return {}
+    legal={r['dialogue_event_id'] for r in report['operations'] if r['classification']=='legal_execution'}
+    positions={e.id:i for i,(e,_,_) in enumerate(states)};result={}
+    for refusal in report['service_decisions']:
+        if refusal['classification']!='correct_refusal':continue
+        stop=positions[refusal['event_id']]
+        for event,before,after in states[:stop]:
+            if event.id not in legal or event.kind!='business':continue
+            op=adapter.Operation.model_validate(refusal['operation'])
+            a=adapter.decide(before,trace.private.identity,op);b=adapter.decide(after,trace.private.identity,op)
+            if a.allowed and not b.allowed and b.error_code==refusal['reference_code']:
+                result.setdefault(event.id,[]).append((refusal['operation'],{'refusal_event_id':refusal['event_id']}))
+    return result
+
+
 def certify_dependencies(adapter,trace):
-    result=[]
-    for event,before,after in event_states(adapter,trace):
+    result=[];states=event_states(adapter,trace);partials=_partial_candidates(adapter,trace,states)
+    for event,before,after in states:
+        for operation,intervention in _commitment_candidates(event,before,after):
+            row=_certificate(adapter,trace,event,before,after,operation,'cross_turn_commitment',intervention)
+            if row:result.append(row)
+        for operation,intervention in partials.get(event.id,[]):
+            row=_certificate(adapter,trace,event,before,after,operation,'partial_completion',intervention)
+            if row:result.append(row)
         if event.kind=='business':
             ops=[e['payload']['operation'] for e in event.payload['trace']['events'] if e['kind']=='operation']
             op=adapter.Operation.model_validate(ops[0])
@@ -106,10 +139,16 @@ def certify_dependencies(adapter,trace):
 def verify_dependency(adapter,trace,certificate):
     c=DependencyCertificate.model_validate(certificate.model_dump(mode='json') if isinstance(certificate,DependencyCertificate) else certificate)
     if c.certificate_hash!=c.computed_hash() or c.trace_hash!=trace.trace_hash:raise ValueError('dependency certificate integrity/source mismatch')
-    rows={e.id:(e,b,a) for e,b,a in event_states(adapter,trace)}
+    states=event_states(adapter,trace);rows={e.id:(e,b,a) for e,b,a in states}
     if c.event_id not in rows:raise ValueError('dependency has no source event')
     event,control,actual_after=rows[c.event_id]
-    if c.proof.kind=='state_update':
+    if c.proof.kind=='cross_turn_commitment':
+        if (c.proof.operation,c.intervention) not in _commitment_candidates(event,control,actual_after):raise ValueError('commitment dependency lacks an actual prior consent and later Customer revision')
+        changed=actual_after
+    elif c.proof.kind=='partial_completion':
+        if (c.proof.operation,c.intervention) not in _partial_candidates(adapter,trace,states).get(event.id,[]):raise ValueError('partial completion lacks actual legal transition and later correct refusal')
+        changed=actual_after
+    elif c.proof.kind=='state_update':
         if event.kind!='external' or c.intervention!={'external_event_id':event.payload['event_id']}:raise ValueError('state update lacks actual external source')
         allowed=adapter.candidate_intents(control,trace.private)+adapter.candidate_intents(actual_after,trace.private)
         if c.proof.operation not in allowed:raise ValueError('external dependency operation outside frozen Customer scope')

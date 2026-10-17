@@ -4,8 +4,8 @@ from usami_harness.models import digest
 from .contracts import WorldSpec
 
 
-GENERATORS={'education':'education-generator-v1','property':'property-generator-v1','airline':'airline-generator-v1','aftersales':'aftersales-generator-v1','cloudops':'cloudops-structural-v1','fulfillment':'fulfillment-structural-v1','stayops':'stayops-structural-v1','saas':'saas-generator-0.2.0'}
-RULES={'education':'education-0.1.0','property':'property-0.1.0','airline':'airline-0.1.0','aftersales':'aftersales-0.1.0','cloudops':'cloudops-0.1.0','fulfillment':'fulfillment-0.1.0','stayops':'stayops-0.1.0','saas':'saas-rules-0.2.0'}
+GENERATORS={'education':'education-generator-v1','property':'property-generator-v1','airline':'airline-generator-v1','aftersales':'aftersales-generator-v1','cloudops':'cloudops-structural-v1','fulfillment':'fulfillment-structural-v1','stayops':'stayops-structural-v2','saas':'saas-generator-0.2.0'}
+RULES={'education':'education-0.1.0','property':'property-0.1.0','airline':'airline-0.1.0','aftersales':'aftersales-0.1.0','cloudops':'cloudops-0.1.0','fulfillment':'fulfillment-0.1.0','stayops':'stayops-0.2.0','saas':'saas-rules-0.2.0'}
 
 
 def default_spec(domain,seed,partition='train',config=None):
@@ -17,6 +17,9 @@ def generate(spec,*,diagnostics=None):
     spec=WorldSpec.model_validate(spec.model_dump(mode='json') if isinstance(spec,WorldSpec) else spec)
     if spec.domain=='stayops' and (spec.generator_version,spec.rules_version)==('stayops-structural-v2','stayops-0.2.0'):
         from .generators.stayops_v2 import generate_world
+        return generate_world(spec.seed,spec.generator_config,diagnostics=diagnostics)
+    if spec.domain=='stayops' and (spec.generator_version,spec.rules_version)==('stayops-structural-v1','stayops-0.1.0'):
+        from .generators.stayops import generate_world
         return generate_world(spec.seed,spec.generator_config,diagnostics=diagnostics)
     if spec.domain not in GENERATORS or spec.generator_version!=GENERATORS[spec.domain] or spec.rules_version!=RULES[spec.domain]:raise ValueError('unregistered generator/rules version')
     if spec.domain=='saas':

@@ -77,3 +77,8 @@ worlds passed native invariants. Anonymous structures: 100 each; ownership
 topologies: After-sales 99, Airline 95, Property 100, Education 100. These counts
 do not prove graph non-isomorphism, task independence or model generalization.
 They do not replace the remaining lifecycle-history and certified-task audits.
+
+New vNext default StayOps specifications now use structural-v2 / stayops-0.2.0,
+whose independent 100-world audit is already archived. Explicit v1 specifications
+remain executable. This is a change to the isolated vNext default registration;
+it does not redirect historical native generators or rewrite old manifests.

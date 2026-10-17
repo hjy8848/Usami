@@ -32,3 +32,29 @@ For Track B, private Customer facts must not be fields silently exposed in Servi
 ## Outstanding integration
 
 Eight-domain native binding, multi-domain Task Composer, dialogue Engine/Oracle, dataset construction, capability matrix, macro scoring, leakage audit and VAST controller integration remain active work. This checkpoint does not claim those mechanisms are finished.
+
+## Current eight-domain implementation boundary
+
+All eight generators are registered under `usami_benchmark.registry`. The four
+new domains share only the native Engine/protocol, process reducer, proof/replay
+infrastructure and agent runner. Their Reference rules, actual mutations,
+resource/financial models, observations and task-contract validation remain
+independent native modules.
+
+| Domain | Native business/execution binding | Unified world evidence | Unified task release/Discovery status |
+| --- | --- | --- | --- |
+| SaaS | Existing versioned `usami` runtime | Structural generator and split audit | Existing native goals; new eight-domain task bridge pending |
+| CloudOps | Existing `usami_cloudops` runtime | Isolated structural generator and split audit | Existing Frozen Discovery; common eight-domain bridge pending |
+| Fulfillment | Existing native adapter/Engine/Oracle | Isolated structural generator and split audit | Existing native goals; common bridge pending |
+| StayOps | Existing runtime plus explicit isolated v2 Reference revision | Versioned structural world pool and split audit | Existing native goals; common bridge pending |
+| After-sales | `usami_aftersales.adapter` | 100 worlds and source-bound native examples | Native task certificates/agent runner; balanced release/Discovery pending |
+| Airline | `usami_airline.adapter` | 100 worlds and source-bound native examples | Native task certificates/agent runner; balanced release/Discovery pending |
+| Property | `usami_property.adapter` | 100 worlds and source-bound native examples | Native task certificates/agent runner; balanced release/Discovery pending |
+| Education | `usami_education.adapter` | 100 worlds and source-bound native examples | Native task certificates/agent runner; balanced release/Discovery pending |
+
+`usami_benchmark.evaluation` now freezes exact cohorts and aggregates eight equal
+domain weights, with conditional endpoint denominators. It does not validate a
+model's behavior on its own. `usami_benchmark.splits` checks exact/anonymous world
+isolation and finite private pool generation, while explicitly marking semantic
+task isolation as unfinished. These layers do not update skills or restore a
+performance gate. The mandatory `explicit-selection-v2` defaults remain unchanged.

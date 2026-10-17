@@ -1,0 +1,4 @@
+actual_cross_turn_revision ['cross_turn_commitment', 'missing_information', 'preference_resolution'] 18
+actual_mixed_refund ['explicit_consent', 'missing_information', 'partial_completion', 'preference_resolution'] 38
+actual_repair_receipt ['explicit_consent', 'missing_information', 'partial_completion', 'preference_resolution', 'state_update'] 44
+all six dependency kinds verified

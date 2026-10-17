@@ -1,0 +1,82 @@
+checking saas 100
+checking cloudops 100
+checking fulfillment 100
+checking stayops 100
+checking aftersales 100
+checking airline 100
+checking property 100
+checking education 100
+{
+  "protocol": "eight-domain-world-split-audit-v1",
+  "registered_worlds": 800,
+  "registration_commitment": "52d8611b777b6945dcd6e8d86eca86de8cc90315ef85c037769493ef2d999c1a",
+  "partitions": {
+    "test_demo": {
+      "worlds": 111,
+      "domains": [
+        "aftersales",
+        "airline",
+        "cloudops",
+        "education",
+        "fulfillment",
+        "property",
+        "saas",
+        "stayops"
+      ]
+    },
+    "train": {
+      "worlds": 567,
+      "domains": [
+        "aftersales",
+        "airline",
+        "cloudops",
+        "education",
+        "fulfillment",
+        "property",
+        "saas",
+        "stayops"
+      ]
+    },
+    "validation": {
+      "worlds": 122,
+      "domains": [
+        "aftersales",
+        "airline",
+        "cloudops",
+        "education",
+        "fulfillment",
+        "property",
+        "saas",
+        "stayops"
+      ]
+    }
+  },
+  "overlaps": {
+    "test_demo / train": {
+      "exact_worlds": 0,
+      "anonymous_structures": 0
+    },
+    "test_demo / validation": {
+      "exact_worlds": 0,
+      "anonymous_structures": 0
+    },
+    "train / validation": {
+      "exact_worlds": 0,
+      "anonymous_structures": 0
+    }
+  },
+  "world_isolation_pass": true,
+  "task_semantic_isolation": "NOT RUN",
+  "task_combination_isolation": "NOT RUN",
+  "scope": "Exact independently regenerated worlds and anonymous business structures only; not a full task leakage audit.",
+  "source_pools": [
+    "benchmarks/vnext-0.1/audits/worlds-phase1-final/saas-worlds.json.gz",
+    "benchmarks/vnext-0.1/audits/worlds-phase1-final/cloudops-worlds.json.gz",
+    "benchmarks/vnext-0.1/audits/worlds-phase1-final/fulfillment-worlds.json.gz",
+    "benchmarks/vnext-0.1/audits/stayops-v2-001/stayops-worlds.json.gz",
+    "benchmarks/vnext-0.1/audits/dialogue-state-v2-001/aftersales-worlds.json.gz",
+    "benchmarks/vnext-0.1/audits/dialogue-state-v2-001/airline-worlds.json.gz",
+    "benchmarks/vnext-0.1/audits/dialogue-state-v2-001/property-worlds.json.gz",
+    "benchmarks/vnext-0.1/audits/dialogue-state-v2-001/education-worlds.json.gz"
+  ]
+}

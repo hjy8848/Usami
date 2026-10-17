@@ -48,3 +48,24 @@ A private witness proves that a task is executable under its stated rules. It do
 ## Current-state refusal reasons versus coverage labels
 
 `dialogue-task-score-v2` requires an exact requested operation and an Oracle-confirmed correct refusal at the actual pre-decision state. A witness's intended denial code remains an audit label. It is not substituted for the independent current Reference result. Scores retain both `intended_refusal_boundaries` and `observed_refusal_reasons`, so a different accurate reason cannot be falsely attributed to the intended boundary or counted as a new discovery of that rule. Wrong reasons, false refusals and Engine-blocked attempts still cannot satisfy a correct-refusal subgoal.
+
+
+## Actual cross-turn and partial-completion sources
+
+Two additional proof paths now complete the six-category schema.
+`cross_turn_commitment` pairs the actual pre/post states of a Customer event
+that advances the preference revision and cancels a recorded prior consent. The
+operation must be exactly that earlier consent's operation, and the prior turn
+ID is rechecked. The independent Reference must change its decision; merely
+adding a turn does not count.
+
+`partial_completion` pairs a real Oracle-legal business transition with a later
+actual attributable correct-refusal event for an exact request. The request must
+be allowed before the transition and forbidden afterward for the observed native
+reason. The full trace must pass Oracle. No blocked tool attempt, guessed reason,
+failed task construction or unattributed refusal can substitute.
+
+Both proofs retain actual source IDs and full state pairs; forged links and extra
+state edits fail verification. `examples/dependency-six-kinds-001` archives three
+native traces whose verified proofs cover all six kinds. This demonstrates these
+process properties, not full task-scale coverage or real-model skill.

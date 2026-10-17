@@ -37,3 +37,13 @@ def test_revision_generation_is_explicit_deterministic_and_valid():
     a=generate(spec);assert a==generate(spec) and a.version==revised.VERSION and not invariants('stayops',a)
     legacy_spec=spec.model_copy(update={'generator_version':'stayops-structural-v1','rules_version':'stayops-0.1.0'})
     assert generate(legacy_spec).version=='stayops-0.1.0'
+
+
+def test_new_release_defaults_to_corrected_rules_but_retains_explicit_v1():
+    from usami_benchmark.registry import default_spec
+    from usami_benchmark.worlds import freeze
+    spec=default_spec('stayops',10009)
+    assert (spec.generator_version,spec.rules_version)==('stayops-structural-v2',revised.VERSION)
+    assert not invariants('stayops',generate(spec))
+    historical=spec.model_copy(update={'generator_version':'stayops-structural-v1','rules_version':'stayops-0.1.0'})
+    assert generate(historical).version=='stayops-0.1.0' and freeze(historical)==freeze(historical)

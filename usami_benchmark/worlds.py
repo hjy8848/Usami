@@ -46,7 +46,7 @@ class WorldPool:
         if row is None or digest(row)!=self.seals[key]:raise ValueError('unknown or mutated world registration')
         row.checked()
         return FrozenWorld.model_validate(row.model_dump(mode='json'))
-    def save(self,path):atomic_json(Path(path),{'protocol':'eight-domain-world-pool-v1','pool_hash':self.pool_hash,'worlds':[self.load(k) for k in sorted(self.entries)]},immutable=True)
+    def save(self,path):atomic_json(Path(path),{'protocol':'eight-domain-world-pool-v1','pool_hash':self.pool_hash,'worlds':[self.load(k).model_dump(mode='json') for k in sorted(self.entries)]},immutable=True)
 
 
 def partition_for(structure):

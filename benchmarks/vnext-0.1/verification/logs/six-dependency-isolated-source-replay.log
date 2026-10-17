@@ -1,0 +1,3 @@
+isolated source exit 0
+{'verified': True, 'kinds': ['cross_turn_commitment', 'explicit_consent', 'missing_information', 'partial_completion', 'preference_resolution', 'state_update'], 'dependency_proofs': 100, 'model_experiments': 'NOT RUN', 'real_api_calls': 0}
+

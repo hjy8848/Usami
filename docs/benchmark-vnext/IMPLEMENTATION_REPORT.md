@@ -8,12 +8,12 @@ This is an active engineering ledger, not a completed release claim. The full re
 | --- | --- | --- |
 | Preserve four historical domains/releases | Old generator hashes, historical tests and Replay | Four legacy seed/source pins verified; old Web/native regression passed after namespace isolation |
 | Three structural generators | 100 worlds each, native invariants, ID-neutral signatures, ≥30 meaningful structures or actual gap | Implemented under isolated vNext namespace; 100 valid audited worlds per existing domain; native StayOps consistency issue recorded |
-| Four dialogue domains | Domain-specific rules/appliers, private Customer state, information/consent dependencies, proof and Replay | After-sales, Airline and Property native cores, shared runtime, certificates and offline examples implemented; Education, domain breadth and unified release remain pending |
-| Eight-domain contracts and audit | Unified provenance, taxonomy, structural/permission/decision/task coverage | WorldSpec/FrozenWorld/pool/signatures and private dialogue reducer implemented; task/decision coverage pending |
+| Four dialogue domains | Domain-specific rules/appliers, private Customer state, information/consent dependencies, proof and Replay | All four native cores, shared runtime, certificates and offline examples implemented; historical/multi-entity breadth and unified release remain pending |
+| Eight-domain contracts and audit | Unified provenance, taxonomy, structural/permission/decision/task coverage | WorldSpec/FrozenWorld/pool/signatures, state census v2, six dependency types and private dialogue reducer implemented; complete task/decision coverage pending |
 | Pilot 320 / Core 800 | Frozen certified tasks, truthful counts, stratified coverage and leakage audit | Pending |
 | Multi-domain Frozen Discovery | Real source-bound branches, fixed Customer, static-only inheritance and exact Replay | Existing CloudOps path inspected; expansion pending |
-| Evaluation and ablations | Equal domain/track weights, immutable manifests, fixed budgets and offline validation | Pending |
-| Full tests/docs/examples | Executed test logs, source pins and eleven requested documents | Phase-1 full regression 1069 passed; later 49-case dialogue milestone passed; After-sales checkpoint full regression 1094 passed; remaining documents pending |
+| Evaluation and ablations | Equal domain/track weights, immutable manifests, fixed budgets and offline validation | Frozen aggregation plans, equal weights and provenance/denominator tests implemented; native all-domain result adapters and ablations pending |
+| Full tests/docs/examples | Executed test logs, source pins and eleven requested documents | Education checkpoint full regression 1153 passed; subsequent vNext integration 117 passed and split/evaluation/generator set 25 passed; all eleven document paths now exist with actual limits; final release verification pending |
 
 ## Architecture findings
 
@@ -211,3 +211,58 @@ source-bound multi-domain Frozen Discovery/Reflection/StaticSkillGate/Skill
 inheritance/selection Replay; complete requested documentation and final-release
 verification. No model improvement or generalization conclusion follows from the
 native proofs and scripted protocol fixtures above.
+
+
+## Shared dependency and evaluation/split foundation
+
+`usami_dialogue.dependencies` now adds two actual-event confirmation paths.
+Cross-turn commitment uses an earlier real consent and a later actual Customer
+revision, comparing native decisions before/after that event. Partial completion
+uses a real legal business transition and a later attributable Oracle-correct
+refusal. Neither an invented prior agreement nor a model's guessed refusal reason
+can earn the corresponding dependency. Their trace-bound intervention/source IDs
+and full paired states are verified independently. The diagnostic archive
+`examples/dependency-six-kinds-001/` covers all six supported dependency kinds;
+it is not a model performance result or the final task dataset.
+
+`usami_benchmark.evaluation` implements frozen plans, exact task/result provenance,
+conditional completion/refusal denominators, unknown values, role-separated costs
+and eight equal domain weights (1/8), with tracks weighted 1/2. Missing domains
+cannot be renormalized away. This is an aggregation layer; the complete native
+eight-domain result adapters and release task descriptors remain pending.
+
+`usami_benchmark.splits` independently regenerates worlds/signatures/source pins
+and detects relabelling an already registered training world as test. Its finite
+private Held-out generator preregisters all candidates, excludes known world/
+structure overlaps, preserves shortfalls and refuses repository output paths.
+A test exposed an existing `WorldPool.save` serialization defect (Pydantic
+objects were passed to a plain JSON writer); the pool now writes explicit JSON
+model dumps. The original failed test log remains preserved. This changes only
+the new isolated pool infrastructure, not old native business runtimes.
+
+Actual eight-domain world-split audit: **800 independently regenerated worlds**,
+567 train / 122 validation / 111 public test-demo. Exact-world and anonymous-
+structure overlaps are zero for every partition pair. Source-pinned report:
+`audits/eight-domain-world-splits-001/report.json`. These are **800 worlds, not
+800 certified tasks**. Task-semantic and task-combination leakage remain `NOT RUN`;
+no official private Held-out evaluation was run.
+
+Validation for these later changes: 20 dependency/education tests passed in
+34.14s; 117 vNext integration tests passed in 133.65s; 25 split/evaluation/generator
+tests passed in 2.11s. The 1153-test full run predates the added dependency,
+evaluation and split changes; a final full repository regression remains required.
+All original selection flags and the existing Service/Designer training mechanisms
+remain unchanged. No new model inference, Reflection or research experiment ran.
+
+The final combined vNext set at the dependency/evaluation/split checkpoint passed
+**122 tests in 132.27s** (exit 0). The 100 dependency proofs also verified from an
+isolated extracted source snapshot with exit 0. Both logs are preserved.
+
+New vNext StayOps defaults now select the already-audited structural-v2 /
+stayops-0.2.0 registration. Explicit structural-v1 / stayops-0.1.0 remains
+supported, and the original `usami_stayops` runtime was not edited. This avoids
+routing new default worlds through the known earlier Reference turnover defect.
+The focused default/historical generator/split suite passed **22 tests in 9.13s**;
+the 122-test run precedes this small default-routing change. Historical manifests
+and source-pinned archives keep their original semantics and must use the original
+runtime when full source pinning is required.

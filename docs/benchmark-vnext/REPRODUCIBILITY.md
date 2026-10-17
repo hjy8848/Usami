@@ -96,3 +96,19 @@ to answer and it never edits a generated initial world. The four dialogue cases
 contain real completion and correct-refusal subgoals and actual information and
 consent dependencies. No record from this hand-selected engineering sample is
 an independent Held-out example or evidence of improved model performance.
+
+## Native candidate-bank rebuild
+
+`build-dataset` and `verify-dataset` extend the same offline CLI. A source-pinned
+bank contains its exact `plan.json`, whole independent `world-pool.json`, full
+`candidate-schedule.json`, every `attempts/*.json`, successful private
+`records/*.json.gz`, `selection.json`, candidate coverage and manifest. Output
+directories must be new; an aborted build retains a stage-specific failure and
+all already completed records. No exception causes an automatic model retry or
+replacement world.
+
+Native candidate banks are not scored model datasets or completed Pilot/Core
+releases. In particular, `quota_complete` does not establish coverage quality,
+semantic independence, held-out isolation or actual model performance. Old source
+snapshots remain the authoritative runtime for earlier artifacts after adding
+new native modules.

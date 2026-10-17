@@ -71,3 +71,49 @@ Both proofs retain actual source IDs and full state pairs; forged links and extr
 state edits fail verification. `examples/dependency-six-kinds-001` archives three
 native traces whose verified proofs cover all six kinds. This demonstrates these
 process properties, not full task-scale coverage or real-model skill.
+
+## Finite candidate banks and balanced dataset selection
+
+`usami_benchmark.datasets.DatasetPlan` freezes the complete independent world
+schedule, per-world candidate ceiling, construction budget and four equal-domain
+stratum quotas. Default Pilot targets are 8 basic, 12 medium, 8 complex and 12
+pure-refusal tasks per domain. A mixed task is a cross attribute and must have a
+certified completion difficulty to enter a completion stratum. Unclassified
+dialogue tasks remain certified candidates, but cannot manufacture difficulty
+quota completion. These definitions do not change any business rule or score.
+
+The builder first generates and seals the entire World Pool. Only then does
+`usami_benchmark.candidates` enumerate finite existing-entity choices. It samples
+no replacement worlds after seeing a task. Candidate enumeration is deterministic
+evaluator infrastructure, not autonomous Designer discovery or a Service script.
+The complete bounded candidate schedule is saved before native certification.
+Both successful certificates and exact construction rejections are retained as
+individual immutable records. A bounded failed proof remains unproven, not an
+impossibility proof or a discovered Agent failure.
+
+Selection uses actual certified outcome/difficulty and one task per rooted
+relation group in each domain. Message or family aliases cannot fill extra slots.
+The exact selected hashes, excluded hashes/reasons and each domain/stratum
+shortfall are saved. Quota completion is distinct from a high-quality completed
+Benchmark release: these artifacts are labelled `CANDIDATE_BANK`. They still
+require the complete coverage, difficulty, split and release-quality audit.
+
+`verify_dataset()` independently regenerates worlds and the finite schedule,
+reconstructs every successful proof and every rejected construction, compares
+all saved records, recomputes coverage and selection, and validates runtime source
+pins. A resealed summary cannot hide a failed attempt, fabricate a selected task,
+complete a missing stratum or relabel native proof as a real-model run. Replay is
+offline; no model credentials are accessed.
+
+```sh
+.venv/bin/python -m usami_benchmark build-dataset REGISTERED_PLAN.json \
+  --output NEW_CANDIDATE_BANK
+.venv/bin/python -m usami_benchmark verify-dataset NEW_CANDIDATE_BANK
+```
+
+The plan can register known training world hashes and anonymous structures.
+Reusing any of them as independent validation/test/Held-out fails before task
+construction. The caller must supply the complete applicable training registry;
+an empty list is not proof of historical independence. Private Held-out banks
+cannot be stored in this public repository. No private Held-out evaluation or
+real-model experiment is performed by the builder.

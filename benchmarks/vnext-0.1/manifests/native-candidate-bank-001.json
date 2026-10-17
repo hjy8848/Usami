@@ -1,0 +1,91 @@
+{
+  "protocol": "native-balanced-dataset-v1",
+  "worlds": [
+    {
+      "domain": "saas",
+      "seed": 314159,
+      "generator_version": "saas-generator-0.2.0",
+      "rules_version": "saas-rules-0.2.0",
+      "generator_config": {},
+      "partition": "train",
+      "generation_mode": "unconditioned"
+    },
+    {
+      "domain": "cloudops",
+      "seed": 314159,
+      "generator_version": "cloudops-structural-v1",
+      "rules_version": "cloudops-0.1.0",
+      "generator_config": {},
+      "partition": "train",
+      "generation_mode": "unconditioned"
+    },
+    {
+      "domain": "fulfillment",
+      "seed": 314159,
+      "generator_version": "fulfillment-structural-v1",
+      "rules_version": "fulfillment-0.1.0",
+      "generator_config": {},
+      "partition": "train",
+      "generation_mode": "unconditioned"
+    },
+    {
+      "domain": "stayops",
+      "seed": 314159,
+      "generator_version": "stayops-structural-v2",
+      "rules_version": "stayops-0.2.0",
+      "generator_config": {},
+      "partition": "train",
+      "generation_mode": "unconditioned"
+    },
+    {
+      "domain": "aftersales",
+      "seed": 314159,
+      "generator_version": "aftersales-generator-v1",
+      "rules_version": "aftersales-0.1.0",
+      "generator_config": {},
+      "partition": "train",
+      "generation_mode": "unconditioned"
+    },
+    {
+      "domain": "airline",
+      "seed": 314159,
+      "generator_version": "airline-generator-v1",
+      "rules_version": "airline-0.1.0",
+      "generator_config": {},
+      "partition": "train",
+      "generation_mode": "unconditioned"
+    },
+    {
+      "domain": "property",
+      "seed": 314159,
+      "generator_version": "property-generator-v1",
+      "rules_version": "property-0.1.0",
+      "generator_config": {},
+      "partition": "train",
+      "generation_mode": "unconditioned"
+    },
+    {
+      "domain": "education",
+      "seed": 314159,
+      "generator_version": "education-generator-v1",
+      "rules_version": "education-0.1.0",
+      "generator_config": {},
+      "partition": "train",
+      "generation_mode": "unconditioned"
+    }
+  ],
+  "candidates_per_world": 16,
+  "construction_budget": {
+    "max_nodes": 128,
+    "max_depth": 12,
+    "max_paths": 1
+  },
+  "quotas": {
+    "basic": 8,
+    "medium": 12,
+    "complex": 8,
+    "refusal": 12
+  },
+  "known_world_hashes": [],
+  "known_structure_signatures": []
+}

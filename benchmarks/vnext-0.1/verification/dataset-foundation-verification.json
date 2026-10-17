@@ -1,0 +1,48 @@
+{
+  "benchmark_release_complete": false,
+  "checks": [
+    {
+      "command": "pytest -q tests/test_vnext_datasets.py -x",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/dataset-foundation-initial.log",
+      "scope": "14 passed in 17.17s; initial implementation before strict hash/quota extensions.",
+      "sha256": "ff07c4a490e80ebc30b76478158c243e2f8b0ec47da2e034ea899daba2052862"
+    },
+    {
+      "command": "pytest -q tests/test_vnext_datasets.py tests/test_vnext_task_audit.py tests/test_vnext_artifacts_cli.py tests/test_vnext_task_compiler.py -x",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/dataset-task-integration.log",
+      "scope": "40 passed in 94.81s; current source.",
+      "sha256": "ab82b61f70d95768cd2cae9d05ad28dbdab3f379164d0dfb82ef3df900d9c0b7"
+    },
+    {
+      "command": "python -m usami_benchmark build-dataset benchmarks/vnext-0.1/manifests/native-candidate-bank-001.json --output benchmarks/vnext-0.1/candidate-banks/native-001",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/native-candidate-bank-001-build.log",
+      "scope": "128 finite candidates; 83 certified, 45 rejected, 65 selected; incomplete quotas.",
+      "sha256": "7eca2916dd845ece195deb9dba1413314e56dd139fb1f31ae740d2a378c707bf"
+    },
+    {
+      "command": "python -m usami_benchmark verify-dataset benchmarks/vnext-0.1/candidate-banks/native-001",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/native-candidate-bank-001-verify.log",
+      "scope": "128 exact outcomes, world pool, all proofs/rejections and selection reconstructed.",
+      "sha256": "674101b06b170bc05dd31ac30c1efc409aef7ce844c7d478ec7f5fd05d8ab304"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -x",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/dataset-foundation-full.log",
+      "scope": "1264 passed in 868.24s (14:28); current source.",
+      "sha256": "d83fe34d3b0affdab47b3240c0d470ab8da4bf81bbf8fda08d7b1d4b3a2424de"
+    }
+  ],
+  "model_calls": 0,
+  "model_experiments": "NOT RUN",
+  "protocol": "native-dataset-checkpoint-verification-v1",
+  "remaining": "Necessary causal task families and dialogue difficulty proofs; full balanced Pilot/Core, leakage and coverage; eight-domain Frozen Discovery/Skill evolution and ablations.",
+  "runtime_source_pins_hash": "0d8aea8704d1cccb8c1154ff3147fcf72d8ec8d90f2dbefe1a4260c124d71a33",
+  "runtime_source_set_matches_checked_tree": true,
+  "source_base_commit": "3cbb9cb8661797a25c132763c5269d4b92db67bc",
+  "verification_hash": "ff68c4ca3f3e4504ea0d74d382ff61308fc5d7660a73feab00c65ebb8e427744"
+}

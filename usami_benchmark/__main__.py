@@ -24,6 +24,9 @@ def main(argv=None):
     audit.add_argument('path',help='Source-pinned eight-domain task archive')
     audit.add_argument('--output',required=True,help='New immutable audit directory')
     audit.add_argument('--per-domain-target',type=int)
+    dataset=sub.add_parser('build-dataset',help='Freeze a finite world/candidate plan and certify native tasks; no model calls.')
+    dataset.add_argument('path');dataset.add_argument('--output',required=True)
+    dataset=sub.add_parser('verify-dataset');dataset.add_argument('path')
     execute=sub.add_parser('run',help='Real model execution only with explicit --online and total call ceiling.')
     execute.add_argument('path');execute.add_argument('--output',required=True);execute.add_argument('--online',action='store_true')
     execute.add_argument('--max-llm-calls',type=int,required=True);execute.add_argument('--customer-calls',type=int,default=8);execute.add_argument('--service-calls',type=int,default=16)
@@ -48,6 +51,10 @@ def main(argv=None):
     if args.command=='audit-tasks':
         from .task_audit import audit_archive
         print(json.dumps(audit_archive(args.path,args.output,per_domain_target=args.per_domain_target),sort_keys=True));return 0
+    if args.command in {'build-dataset','verify-dataset'}:
+        from .datasets import build,verify_dataset
+        result=build(_read(args.path),args.output) if args.command=='build-dataset' else verify_dataset(args.path)
+        print(json.dumps(result,sort_keys=True));return 0
     if args.command=='replay':
         from .episodes import replay
         print(json.dumps(replay(_read(args.path)),sort_keys=True));return 0

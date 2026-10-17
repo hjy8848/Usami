@@ -418,3 +418,72 @@ boundary mappings and necessary difficulty proofs, meaningful stratified
 Pilot/Core releases and their leakage audits, eight-domain Frozen Discovery and
 source-bound dual Skill inheritance/selection Replay, ablations and final release
 verification. This checkpoint does not complete the active eight-domain goal.
+
+## Frozen candidate banks and strict stratified sampling (in progress)
+
+`usami_benchmark.candidates` now enumerates finite native existing-entity choices
+in all eight domains. It is evaluator-side infrastructure, not autonomous
+Designer behavior. It cannot edit worlds, request a task-conditioned generator,
+invent Customer facts, supply a Reference verdict, or replace the Service policy.
+CloudOps also includes a joint existing-stack goal whose operation order is
+searched by native Reference. These catalogues are lower bounds on task space;
+additional causal/mixed families remain mandatory for the complete release.
+
+`usami_benchmark.datasets` freezes independent world specifications, complete
+candidate schedules and proof budgets before certification. Every successful
+native record and exact rejected construction is retained. Balanced selection
+uses certificate-derived difficulty/outcome, excludes repeated rooted task
+groups and records real per-domain/stratum shortfalls. Unclassified dialogue
+tasks cannot fill a difficulty quota. Artifacts remain `CANDIDATE_BANK` even if
+all numerical quotas are filled; this is not the final release-quality gate.
+
+The verifier regenerates worlds, enumerations, successful certificates and failed
+attempts; checks exact record/attempt file sets; and recomputes selection and
+coverage. Known training worlds/anonymous structures cannot be relabelled as
+independent evaluation. The applicable known-training registry must be supplied
+by the caller; an empty registry is not proof of historical independence.
+Private Held-out output is forbidden inside the public repository.
+
+Executed foundation tests: **14 passed in 17.17s**, exit 0. Following stricter
+quota/hash validation, the dataset/audit/compiler/archive integration set passed
+**40 tests in 94.81s**, exit 0. Logs:
+`verification/logs/dataset-foundation-initial.log` and
+`verification/logs/dataset-task-integration.log`.
+
+`manifests/native-candidate-bank-001.json` registers eight independently generated
+train worlds (seed 314159), 16 candidates per world and equal Pilot target
+quotas, with native search limited to 128 nodes / depth 12 / one witness. This is
+a finite candidate-bank construction, not a scored experiment or completed
+320-task Pilot. The build and current-tree full regression have been started;
+their terminal handles/logs must be inspected before any success claim. No
+source code should change while these source-pinned checks are live. No model
+requests, Skill Reflection or Held-out execution were started.
+
+The bank build terminated with exit 0: **128 attempted candidates, 83 native
+certificates, 45 retained construction rejections and 65 selected quota slots**.
+`quota_complete` is false. All medium/complex strata remain empty, and After-sales
+has no selected slots because its certified dialogue tasks are unclassified and
+its current catalogue lacks a standalone refusal family. This is a concrete
+coverage gap, not a reason to lower difficulty thresholds or count duplicated
+questions. Additional native causal families and dialogue difficulty proofs are
+required before more seeds can establish the requested balanced release.
+
+Complete dataset verification (including rebuilding all 45 rejected candidates)
+and the current-tree full regression remain live and unclaimed at this point.
+Their actual tool handles/logs must be polled; do not restart a job based only on
+a delayed observation or log file. The candidate bank is not a 320-task Pilot,
+800-task Core or independent Held-out cohort.
+
+Terminal verification subsequently completed: all **128 candidate outcomes**
+(83 certificates and 45 construction rejections), the complete frozen pool,
+selection and coverage independently rebuilt with exit 0. Raw log:
+`verification/logs/native-candidate-bank-001-verify.log`; source-linked receipt:
+`candidate-banks/native-001/verification.json`.
+
+The current-tree full regression completed with exit 0: **1264 passed in
+868.24s (14:28)**, command `PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest
+-q -x`, raw log `verification/logs/dataset-foundation-full.log`. The 268 runtime
+source pins match the tree validated by this run. Exact commands, exit codes and
+raw log hashes are in `verification/dataset-foundation-verification.json`.
+This completes the candidate-bank infrastructure checkpoint, not the full
+eight-domain Benchmark objective or the missing causal/difficulty release strata.

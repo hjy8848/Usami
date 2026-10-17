@@ -1,0 +1,14 @@
+{
+  "attempts": 128,
+  "certified": 83,
+  "exit_code": 0,
+  "log_path": "benchmarks/vnext-0.1/verification/logs/native-candidate-bank-001-verify.log",
+  "log_sha256": "674101b06b170bc05dd31ac30c1efc409aef7ce844c7d478ec7f5fd05d8ab304",
+  "model_calls": 0,
+  "quota_complete": false,
+  "release_status": "CANDIDATE_BANK",
+  "scope": "Actual independent rebuild of all successful and rejected candidates; no model calls.",
+  "selected": 65,
+  "source_pins_hash": "0d8aea8704d1cccb8c1154ff3147fcf72d8ec8d90f2dbefe1a4260c124d71a33",
+  "verified": true
+}

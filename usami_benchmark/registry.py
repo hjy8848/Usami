@@ -15,6 +15,9 @@ def default_spec(domain,seed,partition='train',config=None):
 
 def generate(spec,*,diagnostics=None):
     spec=WorldSpec.model_validate(spec.model_dump(mode='json') if isinstance(spec,WorldSpec) else spec)
+    if spec.domain in {'aftersales','airline','property','education'} and spec.generator_version==spec.domain+'-lifecycle-v2' and spec.rules_version==RULES[spec.domain]:
+        from .generators.dialogue_history import generate_world
+        return generate_world(spec.domain,spec.seed,spec.generator_config,diagnostics=diagnostics)
     if spec.domain=='stayops' and (spec.generator_version,spec.rules_version)==('stayops-structural-v2','stayops-0.2.0'):
         from .generators.stayops_v2 import generate_world
         return generate_world(spec.seed,spec.generator_config,diagnostics=diagnostics)
@@ -50,6 +53,8 @@ def canonical_world(spec):
 
 
 def source_modules(spec):
+    if spec.domain in {'aftersales','airline','property','education'} and spec.generator_version==spec.domain+'-lifecycle-v2':
+        return importlib.import_module('usami_benchmark.generators.dialogue_history'),importlib.import_module('usami_'+spec.domain+'.rules')
     if spec.domain in {'aftersales','airline','property','education'}:
         return importlib.import_module('usami_'+spec.domain+'.generator'),importlib.import_module('usami_'+spec.domain+'.rules')
     if spec.domain=='stayops' and spec.rules_version=='stayops-0.2.0':

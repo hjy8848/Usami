@@ -82,3 +82,33 @@ New vNext default StayOps specifications now use structural-v2 / stayops-0.2.0,
 whose independent 100-world audit is already archived. Explicit v1 specifications
 remain executable. This is a change to the isolated vNext default registration;
 it does not redirect historical native generators or rewrite old manifests.
+
+## Opt-in native lifecycle generator v2 (under audit)
+
+The four explicit registrations `<domain>-lifecycle-v2` reuse each native v1 base
+world and then sample bounded legitimate customer choices, existing native
+operations and frozen external events. They never consume a task, Designer,
+Service result, score or Skill. Selected transitions use actual Session/Engine,
+independent Oracle and Replay. Compact historical journals retain actual Customer
+facts/choices, current offers/consents, business operations and simulator events;
+`replay_history` independently executes those journals again. No lifecycle status,
+credit, refund, repair completion or receipt is assigned directly by the generator.
+
+At the generated episode boundary, previous interaction authority is cleared.
+Education's initial-expiry fact is rebound to the actual generated epoch; business
+state is preserved. Old v1 distributions remain explicitly registered and remain
+the current dialogue defaults until audit/breadth assessment is complete. Setting
+`lifecycle_steps: 0` yields exactly the corresponding base distribution.
+
+Audit v3 adds actual generation-history counts and separates already applied
+external events from future frozen outcomes. Historical v1/v2 audit files and
+sources are not rewritten. The 12 initial lifecycle/census tests passed; the
+100-world-per-domain audit is running in
+`audits/dialogue-lifecycle-v2-001/`. This paragraph records an active run, not its
+outcome; use its completed summaries/logs to establish the eventual result.
+
+The opt-in lifecycle audit above has now completed: all 400 worlds are valid,
+100 anonymous structures per domain, with actual history counts and sparse
+commitment coverage retained in `dialogue-lifecycle-v2-001/summary.json`. Its raw
+log is `verification/logs/dialogue-lifecycle-v2-400-audit.log`. Earlier wording
+records when the run started; it is not an assertion that it remains alive.

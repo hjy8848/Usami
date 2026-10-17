@@ -16,7 +16,7 @@ def state_coverage(world):
     This is a descriptive field census, not evidence of tested Reference boundaries.
     IDs, text, raw timestamps and monetary jitter do not add state categories.
     """
-    current=Counter();latent=Counter();future=Counter()
+    current=Counter();latent=Counter();future=Counter();past=Counter();applied=set(world.get('applied_events',[]))
     fields={'status','role','quality','housekeeping','maintenance','receiving_enabled',
         'condition','responsibility','on_call','skills','severity','kind','issue','return_required',
         'review_requested','cabin','changeable','refundable','verified','action','subject','subjects',
@@ -24,11 +24,11 @@ def state_coverage(world):
         'last_lesson_status','late_fee','auto_renew','closed','outcome'}
     for collection,values in world.items():
         if not isinstance(values,dict):continue
-        for obj in values.values():
+        for key,obj in values.items():
             if not isinstance(obj,dict):continue
             for field,value in obj.items():
                 if collection=='external_events':
-                    if field in {'kind','outcome','timing'}:future[collection+'.'+field+'='+str(value)]+=1
+                    if field in {'kind','outcome','timing'}:(past if key in applied else future)[collection+'.'+field+'='+str(value)]+=1
                 elif field.startswith('simulated_'):
                     if isinstance(value,(str,bool,int)) or value is None:latent[collection+'.'+field+'='+str(value)]+=1
                 elif field in fields:
@@ -37,31 +37,40 @@ def state_coverage(world):
                         if isinstance(choice,(str,bool,int)) or choice is None:current[collection+'.'+field+'='+str(choice)]+=1
     return {'state_coverage':dict(sorted(current.items())),
         'latent_fact_coverage':dict(sorted(latent.items())),
-        'frozen_external_event_coverage':dict(sorted(future.items()))}
+        'frozen_external_event_coverage':dict(sorted(future.items())),
+        'historical_external_event_coverage':dict(sorted(past.items()))}
 
 
 def audit_domain(domain,seeds,root=None,*,generator_version=None,rules_version=None):
     if (generator_version is None)!=(rules_version is None):raise ValueError('generator/rules overrides must be paired')
-    rows=[];worlds=[];states=Counter();latent=Counter();future=Counter();partitions={};invalid=[];exclusions=[]
+    rows=[];worlds=[];states=Counter();latent=Counter();future=Counter();past=Counter();partitions={};invalid=[];exclusions=[];histories=[]
     for seed in seeds:
         try:
             spec=default_spec(domain,seed)
             if generator_version is not None:spec.generator_version=generator_version;spec.rules_version=rules_version
             row=freeze(spec);row.spec.partition=partition_for(row.structure_signature)
-            exclusions.extend({'seed':seed,**d} for d in row.generation_diagnostics)
+            for diagnostic in row.generation_diagnostics:
+                if diagnostic.get('kind')=='native_dialogue_lifecycle_v2':
+                    histories.extend(diagnostic['histories'])
+                    exclusions.extend({'seed':seed,**d} for d in diagnostic['excluded_native_conflicts'])
+                else:exclusions.append({'seed':seed,**diagnostic})
             world=row.world
             census=state_coverage(world)
-            states.update(census['state_coverage']);latent.update(census['latent_fact_coverage']);future.update(census['frozen_external_event_coverage'])
+            states.update(census['state_coverage']);latent.update(census['latent_fact_coverage']);future.update(census['frozen_external_event_coverage']);past.update(census['historical_external_event_coverage'])
             partitions.setdefault(row.spec.partition,set()).add(row.structure_signature)
             rows.append({'seed':seed,'spec_hash':row.spec.spec_hash,'registration_hash':row.registration_hash,'world_hash':row.world_hash,'structure':row.structure_signature,'permissions':row.permission_signature,'partition':row.spec.partition})
             worlds.append(row.model_dump(mode='json'))
         except (ValueError,TypeError) as exc:invalid.append({'seed':seed,'error':str(exc)})
     structures={r['structure'] for r in rows}
     overlaps={a+' / '+b:len(partitions[a]&partitions[b]) for a in partitions for b in partitions if a<b}
-    report={'protocol':'eight-domain-world-audit-v2','domain':domain,'attempted':len(seeds),'valid_worlds':len(rows),'invalid':invalid,
-        'generation_exclusions':exclusions,'unique_world_hashes':len({r['world_hash'] for r in rows}),'anonymous_structures':len(structures),'permission_topologies':len({r['permissions'] for r in rows}),
+    report={'protocol':'eight-domain-world-audit-v3','domain':domain,'attempted':len(seeds),'valid_worlds':len(rows),'invalid':invalid,
+        'generation_exclusions':exclusions,
+        'generation_history':{'sessions':len(histories),'nonempty_sessions':sum(h['actual_business_operations']+h['external_events']>0 for h in histories),
+            'actual_business_operations':sum(h['actual_business_operations'] for h in histories),'actual_external_events':sum(h['external_events'] for h in histories),
+            'operation_distribution':dict(sorted(Counter(step['operation']['name'] for h in histories for step in h['steps'] if step['kind']=='business').items())),
+            'scope':'Actual generator simulator histories verified by native Oracle/Replay, not model calls or task success.'},'unique_world_hashes':len({r['world_hash'] for r in rows}),'anonymous_structures':len(structures),'permission_topologies':len({r['permissions'] for r in rows}),
         'duplicate_structure_ratio':1-len(structures)/len(rows) if rows else None,'state_coverage':dict(sorted(states.items())),
-        'latent_fact_coverage':dict(sorted(latent.items())),'frozen_external_event_coverage':dict(sorted(future.items())),
+        'latent_fact_coverage':dict(sorted(latent.items())),'frozen_external_event_coverage':dict(sorted(future.items())),'historical_external_event_coverage':dict(sorted(past.items())),
         'state_coverage_scope':'Descriptive category census; not executed Reference decision or task coverage. Future events and hidden simulator facts are separate.',
         'split_structure_overlaps':overlaps,'minimum_structural_goal_met':len(rows)>=100 and len(structures)>=30,
         'reference_decision_coverage':{'status':'NOT RUN','reason':'World generation audit is separate from the forthcoming certified task audit.'},

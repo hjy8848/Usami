@@ -266,3 +266,39 @@ The focused default/historical generator/split suite passed **22 tests in 9.13s*
 the 122-test run precedes this small default-routing change. Historical manifests
 and source-pinned archives keep their original semantics and must use the original
 runtime when full source pinning is required.
+
+## Native lifecycle v2 verification in progress
+
+An opt-in four-domain lifecycle generator now uses actual native customer,
+business and external-event transitions; explicit old generators remain intact.
+Its compact historical journals replay through the actual runtime, Oracle and
+Replay. Source-private facts/preferences are generated before episode freezing;
+Designer and task goals never participate. Initial tests: **12 passed in 11.06s**.
+The 400-world audit and a new current-tree full regression have been started.
+They must be checked by their live execution handles/logs; this ledger does not
+claim they passed or remain alive. No Python source should change while these
+source-pinned checks are running. Native dialogue defaults remain v1 during this
+opt-in audit, and complete historical breadth is not established by the smoke.
+
+### Lifecycle v2 audit completed
+
+The source-pinned run completed with exit 0: **400/400 valid worlds**, 100 per
+dialogue domain, each with 100 anonymous structures. Ownership topologies were
+99 / 96 / 100 / 99 (After-sales / Airline / Property / Education). Actual
+historical sessions executed 1460 business operations and 961 external events,
+all through native Oracle/Replay; this is simulator execution, not LLM cost.
+Raw reports and full compact journals: `audits/dialogue-lifecycle-v2-001/`.
+
+Coverage is explicitly shallow in several places: the 100 Property worlds have
+2 actual bookings, and Education has only 3 irreversible quote commitments.
+After-sales has 26 settlements; Airline 6 commitments. All other operations and
+zero-business sessions remain visible in the reports. This is useful initial
+history variation, not proof of complete deep lifecycle/task-boundary coverage.
+The opt-in v2 distributions are therefore not silently substituted for existing
+native v1 generators. The final task release must choose and freeze its precise
+source distributions and report these gaps.
+
+The current-tree full regression completed with exit 0: **1178 passed in 647.09s**,
+log `verification/logs/lifecycle-foundation-full-1178.log`. This result precedes
+subsequent common native-task adapter work. No model call or evolution experiment
+was run. Historical source snapshots and all previous logs remain unchanged.

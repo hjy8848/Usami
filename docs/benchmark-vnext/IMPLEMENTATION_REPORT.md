@@ -337,3 +337,84 @@ Checkpoint verification: the seven compiler/tool-agent/public-policy/episode/
 archive/evaluation test modules completed with exit 0, **64 passed in 168.79s**.
 Raw log: `verification/logs/unified-task-execution-checkpoint-64.log`. The earlier
 failed development logs are retained verbatim, including their output whitespace.
+
+## Certificate-backed task audit checkpoint (2026-10-18; release incomplete)
+
+The new `usami_benchmark.task_audit` rebuilds actual native certificates before
+deriving coverage. Every asserted capability retains native witness or
+trace-bound dependency evidence. It records real allowed/refused Reference
+boundaries, objective completion/refusal/mixed subgoals, write-omission causal
+edges and different certified operation mechanisms. Caller-written family names,
+display labels and message paraphrases do not establish new task structures.
+
+Rooted relation colour refinement supplies ID-neutral task grouping, while a
+separate coarse decision grouping reports shared operations, actual Reference
+codes and dependency types. Pairwise partition reports disclose exact-world,
+world-structure, task-group, decision-group and family overlaps. Re-registering a
+training world as test is detected. A single-partition sample explicitly has no
+split-isolation conclusion. Grouping is conservative and is not a proof of graph
+isomorphism, semantic equivalence or independent scientific novelty.
+
+The new opt-in `episodes.certified_evaluation_result()` derives strata from this
+native evidence and performs full episode/model/score/cost Replay. Its caller
+cannot supply capability/difficulty labels. The original externally audited
+descriptor adapter and all historical archives remain available unchanged.
+Neither path modifies training selection or invokes models during Replay.
+
+The source-pinned engineering artifact
+`audits/tasks-eight-domain-001/` contains one actual certified task per domain,
+including four genuine dialogue completion-plus-refusal tasks. Exact generator
+specifications, selected ordinary requests, native construction budgets and
+source snapshots were saved before proof execution. The archive and coverage
+report independently verified with exit 0. It is a hand-selected engineering
+sample, not a random cohort, 320-task Pilot, 800-task Core or model experiment.
+Each domain's Pilot quantity shortfall is 39; all eight cases use train worlds.
+Full task split evaluation is therefore not claimed.
+
+The eight-case report has verified identity/request, frame, refusal, mixed,
+information, preference and consent evidence. It has no certified cells yet for
+time, capacity, finance or entity-isolation boundaries; these remain
+`NOT_AUDITED`. Its selected cases do not exercise causal alternatives or
+cross-turn commitment revisions. Those proofs are tested elsewhere, but are not
+silently added to this sample's matrix. Tool examples are basic one-write tasks;
+the four dialogue examples remain structurally unclassified because long
+transcripts do not substitute for necessary business-step proofs.
+
+Initial audit tests stopped before any coverage result because a test fixture
+used the ordinary After-sales family name with the mixed-task flag. The native
+compiler correctly rejected it; the fixture was corrected without weakening the
+check. The original log remains `verification/logs/task-coverage-initial.log`.
+The repaired first audit suite passed **11 tests in 48.32s** (exit 0), including
+all eight native domains, sorted-JSON verification, re-sealed tamper rejection,
+ID/name/paraphrase grouping, split relabelling and immutable offline CLI behavior.
+Further tests and current-tree full regression were started subsequently; only
+their eventual terminal logs can establish their results.
+
+The expanded audit/descriptor set subsequently passed **14 tests in 51.41s**,
+exit 0 (`verification/logs/task-coverage-expanded-14.log`). Added checks cover
+independently valid causal alternatives, separate raw/group shortfalls, unknown
+single-partition isolation, private Held-out output and evidence-derived episode
+strata. The eight native tasks and complete coverage report also verified under
+an isolated extracted source runtime, exit 0
+(`verification/logs/task-coverage-isolated-replay.log`). This is actual Oracle,
+business/process Replay and audit reconstruction, with zero model requests.
+
+The current-tree full repository regression completed with exit 0:
+**1250 passed in 837.08s (13:57)**. Exact command:
+`PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -x`.
+Raw output: `verification/logs/task-coverage-current-full.log`. Source files were
+unchanged from the checkpoint archive throughout this run; the archive's entire
+runtime source set and hashes were checked again afterward. Terminal commands,
+exit codes and raw-log hashes are retained in
+`verification/task-coverage-checkpoint-verification.json`. This validates the
+task-audit checkpoint, not future release code or the unfinished dataset and
+Discovery requirements.
+
+No original native World/Engine/Reference/Oracle or permission code, historical
+manifest, selected Skill, dynamic selection flag or existing experiment result
+was changed. Real-model execution, Reflection, learning gain and private
+Held-out evaluation remain `NOT RUN`. Mandatory remaining scope includes full
+boundary mappings and necessary difficulty proofs, meaningful stratified
+Pilot/Core releases and their leakage audits, eight-domain Frozen Discovery and
+source-bound dual Skill inheritance/selection Replay, ablations and final release
+verification. This checkpoint does not complete the active eight-domain goal.

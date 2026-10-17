@@ -4,7 +4,8 @@
 `eight-domain-task-result-v1` records and deterministic aggregation. This is an
 aggregation layer, not a replacement for native Reference, Engine, Oracle or
 Replay. Trace adapters must verify execution before constructing result records.
-The all-eight adapter/dataset release remains in progress.
+The native all-eight result adapter is available; the balanced dataset release
+remains in progress.
 
 A plan freezes partition, evidence kind, model-configuration content hash and the
 exact task-content hashes for every included domain. A result binds that plan,
@@ -57,3 +58,21 @@ The small deterministic test cohort in `tests/test_vnext_balanced_evaluation.py`
 checks weighting, missing domains, conditional denominators, provenance, costs
 and mixed-goal/safety consistency. It is not benchmark model performance. No
 real-model comparison has been run for this release (`NOT RUN`).
+
+## Certificate-backed descriptor adapter
+
+`usami_benchmark.episodes.certified_evaluation_result(plan, episode)` is the
+new release adapter for evidence-derived strata. It independently rebuilds the
+native task descriptor, derives the supported capabilities and structural
+difficulty from its certificate, and then performs the original complete native
+model/score/cost Replay before constructing an evaluation result. There are no
+caller arguments that can substitute capability or difficulty labels. The
+exact task content hash and native interface remain bound to the frozen plan.
+
+The original `evaluation_result()` remains available for historical workflows
+whose descriptors were externally audited; its behavior is unchanged. Native
+certificate descriptors are coverage of the task's verified witness. They do
+not imply that the evaluated model exercised every capability successfully.
+In particular, an unclassified dialogue task must not be silently assigned to a
+desired difficulty quota. No model requests or credentials are used by either
+descriptor extraction or offline Replay.

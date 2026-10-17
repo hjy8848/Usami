@@ -96,3 +96,22 @@ def test_only_replayed_results_with_matching_interfaces_enter_evaluation_plan():
     assert aggregate(plan,[result])['macro']['task_success'] is None
     bad=episode.model_copy(deep=True);bad.metrics['task_success']=False;bad.execution_hash=bad.computed_hash()
     with pytest.raises(ValueError,match='score/cost'):evaluation_result(plan,bad)
+
+
+def test_certified_result_strata_require_native_evidence_instead_of_caller_labels():
+    from usami_benchmark.episodes import certified_evaluation_result
+    from usami_benchmark.evaluation import EvaluationPlan
+    frozen,t=single('cloudops')
+    record=compile_task(frozen,TaskSelection(kind='tool',identity=t.identity,family=t.family,message=t.message,goal=t.goal,capabilities=t.capabilities))
+    customer=ScriptedClient(SPEC,[])
+    service=ScriptedClient(SPEC,[tool_call('op',record.task.capabilities[0],'cloudops'),final()])
+    config=EpisodeConfig(task=record,service_model=service.settings,customer_model=customer.settings,evidence_kind='scripted_transport_fixture')
+    episode=run(config,customer,service)
+    plan=EvaluationPlan(partition=frozen.spec.partition,evidence_kind=config.evidence_kind,
+        model_configuration_hash=episode.config.model_configuration_hash,tasks={'cloudops':[record.task_hash]},interface_hashes={'cloudops':episode.interface_hash})
+    result=certified_evaluation_result(plan,episode)
+    assert result.difficulty=='basic'
+    assert set(result.capabilities)=={'identity_authorization','side_effect_consistency'}
+    assert result.evidence_kind=='scripted_transport_fixture' and result.metrics['task_success']
+    with pytest.raises(TypeError):
+        certified_evaluation_result(plan,episode,capabilities=['capacity_resources'])

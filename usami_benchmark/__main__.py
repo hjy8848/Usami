@@ -20,6 +20,10 @@ def main(argv=None):
     check=sub.add_parser('verify-task');check.add_argument('path')
     check=sub.add_parser('replay');check.add_argument('path')
     check=sub.add_parser('verify-archive');check.add_argument('path')
+    audit=sub.add_parser('audit-tasks',help='Rebuild native certificates and audit coverage/split grouping without model calls.')
+    audit.add_argument('path',help='Source-pinned eight-domain task archive')
+    audit.add_argument('--output',required=True,help='New immutable audit directory')
+    audit.add_argument('--per-domain-target',type=int)
     execute=sub.add_parser('run',help='Real model execution only with explicit --online and total call ceiling.')
     execute.add_argument('path');execute.add_argument('--output',required=True);execute.add_argument('--online',action='store_true')
     execute.add_argument('--max-llm-calls',type=int,required=True);execute.add_argument('--customer-calls',type=int,default=8);execute.add_argument('--service-calls',type=int,default=16)
@@ -41,6 +45,9 @@ def main(argv=None):
     if args.command=='verify-archive':
         from .artifacts import verify_archive
         print(json.dumps(verify_archive(args.path),sort_keys=True));return 0
+    if args.command=='audit-tasks':
+        from .task_audit import audit_archive
+        print(json.dumps(audit_archive(args.path,args.output,per_domain_target=args.per_domain_target),sort_keys=True));return 0
     if args.command=='replay':
         from .episodes import replay
         print(json.dumps(replay(_read(args.path)),sort_keys=True));return 0

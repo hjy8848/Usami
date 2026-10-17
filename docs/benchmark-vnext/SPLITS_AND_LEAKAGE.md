@@ -1,9 +1,10 @@
 # World partitions, task leakage and private Held-out
 
 `usami_benchmark.splits` implements independently regenerated world-split checks
-and finite private Held-out generation. It does **not** yet implement the final
-all-domain task-semantic/task-combination leakage audit. Those axes are explicitly
-`NOT RUN`, even when world isolation passes.
+and finite private Held-out generation. `usami_benchmark.task_audit` additionally
+implements certificate-backed task grouping and pairwise task overlap reports.
+The final Pilot/Core partition policy and release-scale audit remain unfinished;
+world isolation alone does not establish task isolation.
 
 ## Public world audit
 
@@ -50,6 +51,37 @@ task-combination, business-structure and cross-domain generalization. These chec
 must derive from actual certified native tasks. No such conclusion follows from
 world disjointness, registry content hashes or the evaluation plan alone. Training
 and development evidence must never be relabelled as final test evidence.
+
+### Task-level grouping and overlap reports
+
+The offline native task auditor reports exact world, complete anonymous world,
+rooted task-relation and coarse decision group overlaps for each partition pair.
+It also exposes shared business families. A changed partition label cannot hide
+the same initial world or task relation group. Author-written family names,
+messages, display names, numeric jitter and identifier changes do not by
+themselves create an additional task-structure group.
+
+`rooted-business-task-group-v1` colours selected task objects, two outgoing
+relation hops and relevant identity/membership links. Task operations, goals and
+frames supply distinct typed graph nodes. Native policy-derived boundary bins
+describe selected objects. This bounded, six-round colour refinement is not a
+graph-isomorphism algorithm or a count of independent scientific problems. It can
+merge distinct problems; omitted distant context and new-entity bindings require
+additional auditing. It is not a justification to count every different hash as
+a novel decision problem.
+
+The coarser `decision_signature` deliberately groups actual operation/outcome/
+Reference-code/dependency/causal-depth combinations. Shared decisions and business
+families are disclosed separately rather than silently excluded or called novel.
+A research split must preregister which of world, task-combination, business
+structure or cross-domain generalization it tests and how these coarse overlaps
+are treated. The auditor does not choose that policy after seeing model results.
+
+The audit is versioned separately from historical world-only reports. Original
+reports whose task axes say `NOT RUN` retain that meaning and are never edited.
+Private Held-out task audits are rejected inside the public repository, just as
+private task/episode archives are. No Held-out model experiment is run by these
+audits.
 
 ## Executed public-world checkpoint
 

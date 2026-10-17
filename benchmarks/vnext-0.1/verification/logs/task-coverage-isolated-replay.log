@@ -1,0 +1,2 @@
+{"domains": {"aftersales": 1, "airline": 1, "cloudops": 1, "education": 1, "fulfillment": 1, "property": 1, "saas": 1, "stayops": 1}, "episodes": 0, "evidence_kinds": {}, "model_experiments": "NOT RUN", "tasks": 8, "verified": true}
+PASS: archived-runtime native task, Oracle, business/process Replay and coverage reconstruction

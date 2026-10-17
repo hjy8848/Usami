@@ -1,0 +1,62 @@
+{
+  "checkpoint_complete": true,
+  "checks": [
+    {
+      "command": "pytest -q tests/test_vnext_task_audit.py -x",
+      "exit_code": 1,
+      "path": "benchmarks/vnext-0.1/verification/logs/task-coverage-initial.log",
+      "scope": "Initial test setup rejected by native compiler; no coverage result.",
+      "sha256": "5d84799286a6598c36be5dd87868f9b260b8b47803b232a83f843a93907645d7"
+    },
+    {
+      "command": "pytest -q tests/test_vnext_task_audit.py -x",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/task-coverage-repaired-setup.log",
+      "scope": "11 passed; initial audit code before expanded tests and result adapter.",
+      "sha256": "30e4e6dea26c51800706191ee5da411de8aa951ef2a95040c2ee42a18bdeb1f7"
+    },
+    {
+      "command": "pytest -q tests/test_vnext_task_audit.py tests/test_vnext_episodes.py::test_certified_result_strata_require_native_evidence_instead_of_caller_labels -x",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/task-coverage-expanded-14.log",
+      "scope": "14 passed in 51.41 seconds; current code.",
+      "sha256": "750d6bab3ecedd7bf132446a8672ccf50e1dbe3156c30fe66911a9401681388c"
+    },
+    {
+      "command": "PYTHONPATH=. .venv/bin/python experiments/vast_coevo/examples/task_coverage_checkpoint.py --output benchmarks/vnext-0.1/audits/tasks-eight-domain-001",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/task-coverage-eight-domain-example.log",
+      "scope": "8 native tasks; Oracle, Replay, certificate coverage and sorted-JSON reconstruction.",
+      "sha256": "85bf910e9c3c63feb1f8926fcb5ce5647eb9780863366986798d518e9b521c19"
+    },
+    {
+      "command": "Archived runtime in isolated PYTHONPATH: verify_archive(tasks) and verify_audit(records, coverage)",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/task-coverage-isolated-replay.log",
+      "scope": "Exact extracted source runtime; no checkout fallback or model calls.",
+      "sha256": "25105bccbf39a526617d6a76021c268c5986270a7117af671e0f4bb53778118a"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -x",
+      "exit_code": 0,
+      "path": "benchmarks/vnext-0.1/verification/logs/task-coverage-current-full.log",
+      "scope": "1250 passed in 837.08 seconds; current code.",
+      "sha256": "01e32440569f74655711fa783a29442f8e57bc64f4ad04a24a22c2bbd6db37c0"
+    }
+  ],
+  "eight_domain_benchmark_release_complete": false,
+  "model_calls": 0,
+  "model_experiments": "NOT RUN",
+  "protocol": "task-coverage-checkpoint-verification-v1",
+  "remaining": [
+    "Pilot320/Core800 meaningful stratified tasks",
+    "complete native boundary capability/difficulty evidence",
+    "release task leakage and private Held-out audits",
+    "eight-domain Frozen Designer/Service Discovery and Skill inheritance/selection Replay",
+    "ablation validation and final release verification"
+  ],
+  "runtime_source_pins_hash": "2e404ef2d47328d96ed69e0f34bbffdd7f51828ceef055cf53acca5ec93dabbb",
+  "runtime_source_set_matches_current": true,
+  "source_base_commit": "4ed7348da0178f74754ed598d3c5ed8cb22cbf6a",
+  "verification_hash": "a03accdc83a14f0ca9fd6f1fae2fc9741c87e10dac24f8836fd86ffb6077effc"
+}

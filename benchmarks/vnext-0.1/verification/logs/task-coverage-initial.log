@@ -1,0 +1,49 @@
+E
+==================================== ERRORS ====================================
+_ ERROR at setup of test_all_eight_domains_have_native_evidence_but_no_invented_release_counts _
+
+    @pytest.fixture(scope='module')
+    def records():
+        rows = [tool_record(d) for d in ('saas', 'cloudops', 'fulfillment', 'stayops')]
+        from test_vnext_aftersales import prepared
+        session, _, _ = prepared()
+        for domain, seed, profile, family, params in [
+            ('aftersales', session.initial.seed, session.profile_id, 'dispute_resolution', {'mixed': True}),
+            ('airline', 0, 'profile_u0_booking1', 'refund', {'mixed': True}),
+            ('property', 1, 'profile_p0_building0_unit1_asset1', 'repair', {'slot_ids': ['p0_tech0_slot2'], 'mixed': True}),
+            ('education', 0, 'profile_u1_enrollment1', 'refund', {'mixed': True}),
+        ]:
+>           rows.append(compile_task(freeze(default_spec(domain, seed)), TaskSelection(
+                kind='dialogue', profile_id=profile, family=family, parameters=params,
+            ), ConstructionBudget(max_nodes=256)))
+
+tests/test_vnext_task_audit.py:36: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usami_benchmark/tasks.py:150: in compile_task
+    rows,summary=_dialogue(frozen,selection,budget)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frozen = FrozenWorld(spec=WorldSpec(domain='aftersales', seed=1, generator_version='aftersales-generator-v1', rules_version='af...569a', generation_diagnostics=[], rules_source_hash='69900ba26dac2f8a07637f1d6155b99a40d23d73d9c03070d98f757244e08ad0')
+selection = TaskSelection(kind='dialogue', family='dispute_resolution', identity=None, profile_id='profile_u1_order0_line1', message=None, goal=None, capabilities=[], refusal_operations=[], parameters={'mixed': True})
+budget = ConstructionBudget(max_nodes=256, max_depth=12, max_paths=1)
+
+    def _dialogue(frozen,selection,budget):
+        domain=frozen.spec.domain;adapter=importlib.import_module('usami_'+domain+'.adapter');module=importlib.import_module('usami_'+domain+'.tasks')
+        w=adapter.World.model_validate(frozen.world)
+        if selection.profile_id not in w.profiles:raise ValueError('profile is not in the frozen world')
+        p=adapter.private_state(w,selection.profile_id)
+        if selection.identity is not None and selection.identity!=p.identity:raise ValueError('execution identity differs from frozen Customer profile')
+        if selection.message is not None or selection.goal is not None or selection.capabilities or selection.refusal_operations:raise ValueError('dialogue goals must use native Customer choices, not replace facts, frames or requests')
+        if set(selection.parameters)-PARAMETERS[domain]:raise ValueError('unregistered native task parameters')
+        kwargs=dict(selection.parameters);probe=kwargs.pop('probe_parameters',{})
+        if not isinstance(probe,dict):raise ValueError('probe parameters must be an object')
+        if domain=='aftersales':
+            expected='settlement_with_duplicate_refusal' if kwargs.get('mixed',False) else 'dispute_resolution'
+>           if selection.family!=expected:raise ValueError('unregistered aftersales family')
+E           ValueError: unregistered aftersales family
+
+usami_benchmark/tasks.py:110: ValueError
+=========================== short test summary info ============================
+ERROR tests/test_vnext_task_audit.py::test_all_eight_domains_have_native_evidence_but_no_invented_release_counts
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 error in 1.45s

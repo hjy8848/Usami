@@ -199,3 +199,18 @@ def evaluation_result(plan,episode,*,difficulty='unclassified',capabilities=None
         interface_hash=row.interface_hash,partition=plan.partition,evidence_kind=plan.evidence_kind,model_configuration_hash=plan.model_configuration_hash,
         family=task.family,difficulty=difficulty,outcome=outcome,capabilities=capabilities or [],metrics=row.metrics,
         **{k:row.cost[k] for k in ('customer_calls','service_calls','tool_calls','customer_input_tokens','customer_output_tokens','service_input_tokens','service_output_tokens')})
+
+
+def certified_evaluation_result(plan, episode):
+    """New release path: strata come from native proof, never caller labels.
+
+    The original evaluation_result adapter remains available for historical
+    externally audited descriptors. This opt-in path adds no model calls and
+    uses the same native episode/model Replay and frozen evaluation plan.
+    """
+    from .task_audit import describe_task
+    row = EpisodeExecution.model_validate(episode.model_dump(mode='json') if isinstance(episode, EpisodeExecution) else episode)
+    descriptor = describe_task(row.config.task)
+    return evaluation_result(plan, row, difficulty=descriptor['difficulty'], capabilities=[
+        key for key, item in descriptor['capabilities'].items() if item['evidence']
+    ])

@@ -52,3 +52,50 @@ A genuinely inapplicable capability requires a domain-rule explanation labelled
 Existing tool-centric domains already support Customer/Service interaction; their
 coverage cannot be dismissed merely because they lack the new private-state
 protocol. Their claimed dialogue necessities require equivalent actual proof.
+
+## Native task audit implementation
+
+`usami_benchmark.task_audit.describe_task()` independently reconstructs the
+eight-domain native task certificate before deriving a descriptor. It reports
+the actual completion/refusal/mixed outcome, exact executed Reference boundaries,
+protected-frame evidence, real write-omission edges, distinct solution mechanisms
+and trace-bound dialogue dependency certificates. Every positive capability cell
+retains its source certificate/trace/event or witness index. The descriptor does
+not accept caller-supplied capability labels.
+
+The initial auditor conservatively certifies scoped identity/request checks,
+protected frames, causal preconditions proved by omissions, actual correct
+refusals, mixed goals, information, preference, consent and commitment dependencies,
+and different proven operation mechanisms. It does not infer complete time,
+financial, capacity or entity-isolation coverage from an operation name. Those
+cells remain `NOT_AUDITED` until dedicated boundary evidence is mapped. A zero
+cell count is a gap in this auditor's evidence, not a claim that the business
+domain lacks the capability.
+
+Tool difficulty uses `omission-certified-tool-depth-v1`: basic has a necessary
+one-write witness; medium has multiple necessary writes without a two-edge
+causal chain; complex requires a proved causal depth of at least two. This is a
+structural classifier within the finite certified capability set, not global
+minimal planning difficulty. Dialogue and pure refusal tasks remain unclassified
+by this first classifier. Dialogue proof lengths and verified dependency kinds
+are reported separately; a long transcript cannot manufacture complexity.
+
+`audit_tasks()` emits the full capability/family/difficulty/outcome matrix with
+per-domain counts, actual world/group counts, duplicate fractions and an explicit
+equal-domain quantity shortfall. It does not fill absent strata, turn N/A into
+success, or certify the 40/100-task targets solely from task content hashes.
+`verify_audit()` rebuilds the native evidence and aggregates, including after a
+sorted JSON roundtrip. Resealing an altered report is insufficient.
+
+The immutable CLI entry point is:
+
+```sh
+.venv/bin/python -m usami_benchmark audit-tasks NEW_SOURCE_PINNED_TASK_ARCHIVE \
+  --output NEW_AUDIT_DIRECTORY --per-domain-target 40
+```
+
+It retains the exact input manifest commitment, source snapshot, report and
+verification, or a failure record. It cannot overwrite the original archive or
+an earlier audit. It performs no model calls and reads no model credentials.
+Historical source-pinned task archives must run with their archived source tree;
+adding the auditor does not rewrite their source manifests.

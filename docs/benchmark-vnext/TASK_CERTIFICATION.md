@@ -1,6 +1,8 @@
 # Native dialogue task certification
 
-Status: implemented and exercised for After-sales, Airline and Property; Education and the unified eight-domain release remain active work. No real LLM research run has been performed.
+Status: all four dialogue domains and the common eight-domain compiler/runner
+are implemented. Pilot/Core datasets and complete multi-domain Discovery remain
+active work. No real LLM research run has been performed for this upgrade.
 
 ## Reachability and scoring are different operations
 

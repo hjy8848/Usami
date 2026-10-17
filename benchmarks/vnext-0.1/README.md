@@ -1,6 +1,9 @@
 # Usami Benchmark vNext — active construction
 
-This directory is not yet a complete eight-domain Benchmark release. The requested four new dialogue domains, 320-task Pilot, 800-task Core and multi-domain Discovery are still under implementation. No model results exist.
+This directory is not yet a complete eight-domain Benchmark release. All eight
+native world/task runtimes are implemented; the balanced 320-task Pilot,
+800-task Core and multi-domain Discovery remain unfinished. No model results
+exist for this upgrade.
 
 Current evidence:
 
@@ -12,7 +15,10 @@ Current evidence:
 - `verification/logs/`: actual executed test/audit output. Initial Python 3.9 annotation collection error retained; corrected primitive tests use compatible Optional annotations.
 - `verification/environment.json`: actual interpreter and dependency versions.
 
-Task coverage fields deliberately remain NOT RUN until task certification is implemented. Structural diversity does not demonstrate model generalization. See `docs/benchmark-vnext/IMPLEMENTATION_REPORT.md` for active remaining work.
+Task coverage fields in the original world-only audits deliberately remain
+`NOT RUN`; new task audits are separate artifacts rather than retroactive edits.
+Structural diversity does not demonstrate model generalization. See
+`docs/benchmark-vnext/IMPLEMENTATION_REPORT.md` for active remaining work.
 
 Education checkpoint: all eight independent world generators are executable.
 Four dialogue domains have native rules, mutations, scoped queries, frozen
@@ -21,3 +27,11 @@ Customer profiles, task proofs and Replay. See `examples/education-native-001/`,
 engineering verification artifacts, not real-model results. The 320/800 task
 releases, complete coverage/leakage and eight-domain Discovery integration are
 still in progress; this directory is not yet the complete vNext release.
+
+The unified compiler/runner now supports native task certification and exact
+episode Replay for all eight domains. `audits/tasks-eight-domain-001/` adds eight
+source-pinned native task examples and an evidence-derived coverage matrix with
+actual shortfalls. It is an engineering sample, not the Pilot/Core dataset.
+Task audit reports distinguish world, rooted task and coarse decision groups;
+one-partition examples do not claim split isolation. See
+`docs/benchmark-vnext/COVERAGE_TAXONOMY.md` for the offline `audit-tasks` command.

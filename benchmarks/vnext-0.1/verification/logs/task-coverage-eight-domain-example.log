@@ -1,0 +1,9 @@
+Certified saas
+Certified cloudops
+Certified fulfillment
+Certified stayops
+Certified aftersales
+Certified airline
+Certified property
+Certified education
+{"model_calls": 0, "report_hash": "ec2ad0e202022f7371828929f0889eb15e2385d8914ac8c0a0b3480108b8d004", "source_archive": {"domains": {"aftersales": 1, "airline": 1, "cloudops": 1, "education": 1, "fulfillment": 1, "property": 1, "saas": 1, "stayops": 1}, "episodes": 0, "evidence_kinds": {}, "model_experiments": "NOT RUN", "tasks": 8, "verified": true}, "tasks": 8, "verified": true}

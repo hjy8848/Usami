@@ -65,3 +65,34 @@ Later changes require their own verification; this number is not a final-release
 claim. Failed test/verification attempts remain in the logs with their actual
 errors and are distinguished from later successful runs. No real LLM run or
 Held-out evaluation is authorized or represented by these fixtures.
+
+## Unified task coverage audit
+
+The common native task archive can be audited without model credentials:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m usami_benchmark audit-tasks \
+  SOURCE_PINNED_ARCHIVE --output NEW_TASK_AUDIT --per-domain-target 40
+```
+
+The input archive is read-only. A new audit directory retains its source
+snapshot, the exact input manifest/task commitments, actual coverage report and
+verification or failure. `coverage.json` roundtrips through sorted JSON and is
+independently recomputed. A single-partition audit reports split isolation as
+unknown, not as a vacuous pass. Raw task count shortfalls and rooted structural
+group shortfalls are separate.
+
+To rebuild the selected eight-domain engineering cases (not a Pilot dataset):
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. .venv/bin/python \
+  experiments/vast_coevo/examples/task_coverage_checkpoint.py \
+  --output NEW_EIGHT_DOMAIN_COVERAGE_CHECKPOINT
+```
+
+The script registers exact independent world specifications, ordinary task
+selections and finite proof budgets before execution. It does not ask any model
+to answer and it never edits a generated initial world. The four dialogue cases
+contain real completion and correct-refusal subgoals and actual information and
+consent dependencies. No record from this hand-selected engineering sample is
+an independent Held-out example or evidence of improved model performance.

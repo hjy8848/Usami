@@ -1,0 +1,6 @@
+{
+  "origin": "experiments/vast_coevo/examples/task_coverage_checkpoint.py",
+  "path": "builder.py",
+  "scope": "Exact builder used for this checkpoint; native runtime is pinned separately.",
+  "sha256": "8af3b2d3a518d6266872ed9052377cd8e024802a885b4606ecbd9bfa4fe8a4ec"
+}

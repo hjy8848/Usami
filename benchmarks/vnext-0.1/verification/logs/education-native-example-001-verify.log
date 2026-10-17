@@ -1,0 +1,27 @@
+{
+  "verified": true,
+  "domain": "education",
+  "cases": [
+    {
+      "family": "refund",
+      "trace_hash": "c0625fdba6edf7ff4e90d3ee942cc40bee07aa9b36bd88c1f36af8db557fba25",
+      "task_hash": "fdf0bf996919913a96602a9e75c84d69b30511b92f620566e6eda058760454c9"
+    },
+    {
+      "family": "transfer",
+      "trace_hash": "a32a3ec12200dab0d474fb33a140aa4adf850457942897b6e8456710350e77ba",
+      "task_hash": "a906b9dd37ef999a385e39c424abbaadef8117f7264dc2addfdd0e8a6c8241cc"
+    },
+    {
+      "family": "extend",
+      "trace_hash": "cadb9f806bdda3770a657b6514c556aa2191a6e1a0c1f95564725929e0765db7",
+      "task_hash": "b32d2229f2f602829e5aea9849959e5040d2ba43eab2597ea2aa2755bab8b637"
+    },
+    {
+      "family": "tutoring",
+      "trace_hash": "42168ca9b555220d28d7e591f7c4f0dd2bb14ed51ffec16daa76a6b1f26945be",
+      "task_hash": "f014924608f285298d802476854a2f1bc167b91ee7706fde8af59563a1314135"
+    }
+  ],
+  "model_experiments": "NOT RUN"
+}

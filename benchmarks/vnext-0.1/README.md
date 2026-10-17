@@ -13,3 +13,11 @@ Current evidence:
 - `verification/environment.json`: actual interpreter and dependency versions.
 
 Task coverage fields deliberately remain NOT RUN until task certification is implemented. Structural diversity does not demonstrate model generalization. See `docs/benchmark-vnext/IMPLEMENTATION_REPORT.md` for active remaining work.
+
+Education checkpoint: all eight independent world generators are executable.
+Four dialogue domains have native rules, mutations, scoped queries, frozen
+Customer profiles, task proofs and Replay. See `examples/education-native-001/`,
+`audits/dialogue-state-v2-001/` and the 1153-test full regression log. These are
+engineering verification artifacts, not real-model results. The 320/800 task
+releases, complete coverage/leakage and eight-domain Discovery integration are
+still in progress; this directory is not yet the complete vNext release.

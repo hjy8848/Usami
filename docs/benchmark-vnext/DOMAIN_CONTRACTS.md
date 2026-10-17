@@ -86,3 +86,34 @@ The Customer must actually disclose their observed fault/hazard and access const
 Appointment booking, cancellation and closure bind actual current offers. A technician event can arrive only for a scheduled, current work instruction, at the selected appointment's end. Completed work produces an independent receipt and correctly assigned charge; unresolved/missed work supports the corresponding complaint instead. Closure additionally requires customer feedback and a fresh explicit consent. Scoped tools expose physical/unit/service facts and public technician availability, excluding other residents' contacts and hidden simulator conditions.
 
 Current task composers cover scheduling, real repair/closure, complaint/escalation, source-valid policy refusals and an appropriate mixed duplicate-closure request. The private Reference witness is not a production conversation. Current tests include a six-turn scripted-transport execution through the actual generic runner, but do not claim that real models have solved or learned these tasks. Broader initial histories, multi-entity task families and final coverage certification remain active work.
+
+## Education native contract (implementation checkpoint)
+
+`usami_education/` models signed study-unit contracts and actual money/study-value
+ledgers, rather than treating education as another refund ticket. Students own
+school-scoped enrollments, with original and current courses kept separately.
+Packages bound transfer choices; verified placement levels, finite cohort seats,
+dated classes, teacher qualifications and calendars constrain new arrangements.
+Opening consumption records retain their actual course price. Transferring or
+buying additional units does not reset cumulative consumption for refund policy.
+
+Refunds use the unused balance, original contract window and consumed-unit limit,
+subtract the contractual fee and return money to the original channel. Extensions
+have reason, total-day, grace and self-service limits; an academic simulator must
+actually approve requests beyond authority. A review is bound to the requested
+days and enrollment version. Changing either invalidates the old approval.
+Tutoring reservations reserve study credit; actual attendance/no-show outcomes
+consume it according to the contract. Teacher cancellation consumes no credit.
+No model can invent an attendance record, approval, discount or new payment.
+
+The fixed Customer privately holds their genuine problem, budget, available
+hours, minimum refund/study needs and bounded course/slot/extension choices.
+Current exact quote consent is required for an irreversible commitment; changing
+preferences or enrollment state invalidates old offers. Domain composers certify
+refund, transfer, extension, tutoring, attendance and native refusal goals via
+private Reference search, actual Engine execution, independent Oracle and Replay.
+Production agents receive scoped queries and the Customer's own disclosures,
+not the private witness, future academic outcome or reference refusal answer.
+
+This checkpoint does not yet establish complete historical case distributions,
+cross-enrollment composite tasks, balanced release quantities or model quality.

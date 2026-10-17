@@ -9,7 +9,7 @@ from vast_coevo.schema import atomic_json
 from .engine import ExecutionTrace
 from .tasks import TaskCertificate,verify_certificate
 
-NATIVE_DOMAINS=('aftersales','airline','property')
+NATIVE_DOMAINS=('aftersales','airline','property','education')
 
 
 def adapter_for(domain):

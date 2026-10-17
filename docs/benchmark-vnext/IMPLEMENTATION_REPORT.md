@@ -155,3 +155,59 @@ When later source changes cause a source-pin rejection, extract that example's a
 
 
 Audit scope caveat: the current world-audit implementation has complete content/anonymous-structure/ownership counts for the new domains, but its generic state-field list still needs expansion for the new condition/skill/latent-fact/event fields. Future simulator outcomes must be reported separately from current business lifecycle states. Initial ticket/case lifecycle variation is not yet a completed generator deliverable. These gaps remain part of the full objective and are not satisfied by the structural counts above.
+
+## Education implementation in progress
+
+The fourth dialogue domain now has independent education contract/credit rules,
+actual financial and enrollment mutations, scoped tools, frozen student profiles,
+academic review and actual attendance simulators, native goal composition and
+shared certificate/agent interfaces. Registry support brings the independently
+executable world generators to all eight domains. This is not completion of the
+full release: education test/audit outcomes are recorded separately below once
+commands terminate, and the complete release still requires all-domain task
+coverage/datasets, split isolation, multi-domain Discovery/Skill evidence Replay,
+remaining documentation and final repository regression.
+
+The original education test attempt is preserved in
+`verification/logs/education-initial-tests.log` (10 passed, 3 failed). Failures
+were test setup defects: re-closing a completed session and supplying an actual
+course/slot from a different frozen student scope. The expanded attempt is also
+preserved (`education-expanded-tests-failure.log`, 15 passed, 2 failed): a
+zero-budget student correctly could not pay for a top-up, and a Customer could
+not authorize a case-specific quote before the case existed. Tests were repaired
+without weakening either production check. All examples remain synthetic native
+proofs or explicitly scripted transport; no real-model experiment has run.
+
+### Verified education checkpoint
+
+- Education unit/generator/agent tests: **17 passed in 30.13s** (exit 0).
+- Complete vNext integration set, including census v2: **108 passed in 124.08s**
+  (exit 0; `verification/logs/four-dialogue-domains-108.log`).
+- Entire repository regression: **1153 passed in 591.97s** (exit 0;
+  `verification/logs/education-checkpoint-full-1153.log`). This verifies this
+  checkpoint, not later all-domain dataset/Discovery changes.
+- All four dialogue generators: **400/400 invariant-valid worlds**, 100 per
+  domain. Complete v2 state censuses and anonymous grouping are archived in
+  `audits/dialogue-state-v2-001/`. Reference decision/task/depth coverage is
+  deliberately still NOT RUN in a world-generation-only audit.
+- `examples/education-native-001/`: actual certified refund plus duplicate
+  refusal, transfer, extension and tutoring traces; no model calls.
+- `verification/fixtures/education-agent-001/`: complete sorted-JSON/gzip
+  production-runner journal with 5 Customer and 7 Service scripted completions,
+  3 actual business operations and exact request Replay. The initial verification
+  command supplied a dict where Replay requires a typed config; its failure and
+  a subsequent tooling import typo are retained. The same original journal
+  verifies with the correct typed configuration; no result was replaced.
+- No original SaaS/CloudOps/Fulfillment/StayOps business source, rules, permissions,
+  Oracle, frozen manifest or historical result was changed. No new real LLM
+  training, inference experiment or Held-out evaluation was started.
+
+The eighth executable generator is a milestone, not the full requested end state.
+Mandatory remaining work includes meaningful initial lifecycle histories and
+cross-entity breadth; six-category interaction dependency coverage; all-eight
+native task certification/320-task Pilot and 800-task Core with honest strata;
+semantic/task/world leakage and private Held-out generation; equal-weight metrics;
+source-bound multi-domain Frozen Discovery/Reflection/StaticSkillGate/Skill
+inheritance/selection Replay; complete requested documentation and final-release
+verification. No model improvement or generalization conclusion follows from the
+native proofs and scripted protocol fixtures above.

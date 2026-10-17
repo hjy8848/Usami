@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<stdin>", line 13, in <module>
+  File "/Users/spring/RSI/Usami/usami_dialogue/agents.py", line 210, in replay
+    if config is not None and config!=row.config:raise ValueError('registered config differs')
+ValueError: registered config differs

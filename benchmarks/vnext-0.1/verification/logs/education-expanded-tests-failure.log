@@ -1,0 +1,45 @@
+...........F..F..                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_original_consumption_limit_survives_transfer_and_topup __________
+
+    def test_original_consumption_limit_survives_transfer_and_topup():
+        s,cid=opened(resolution='transfer');eid=s.private.facts['enrollment_id'];e=s.state.enrollments[eid];before=used_units(s.state,eid);original=e.original_course_id
+        op=operation(s,'quote_transfer',case_id=cid,target_class_id=CLASS,topup_units=1);customer(s,op)
+>       q=s.act(op)['data']['quote'];commit(s,q)
+E       KeyError: 'quote'
+
+tests/test_vnext_education.py:132: KeyError
+_ test_native_refund_runs_through_production_agents_and_exact_serialized_replay _
+
+    def test_native_refund_runs_through_production_agents_and_exact_serialized_replay():
+>       fixture_execution()
+
+tests/test_vnext_education_agents.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def fixture_execution():
+        w=adapter.generate_world(0);pid='profile_u1_enrollment1';p=w.profiles[pid];e=w.enrollments[p.facts['enrollment_id']]
+        task,search,rows=certified_tasks(w,pid,family='refund',max_nodes=128,max_paths=1)
+        assert rows
+        config=TaskRunConfig(task=task,certificate=rows[0]['certificate'],witness=rows[0]['trace'],profile_id=pid,initial_world_hash=w.state_hash,tools=list(adapter.TOOLS),external_schedule=task.external_schedule,
+            budget=Budget(max_customer_turns=5,max_customer_llm_calls=5,max_service_llm_calls=8,max_service_tool_calls=5))
+        def op(name,**params):return adapter.Operation(name=name,scope_id=e.school_id,resource_id=e.id,params=params)
+        opening=op('open_request',request_id=p.facts['request_id'],reason=p.facts['reason']);quote=op('quote_refund',case_id=case_key(e.id,p.facts['request_id']))
+        q=next(iter(rows[0]['trace'].final_world['quotes'].values()));commit=op('commit_quote',quote_id=q['id'],payment_channel=e.payment_channel)
+        customer=CheckedClient(SPEC,[intent('c0'),intent('c1',disclosures=p.facts,preferences={'resolution':'refund'},requested_operations=[opening.model_dump(mode='json'),quote.model_dump(mode='json')]),
+            intent('c2',confirm_operation=commit.model_dump(mode='json')),intent('c3',finish=True)])
+        service=CheckedClient(SPEC,[reply('r0','Which enrollment and why do you need help?'),service_tool('s0',opening),service_tool('s1',quote),
+            reply('r1','Confirm the unused credit refund and contractual fee to the original channel.',commit),service_tool('s2',commit),reply('r2','The original-channel refund has been issued.')])
+        result=run(adapter,w,config,customer,service)
+>       assert result.status=='customer_finished' and result.oracle['status']=='pass',(result.status,result.errors)
+E       AssertionError: ('customer_protocol_error', [{'kind': 'protocol', 'message': 'intention exceeds frozen Customer action/object scope', ...protocol', 'message': 'Customer cannot confirm an offer that Service has not actually presented', 'role': 'customer'}])
+E       assert ('customer_protocol_error' == 'customer_finished'
+E         
+E         - customer_finished
+E         + customer_protocol_error)
+
+tests/test_vnext_education_agents.py:26: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_vnext_education.py::test_original_consumption_limit_survives_transfer_and_topup
+FAILED tests/test_vnext_education_agents.py::test_native_refund_runs_through_production_agents_and_exact_serialized_replay
+2 failed, 15 passed in 26.55s

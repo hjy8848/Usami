@@ -49,3 +49,31 @@ The corrected audit freezes compressed complete worlds, source snapshots, source
 ## Limits still requiring work
 
 These samples are not evidence of real-world representativeness or model generalization. The distributions use bounded synthetic organizations and simulator clocks. Financial eligibility, logistics aging, alternative history graphs and additional task-conditioned strata must be separately audited. Four dialogue-domain generators are not yet implemented in this checkpoint.
+
+## State census v2 and education registry
+
+`eight-domain-world-audit-v2` keeps anonymous-structure and ownership grouping
+separate from three descriptive state censuses: current business categories,
+latent `simulated_*` facts, and pre-registered external-event kinds/outcomes.
+A future successful repair or academic approval does not count as a currently
+completed repair or approved request. Names, raw money, timestamps and repeated
+list entries do not add state categories. This census does not claim that a
+Reference boundary was exercised; task and causal-depth coverage remain separate
+measurements. V1 artifacts retain their original schema and archived sources.
+
+Education is registered as `education-generator-v1` / `education-0.1.0`. Its
+unconditioned worlds vary school/course packages, verified academic levels,
+student enrollment/ownership relationships, teacher qualifications, dated classes,
+limited seats, actual opening consumption and study-credit balances, contract
+refund/transfer/extension restrictions and calendar conflicts. Anonymous grouping
+uses relations plus policy-derived refund progress/window, credit, expiry,
+capacity, duration and conflict categories. Future academic/attendance outcomes
+are frozen environment inputs, reported separately by the state census.
+
+The new four-domain census is archived under
+`benchmarks/vnext-0.1/audits/dialogue-state-v2-001/`, with 100 worlds per domain,
+full source archive, hashes and generation specifications. All 400 generated
+worlds passed native invariants. Anonymous structures: 100 each; ownership
+topologies: After-sales 99, Airline 95, Property 100, Education 100. These counts
+do not prove graph non-isomorphism, task independence or model generalization.
+They do not replace the remaining lifecycle-history and certified-task audits.

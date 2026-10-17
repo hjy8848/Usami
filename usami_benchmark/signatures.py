@@ -30,6 +30,10 @@ def relations(domain,world,permissions_only=False):
         refs.update(building_id='buildings',unit_id='units',asset_id='assets',technician_id='technicians',slot_id='slots',booked_slot_id='slots',resident_ids='users',reporter_id='users',requester_id='users',ticket_id='tickets',plan_id='plans',appointment_id='appointments')
         categories.update({'condition','responsibility','on_call','skills','severity','simulated_symptom','simulated_hazard','timing'})
         allowed={'users','properties','buildings','units'}
+    if domain=='education':
+        refs.update(school_id='schools',student_id='users',requester_id='users',course_id='courses',original_course_id='courses',course_ids='courses',package_id='packages',teacher_id='teachers',class_id='classes',enrollment_id='enrollments',case_id='cases',quote_id='quotes',slot_id='slots',appointment_id='appointments',target_class_id='classes')
+        categories.update({'subject','subjects','level','max_level','transferable','extension_reasons','no_show_consumes','origin','reason','action'})
+        allowed={'users','schools','enrollments'}
     for collection,value in raw.items():
         if not isinstance(value,dict) or collection in {'rules','config'} or (permissions_only and collection not in allowed):continue
         for key,obj in value.items():
@@ -46,7 +50,7 @@ def relations(domain,world,permissions_only=False):
                             label=prefix+field+(':'+str(position) if domain=='airline' and field=='flights' else '')
                             edges[token].append((label,right));edges[right].append(('reverse:'+label,token))
                 elif field in categories and (not permissions_only or field=='role' or (field=='status' and token[0] in {'access','memberships'})):
-                    nodes[token][prefix+field]=sorted(item,key=digest) if domain=='property' and field=='skills' else item
+                    nodes[token][prefix+field]=sorted(item,key=digest) if (domain=='property' and field=='skills') or (domain=='education' and field in {'subjects','extension_reasons'}) else item
                 elif isinstance(item,(list,dict)) and field not in {'attestation','gateway_notice','carrier_notice','receipt_notice','inspection_notice','receiving_notice','notice','payments','refunds'}:
                     scan(token,item,prefix+field+'.')
         elif isinstance(value,list):
@@ -122,6 +126,22 @@ def policy_features(domain,w,collection,key):
             unit=w.units[obj.unit_id];c=contract(w,unit);profiles=[p for p in w.profiles.values() if p.facts.get('asset_id')==key]
             features['customer_contract_boundaries']=sorted((p.identity==unit.owner_id,relation(cost_terms(w,obj,p.identity)[0],c.resident_approval_limit_cents),cost_terms(w,obj,p.identity)[2]<=p.facts['max_budget_cents']) for p in profiles)
             features['slot_duration_fit']=sorted((s.end-s.start).total_seconds()>=obj.duration_minutes*60 for s in w.slots.values() if s.property_id==obj.property_id and obj.category in w.technicians[s.technician_id].skills)
+    elif domain=='education':
+        from datetime import timedelta
+        from usami_education.rules import occupancy,used_units,reservation_value,teacher_busy,student_busy
+        if collection=='classes':
+            features['capacity']=relation(occupancy(w,key),obj.capacity)
+        if collection=='enrollments':
+            c=w.contracts[obj.contract_id];course=w.courses[obj.course_id]
+            features.update(expiry=relation(obj.expires_at,w.clock),refund_window=relation(w.clock,obj.enrolled_at+timedelta(days=c.refund_days)),
+                consumed_limit=relation(used_units(w,key)*10000,c.total_units*c.refund_consumed_limit_bps),
+                credit_for_one_unit=relation(obj.remaining_credit_cents-reservation_value(w,key),course.unit_price_cents),
+                extension_remaining=relation(obj.extended_days,c.max_extension_days),
+                class_fits_validity=all(m.end<=obj.expires_at for m in w.classes[obj.class_id].meetings))
+        if collection=='slots':
+            features.update(past=obj.start<=w.clock,teacher_busy=teacher_busy(w,obj.teacher_id,obj),
+                student_conflicts=sorted(student_busy(w,u,obj) for u in w.users),
+                duration_fit=sorted((obj.end-obj.start).total_seconds()>=c.unit_minutes*60 for c in w.courses.values() if c.school_id==obj.school_id))
     elif domain=='saas':
         if collection=='subscriptions':
             members=[m for m in w.memberships.values() if m.org_id==obj.org_id and m.status=='active'] if hasattr(obj,'org_id') else []

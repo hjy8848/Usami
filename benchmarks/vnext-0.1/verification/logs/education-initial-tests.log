@@ -1,0 +1,83 @@
+......FF.F...                                                            [100%]
+=================================== FAILURES ===================================
+_ test_unconsented_sandbox_booking_is_a_real_violation_even_when_business_state_is_valid _
+
+    def test_unconsented_sandbox_booking_is_a_real_violation_even_when_business_state_is_valid():
+        s,cid,q=quoted();e=s.state.enrollments[s.private.facts['enrollment_id']]
+        op=operation(s,'commit_quote',quote_id=q['id'],payment_channel=e.payment_channel)
+        assert s.act(op,'sandbox')['success'] and s.state.appointments
+        report=evaluate(adapter,s.finish())
+        assert report['metrics']['successful_business_violation']==1
+        assert report['operations'][-1]['reference_error_code']=='EXPLICIT_CONSENT_REQUIRED'
+>       assert replay(adapter,s.finish())['verified']
+
+tests/test_vnext_education.py:87: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <usami_dialogue.engine.DialogueSession object at 0x102449f40>
+
+    def finish(self):
+>       if self.closed:raise ValueError('closed dialogue session')
+E       ValueError: closed dialogue session
+
+usami_dialogue/engine.py:86: ValueError
+__________ test_refund_uses_actual_unused_value_and_original_channel ___________
+
+    def test_refund_uses_actual_unused_value_and_original_channel():
+>       s,cid=opened('profile_u1_enrollment1','refund');eid=s.private.facts['enrollment_id'];e=s.state.enrollments[eid];contract=s.state.contracts[e.contract_id]
+
+tests/test_vnext_education.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vnext_education.py:27: in opened
+    customer(s,op,disclosures=s.private.facts,preferences={'resolution':resolution,'slot_id':SLOT,'class_id':CLASS,'extension_days':7,'allow_topup':True,'allow_extension':True})
+tests/test_vnext_education.py:22: in customer
+    return s.customer(CustomerIntent(message='Please handle my actual enrollment request.',requested_operations=[op.model_dump(mode='json') for op in ops],**kwargs))
+usami_dialogue/engine.py:50: in customer
+    context=customer_event(before.interaction,self.private,normalized,turn_id=turn,world_hash=before.state_hash,offer=offer,consent_check=self.adapter.consent_allowed)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = InteractionState(identity='u1', known_facts={}, preferences={}, revision=0, consents=[], commitments={})
+private = CustomerPrivateState(identity='u1', opening_request='I am not satisfied with my course and need help.', facts={'enroll...protected_objects=('u1_enrollment1',), private_hash='8dc3937e9708fd9455b440d55c5a4a6f32d2d3fc837f71f0c0b5da177bd9f676')
+intent = CustomerIntent(message='Please handle my actual enrollment request.', disclosures={'enrollment_id': 'u1_enrollment1', ...quest_id': 'request_u1_enrollment1', 'reason': 'too_busy'}}], confirm_operation=None, reject_offer=False, finish=False)
+
+    def customer_event(state,private,intent,*,turn_id,world_hash,offer=None,consent_check=None):
+        private=private.checked();intent=CustomerIntent.model_validate(intent.model_dump(mode='json'))
+        if state.identity!=private.identity:raise ValueError('customer identity cannot change')
+        new=state.model_copy(deep=True)
+        for key,value in intent.disclosures.items():
+            if key not in private.facts or value!=private.facts[key]:raise ValueError('customer fabricated or changed an objective fact')
+            new.known_facts[key]=value
+        changed=False
+        for key,value in intent.preferences.items():
+>           if key not in private.preference_space or value not in private.preference_space[key]:raise ValueError('preference outside frozen profile')
+E           ValueError: preference outside frozen profile
+
+usami_dialogue/process.py:20: ValueError
+_________ test_slot_conflict_is_independent_of_what_customer_confirms __________
+
+    def test_slot_conflict_is_independent_of_what_customer_confirms():
+        from usami_education.models import Busy
+        w=adapter.generate_world(0);slot=w.slots[SLOT]
+        w.background_busy['test_busy']=Busy(id='test_busy',kind='teacher',resource_id=slot.teacher_id,start=slot.start,end=slot.end)
+        assert not adapter.invariants(w)
+        s,cid=opened(world=w);op=operation(s,'quote_lesson',case_id=cid,slot_id=SLOT);customer(s,op)
+        assert adapter.decide(s.state,s.private.identity,op).error_code=='SCHEDULE_CONFLICT'
+        assert s.act(op,'sandbox')['success']
+        assert evaluate(adapter,s.finish())['metrics']['successful_business_violation']==1
+>       assert replay(adapter,s.finish())['verified']
+
+tests/test_vnext_education.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <usami_dialogue.engine.DialogueSession object at 0x1024c44c0>
+
+    def finish(self):
+>       if self.closed:raise ValueError('closed dialogue session')
+E       ValueError: closed dialogue session
+
+usami_dialogue/engine.py:86: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_vnext_education.py::test_unconsented_sandbox_booking_is_a_real_violation_even_when_business_state_is_valid
+FAILED tests/test_vnext_education.py::test_refund_uses_actual_unused_value_and_original_channel
+FAILED tests/test_vnext_education.py::test_slot_conflict_is_independent_of_what_customer_confirms
+3 failed, 10 passed in 18.85s

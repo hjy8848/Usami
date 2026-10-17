@@ -4,8 +4,8 @@ from usami_harness.models import digest
 from .contracts import WorldSpec
 
 
-GENERATORS={'cloudops':'cloudops-structural-v1','fulfillment':'fulfillment-structural-v1','stayops':'stayops-structural-v1','saas':'saas-generator-0.2.0'}
-RULES={'cloudops':'cloudops-0.1.0','fulfillment':'fulfillment-0.1.0','stayops':'stayops-0.1.0','saas':'saas-rules-0.2.0'}
+GENERATORS={'aftersales':'aftersales-generator-v1','cloudops':'cloudops-structural-v1','fulfillment':'fulfillment-structural-v1','stayops':'stayops-structural-v1','saas':'saas-generator-0.2.0'}
+RULES={'aftersales':'aftersales-0.1.0','cloudops':'cloudops-0.1.0','fulfillment':'fulfillment-0.1.0','stayops':'stayops-0.1.0','saas':'saas-rules-0.2.0'}
 
 
 def default_spec(domain,seed,partition='train',config=None):
@@ -15,6 +15,9 @@ def default_spec(domain,seed,partition='train',config=None):
 
 def generate(spec,*,diagnostics=None):
     spec=WorldSpec.model_validate(spec.model_dump(mode='json') if isinstance(spec,WorldSpec) else spec)
+    if spec.domain=='stayops' and (spec.generator_version,spec.rules_version)==('stayops-structural-v2','stayops-0.2.0'):
+        from .generators.stayops_v2 import generate_world
+        return generate_world(spec.seed,spec.generator_config,diagnostics=diagnostics)
     if spec.domain not in GENERATORS or spec.generator_version!=GENERATORS[spec.domain] or spec.rules_version!=RULES[spec.domain]:raise ValueError('unregistered generator/rules version')
     if spec.domain=='saas':
         from usami.world.generator import GeneratorConfig,generate_world
@@ -25,10 +28,14 @@ def generate(spec,*,diagnostics=None):
         if 'rules' in raw and raw['rules']!=RulesConfig(version=spec.rules_version).model_dump(mode='json'):raise ValueError('rules config must be registered separately')
         raw.update(version=spec.generator_version,rules=RulesConfig(version=spec.rules_version))
         return generate_world(spec.seed,GeneratorConfig.model_validate(raw))
-    return importlib.import_module('usami_benchmark.generators.'+spec.domain).generate_world(spec.seed,spec.generator_config,diagnostics=diagnostics)
+    module='usami_aftersales.generator' if spec.domain=='aftersales' else 'usami_benchmark.generators.'+spec.domain
+    return importlib.import_module(module).generate_world(spec.seed,spec.generator_config,diagnostics=diagnostics)
 
 
 def invariants(domain,world):
+    if domain=='stayops' and world.version=='stayops-0.2.0':
+        from .native.stayops_v2.rules import invariants as check
+        return check(world)
     module=importlib.import_module('usami.world.rules' if domain=='saas' else 'usami_'+domain+'.rules')
     return (module.check_invariants if domain=='saas' else module.invariants)(world)
 
@@ -37,3 +44,12 @@ def canonical_world(spec):
     world=generate(spec)
     if invariants(spec.domain,world):raise ValueError('invalid generated world')
     return world.model_dump(mode='json'),digest(world)
+
+
+def source_modules(spec):
+    if spec.domain=='aftersales':
+        return importlib.import_module('usami_aftersales.generator'),importlib.import_module('usami_aftersales.rules')
+    if spec.domain=='stayops' and spec.rules_version=='stayops-0.2.0':
+        return importlib.import_module('usami_benchmark.generators.stayops_v2'),importlib.import_module('usami_benchmark.native.stayops_v2.rules')
+    return (importlib.import_module('usami.world.generator_v2' if spec.domain=='saas' else 'usami_benchmark.generators.'+spec.domain),
+            importlib.import_module('usami.world.rules_v2' if spec.domain=='saas' else 'usami_'+spec.domain+'.rules'))

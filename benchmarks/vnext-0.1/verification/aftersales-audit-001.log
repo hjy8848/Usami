@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/Users/spring/RSI/Usami/usami_benchmark/audit.py", line 78, in <module>
+    if __name__=='__main__':raise SystemExit(main())
+  File "/Users/spring/RSI/Usami/usami_benchmark/audit.py", line 72, in main
+    reports=[audit_domain(d,list(range(args.start_seed,args.start_seed+args.count)),root) for d in args.domains]
+  File "/Users/spring/RSI/Usami/usami_benchmark/audit.py", line 72, in <listcomp>
+    reports=[audit_domain(d,list(range(args.start_seed,args.start_seed+args.count)),root) for d in args.domains]
+  File "/Users/spring/RSI/Usami/usami_benchmark/audit.py", line 17, in audit_domain
+    row=freeze(default_spec(domain,seed));row.spec.partition=partition_for(row.structure_signature)
+  File "/Users/spring/RSI/Usami/usami_benchmark/worlds.py", line 29, in freeze
+    diagnostics=[];world=generate(spec,diagnostics=diagnostics);sig=signatures(spec.domain,world)
+  File "/Users/spring/RSI/Usami/usami_benchmark/signatures.py", line 100, in signatures
+    def signatures(domain,world):return {'structure':relations(domain,world),'permissions':relations(domain,world,True)}
+  File "/Users/spring/RSI/Usami/usami_benchmark/signatures.py", line 52, in relations
+    scan(token,raw[token[0]][token[1]])
+  File "/Users/spring/RSI/Usami/usami_benchmark/signatures.py", line 39, in scan
+    elif field in categories and (not permissions_only or field=='role' or (field=='status' and token[0] in {'access','memberships'})):
+UnboundLocalError: local variable 'categories' referenced before assignment

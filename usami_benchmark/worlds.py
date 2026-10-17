@@ -4,7 +4,7 @@ from pydantic import Field
 from usami_harness.models import Model,digest
 from vast_coevo.schema import atomic_json
 from .contracts import WorldSpec
-from .registry import generate,invariants
+from .registry import generate,invariants,source_modules
 from .signatures import signatures
 
 
@@ -27,8 +27,7 @@ class FrozenWorld(Model):
 def freeze(spec):
     import hashlib,importlib
     diagnostics=[];world=generate(spec,diagnostics=diagnostics);sig=signatures(spec.domain,world)
-    generator=importlib.import_module('usami.world.generator_v2' if spec.domain=='saas' else 'usami_benchmark.generators.'+spec.domain)
-    rules=importlib.import_module('usami.world.rules_v2' if spec.domain=='saas' else 'usami_'+spec.domain+'.rules')
+    generator,rules=source_modules(spec)
     return FrozenWorld(spec=spec,world=world.model_dump(mode='json'),world_hash=world.state_hash,
         structure_signature=sig['structure'],permission_signature=sig['permissions'],generation_diagnostics=diagnostics,
         generator_source_hash=hashlib.sha256(Path(generator.__file__).read_bytes()).hexdigest(),

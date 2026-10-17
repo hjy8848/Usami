@@ -12,11 +12,15 @@ RULES_VERSION='stayops-0.1.0'
 
 
 def generate_world(seed=42,config=None,*,diagnostics=None):
-    cfg=GeneratorConfig.model_validate(config or {});rng=StableRandom(digest({'version':GENERATOR_VERSION,'seed':seed,'config':cfg.model_dump(mode='json')}))
+    return _generate(seed,config,diagnostics=diagnostics)
+
+
+def _generate(seed,config=None,*,diagnostics=None,world_type=World,native_adapter=None,distribution_version=GENERATOR_VERSION):
+    cfg=GeneratorConfig.model_validate(config or {});rng=StableRandom(digest({'version':distribution_version,'seed':seed,'config':cfg.model_dump(mode='json')}))
     users={f'u{i}':User(id=f'u{i}',name=f'User {i}') for i in range(9)}
     props={f'p{i}':Property(id=f'p{i}',name=f'Property {i}',owner_id=f'u{i%3}',max_stay_nights=rng.choice([7,14,21])) for i in range(rng.randint(cfg.min_scopes,cfg.max_scopes))}
     guests={f'g{i}':Guest(id=f'g{i}',user_id=f'u{i+3}',name=f'Guest {i}',simulated_identity_result=rng.choice(['verified','verified','declined'])) for i in range(6)}
-    world=World(seed=seed,users=users,properties=props,guests=guests,access={},room_types={},rooms={},calendar={},rate_plans={})
+    world=world_type(seed=seed,users=users,properties=props,guests=guests,access={},room_types={},rooms={},calendar={},rate_plans={})
     for pid in props:
         for uid in rng.sample(list(users),rng.randint(2,5)):
             aid=pid+'_'+uid;world.access[aid]=Access(id=aid,property_id=pid,user_id=uid,role=rng.choice(['manager','frontdesk','housekeeping','finance','viewer']))
@@ -31,8 +35,9 @@ def generate_world(seed=42,config=None,*,diagnostics=None):
                 world.calendar[cid]=CalendarDay(id=cid,property_id=pid,room_type_id=tid,day=day,sale_limit=rng.randint(1,count),closed=rng.random()<.08)
         for j in range(rng.randint(2,3)):
             rid=f'{pid}_rate{j}';world.rate_plans[rid]=RatePlan(id=rid,property_id=pid,name=f'Rate {j}',room_type_ids=rng.sample(tids,rng.randint(1,len(tids))),deposit_bps=rng.choice([0,2000,5000,10000]),free_cancel_hours=rng.choice([0,24,48,168]),late_fee=rng.choice(['first_night','full_stay']),weekend_surcharge_cents=rng.choice([0,500,1500]))
-    if invariants(world):raise ValueError(str(invariants(world)))
-    from usami_stayops import adapter
+    from usami_stayops import adapter as legacy_adapter
+    adapter=native_adapter or legacy_adapter
+    if adapter.invariants(world):raise ValueError(str(adapter.invariants(world)))
     history=NativeHistory(adapter,world,diagnostics)
     for pid,prop in props.items():
         plans=[p for p in world.rate_plans.values() if p.property_id==pid]

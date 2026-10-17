@@ -55,6 +55,7 @@ class CustomerIntent(Model):
     message: str=Field(min_length=1,max_length=8000)
     disclosures: dict=Field(default_factory=dict)
     preferences: dict=Field(default_factory=dict)
+    requested_operations: list[dict]=Field(default_factory=list,max_length=32)
     confirm_operation: Optional[dict]=None
     reject_offer: bool=False
     finish: bool=False

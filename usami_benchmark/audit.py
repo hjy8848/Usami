@@ -10,11 +10,14 @@ from .registry import default_spec,generate,invariants
 from .worlds import freeze,partition_for
 
 
-def audit_domain(domain,seeds,root=None):
+def audit_domain(domain,seeds,root=None,*,generator_version=None,rules_version=None):
+    if (generator_version is None)!=(rules_version is None):raise ValueError('generator/rules overrides must be paired')
     rows=[];worlds=[];states=Counter();partitions={};invalid=[];exclusions=[]
     for seed in seeds:
         try:
-            row=freeze(default_spec(domain,seed));row.spec.partition=partition_for(row.structure_signature)
+            spec=default_spec(domain,seed)
+            if generator_version is not None:spec.generator_version=generator_version;spec.rules_version=rules_version
+            row=freeze(spec);row.spec.partition=partition_for(row.structure_signature)
             exclusions.extend({'seed':seed,**d} for d in row.generation_diagnostics)
             world=row.world
             for collection,values in world.items():
@@ -64,12 +67,14 @@ def snapshot_sources(root):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--domains',nargs='+',default=['saas','cloudops','fulfillment','stayops'])
+    parser.add_argument('--generator-version');parser.add_argument('--rules-version')
     parser.add_argument('--count',type=int,default=100);parser.add_argument('--start-seed',type=int,default=10000);parser.add_argument('--root',required=True)
     args=parser.parse_args(argv);root=Path(args.root)
+    if (args.generator_version or args.rules_version) and len(args.domains)!=1:raise ValueError('explicit version overrides require exactly one domain')
     if root.exists():raise ValueError('audit output must be new')
     root.mkdir(parents=True)
     snapshot_sources(root)
-    reports=[audit_domain(d,list(range(args.start_seed,args.start_seed+args.count)),root) for d in args.domains]
+    reports=[audit_domain(d,list(range(args.start_seed,args.start_seed+args.count)),root,generator_version=args.generator_version,rules_version=args.rules_version) for d in args.domains]
     result={r['domain']:{k:r[k] for k in ('attempted','valid_worlds','anonymous_structures','permission_topologies','minimum_structural_goal_met','invalid')} for r in reports}
     atomic_json(root/'summary.json',result,immutable=True);print(json.dumps(result,indent=2))
     return int(any(r['invalid'] for r in reports))

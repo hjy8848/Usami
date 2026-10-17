@@ -8,12 +8,12 @@ This is an active engineering ledger, not a completed release claim. The full re
 | --- | --- | --- |
 | Preserve four historical domains/releases | Old generator hashes, historical tests and Replay | Four legacy seed/source pins verified; old Web/native regression passed after namespace isolation |
 | Three structural generators | 100 worlds each, native invariants, ID-neutral signatures, ≥30 meaningful structures or actual gap | Implemented under isolated vNext namespace; 100 valid audited worlds per existing domain; native StayOps consistency issue recorded |
-| Four dialogue domains | Domain-specific rules/appliers, private Customer state, information/consent dependencies, proof and Replay | Pending |
+| Four dialogue domains | Domain-specific rules/appliers, private Customer state, information/consent dependencies, proof and Replay | After-sales native core, shared runtime, task certificates and an offline mixed example implemented; remaining domain coverage and three other domains pending |
 | Eight-domain contracts and audit | Unified provenance, taxonomy, structural/permission/decision/task coverage | WorldSpec/FrozenWorld/pool/signatures and private dialogue reducer implemented; task/decision coverage pending |
 | Pilot 320 / Core 800 | Frozen certified tasks, truthful counts, stratified coverage and leakage audit | Pending |
 | Multi-domain Frozen Discovery | Real source-bound branches, fixed Customer, static-only inheritance and exact Replay | Existing CloudOps path inspected; expansion pending |
 | Evaluation and ablations | Equal domain/track weights, immutable manifests, fixed budgets and offline validation | Pending |
-| Full tests/docs/examples | Executed test logs, source pins and eleven requested documents | Phase-1 and primitive tests passed; final full regression 1069 passed; remaining documents pending |
+| Full tests/docs/examples | Executed test logs, source pins and eleven requested documents | Phase-1 full regression 1069 passed; later 49-case dialogue milestone passed; After-sales checkpoint full regression 1094 passed; remaining documents pending |
 
 ## Architecture findings
 
@@ -56,3 +56,40 @@ Next engineering priority: implement a genuinely versioned correction/adapter fo
 - No existing tracked business code, old benchmark data or historical experiment has been modified. No real LLM experiment has run.
 
 This is a committed engineering checkpoint, not completion of the user objective. The four new business domains, real dialogue Engine/Oracle/certificates, complete 320/800 task releases, capability/semantic leakage audits, equal-weight scoring and eight-domain VAST evidence/selection Replay remain mandatory active work.
+
+
+## Phase-2 checkpoint: native After-sales and executable dialogue
+
+Implemented real order-line disputes, evidence verification, refund approval thresholds, original-channel settlement, replacement inventory, return pickup/receipt and duplicate-settlement boundaries. Reference expected mutations and actual mutations are separate. Manager and carrier outcomes are frozen simulator events; neither model can fabricate their outcomes. Service receives scoped observations, not private profiles or hidden simulator verification flags.
+
+The shared dialogue runtime independently establishes Customer identity and exact requested writes, records actual quote presentation, validates truthful disclosures, revokes superseded consent and retains full business/process/external traces. A real OpenAI-compatible two-Agent runner journals exact requests, replies, tools, usage by role, budgets and bounded protocol recovery. Fixture tests use that same runner; no paid calls were made.
+
+Native Reference search creates private reachability witnesses. Objective scoring accepts different legal outcomes/paths, enforces the domain frame and checks exact correct-refusal subgoals. Counterfactual certificates prove changes to actual Reference legality after removing facts/consent, changing allowed preferences, or receiving a frozen manager event. The mixed example completes a real remedy and refuses a duplicate request without invoking a forbidden write.
+
+Initial added tests passed 49 cases before the serialization-roundtrip extension. CLI certification found a separate ordering issue on reloading sorted JSON: proof ordering depended on dictionary insertion order. The failed bundle/source archive and verification traceback are retained as `examples/aftersales-mixed-001/`. Proofs now have canonical content-hash ordering, a JSON-roundtrip assertion has been added, and `examples/aftersales-mixed-002/` certified and independently verified successfully. This is an offline native proof, not a model result.
+
+World audits: `audits/aftersales-native-002/` contains 100/100 valid worlds, 100 anonymous structures and 99 ownership topologies. The first After-sales audit aborted due to a new scanner variable-shadowing error before any world registration; its source and traceback remain in `aftersales-native-001/`. A corrected new run was saved separately. `audits/stayops-v2-001/` contains 100/100 valid worlds and 100 structures/topologies under explicitly registered `stayops-structural-v2` / `stayops-0.2.0`. The old native StayOps rules remain untouched. Its versioned correction permits future assignments of a currently dirty unoccupied room while retaining current occupancy/cleanliness constraints.
+
+### Still mandatory
+
+- Finish After-sales domain breadth (including initial historical case distributions, richer account and cross-order scenarios) and comprehensive boundary/task audit.
+- Implement distinct Airline, Property and Education native state machines and generators; do not copy the refund flow into renamed domains.
+- Complete all eight native task composers, stratified Pilot/Core manifests, capability/depth/decision coverage, equal-weight scoring and semantic split/leakage audit.
+- Complete cross-turn commitment/partial-completion dependency coverage beyond the present counterfactual and mixed-task examples.
+- Extend Frozen Task Discovery and source-bound bidirectional evidence/Reflection/static-only version selection to eight domains.
+- Finish all requested documents, datasets, final source-pinned verification and full release audit. The current work is not an eight-domain release.
+
+### Offline example commands
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m usami_aftersales verify \
+  --bundle benchmarks/vnext-0.1/examples/aftersales-mixed-002/bundle.json
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m usami_aftersales certify \
+  --seed 1 --profile profile_u1_order0_line1 --mixed --resolution refund \
+  --max-search-nodes 256 --max-paths 1 --output /tmp/usami-aftersales-new-certificate
+```
+
+Use a new output directory. Archived bundles contain exact sources and reject current source mismatches; if the runtime advances, use the corresponding archived source snapshot. Actual LLM execution is separately available via `python -m usami_aftersales run --online` with environment-configured models/credentials and frozen budgets. It is not invoked by certification or verification. Customer/Service-specific settings can override the shared environment via `USAMI_CUSTOMER_LLM_*` / `USAMI_SERVICE_LLM_*`. No key or HTTP authorization header is stored.
+
+
+Full regression for the After-sales checkpoint finished with exit 0: **1094 passed in 508.69 seconds**. Raw log: `benchmarks/vnext-0.1/verification/logs/aftersales-checkpoint-full-1094.log`. This result predates the subsequent Airline implementation and cannot be used to claim validation of that later code.

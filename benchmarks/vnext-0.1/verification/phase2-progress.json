@@ -1,0 +1,52 @@
+{
+  "status": "IN_PROGRESS",
+  "full_goal_complete": false,
+  "paid_model_experiments": "NOT RUN",
+  "implemented": [
+    "Versioned StayOps rules correction with 100-world audit",
+    "Native After-sales core and 100-world audit",
+    "Actual fixed-policy Customer/Service dialogue runner",
+    "Native Reference reachability and mixed-task certification",
+    "Trace-bound counterfactual necessity certificates",
+    "Exact offline process/model Replay"
+  ],
+  "verified": {
+    "milestone_tests": {
+      "passed": 49,
+      "log": "logs/dialogue-milestone-49.log",
+      "caveat": "Precedes later serialization-roundtrip test extension; full current-tree regression is running."
+    },
+    "aftersales_worlds": {
+      "valid": 100,
+      "structures": 100,
+      "ownership_topologies": 99
+    },
+    "stayops_v2_worlds": {
+      "valid": 100,
+      "structures": 100,
+      "permission_topologies": 100
+    },
+    "serialized_mixed_example": {
+      "bundle": "../examples/aftersales-mixed-002/bundle.json",
+      "verified": true,
+      "log": "logs/aftersales-example-002-verify.log"
+    }
+  },
+  "running_validation": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/pytest -q",
+    "log": "/private/tmp/usami-vnext-aftersales-full-regression.log",
+    "note": "Process must be re-polled by its actual exec handle; this file does not prove it is still alive.",
+    "status": "COMPLETED",
+    "exit_code": 0,
+    "passed": 1094,
+    "seconds": 508.69,
+    "archived_log": "logs/aftersales-checkpoint-full-1094.log"
+  },
+  "remaining": [
+    "Complete After-sales historical/account/cross-order breadth and task-boundary audit",
+    "Implement Airline, Property and Education distinct native domains",
+    "Eight-domain unified task composition, Pilot/Core release, coverage and semantic leakage audit",
+    "Eight-domain frozen bidirectional Discovery, fixed Customer, static-only selection and full evidence/selection Replay",
+    "Final documents, final regression and release audit"
+  ]
+}

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/Users/spring/RSI/Usami/usami_aftersales/__main__.py", line 97, in <module>
+    if __name__=='__main__':raise SystemExit(main())
+  File "/Users/spring/RSI/Usami/usami_aftersales/__main__.py", line 76, in main
+    for row in raw['witnesses']:verify_certificate(adapter,world,row['certificate'],ExecutionTrace.model_validate(row['trace']))
+  File "/Users/spring/RSI/Usami/usami_dialogue/tasks.py", line 138, in verify_certificate
+    if c!=certify(adapter,world,c.task,trace):raise ValueError('task certificate does not reproduce')
+ValueError: task certificate does not reproduce

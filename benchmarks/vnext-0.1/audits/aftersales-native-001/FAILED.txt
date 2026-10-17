@@ -1,0 +1,1 @@
+ABORTED before the first world registration: UnboundLocalError in newly extended signature scanner. Full traceback: verification/aftersales-audit-001.log. Original source snapshot retained. No generated worlds were reported as valid.

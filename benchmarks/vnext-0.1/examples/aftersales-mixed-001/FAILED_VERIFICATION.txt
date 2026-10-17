@@ -1,0 +1,1 @@
+Original CLI certification exited 0; loading the sorted JSON and re-verifying exited 1 because dependency-list iteration depended on dict insertion order. Original bundle and source archive retained. Verification traceback saved in verification/logs/aftersales-example-001-verify.log. Superseded by canonical proof ordering and the separate -002 run. No model calls.

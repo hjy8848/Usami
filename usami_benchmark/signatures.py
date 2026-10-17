@@ -16,7 +16,12 @@ CATEGORIES={'status','role','quality','category','returnable','receiving_enabled
 
 def relations(domain,world,permissions_only=False):
     raw=world.model_dump(mode='json');nodes={};edges={}
+    refs=dict(REFS);categories=set(CATEGORIES)
     allowed={'users','organizations','projects','warehouses','properties','access','memberships'}
+    if domain=='aftersales':
+        refs.update(merchant_id='merchants',product_id='products',line_id='lines',holder_id='users',case_id='cases',agreement_quote='quotes')
+        categories.update({'issue','return_required','simulated_valid','option','review_requested'})
+        allowed={'users','merchants','orders'}
     for collection,value in raw.items():
         if not isinstance(value,dict) or collection in {'rules','config'} or (permissions_only and collection not in allowed):continue
         for key,obj in value.items():
@@ -25,24 +30,24 @@ def relations(domain,world,permissions_only=False):
     def scan(token,value,prefix=''):
         if isinstance(value,dict):
             for field,item in value.items():
-                if field in REFS:
+                if field in refs:
                     values=item if isinstance(item,list) else [item]
                     for target in values:
-                        right=(REFS[field],target) if isinstance(target,str) else None
+                        right=(refs[field],target) if isinstance(target,str) else None
                         if right in nodes:
                             edges[token].append((prefix+field,right));edges[right].append(('reverse:'+prefix+field,token))
-                elif field in CATEGORIES and (not permissions_only or field=='role' or (field=='status' and token[0] in {'access','memberships'})):
+                elif field in categories and (not permissions_only or field=='role' or (field=='status' and token[0] in {'access','memberships'})):
                     nodes[token][prefix+field]=item
                 elif isinstance(item,(list,dict)) and field not in {'attestation','gateway_notice','carrier_notice','receipt_notice','inspection_notice','receiving_notice','notice','payments','refunds'}:
                     scan(token,item,prefix+field+'.')
         elif isinstance(value,list):
-            categories=[]
+            items=[]
             for item in value:
                 if isinstance(item,dict):
                     # List order is not a new business structure.
-                    categories.append({k:v for k,v in item.items() if k in CATEGORIES})
+                    items.append({k:v for k,v in item.items() if k in categories})
                     scan(token,item,prefix+'item.')
-            if categories:nodes[token][prefix+'categories']=sorted(categories,key=digest)
+            if items:nodes[token][prefix+'categories']=sorted(items,key=digest)
     for token in nodes:
         scan(token,raw[token[0]][token[1]])
         if not permissions_only:nodes[token].update(policy_features(domain,world,*token))
@@ -75,6 +80,15 @@ def policy_features(domain,w,collection,key):
         if collection=='calendar':features['occupancy']=relation(occupied(w,obj.room_type_id,obj.day),calendar_capacity(w,obj.room_type_id,obj.day));features['weekend']=obj.day.weekday()>=5
         if collection=='reservations':features.update(payment=relation(net_paid(w,key),obj.total_cents),deposit=relation(net_paid(w,key),obj.deposit_cents),arrival=relation(obj.arrival,w.clock.date()),cancel_fee='free' if not cancellation_fee(w,obj,w.clock) else 'penalty',hold_expired=w.clock>=obj.hold_expires_at)
         if collection=='rate_plans':features['deposit']='none' if not obj.deposit_bps else 'full' if obj.deposit_bps==10000 else 'partial';features['free_window']='none' if not obj.free_cancel_hours else 'positive'
+    elif domain=='aftersales':
+        from datetime import timedelta
+        if collection=='lines':
+            order=w.orders[obj.order_id];product=w.products[obj.product_id]
+            features.update(return_window='not_delivered' if order.delivered_at is None else 'open' if w.clock<=order.delivered_at+timedelta(days=product.return_days) else 'expired',
+                replacement_stock=relation(product.stock,obj.quantity),approval_required=obj.quantity*obj.unit_price_cents>w.merchants[order.merchant_id].refund_approval_limit_cents,
+                paid_balance=relation(order.paid_cents-sum(r.amount_cents for r in w.refunds.values() if r.order_id==order.id),obj.quantity*obj.unit_price_cents))
+            profiles=[p for p in w.profiles.values() if p.facts.get('line_id')==key]
+            features['deadline_fits']=sorted(w.clock+timedelta(days=product.replacement_days)<=__import__('datetime').datetime.fromisoformat(p.facts['deadline']) for p in profiles)
     elif domain=='saas':
         if collection=='subscriptions':
             members=[m for m in w.memberships.values() if m.org_id==obj.org_id and m.status=='active'] if hasattr(obj,'org_id') else []

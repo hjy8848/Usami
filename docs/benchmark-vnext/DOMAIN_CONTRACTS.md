@@ -50,3 +50,17 @@ The customer may initially describe dissatisfaction without disclosing the actua
 ## Runtime boundaries still to connect
 
 The implemented `usami_dialogue` reducer verifies private-value provenance, preferences and consent scope, but does not yet validate these four industries' quotes or execute native business actions. Native domain callbacks, Engine/Oracle traces, mixed task proofs, Customer/Service sessions and unified adapters are mandatory remaining work. No common CRUD facade is an acceptable substitute.
+
+## Executable After-sales core
+
+The After-sales implementation (`usami_aftersales/`) is an order-line dispute state machine, with merchant-scoped ownership, simulated evidence verification, refund approval limits, paid-value/original-channel accounting, replacement stock conservation, pickup and verified receipt. Its native operations implement open-case, evidence verification, approval request, actual quote, consent-bound settlement, return scheduling and refund release. Scoped read tools expose the actual order/case/options without private profile or simulator outcomes.
+
+The Customer profile chooses a real buyer/order/line, immutable problem/evidence facts, deadline and acceptable resolution space before execution. A Customer declaration can itself supply exact facts; missing-information rules must not manufacture extra turns after those facts have been supplied. The production model chooses whether to clarify, compare, revise, confirm or finish. Manager/carrier events have pre-registered outcomes and independent expected/actual handlers.
+
+The current domain task contract allows actual terminal line states and explicit duplicate-resolution refusal subgoals. Frames are supplied by the domain binding and cannot be broadened by a task proposal. Native Reference search is private certification; production execution remains autonomous. Current fixtures cover two different valid resolution paths, a legal extra-query path, a mixed completion/refusal goal, consent and preference boundaries, premature Sandbox settlement, and actual simulator receipt/approval dependencies.
+
+This is not a claim of full After-sales coverage: historical initial case distributions, richer account choices, full cross-order/multi-entity task families and the final Reference decision matrix remain under development. The three other Dialogue-Centric domains remain unimplemented at this checkpoint.
+
+## Explicit StayOps correction version
+
+`stayops-structural-v2` binds `stayops-0.2.0` under `usami_benchmark/native/stayops_v2/`. A currently dirty unoccupied room can have an assignment for a future arrival; actual assignment/check-in cleanliness checks and the prohibition on a currently occupied dirty room remain. This resolves the legacy checkout-versus-future-assignment invariant conflict. Both historical native `stayops-0.1.0` and the first structural generator remain available under their original explicit registrations; old traces are not re-scored under the new invariant.

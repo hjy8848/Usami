@@ -1,0 +1,30 @@
+{
+  "status": "pass",
+  "meaning": "Namespace isolation preserves world content; source provenance registrations intentionally change.",
+  "domains": {
+    "saas": {
+      "unchanged_complete_worlds": 100,
+      "anonymous_structures": 100,
+      "permission_topologies": 100,
+      "generation_exclusions": 0
+    },
+    "cloudops": {
+      "unchanged_complete_worlds": 100,
+      "anonymous_structures": 100,
+      "permission_topologies": 100,
+      "generation_exclusions": 0
+    },
+    "fulfillment": {
+      "unchanged_complete_worlds": 100,
+      "anonymous_structures": 100,
+      "permission_topologies": 100,
+      "generation_exclusions": 0
+    },
+    "stayops": {
+      "unchanged_complete_worlds": 100,
+      "anonymous_structures": 100,
+      "permission_topologies": 100,
+      "generation_exclusions": 4
+    }
+  }
+}

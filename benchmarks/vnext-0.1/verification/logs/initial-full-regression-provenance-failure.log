@@ -1,0 +1,38 @@
+........................................................................ [  6%]
+........................................................................ [ 13%]
+........................................................................ [ 20%]
+........................................................................ [ 26%]
+........................................................................ [ 33%]
+........................................................................ [ 40%]
+........................................................................ [ 47%]
+........................................................................ [ 53%]
+........................................................................ [ 60%]
+........................................................................ [ 67%]
+........................................................................ [ 74%]
+........................................................................ [ 80%]
+.............................................F
+=================================== FAILURES ===================================
+__ test_frozen_library_loading_witness_and_read_only_pilot[cloudops-counts0] ___
+
+client = <starlette.testclient.TestClient object at 0x108590b80>
+domain = 'cloudops', counts = [27, 9, 9, 2]
+
+    @pytest.mark.parametrize('domain,counts', [('cloudops',[27,9,9,2]),('fulfillment',[265,27,46,1]),('stayops',[234,1,67,1])])
+    def test_frozen_library_loading_witness_and_read_only_pilot(client,domain,counts):
+        state=initial(client,domain);release=client.get(f'/api/domains/{domain}/benchmark').json()
+        assert [s['instance_count'] for s in release['suites']]==counts
+        assert not release['pilot']['official_full_release_score']
+        assert client.get(f'/api/domains/{domain}/benchmark/suites/private').status_code==404
+        items=client.get(f'/api/domains/{domain}/benchmark/suites/test-demo').json()['instances']
+        item=next(i for i in items if i['task'] and i['task']['kind']=='completion')
+        command={'suite':'test-demo','instance_id':item['id'],'expected_state_hash':state['state_hash']}
+>       loaded=client.post(f'/api/domains/{domain}/benchmark/load',json=command);assert loaded.status_code==200,loaded.text
+E       AssertionError: {"detail":{"code":"INVALID_INPUT","message":"CloudOps source provenance differs; use original commit or refreeze a new profile"}}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_web_domains.py:125: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_web_domains.py::test_frozen_library_loading_witness_and_read_only_pilot[cloudops-counts0]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 909 passed in 483.27s (0:08:03)

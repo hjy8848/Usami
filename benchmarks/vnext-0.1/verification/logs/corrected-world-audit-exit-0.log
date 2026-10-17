@@ -1,0 +1,34 @@
+{
+  "saas": {
+    "attempted": 100,
+    "valid_worlds": 100,
+    "anonymous_structures": 100,
+    "permission_topologies": 100,
+    "minimum_structural_goal_met": true,
+    "invalid": []
+  },
+  "cloudops": {
+    "attempted": 100,
+    "valid_worlds": 100,
+    "anonymous_structures": 100,
+    "permission_topologies": 100,
+    "minimum_structural_goal_met": true,
+    "invalid": []
+  },
+  "fulfillment": {
+    "attempted": 100,
+    "valid_worlds": 100,
+    "anonymous_structures": 100,
+    "permission_topologies": 100,
+    "minimum_structural_goal_met": true,
+    "invalid": []
+  },
+  "stayops": {
+    "attempted": 100,
+    "valid_worlds": 100,
+    "anonymous_structures": 100,
+    "permission_topologies": 100,
+    "minimum_structural_goal_met": true,
+    "invalid": []
+  }
+}

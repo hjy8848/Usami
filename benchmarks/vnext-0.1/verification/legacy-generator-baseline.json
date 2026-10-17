@@ -1,0 +1,25 @@
+{
+  "source_commit": "2319b279a906a5eed043469c9528ebdfc68e46b0",
+  "domains": {
+    "saas": {
+      "seed": 42,
+      "world_hash": "cbdc43984d682555281707a7431c7ed702f0c9bc4a3ebb3346b614f10936e0ec",
+      "legacy_generator_sha256": "6048fdec6e8247af33163772b2a5cda6a18b52358783705ac44f5d06f6be9a3f"
+    },
+    "cloudops": {
+      "seed": 42,
+      "world_hash": "bcd3dc809292c82106bde8bd729fda0d097f9a29504ceb1dacdbf6dc7c3944b9",
+      "legacy_generator_sha256": "f53de74fc95f6d7868bea81ea19915628a97012918ee9b2a0f3d53a3bc015417"
+    },
+    "fulfillment": {
+      "seed": 42,
+      "world_hash": "a0378578282d378ddfe5b221fccd4e339a7f3432828be4627c663373fe714b3f",
+      "legacy_generator_sha256": "0a538d486372a94e3e610b92befe5885ffa7b33f6186aaa110a31d1ccfe2b8a9"
+    },
+    "stayops": {
+      "seed": 42,
+      "world_hash": "7ec0ebf2701f8b04f85c18a8f768e1d3b060826ae72f1d68dfc00de8600464a3",
+      "legacy_generator_sha256": "0059529947abcc3888b62758c390863bfc0dc559e0e226a9a55846735695e59c"
+    }
+  }
+}

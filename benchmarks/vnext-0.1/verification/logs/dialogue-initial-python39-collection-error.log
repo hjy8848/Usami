@@ -1,0 +1,15 @@
+
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/test_vnext_dialogue_process.py _____________
+tests/test_vnext_dialogue_process.py:3: in <module>
+    from usami_dialogue.models import CustomerPrivateState,CustomerIntent
+usami_dialogue/models.py:54: in <module>
+    class CustomerIntent(Model):
+usami_dialogue/models.py:58: in CustomerIntent
+    confirm_operation: dict | None=None
+E   TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
+=========================== short test summary info ============================
+ERROR tests/test_vnext_dialogue_process.py - TypeError: unsupported operand t...
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.07s

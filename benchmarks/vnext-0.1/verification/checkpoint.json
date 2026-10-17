@@ -1,0 +1,25 @@
+{
+  "status": "checkpoint_passed",
+  "overall_objective": "IN PROGRESS",
+  "full_regression": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/pytest -q -x",
+    "exit_code": 0,
+    "passed": 1069,
+    "failed": 0,
+    "seconds": 500.95
+  },
+  "world_audit": {
+    "exit_code": 0,
+    "domains": 4,
+    "worlds_per_domain": 100,
+    "real_llm": "NOT RUN"
+  },
+  "required_remaining": [
+    "versioned native StayOps consistency correction",
+    "four complete dialogue business domains",
+    "eight-domain task certification and mixed goals",
+    "Pilot/Core datasets and capability audit",
+    "semantic leakage and balanced evaluation",
+    "eight-domain Frozen Task Discovery and full Replay"
+  ]
+}

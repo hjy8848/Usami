@@ -1,6 +1,6 @@
 # Native dialogue task certification
 
-Status: implemented and exercised for After-sales; Airline, Property, Education and the unified eight-domain release remain active work. No real LLM research run has been performed.
+Status: implemented and exercised for After-sales and Airline; Property, Education and the unified eight-domain release remain active work. No real LLM research run has been performed.
 
 ## Reachability and scoring are different operations
 
@@ -34,3 +34,12 @@ Current tests demonstrate missing-information, preference, consent and real mana
 ## Evidence limits
 
 A private witness proves that a task is executable under its stated rules. It does not prove a real model solves the task, asks good questions or learns across generations. Fixture-driven Agent protocol tests exercise actual Function Calling, business mutations, Oracle, budget handling and exact request Replay; they are not real LLM results. Dataset-scale certification, coverage/leakage reports and the Pilot/Core releases remain outstanding.
+
+
+## Shared planner and source-complete artifacts
+
+`usami_dialogue.planner` is the common bounded search/execution implementation. Domain-specific composers supply only real goals, exact scopes, allowable preferences, frames and refusal probes. A refusal is reachable only when the requested operation is actually disallowed for the declared reason; reaching a completion goal alone is insufficient for a mixed task.
+
+`usami_dialogue.artifacts` saves actual native traces/certificates with independently frozen generator provenance, deterministic compressed content, exact runtime source file sets/hashes and a source archive. Offline verification checks generation, source completeness, manifest/case integrity, objective scoring and Replay. Native witnesses are explicitly labelled `model_experiments: NOT RUN`; re-labelling them as real LLM evidence is rejected.
+
+`TaskRunConfig` uses a separate task-agent protocol. It requires the task to match a private certificate and verifies the witness before invoking either model. Domain-derived Customer briefs contain the selected business need but no hidden refusal code, expected outcome or witness. The complete private certificate remains in the host journal for reproducibility, never the model request. Base v1 configurations remain available for task-independent interactions.

@@ -8,7 +8,7 @@ This is an active engineering ledger, not a completed release claim. The full re
 | --- | --- | --- |
 | Preserve four historical domains/releases | Old generator hashes, historical tests and Replay | Four legacy seed/source pins verified; old Web/native regression passed after namespace isolation |
 | Three structural generators | 100 worlds each, native invariants, ID-neutral signatures, ≥30 meaningful structures or actual gap | Implemented under isolated vNext namespace; 100 valid audited worlds per existing domain; native StayOps consistency issue recorded |
-| Four dialogue domains | Domain-specific rules/appliers, private Customer state, information/consent dependencies, proof and Replay | After-sales native core, shared runtime, task certificates and an offline mixed example implemented; remaining domain coverage and three other domains pending |
+| Four dialogue domains | Domain-specific rules/appliers, private Customer state, information/consent dependencies, proof and Replay | After-sales and Airline native cores, shared runtime, task certificates and offline mixed/refusal examples implemented; domain breadth and Property/Education pending |
 | Eight-domain contracts and audit | Unified provenance, taxonomy, structural/permission/decision/task coverage | WorldSpec/FrozenWorld/pool/signatures and private dialogue reducer implemented; task/decision coverage pending |
 | Pilot 320 / Core 800 | Frozen certified tasks, truthful counts, stratified coverage and leakage audit | Pending |
 | Multi-domain Frozen Discovery | Real source-bound branches, fixed Customer, static-only inheritance and exact Replay | Existing CloudOps path inspected; expansion pending |
@@ -93,3 +93,29 @@ Use a new output directory. Archived bundles contain exact sources and reject cu
 
 
 Full regression for the After-sales checkpoint finished with exit 0: **1094 passed in 508.69 seconds**. Raw log: `benchmarks/vnext-0.1/verification/logs/aftersales-checkpoint-full-1094.log`. This result predates the subsequent Airline implementation and cannot be used to claim validation of that later code.
+
+
+## Phase-2 checkpoint: Airline and shared certified-task execution
+
+Airline now has a distinct native ticketing model, independent expected/actual transitions, flight/cabin seat conservation, spatial and temporal connection constraints, passenger-document verification, voluntary fare restrictions versus airline cancellation, fee/refund computation, baggage limits, simulated payment capacity, current-quote consent, actual ledger accounting, scoped queries, frozen operational updates and full Replay.
+
+The shared `usami_dialogue.planner` now handles private native Reference search for both implemented dialogue domains; it does not drive production Service decisions. Airline composers cover rebooking, refund, baggage, standalone policy refusal and appropriate mixed completion/duplicate refusal. Correct refusal certification uses a real unattempted Customer request and independently checked policy reason. Pure refusal frames preserve ticket and financial state while allowing the necessary identity-verification record.
+
+A separate `business-dialogue-task-agents-v1` configuration binds the exact task, private certificate and witness before any paid model call. It derives a Customer-facing business request from domain-validated goals. Reference outcomes, policy refusal codes and witnesses remain host-side. The earlier `business-dialogue-agents-v1` config/journal shape is retained. The fixed Customer's weights and policy are unchanged; selected task goals guide what it wants, without changing its objective facts or revealing an answer. The After-sales online CLI now uses this certified task variant. No online invocation was performed.
+
+Actual validation:
+
+- `pytest -q tests/test_vnext*`: **69 passed in 44.03s**, exit 0. This includes the two native domains, original generator/StayOps tests, process/counterfactual/certificate checks, production Function Calling runner with explicitly scripted transport, exact model-request Replay, task goal isolation and rejection of invalid certification before any model call.
+- Airline world audit: **100/100 valid**, **100 ID-neutral structures**, **97 ownership topologies**, no invalid worlds. Task-scale decision/depth/coverage measurements remain NOT RUN.
+- Four archived Airline native examples: refund (mixed), rebook, baggage (mixed), standalone fare-refund refusal. All verified through independent Oracle and actual transition Replay.
+- The entire example source snapshot was extracted to a fresh isolated directory. The four cases verified successfully using only that archived runtime (exit 0). This checks that Replay does not accidentally depend on the current checkout.
+- The prior 1094-test full repository regression is the preceding After-sales checkpoint result, not a final validation claim for all subsequent work. A final full regression is still required for the full eight-domain release.
+
+Artifacts: `audits/airline-native-001/`, `examples/airline-native-002/`, and `verification/logs/`. The earlier `airline-native-001` example is retained with its exact sources; the second example includes the later certified-task protocol and stricter pure-refusal frame. Neither is a model experiment. Source-pinned example verification intentionally rejects a modified runtime; use the corresponding archived source snapshot.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m usami_dialogue verify-examples \
+  benchmarks/vnext-0.1/examples/airline-native-002
+```
+
+Remaining scope is unchanged: After-sales historical/account/cross-order expansion, complete Property and Education domains, all eight native task bindings and certified datasets, coverage/leakage/macro evaluation, fixed-Customer multi-domain Designer/Service Discovery and selection Replay, and final release verification. No paid LLM training, actual learning gain or cross-domain generalization has been demonstrated.

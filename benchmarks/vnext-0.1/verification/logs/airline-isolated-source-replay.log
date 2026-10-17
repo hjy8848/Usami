@@ -1,0 +1,29 @@
+Isolated archived-source replay: /var/folders/3b/r2075jwj0s7cf56j2mnztpdm0000gn/T/usami-airline-source-replay-3ybh1hgc
+{
+  "verified": true,
+  "domain": "airline",
+  "cases": [
+    {
+      "family": "refund",
+      "trace_hash": "bc07776efdc75584e571b907ddf169b69df9e57bd6eb7e10c084b74c7c578bc6",
+      "task_hash": "0002adcbd8b200c5fb1b5ade024f66ef43e2f0dd655e3f0ce4bc16b97e416299"
+    },
+    {
+      "family": "rebook",
+      "trace_hash": "21a696d84a04c7ccf5353920a43e7c7ceb21e78e929130d1e6e474e2ac5be919",
+      "task_hash": "bf9fa8d9944a0a79d9665b49aff0d3d1d77fd40b55437a443565f14372670128"
+    },
+    {
+      "family": "baggage",
+      "trace_hash": "36815ba6702b877f3df80aeba7cd6063125c4791698dafb12b313bccdbb71c5e",
+      "task_hash": "e13fbcd88089c7b13bfeaf0ef9837bf1024a867c9e807d18aaf346a4a32e74aa"
+    },
+    {
+      "family": "refuse_refund",
+      "trace_hash": "537fa3846523e3c00ccf5abfbb2568451ccb6641db89d117930c7ff4f7624ff6",
+      "task_hash": "c76b1620d411aec599be4928383ec5492bfeb7f34c08798c6c6c384beda62130"
+    }
+  ],
+  "model_experiments": "NOT RUN"
+}
+EXIT_CODE 0

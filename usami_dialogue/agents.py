@@ -1,6 +1,6 @@
 """Real function-calling Customer/Service interaction; fixtures use this exact runner."""
 import copy,json
-from typing import Literal
+from typing import Literal,Union
 from pydantic import Field
 from usami_harness.models import Model,Budget,digest
 from usami_harness.tools import schemas,parse
@@ -9,6 +9,7 @@ from usami.service.runner import completion_message
 from .models import CustomerIntent
 from .engine import DialogueSession,ExecutionTrace
 from .oracle import evaluate
+from .tasks import DialogueTask,TaskCertificate,verify_certificate
 
 
 class RunConfig(Model):
@@ -21,14 +22,22 @@ class RunConfig(Model):
     external_schedule:list[str]=Field(default_factory=list)
 
 
+class TaskRunConfig(RunConfig):
+    # A separate discriminator preserves the original journal/config shape.
+    protocol:Literal['business-dialogue-task-agents-v1']='business-dialogue-task-agents-v1'
+    task:DialogueTask
+    certificate:TaskCertificate
+    witness:ExecutionTrace
+
+
 class AgentCall(Model):
     role:Literal['customer','service']
     record:LLMRecord
 
 
 class AgentExecution(Model):
-    protocol:Literal['business-dialogue-agents-v1']='business-dialogue-agents-v1'
-    config:RunConfig
+    protocol:Literal['business-dialogue-agents-v1','business-dialogue-task-agents-v1']='business-dialogue-agents-v1'
+    config:Union[RunConfig,TaskRunConfig]=Field(discriminator='protocol')
     customer_model:ModelSettings
     service_model:ModelSettings
     calls:list[AgentCall]
@@ -54,7 +63,7 @@ CUSTOMER_POLICY=(
 )
 SERVICE_POLICY=(
  'You provide service in a deterministic simulated business. Query and choose your own business tools and order. '
- 'The authenticated buyer is fixed. Only customer-declared exact write intentions authorize writes; tool arguments and your own messages cannot create authority. '
+ 'The authenticated customer is fixed. Only customer-declared exact write intentions authorize writes; tool arguments and your own messages cannot create authority. '
  'Before irreversible action obtain the necessary facts, chosen resolution and explicit current consent. Never invent evidence, approval, receipt or success. '
  'To ask or reply use respond_to_customer(message, offered_operation). To present binding terms, offered_operation must identify the actual quote-backed action; '
  'the host displays its real terms to the customer. Never expose private simulator state, switch actor, or assume consent. '
@@ -63,7 +72,17 @@ SERVICE_POLICY=(
 
 
 def run(adapter,world,config,customer_client,service_client):
-    config=RunConfig.model_validate(config.model_dump(mode='json') if isinstance(config,RunConfig) else config)
+    raw=config.model_dump(mode='json') if isinstance(config,RunConfig) else config
+    config=(TaskRunConfig if raw.get('protocol')=='business-dialogue-task-agents-v1' else RunConfig).model_validate(raw)
+    brief=None
+    if isinstance(config,TaskRunConfig):
+        from .tasks import checked_task
+        config.task=checked_task(adapter,world,config.task)
+        if config.certificate.task!=config.task:raise ValueError('task differs from its private native certificate')
+        verify_certificate(adapter,world,config.certificate,config.witness)
+        if config.task.profile_id!=config.profile_id or config.task.world_hash!=config.initial_world_hash:raise ValueError('Customer task and run source registration differ')
+        if config.external_schedule!=config.task.external_schedule:raise ValueError('task external schedule differs from run registration')
+        brief=adapter.customer_task_brief(world,adapter.private_state(world,config.profile_id),config.task)
     if config.initial_world_hash!=world.state_hash or set(config.tools)-set(adapter.TOOLS):raise ValueError('frozen world/tool configuration differs')
     if len(config.tools)!=len(set(config.tools)) or len(config.external_schedule)!=len(set(config.external_schedule)):raise ValueError('duplicate tool/external registration')
     if set(config.external_schedule)-set(world.external_events):raise ValueError('unregistered external event')
@@ -74,6 +93,7 @@ def run(adapter,world,config,customer_client,service_client):
         'parameters':{'type':'object','properties':{'message':{'type':'string','minLength':1},'offered_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refused_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refusal_code':{'anyOf':[{'type':'string'},{'type':'null'}]}},'required':['message','offered_operation'],'additionalProperties':False}}}]
     smessages=[{'role':'system','content':SERVICE_POLICY+' Identity: '+session.private.identity+'. Public policy: '+json.dumps(adapter.POLICY,sort_keys=True)+'. Budget: '+config.budget.model_dump_json()}]
     cmessages=[{'role':'system','content':CUSTOMER_POLICY+' Your private profile: '+session.private.model_dump_json()+'. Business write schemas: '+json.dumps(schemas(adapter,[n for n in config.tools if n in adapter.PARAMETERS and n not in adapter.Operation.queries]),sort_keys=True)}]
+    if brief is not None:cmessages[0]['content']+=' Your chosen business request: '+brief
     calls=[];tool_records=[];errors=[];seen=set();conversation=[];pending=list(config.external_schedule)
     counts={'customer':0,'service':0};recoveries={'customer':0,'service':0};status='customer_turn_budget_exhausted'
     def complete(role,messages,tools):
@@ -171,7 +191,7 @@ def run(adapter,world,config,customer_client,service_client):
         for target,key in [('input_tokens','prompt_tokens'),('output_tokens','completion_tokens'),('total_tokens','total_tokens')]:
             tokens[target]+=usage[key];by_role[row.role][target]+=usage[key]
     cost={**tokens,'usage_complete':usage_complete,'by_role':by_role,'customer_calls':counts['customer'],'service_calls':counts['service'],'tool_calls':len(tool_records),'format_recoveries':recoveries}
-    result=AgentExecution(config=config,customer_model=cmodel,service_model=smodel,calls=calls,tools=tool_records,trace=trace,oracle=oracle,status=status,errors=errors,cost=cost)
+    result=AgentExecution(protocol=config.protocol,config=config,customer_model=cmodel,service_model=smodel,calls=calls,tools=tool_records,trace=trace,oracle=oracle,status=status,errors=errors,cost=cost)
     result.execution_hash=result.computed_hash();return result
 
 
@@ -179,6 +199,7 @@ def replay(adapter,execution,*,world=None,config=None):
     from usami.service.client import RecordedCompletionClient
     from .replay import replay as replay_trace
     row=AgentExecution.model_validate(execution.model_dump(mode='json') if isinstance(execution,AgentExecution) else execution)
+    if row.protocol!=row.config.protocol:raise ValueError('agent execution/config protocol differs')
     if row.execution_hash!=row.computed_hash():raise ValueError('agent execution integrity differs')
     initial=adapter.World.model_validate(row.trace.initial_world)
     if world is not None and world!=initial:raise ValueError('registered world differs')

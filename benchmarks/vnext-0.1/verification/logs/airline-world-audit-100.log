@@ -1,0 +1,10 @@
+{
+  "airline": {
+    "attempted": 100,
+    "valid_worlds": 100,
+    "anonymous_structures": 100,
+    "permission_topologies": 97,
+    "minimum_structural_goal_met": true,
+    "invalid": []
+  }
+}

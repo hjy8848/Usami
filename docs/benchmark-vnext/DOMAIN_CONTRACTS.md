@@ -64,3 +64,14 @@ This is not a claim of full After-sales coverage: historical initial case distri
 ## Explicit StayOps correction version
 
 `stayops-structural-v2` binds `stayops-0.2.0` under `usami_benchmark/native/stayops_v2/`. A currently dirty unoccupied room can have an assignment for a future arrival; actual assignment/check-in cleanliness checks and the prohibition on a currently occupied dirty room remain. This resolves the legacy checkout-versus-future-assignment invariant conflict. Both historical native `stayops-0.1.0` and the first structural generator remain available under their original explicit registrations; old traces are not re-scored under the new invariant.
+
+
+## Executable Airline core
+
+`usami_airline/` models carrier-scoped passenger bookings, dated flight legs, airports and minimum connection times, cabin inventory, fare contracts, baggage and a signed simulated financial ledger. Rebooking releases the old seat use by changing the actual booking and consumes capacity on the selected legs. Quotes do not reserve seats: native Reference rechecks capacity, current terms, fee/arrival constraints and exact consent at commit. Cancelled tickets release seat use and retain only non-refundable charges according to the executed accounting rules.
+
+An airline's actual pre-registered cancellation is distinct from a passenger's voluntary refund request. The first can waive a fare restriction and fee; Customer statements cannot create it. External delays alter real flight times and connection feasibility. The Service can query actual fare terms, timetable, availability, baggage limits and its authenticated passenger's remaining payment capacity without seeing private simulator identity outcomes.
+
+The fixed private passenger profile contains actual booking/document facts, travel and budget constraints, and reasonable itinerary/service choices. A certified-task runner tells the Customer which business request is selected while withholding Reference answers. The Customer can clarify, choose, revise and consent based on actual replies; it is not a timetable script. Legal commits use the same actual Engine in the fixture protocol tests and the real-model entry point.
+
+Standalone refusal tasks require the exact requested fare/capacity/connection boundary to be independently provable. Their frames allow passenger verification and registered operational events, while protecting ticket/financial state. Mixed refund/baggage tasks additionally reject a real duplicate request after legal completion. These examples do not exhaust the required full domain coverage.

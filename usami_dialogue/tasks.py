@@ -134,6 +134,8 @@ def certify(adapter,world,task,trace):
 def verify_certificate(adapter,world,certificate,trace):
     c=TaskCertificate.model_validate(certificate.model_dump(mode='json') if isinstance(certificate,TaskCertificate) else certificate)
     if c.certificate_hash!=c.computed_hash() or c.witness_trace_hash!=trace.trace_hash:raise ValueError('task certificate integrity/source differs')
-    for proof in c.dependencies:verify_dependency(adapter,trace,proof)
+    # Rebuild the entire canonical proof set from replayed source below. Equality
+    # checks every intervention/state/decision, without replaying the same full
+    # trace once again for each individual certificate.
     if c!=certify(adapter,world,c.task,trace):raise ValueError('task certificate does not reproduce')
     return True

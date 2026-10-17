@@ -3,15 +3,10 @@
 This planner creates private certificates only. The production Service does not
 receive its path and is scored on terminal goals, refusal claims and frame rules.
 """
-from collections import deque
-from usami_harness.models import digest
-from usami_dialogue.models import CustomerIntent
-from usami_dialogue.process import initialize,customer_event
-from usami_dialogue.engine import DialogueSession
 from usami_dialogue.tasks import DialogueTask,Goal,FrameRule,RefusalGoal,checked_task,certify
 from .models import Operation
 from .rules import case_key
-from .customer import candidate_intents,external_ready,offer_for,consent_allowed,normalize_intent,private_state
+from .customer import private_state
 
 
 TERMINAL={'refund':'refunded','exchange':'exchanged','reship':'reshipped'}
@@ -56,71 +51,18 @@ def validate_task(world,private,task):
     if any(world.external_events[e].line_id!=line.id for e in task.external_schedule if e in world.external_events):raise ValueError('external event outside task line')
 
 
-def _context(world,private,intent):
-    new=world.clone()
-    new.interaction=customer_event(world.interaction,private,normalize_intent(private,intent),turn_id='certificate_search',world_hash=world.state_hash,
-        offer=offer_for(world,intent.confirm_operation),consent_check=consent_allowed)
-    return new
-
-
 def search(world,task,*,max_nodes=1024,max_depth=12,max_paths=2):
     from . import adapter
-    task=checked_task(adapter,world,task);private=private_state(world,task.profile_id)
-    queue=deque();seen=set();paths=[];nodes=0
-    for option in private.preference_space['resolution']:
-        if TERMINAL[option] not in task.goals[0].accepted_values:continue
-        state=world.clone();state.interaction=initialize(private)
-        intent=CustomerIntent(message='I am providing my actual order facts and choosing an acceptable resolution.',disclosures=private.facts,preferences={'resolution':option})
-        state=_context(state,private,intent)
-        queue.append((state,[{'kind':'customer','intent':intent.model_dump(mode='json')}],0))
-    while queue and nodes<max_nodes and len(paths)<max_paths:
-        state,path,depth=queue.popleft();key=state.state_hash
-        if key in seen:continue
-        seen.add(key);nodes+=1
-        if all(g.satisfied(state) for g in task.goals):paths.append(path);continue
-        if depth>=max_depth:continue
-        for raw in candidate_intents(state,private):
-            op=Operation.model_validate(raw);steps=[]
-            if op.name in {'commit_resolution','release_refund'}:
-                offer=offer_for(state,raw)
-                if not offer:continue
-                intent=CustomerIntent(message='I confirm these actual terms.',confirm_operation=raw)
-                try:prepared=_context(state,private,intent)
-                except ValueError:continue
-                steps=[{'kind':'service','operation':raw},{'kind':'customer','intent':intent.model_dump(mode='json')}]
-            else:
-                intent=CustomerIntent(message='Please perform this exact preparatory action.',requested_operations=[raw])
-                prepared=_context(state,private,intent)
-                steps=[{'kind':'customer','intent':intent.model_dump(mode='json')}]
-            decision=adapter.decide(prepared,private.identity,op)
-            if not decision.allowed or decision.expected_state==prepared:continue
-            queue.append((decision.expected_state,path+steps+[{'kind':'business','operation':raw}],depth+1))
-        for eid in task.external_schedule:
-            if external_ready(state,eid):
-                following=adapter.external_reference(state,eid)
-                if not adapter.invariants(following):queue.append((following,path+[{'kind':'external','event_id':eid}],depth+1))
-    return {'paths':paths,'nodes':nodes,'exhausted':not queue,'max_nodes':max_nodes,'max_depth':max_depth}
+    from usami_dialogue.planner import search as native_search
+    private=private_state(world,task.profile_id)
+    options=[{'resolution':option} for option in private.preference_space['resolution'] if TERMINAL[option] in task.goals[0].accepted_values]
+    return native_search(adapter,world,task,options,max_nodes=max_nodes,max_depth=max_depth,max_paths=max_paths)
 
 
 def execute_witness(world,task,path):
     from . import adapter
-    task=checked_task(adapter,world,task);session=DialogueSession(adapter,world,task.profile_id)
-    for step in path:
-        if step['kind']=='customer':session.customer(CustomerIntent.model_validate(step['intent']))
-        elif step['kind']=='service':session.reply('Actual binding offer for the selected remedy.',step['operation'])
-        elif step['kind']=='business':
-            result=session.act(step['operation'])
-            if not result['success']:raise ValueError('actual Engine disagrees with private Reference witness: '+str(result))
-        elif step['kind']=='external':session.external(step['event_id'])
-        else:raise ValueError('unknown witness step')
-    for goal in task.refusals:
-        # This is a certificate of a possible correct decision, never the
-        # production Agent's response nor an Engine-blocked invalid attempt.
-        session.customer(CustomerIntent(message='Please resolve this same order line again.',requested_operations=[goal.operation]))
-        decision=adapter.decide(session.state,session.private.identity,Operation.model_validate(goal.operation))
-        if decision.allowed or decision.error_code!=goal.code:raise ValueError('mixed refusal goal is not established')
-        session.reply('The line has already been resolved.',refused_operation=goal.operation,refusal_code=goal.code)
-    return session.finish()
+    from usami_dialogue.planner import execute_witness as native_execute
+    return native_execute(adapter,world,task,path)
 
 
 def certified_tasks(world,profile_id,*,resolutions=None,mixed=False,max_nodes=1024,max_paths=2):
@@ -132,3 +74,11 @@ def certified_tasks(world,profile_id,*,resolutions=None,mixed=False,max_nodes=10
         trace=execute_witness(world,task,path)
         certificates.append({'trace':trace,'certificate':certify(adapter,world,task,trace)})
     return task,result,certificates
+
+
+def customer_task_brief(world,private,task):
+    # A user goal, not the hidden Reference answer, witness or refusal reason.
+    options={'refunded':'refund','exchanged':'exchange','reshipped':'replacement shipment'}
+    result='Seek help for order '+private.facts['order_id']+', item '+private.facts['line_id']+'. Resolve the actual issue with one of: '+', '.join(options[v] for v in task.goals[0].accepted_values)+'. Compare real offers against your frozen needs; provide facts when appropriate.'
+    if task.refusals:result+=' You also want to request a further resolution for this same item after it has been resolved. Discuss the actual Service response.'
+    return result

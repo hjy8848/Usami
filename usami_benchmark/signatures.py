@@ -22,6 +22,10 @@ def relations(domain,world,permissions_only=False):
         refs.update(merchant_id='merchants',product_id='products',line_id='lines',holder_id='users',case_id='cases',agreement_quote='quotes')
         categories.update({'issue','return_required','simulated_valid','option','review_requested'})
         allowed={'users','merchants','orders'}
+    if domain=='airline':
+        refs.update(carrier_id='carriers',passenger_id='users',fare_rule_id='fare_rules',booking_id='bookings',quote_id='quotes',flight_id='flights',flights='flights',origin='airports',destination='airports')
+        categories.update({'cabin','changeable','refundable','verified','action'})
+        allowed={'users','carriers','bookings'}
     for collection,value in raw.items():
         if not isinstance(value,dict) or collection in {'rules','config'} or (permissions_only and collection not in allowed):continue
         for key,obj in value.items():
@@ -32,10 +36,11 @@ def relations(domain,world,permissions_only=False):
             for field,item in value.items():
                 if field in refs:
                     values=item if isinstance(item,list) else [item]
-                    for target in values:
+                    for position,target in enumerate(values):
                         right=(refs[field],target) if isinstance(target,str) else None
                         if right in nodes:
-                            edges[token].append((prefix+field,right));edges[right].append(('reverse:'+prefix+field,token))
+                            label=prefix+field+(':'+str(position) if domain=='airline' and field=='flights' else '')
+                            edges[token].append((label,right));edges[right].append(('reverse:'+label,token))
                 elif field in categories and (not permissions_only or field=='role' or (field=='status' and token[0] in {'access','memberships'})):
                     nodes[token][prefix+field]=item
                 elif isinstance(item,(list,dict)) and field not in {'attestation','gateway_notice','carrier_notice','receipt_notice','inspection_notice','receiving_notice','notice','payments','refunds'}:
@@ -89,6 +94,18 @@ def policy_features(domain,w,collection,key):
                 paid_balance=relation(order.paid_cents-sum(r.amount_cents for r in w.refunds.values() if r.order_id==order.id),obj.quantity*obj.unit_price_cents))
             profiles=[p for p in w.profiles.values() if p.facts.get('line_id')==key]
             features['deadline_fits']=sorted(w.clock+timedelta(days=product.replacement_days)<=__import__('datetime').datetime.fromisoformat(p.facts['deadline']) for p in profiles)
+    elif domain=='airline':
+        from datetime import timedelta
+        from usami_airline.rules import occupancy,disrupted
+        if collection=='flights':
+            features['seat_usage']={c:relation(occupancy(w,key,c),n) for c,n in obj.seats.items()}
+            features['connection_boundaries']=sorted(relation(f.departure,obj.arrival+timedelta(minutes=w.airports[obj.destination].min_connection_minutes)) for f in w.flights.values() if f.carrier_id==obj.carrier_id and f.origin==obj.destination)
+        if collection=='bookings':
+            rule=w.fare_rules[obj.fare_rule_id]
+            features.update(disrupted=disrupted(w,obj),change_window=relation(min(w.flights[f].departure for f in obj.flights),w.clock+timedelta(hours=rule.notice_hours)),baggage_fit=all(rule.baggage_included_kg+obj.extra_baggage_kg<=w.flights[f].max_baggage_kg for f in obj.flights))
+            profiles=[p for p in w.profiles.values() if p.facts.get('booking_id')==key]
+            features['refund_fee']=relation(obj.fare_value_cents,rule.refund_fee_cents)
+            features['change_fee_within_customer_budget']=sorted(rule.change_fee_cents<=p.facts['max_fee_cents'] for p in profiles)
     elif domain=='saas':
         if collection=='subscriptions':
             members=[m for m in w.memberships.values() if m.org_id==obj.org_id and m.status=='active'] if hasattr(obj,'org_id') else []

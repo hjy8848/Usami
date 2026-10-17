@@ -77,9 +77,10 @@ def main(argv=None):
         print(json.dumps({'verified':True,'certificates':len(raw['witnesses']),'world_hash':world.state_hash}));return 0
     if not args.online:raise ValueError('real model calls require explicit --online; offline certification never calls a model')
     from usami.service.client import OpenAICompatibleClient
-    from usami_dialogue.agents import run,replay,RunConfig
+    from usami_dialogue.agents import run,replay,TaskRunConfig
     budget=Budget(max_customer_turns=args.customer_turns,max_customer_llm_calls=args.customer_calls,max_service_llm_calls=args.service_calls,max_service_tool_calls=args.tool_calls)
-    config=RunConfig(profile_id=task.profile_id,initial_world_hash=world.state_hash,mode=args.mode,tools=list(adapter.TOOLS),budget=budget,external_schedule=task.external_schedule)
+    if not raw['witnesses']:raise ValueError('online task execution requires a verified private witness')
+    config=TaskRunConfig(task=task,certificate=raw['witnesses'][0]['certificate'],witness=raw['witnesses'][0]['trace'],profile_id=task.profile_id,initial_world_hash=world.state_hash,mode=args.mode,tools=list(adapter.TOOLS),budget=budget,external_schedule=task.external_schedule)
     root=_new_root(args.output)
     atomic_json(root/'registration.json',{'task':task.model_dump(mode='json'),'config':config.model_dump(mode='json'),'world':world.model_dump(mode='json'),'source_bundle_hash':raw['bundle_hash']},immutable=True)
     c=OpenAICompatibleClient.from_env(_env('customer'));s=None

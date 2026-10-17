@@ -4,8 +4,8 @@ from usami_harness.models import digest
 from .contracts import WorldSpec
 
 
-GENERATORS={'aftersales':'aftersales-generator-v1','cloudops':'cloudops-structural-v1','fulfillment':'fulfillment-structural-v1','stayops':'stayops-structural-v1','saas':'saas-generator-0.2.0'}
-RULES={'aftersales':'aftersales-0.1.0','cloudops':'cloudops-0.1.0','fulfillment':'fulfillment-0.1.0','stayops':'stayops-0.1.0','saas':'saas-rules-0.2.0'}
+GENERATORS={'airline':'airline-generator-v1','aftersales':'aftersales-generator-v1','cloudops':'cloudops-structural-v1','fulfillment':'fulfillment-structural-v1','stayops':'stayops-structural-v1','saas':'saas-generator-0.2.0'}
+RULES={'airline':'airline-0.1.0','aftersales':'aftersales-0.1.0','cloudops':'cloudops-0.1.0','fulfillment':'fulfillment-0.1.0','stayops':'stayops-0.1.0','saas':'saas-rules-0.2.0'}
 
 
 def default_spec(domain,seed,partition='train',config=None):
@@ -28,7 +28,7 @@ def generate(spec,*,diagnostics=None):
         if 'rules' in raw and raw['rules']!=RulesConfig(version=spec.rules_version).model_dump(mode='json'):raise ValueError('rules config must be registered separately')
         raw.update(version=spec.generator_version,rules=RulesConfig(version=spec.rules_version))
         return generate_world(spec.seed,GeneratorConfig.model_validate(raw))
-    module='usami_aftersales.generator' if spec.domain=='aftersales' else 'usami_benchmark.generators.'+spec.domain
+    module='usami_'+spec.domain+'.generator' if spec.domain in {'aftersales','airline'} else 'usami_benchmark.generators.'+spec.domain
     return importlib.import_module(module).generate_world(spec.seed,spec.generator_config,diagnostics=diagnostics)
 
 
@@ -47,8 +47,8 @@ def canonical_world(spec):
 
 
 def source_modules(spec):
-    if spec.domain=='aftersales':
-        return importlib.import_module('usami_aftersales.generator'),importlib.import_module('usami_aftersales.rules')
+    if spec.domain in {'aftersales','airline'}:
+        return importlib.import_module('usami_'+spec.domain+'.generator'),importlib.import_module('usami_'+spec.domain+'.rules')
     if spec.domain=='stayops' and spec.rules_version=='stayops-0.2.0':
         return importlib.import_module('usami_benchmark.generators.stayops_v2'),importlib.import_module('usami_benchmark.native.stayops_v2.rules')
     return (importlib.import_module('usami.world.generator_v2' if spec.domain=='saas' else 'usami_benchmark.generators.'+spec.domain),

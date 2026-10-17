@@ -9,4 +9,4 @@ from .external import expected as external_reference,apply as external_apply
 name='aftersales'
 version=VERSION
 DESCRIPTIONS={n:n.replace('_',' ')+'. Operations use authenticated buyer and explicit merchant/order scope.' for n in TOOLS}
-from .tasks import validate_task,customer_task_brief
+from .tasks import validate_task,customer_task_brief,task_intent_allowed

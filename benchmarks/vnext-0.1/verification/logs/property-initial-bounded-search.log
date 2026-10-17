@@ -1,0 +1,11 @@
+profiles 16
+profile_p0_building0_unit0_asset2 p0_tech0_slot0 9 0
+profile_p0_building0_unit0_asset2 p0_tech0_slot2 128 0
+profile_p0_building0_unit0_asset2 p0_tech1_slot0 9 0
+profile_p0_building0_unit0_asset2 p0_tech1_slot1 128 0
+profile_p0_building0_unit0_asset2 p0_tech1_slot3 9 0
+profile_p1_building0_unit0_asset1 p1_tech2_slot3 128 0
+profile_p3_building0_unit1_asset0 p3_tech0_slot0 9 0
+profile_p3_building0_unit1_asset0 p3_tech1_slot0 9 0
+profile_p3_building0_unit1_asset0 p3_tech1_slot1 9 0
+profile_p3_building0_unit1_asset0 p3_tech3_slot1 9 0

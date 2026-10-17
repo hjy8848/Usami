@@ -8,7 +8,7 @@ This is an active engineering ledger, not a completed release claim. The full re
 | --- | --- | --- |
 | Preserve four historical domains/releases | Old generator hashes, historical tests and Replay | Four legacy seed/source pins verified; old Web/native regression passed after namespace isolation |
 | Three structural generators | 100 worlds each, native invariants, ID-neutral signatures, ≥30 meaningful structures or actual gap | Implemented under isolated vNext namespace; 100 valid audited worlds per existing domain; native StayOps consistency issue recorded |
-| Four dialogue domains | Domain-specific rules/appliers, private Customer state, information/consent dependencies, proof and Replay | After-sales and Airline native cores, shared runtime, task certificates and offline mixed/refusal examples implemented; domain breadth and Property/Education pending |
+| Four dialogue domains | Domain-specific rules/appliers, private Customer state, information/consent dependencies, proof and Replay | After-sales, Airline and Property native cores, shared runtime, certificates and offline examples implemented; Education, domain breadth and unified release remain pending |
 | Eight-domain contracts and audit | Unified provenance, taxonomy, structural/permission/decision/task coverage | WorldSpec/FrozenWorld/pool/signatures and private dialogue reducer implemented; task/decision coverage pending |
 | Pilot 320 / Core 800 | Frozen certified tasks, truthful counts, stratified coverage and leakage audit | Pending |
 | Multi-domain Frozen Discovery | Real source-bound branches, fixed Customer, static-only inheritance and exact Replay | Existing CloudOps path inspected; expansion pending |
@@ -119,3 +119,39 @@ PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m usami_dialogue verify-examples \
 ```
 
 Remaining scope is unchanged: After-sales historical/account/cross-order expansion, complete Property and Education domains, all eight native task bindings and certified datasets, coverage/leakage/macro evaluation, fixed-Customer multi-domain Designer/Service Discovery and selection Replay, and final release verification. No paid LLM training, actual learning gain or cross-domain generalization has been demonstrated.
+
+
+## Phase-2 checkpoint: Property and canonical model-journal protocol
+
+Property (`usami_property/`) adds a genuinely different domain: buildings/units and owner/resident relationships, contractual repair responsibility and coverage, reported hazards and triage, technician skills/on-call availability, overlapping calendars, urgent response limits, actual owner review, scoped work plans, appointment consent, physical technician outcomes, charges after completed work, separate customer closure consent, failed-work complaints and escalation. A reservation is not a completed repair. A new inspection supersedes old work instructions; the simulator will not manufacture a visit from a superseded plan. These mechanisms reuse the existing native Engine, independent Oracle, process reducer, proof search and Replay, rather than a renamed ticket-refund workflow.
+
+Completed evidence at this checkpoint:
+
+- `pytest -q tests/test_vnext*`: **89 passed in 92.00s**, exit 0. Raw log `verification/logs/three-dialogue-domains-89.log`. Tests cover the prior generators, three new native domains, independent business violations in Sandbox, protected contacts, true owner-review dependency, false closure, conflicting appointments, consent/revision, objective task proof, model-request Replay and Customer task drift.
+- Property audit: **100/100 valid worlds, 100 anonymous structures, 100 ownership topologies**. Names/contacts/identifiers, skill-list order and currency scaling do not create extra structures. Source and audit data are retained in `audits/property-native-001/`.
+- Four source-pinned native examples in `examples/property-native-002/`: verified repair plus duplicate-closure refusal; scheduling; a genuinely failed visit followed by a complaint and escalation; and a correct refusal that creates no fake work order. Offline generation/Oracle/Replay verified. Earlier `property-native-001` sources/data remain intact.
+- Complete production-runner scripted transport journal in `verification/fixtures/property-agent-002/`: 17 fixture completions, 6 actual business/query events, real simulated work receipt and two distinct consents. Fresh sorted-JSON/gzip load and exact Replay passed, including replay from an isolated extracted source archive. **Real API calls: 0; real-model experiment: NOT RUN.** Token usage is absent in fixtures and is not a zero-cost model-performance estimate.
+
+### Serialization bug and explicit version boundary
+
+The initial scripted journal `property-agent-001` passed an in-memory check but failed a later disk roundtrip: sorted JSON changed dictionary insertion order, and the old prompt renderer inserted private dictionaries as non-canonical JSON text. It could therefore construct a different model request after loading the same hashed world. The original journal, source archive, metadata and failure traceback are preserved, with an appended failure note clarifying that its initial `replay_verified` flag was an in-memory result only.
+
+The new model protocols are `business-dialogue-agents-v2` and `business-dialogue-task-agents-v2`. Private prompt JSON, entity query/observation lists and candidate ordering are now canonical. V1 model journals require their archived runtime; they are not silently interpreted as v2. The business trace format and all four historical domain runtimes/manifests are unchanged. Sorted-JSON tests now cover all three new domain views and exact model requests.
+
+Certified task execution additionally checks that the fixed Customer stays within the selected business goal's resolution/service/visit choices. This uses task parameters, not Reference approval or performance scores. Deviations are recorded as Customer protocol errors before any Service action, not blamed on Service. Neither Customer nor Service weights/Skill were evolved in these tests.
+
+The new `dialogue-task-score-v2` keeps the independent Oracle's current correct-refusal check strict, while recording the certificate's intended boundary separately from the actual refusal reason. An accurate refusal after the actual context changes must not fail solely because its code differs from the witness's earlier first-applicable code. Actual discovery/coverage attribution must use the observed Reference decision, not the original task label. Prior source-pinned scores remain reproducible under their original archives; no real research results were rescored.
+
+### Remaining mandatory scope
+
+This is **not** completion of the eight-domain objective. Education is still unimplemented. Initial historical/lifecycle distributions and multi-entity breadth in the new domains need expansion. Complete causal/coverage reports, 320/800 stratified certified releases, semantic leakage and private Held-out isolation, equal-weight evaluation, eight-domain Frozen Discovery/Reflection/static-only inheritance and exact selection Replay, remaining requested documents and final full regression are all still required. The earlier 1094-test full regression predates these additions and is not a final release claim.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m usami_dialogue verify-examples \
+  benchmarks/vnext-0.1/examples/property-native-002
+```
+
+When later source changes cause a source-pin rejection, extract that example's archived runtime into a separate directory and run with that directory as `PYTHONPATH`. The isolated fixture replay log demonstrates this procedure without relying on the current checkout.
+
+
+Audit scope caveat: the current world-audit implementation has complete content/anonymous-structure/ownership counts for the new domains, but its generic state-field list still needs expansion for the new condition/skill/latent-fact/event fields. Future simulator outcomes must be reported separately from current business lifecycle states. Initial ticket/case lifecycle variation is not yet a completed generator deliverable. These gaps remain part of the full objective and are not satisfied by the structural counts above.

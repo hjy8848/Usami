@@ -1,6 +1,6 @@
 # Native dialogue task certification
 
-Status: implemented and exercised for After-sales and Airline; Property, Education and the unified eight-domain release remain active work. No real LLM research run has been performed.
+Status: implemented and exercised for After-sales, Airline and Property; Education and the unified eight-domain release remain active work. No real LLM research run has been performed.
 
 ## Reachability and scoring are different operations
 
@@ -43,3 +43,8 @@ A private witness proves that a task is executable under its stated rules. It do
 `usami_dialogue.artifacts` saves actual native traces/certificates with independently frozen generator provenance, deterministic compressed content, exact runtime source file sets/hashes and a source archive. Offline verification checks generation, source completeness, manifest/case integrity, objective scoring and Replay. Native witnesses are explicitly labelled `model_experiments: NOT RUN`; re-labelling them as real LLM evidence is rejected.
 
 `TaskRunConfig` uses a separate task-agent protocol. It requires the task to match a private certificate and verifies the witness before invoking either model. Domain-derived Customer briefs contain the selected business need but no hidden refusal code, expected outcome or witness. The complete private certificate remains in the host journal for reproducibility, never the model request. Base v1 configurations remain available for task-independent interactions.
+
+
+## Current-state refusal reasons versus coverage labels
+
+`dialogue-task-score-v2` requires an exact requested operation and an Oracle-confirmed correct refusal at the actual pre-decision state. A witness's intended denial code remains an audit label. It is not substituted for the independent current Reference result. Scores retain both `intended_refusal_boundaries` and `observed_refusal_reasons`, so a different accurate reason cannot be falsely attributed to the intended boundary or counted as a new discovery of that rule. Wrong reasons, false refusals and Engine-blocked attempts still cannot satisfy a correct-refusal subgoal.

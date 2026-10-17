@@ -112,11 +112,13 @@ def score(adapter,world,task,trace):
         except ValueError:pass
     final=adapter.World.model_validate(trace.final_world)
     completed=[g.satisfied(final) for g in task.goals]
-    refused=[any(r['classification']=='correct_refusal' and r['operation']==g.operation and r['reference_code']==g.code for r in report['service_decisions']) for g in task.refusals]
+    refused=[any(r['classification']=='correct_refusal' and r['operation']==g.operation for r in report['service_decisions']) for g in task.refusals]
     frame=frame_preserved(world,final,task.frames)
     scheduled=all(e.payload['event_id'] in task.external_schedule for e in trace.events if e.kind=='external')
     success=source_ok and report['status']=='pass' and replay_ok and all(completed) and all(refused) and frame and scheduled
-    return {'protocol':'dialogue-task-score-v1','success':bool(success),'source_verified':source_ok,'completion_subgoals':completed,'refusal_subgoals':refused,
+    return {'protocol':'dialogue-task-score-v2','success':bool(success),'source_verified':source_ok,'completion_subgoals':completed,'refusal_subgoals':refused,
+        'intended_refusal_boundaries':[g.code for g in task.refusals],
+        'observed_refusal_reasons':[[r['reference_code'] for r in report['service_decisions'] if r['classification']=='correct_refusal' and r['operation']==g.operation] for g in task.refusals],
         'frame_preserved':frame,'external_schedule_compliant':scheduled,'oracle_status':report['status'],'replay_verified':replay_ok,
         'actual_business_operations':len(report['operations']),'actual_customer_turns':sum(e.kind=='customer' and not e.payload.get('setup') for e in trace.events),
         'metrics':report['metrics']}

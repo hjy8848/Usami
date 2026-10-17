@@ -1,5 +1,6 @@
 """Ordinary passenger scope and preference/offer fit, without hidden rule answers."""
 from datetime import datetime
+from usami_harness.models import digest
 from .models import Operation
 
 
@@ -55,7 +56,7 @@ def candidate_intents(world,private):
     inputs=[('verify_passenger',{'document_token':private.facts['document_token']}),('quote_refund',{}),('quote_baggage',{'extra_kg':private.facts['baggage_kg']})]
     inputs += [('quote_change',{'flights':flights,'cabin':cabin}) for flights in private.preference_space['itinerary'] for cabin in ('economy','business')]
     inputs += [('commit_quote',{'quote_id':q.id}) for q in world.quotes.values() if q.booking_id==b.id]
-    return [Operation(name=n,**base,params=p).model_dump(mode='json') for n,p in inputs]
+    return sorted([Operation(name=n,**base,params=p).model_dump(mode='json') for n,p in inputs],key=digest)
 
 
 def external_ready(world,event_id):return event_id not in world.applied_events

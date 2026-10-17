@@ -1,0 +1,12 @@
+{
+  "protocol": "scripted-dialogue-journal-v1",
+  "transport_kind": "scripted_test_fixture",
+  "real_model_experiments": "NOT RUN",
+  "real_api_calls": 0,
+  "fixture_completions": 17,
+  "execution_hash": "58ac21212430cb10c2b4ad2667c06b89906d73d16258fc58b0ad60f14d9e2749",
+  "canonical_content_hash": "72b688a32c56cf55afb56918cf2e9e2714a8dbaed63da60247f009a11d897cad",
+  "compressed_sha256": "3ce4b81458aedd2e7a8439f43aade35dcef3ce089ddb467e75142e1cf39b0431",
+  "replay_verified": true,
+  "token_usage_note": "Fixture responses omit provider usage. Zero real API calls; recorded zero token sums are incomplete usage, not a real-model cost estimate."
+}

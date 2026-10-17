@@ -1,0 +1,15 @@
+{
+  "evidence_kind": "scripted_test_fixture",
+  "real_model_experiments": "NOT RUN",
+  "registration_hash": "90d4e09ca979508cc45854e34dba48b6fa61d71139908fe87eac0b7ba32db2e2",
+  "world_hash": "bd1b7cda629504ee73e8a3c87f4c1d99048aaa80746a7d363c3f9a5dd4701eb9",
+  "world_spec": {
+    "domain": "property",
+    "generation_mode": "unconditioned",
+    "generator_config": {},
+    "generator_version": "property-generator-v1",
+    "partition": "train",
+    "rules_version": "property-0.1.0",
+    "seed": 1
+  }
+}

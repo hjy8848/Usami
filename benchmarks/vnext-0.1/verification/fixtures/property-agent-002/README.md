@@ -1,0 +1,1 @@
+Explicitly scripted offline transport through the production task-agent runner. NOT a real LLM experiment, evolution evidence, or performance result. All exact model requests/fixture outputs, actual native actions, private proof and Oracle data are retained. Fresh gzip/JSON load and exact model-request Replay passed using protocol v2 canonical rendering. No API was called.

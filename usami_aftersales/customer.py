@@ -75,7 +75,7 @@ def candidate_intents(world,private):
     for quote in world.quotes.values():
         if quote.order_id==order.id and world.cases[quote.case_id].line_id==private.facts['line_id']:
             result.append(Operation(name='commit_resolution',**base,params={'quote_id':quote.id,'destination_channel':order.payment_channel}).model_dump(mode='json'))
-    return result
+    return sorted(result,key=digest)
 
 
 def external_ready(world,event_id):

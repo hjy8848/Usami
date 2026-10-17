@@ -1,0 +1,29 @@
+F
+=================================== FAILURES ===================================
+___ test_real_work_receipt_and_two_consents_cross_actual_agent_tool_boundary ___
+
+    def test_real_work_receipt_and_two_consents_cross_actual_agent_tool_boundary():
+        w,config=configuration();p=w.profiles[PID];u=w.units[p.facts['unit_id']];asset=w.assets[p.facts['asset_id']];slot=w.slots[SLOT];tid=ticket_key(asset.id)
+        def op(name,**params):return adapter.Operation(name=name,scope_id=u.property_id,resource_id=u.id,params=params)
+        opening=op('open_ticket',asset_id=asset.id,symptom=p.facts['symptom']);triage=op('triage_ticket',ticket_id=tid,severity='normal')
+        quote=op('quote_visit',ticket_id=tid,technician_id=slot.technician_id,slot_id=slot.id)
+        qid='plan_'+digest([tid,1,0,slot.technician_id,slot.id,1,w.clock.isoformat()])[:20]
+        booking=op('book_visit',plan_id=qid);read=op('get_ticket',ticket_id=tid);close=op('close_ticket',ticket_id=tid)
+        c=CheckedClient(SPEC,[intent('c0'),intent('c1',disclosures=p.facts,preferences={'slot_id':SLOT,'feedback':'satisfied'},requested_operations=[opening.model_dump(mode='json')]),
+            intent('c2',requested_operations=[triage.model_dump(mode='json'),quote.model_dump(mode='json')]),intent('c3',confirm_operation=booking.model_dump(mode='json')),
+            intent('c4',confirm_operation=close.model_dump(mode='json')),intent('c5',finish=True)])
+        s=CheckedClient(SPEC,[reply('r0','Which unit, asset and observed fault?'),service_tool('s0',opening),reply('r1','Please authorize assessment and an actual visit quote.'),
+            service_tool('s1',triage),service_tool('s2',quote),reply('r2','Confirm the real visit time and charge.',booking),service_tool('s3',booking),service_tool('s4',read),
+            reply('r3','The actual technician receipt reports repair. Are you satisfied and willing to close?',close),service_tool('s5',close),reply('r4','Your verified work order is closed.')])
+        result=run(adapter,w,config,c,s)
+>       assert result.status=='customer_finished' and result.oracle['status']=='pass'
+E       AssertionError: assert ('service_protocol_error' == 'customer_finished'
+E         
+E         - customer_finished
+E         + service_protocol_error)
+
+tests/test_vnext_property_agents.py:35: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_vnext_property_agents.py::test_real_work_receipt_and_two_consents_cross_actual_agent_tool_boundary
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 6.59s

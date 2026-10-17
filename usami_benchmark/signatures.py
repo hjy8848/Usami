@@ -26,6 +26,10 @@ def relations(domain,world,permissions_only=False):
         refs.update(carrier_id='carriers',passenger_id='users',fare_rule_id='fare_rules',booking_id='bookings',quote_id='quotes',flight_id='flights',flights='flights',origin='airports',destination='airports')
         categories.update({'cabin','changeable','refundable','verified','action'})
         allowed={'users','carriers','bookings'}
+    if domain=='property':
+        refs.update(building_id='buildings',unit_id='units',asset_id='assets',technician_id='technicians',slot_id='slots',booked_slot_id='slots',resident_ids='users',reporter_id='users',requester_id='users',ticket_id='tickets',plan_id='plans',appointment_id='appointments')
+        categories.update({'condition','responsibility','on_call','skills','severity','simulated_symptom','simulated_hazard','timing'})
+        allowed={'users','properties','buildings','units'}
     for collection,value in raw.items():
         if not isinstance(value,dict) or collection in {'rules','config'} or (permissions_only and collection not in allowed):continue
         for key,obj in value.items():
@@ -42,7 +46,7 @@ def relations(domain,world,permissions_only=False):
                             label=prefix+field+(':'+str(position) if domain=='airline' and field=='flights' else '')
                             edges[token].append((label,right));edges[right].append(('reverse:'+label,token))
                 elif field in categories and (not permissions_only or field=='role' or (field=='status' and token[0] in {'access','memberships'})):
-                    nodes[token][prefix+field]=item
+                    nodes[token][prefix+field]=sorted(item,key=digest) if domain=='property' and field=='skills' else item
                 elif isinstance(item,(list,dict)) and field not in {'attestation','gateway_notice','carrier_notice','receipt_notice','inspection_notice','receiving_notice','notice','payments','refunds'}:
                     scan(token,item,prefix+field+'.')
         elif isinstance(value,list):
@@ -106,6 +110,18 @@ def policy_features(domain,w,collection,key):
             profiles=[p for p in w.profiles.values() if p.facts.get('booking_id')==key]
             features['refund_fee']=relation(obj.fare_value_cents,rule.refund_fee_cents)
             features['change_fee_within_customer_budget']=sorted(rule.change_fee_cents<=p.facts['max_fee_cents'] for p in profiles)
+    elif domain=='property':
+        from datetime import timedelta
+        from usami_property.rules import contract,cost_terms,overlaps
+        if collection=='slots':
+            c=next(c for c in w.contracts.values() if c.property_id==obj.property_id)
+            features.update(past=obj.start<=w.clock,working_hours=obj.start.hour>=c.normal_start_hour and obj.end.date()==obj.start.date() and (obj.end.hour<c.normal_end_hour or obj.end.hour==c.normal_end_hour and not obj.end.minute),
+                busy=any(b.technician_id==obj.technician_id and overlaps(obj,b) for b in w.background_busy.values()),
+                response_windows={k:obj.start<=w.clock+timedelta(hours=v) for k,v in [('urgent',c.urgent_response_hours),('emergency',c.emergency_response_hours)]})
+        if collection=='assets':
+            unit=w.units[obj.unit_id];c=contract(w,unit);profiles=[p for p in w.profiles.values() if p.facts.get('asset_id')==key]
+            features['customer_contract_boundaries']=sorted((p.identity==unit.owner_id,relation(cost_terms(w,obj,p.identity)[0],c.resident_approval_limit_cents),cost_terms(w,obj,p.identity)[2]<=p.facts['max_budget_cents']) for p in profiles)
+            features['slot_duration_fit']=sorted((s.end-s.start).total_seconds()>=obj.duration_minutes*60 for s in w.slots.values() if s.property_id==obj.property_id and obj.category in w.technicians[s.technician_id].skills)
     elif domain=='saas':
         if collection=='subscriptions':
             members=[m for m in w.memberships.values() if m.org_id==obj.org_id and m.status=='active'] if hasattr(obj,'org_id') else []

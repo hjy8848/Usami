@@ -28,6 +28,7 @@ def test_airline_fixed_customer_clarification_actual_quote_consent_and_model_rep
             wire=json.dumps(row.record.request)
             assert 'simulated_identity_valid' not in wire and 'private_hash' not in wire and 'preference_space' not in wire
     assert replay(adapter,result,world=world,config=config)['verified']
+    assert replay(adapter,json.loads(json.dumps(result.model_dump(mode='json'),sort_keys=True)),world=world)['verified']
 
 
 def test_certified_task_goal_injection_excludes_hidden_answers_and_old_protocol_still_works():
@@ -40,7 +41,7 @@ def test_certified_task_goal_injection_excludes_hidden_answers_and_old_protocol_
     customer=CheckedClient(SPEC,[intent('c0'),intent('c1',finish=True)])
     service=CheckedClient(SPEC,[reply('r0','Let us review the actual booking.')])
     result=run(adapter,world,config,customer,service)
-    assert result.protocol=='business-dialogue-task-agents-v1'
+    assert result.protocol=='business-dialogue-task-agents-v2'
     first=result.calls[0].record.request['messages'][0]['content']
     assert 'Your chosen business request:' in first and 'You want a refund for this booking.' in first
     assert 'certificate_hash' not in first and 'expected_changed_code' not in first and 'direct_edges' not in first

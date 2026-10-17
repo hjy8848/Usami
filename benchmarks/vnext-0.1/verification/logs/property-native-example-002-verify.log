@@ -1,0 +1,27 @@
+{
+  "verified": true,
+  "domain": "property",
+  "cases": [
+    {
+      "family": "repair",
+      "trace_hash": "8326a46ee2050cf1ecb2bb78fd84dd5cd7f45b72d24da1fb72a4a719eb2b5da6",
+      "task_hash": "d238a61fd25108703e60d967376380832233ae5b527dafe05652d1a28e146b77"
+    },
+    {
+      "family": "schedule",
+      "trace_hash": "84bc6234abcde911154144ca402e7aad53cc518cadb923c3f58b932f4e3ad901",
+      "task_hash": "8f067a8a19a421e33fb21bf2717e30e8a92d15f6b1f1a1b2eabc6149ced56ca0"
+    },
+    {
+      "family": "complaint",
+      "trace_hash": "b1305ef0d13b6116715f393095bd1466b067efa969de2cc6144cfef076f7035c",
+      "task_hash": "b7bd83deac4262e610f3fd4dee0a71dec9e2642f93fb482f9e50099c66235bb3"
+    },
+    {
+      "family": "refuse_open",
+      "trace_hash": "006e5c362059f013bb373a99e6ebccac1a43ee350a3ae5efbf1707784e0f02c0",
+      "task_hash": "0e6e3a6e3dc302f1e7cab410954b2b9af7340c486c20af3ab5c4677b49fc6b31"
+    }
+  ],
+  "model_experiments": "NOT RUN"
+}

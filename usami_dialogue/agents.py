@@ -13,7 +13,7 @@ from .tasks import DialogueTask,TaskCertificate,verify_certificate
 
 
 class RunConfig(Model):
-    protocol:Literal['business-dialogue-agents-v1']='business-dialogue-agents-v1'
+    protocol:Literal['business-dialogue-agents-v2']='business-dialogue-agents-v2'
     profile_id:str
     initial_world_hash:str
     mode:Literal['reference','sandbox']='reference'
@@ -24,7 +24,7 @@ class RunConfig(Model):
 
 class TaskRunConfig(RunConfig):
     # A separate discriminator preserves the original journal/config shape.
-    protocol:Literal['business-dialogue-task-agents-v1']='business-dialogue-task-agents-v1'
+    protocol:Literal['business-dialogue-task-agents-v2']='business-dialogue-task-agents-v2'
     task:DialogueTask
     certificate:TaskCertificate
     witness:ExecutionTrace
@@ -36,7 +36,7 @@ class AgentCall(Model):
 
 
 class AgentExecution(Model):
-    protocol:Literal['business-dialogue-agents-v1','business-dialogue-task-agents-v1']='business-dialogue-agents-v1'
+    protocol:Literal['business-dialogue-agents-v2','business-dialogue-task-agents-v2']='business-dialogue-agents-v2'
     config:Union[RunConfig,TaskRunConfig]=Field(discriminator='protocol')
     customer_model:ModelSettings
     service_model:ModelSettings
@@ -73,7 +73,7 @@ SERVICE_POLICY=(
 
 def run(adapter,world,config,customer_client,service_client):
     raw=config.model_dump(mode='json') if isinstance(config,RunConfig) else config
-    config=(TaskRunConfig if raw.get('protocol')=='business-dialogue-task-agents-v1' else RunConfig).model_validate(raw)
+    config=(TaskRunConfig if raw.get('protocol')=='business-dialogue-task-agents-v2' else RunConfig).model_validate(raw)
     brief=None
     if isinstance(config,TaskRunConfig):
         from .tasks import checked_task
@@ -82,6 +82,7 @@ def run(adapter,world,config,customer_client,service_client):
         verify_certificate(adapter,world,config.certificate,config.witness)
         if config.task.profile_id!=config.profile_id or config.task.world_hash!=config.initial_world_hash:raise ValueError('Customer task and run source registration differ')
         if config.external_schedule!=config.task.external_schedule:raise ValueError('task external schedule differs from run registration')
+        if not callable(getattr(adapter,'task_intent_allowed',None)):raise ValueError('domain has no fixed Customer task-scope validator')
         brief=adapter.customer_task_brief(world,adapter.private_state(world,config.profile_id),config.task)
     if config.initial_world_hash!=world.state_hash or set(config.tools)-set(adapter.TOOLS):raise ValueError('frozen world/tool configuration differs')
     if len(config.tools)!=len(set(config.tools)) or len(config.external_schedule)!=len(set(config.external_schedule)):raise ValueError('duplicate tool/external registration')
@@ -92,7 +93,7 @@ def run(adapter,world,config,customer_client,service_client):
     stool=schemas(adapter,config.tools)+[{'type':'function','function':{'name':'respond_to_customer','description':'Reply, ask or present real quote-backed terms.',
         'parameters':{'type':'object','properties':{'message':{'type':'string','minLength':1},'offered_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refused_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refusal_code':{'anyOf':[{'type':'string'},{'type':'null'}]}},'required':['message','offered_operation'],'additionalProperties':False}}}]
     smessages=[{'role':'system','content':SERVICE_POLICY+' Identity: '+session.private.identity+'. Public policy: '+json.dumps(adapter.POLICY,sort_keys=True)+'. Budget: '+config.budget.model_dump_json()}]
-    cmessages=[{'role':'system','content':CUSTOMER_POLICY+' Your private profile: '+session.private.model_dump_json()+'. Business write schemas: '+json.dumps(schemas(adapter,[n for n in config.tools if n in adapter.PARAMETERS and n not in adapter.Operation.queries]),sort_keys=True)}]
+    cmessages=[{'role':'system','content':CUSTOMER_POLICY+' Your private profile: '+json.dumps(session.private.model_dump(mode='json'),sort_keys=True,separators=(',',':'),ensure_ascii=False)+'. Business write schemas: '+json.dumps(schemas(adapter,[n for n in config.tools if n in adapter.PARAMETERS and n not in adapter.Operation.queries]),sort_keys=True)}]
     if brief is not None:cmessages[0]['content']+=' Your chosen business request: '+brief
     calls=[];tool_records=[];errors=[];seen=set();conversation=[];pending=list(config.external_schedule)
     counts={'customer':0,'service':0};recoveries={'customer':0,'service':0};status='customer_turn_budget_exhausted'
@@ -125,6 +126,7 @@ def run(adapter,world,config,customer_client,service_client):
                 message,proposals=completion_message(record.response,set())
                 if len(proposals)!=1 or proposals[0]['function']['name']!='submit_customer_turn':raise ValueError('one submit_customer_turn required')
                 submitted=CustomerIntent.model_validate(strict_json(proposals[0]['function']['arguments']))
+                if isinstance(config,TaskRunConfig) and not adapter.task_intent_allowed(session.private,config.task,submitted):raise ValueError('Customer intent leaves the frozen selected task goal')
                 session.customer(submitted);cmessages.append(message)
                 cmessages.append({'role':'tool','tool_call_id':proposals[0]['id'],'content':json.dumps({'accepted':True,'turn':session.turn},sort_keys=True)})
                 break
@@ -198,7 +200,9 @@ def run(adapter,world,config,customer_client,service_client):
 def replay(adapter,execution,*,world=None,config=None):
     from usami.service.client import RecordedCompletionClient
     from .replay import replay as replay_trace
-    row=AgentExecution.model_validate(execution.model_dump(mode='json') if isinstance(execution,AgentExecution) else execution)
+    raw=execution.model_dump(mode='json') if isinstance(execution,AgentExecution) else execution
+    if raw.get('protocol') not in {'business-dialogue-agents-v2','business-dialogue-task-agents-v2'}:raise ValueError('agent protocol requires its archived runtime; v2 uses canonical rendered context')
+    row=AgentExecution.model_validate(raw)
     if row.protocol!=row.config.protocol:raise ValueError('agent execution/config protocol differs')
     if row.execution_hash!=row.computed_hash():raise ValueError('agent execution integrity differs')
     initial=adapter.World.model_validate(row.trace.initial_world)

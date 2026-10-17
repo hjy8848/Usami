@@ -57,6 +57,7 @@ def test_fixed_customer_and_service_function_calls_complete_refund_and_wire_repl
             wire=json.dumps(row.record.request)
             assert 'private_hash' not in wire and 'simulated_valid' not in wire and 'confirmable_actions' not in wire
     assert replay(adapter,result,world=world)['verified']
+    assert replay(adapter,json.loads(json.dumps(result.model_dump(mode='json'),sort_keys=True)),world=world)['verified']
     changed=result.model_copy(deep=True);changed.calls[0].record.response['choices'][0]['message']['content']='tampered'
     with pytest.raises(ValueError,match='integrity'):replay(adapter,changed)
 

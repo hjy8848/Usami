@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+  File "/Users/spring/RSI/Usami/usami_dialogue/agents.py", line 213, in replay
+    if rebuilt!=row or c.index!=len(c.records) or s.index!=len(s.records):raise ValueError('actual model request/response, disclosure, tools or budget replay differs')
+ValueError: actual model request/response, disclosure, tools or budget replay differs

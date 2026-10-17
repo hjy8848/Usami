@@ -8,4 +8,4 @@ from .external import expected as external_reference,apply as external_apply
 name='airline'
 version=VERSION
 DESCRIPTIONS={n:n.replace('_',' ')+'. Authenticated passenger and explicit carrier/booking scope; quotes are not consent.' for n in TOOLS}
-from .tasks import validate_task,customer_task_brief
+from .tasks import validate_task,customer_task_brief,task_intent_allowed

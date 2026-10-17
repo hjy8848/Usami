@@ -1,0 +1,17 @@
+{
+  "protocol": "scripted-dialogue-journal-v2",
+  "agent_protocol": "business-dialogue-task-agents-v2",
+  "transport_kind": "scripted_test_fixture",
+  "real_model_experiments": "NOT RUN",
+  "real_api_calls": 0,
+  "fixture_completions": 17,
+  "execution_hash": "52efaad450d4207038d4915604f75100526a9c09387f38029c6fc88a986ac248",
+  "canonical_content_hash": "fd57f49f33b09cd952d0ebab1d76a9f43186cc89ca5b6c8cee7289062a38d109",
+  "compressed_sha256": "b8b7118ed47acb3755725bb9c3ec69bcf65b607c21736b437f4a7f0ee52b6798",
+  "fresh_disk_roundtrip_replay": {
+    "verified": true,
+    "model_calls": 17,
+    "business_events": 6
+  },
+  "token_usage_note": "Fixture usage is absent. Recorded token sums are incomplete, not real-model cost estimates."
+}

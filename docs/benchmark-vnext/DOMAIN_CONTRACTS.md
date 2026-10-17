@@ -75,3 +75,14 @@ An airline's actual pre-registered cancellation is distinct from a passenger's v
 The fixed private passenger profile contains actual booking/document facts, travel and budget constraints, and reasonable itinerary/service choices. A certified-task runner tells the Customer which business request is selected while withholding Reference answers. The Customer can clarify, choose, revise and consent based on actual replies; it is not a timetable script. Legal commits use the same actual Engine in the fixture protocol tests and the real-model entry point.
 
 Standalone refusal tasks require the exact requested fare/capacity/connection boundary to be independently provable. Their frames allow passenger verification and registered operational events, while protecting ticket/financial state. Mixed refund/baggage tasks additionally reject a real duplicate request after legal completion. These examples do not exhaust the required full domain coverage.
+
+
+## Executable Property core
+
+`usami_property/` ties service authority to actual building/unit ownership and residency. Assets carry distinct fault categories, responsibility and costs. Contracts define coverage, resident approval limits, service hours and response deadlines. Public staff have category skills/on-call status and overlapping appointment options; independent pre-existing commitments consume technician time. The simulator conserves single-technician capacity and never treats a reservation as completed work.
+
+The Customer must actually disclose their observed fault/hazard and access constraints. Electrical sparks or a hazardous observation require emergency triage; an actual inspection can change the assessment and invalidate plans. Owner review is a controlled event with an immutable outcome, not a tool argument saying “approved.” Plan requester identity prevents one resident using another party's financial terms.
+
+Appointment booking, cancellation and closure bind actual current offers. A technician event can arrive only for a scheduled, current work instruction, at the selected appointment's end. Completed work produces an independent receipt and correctly assigned charge; unresolved/missed work supports the corresponding complaint instead. Closure additionally requires customer feedback and a fresh explicit consent. Scoped tools expose physical/unit/service facts and public technician availability, excluding other residents' contacts and hidden simulator conditions.
+
+Current task composers cover scheduling, real repair/closure, complaint/escalation, source-valid policy refusals and an appropriate mixed duplicate-closure request. The private Reference witness is not a production conversation. Current tests include a six-turn scripted-transport execution through the actual generic runner, but do not claim that real models have solved or learned these tasks. Broader initial histories, multi-entity task families and final coverage certification remain active work.

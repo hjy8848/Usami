@@ -37,3 +37,10 @@ The subsequent checkpoint adds actual shared sessions, native Oracle delegation,
 The Service sees scoped business observations and actually disclosed facts. Only the Customer receives the frozen private profile. Production dialogue is chosen by the configured LLM, with no forced turn count or witness injection. All model requests/responses, protocol failures, bounded format recovery, operation results, role-specific usage and external updates are retained. Missing provider token usage is flagged as incomplete rather than presented as a complete zero-cost result.
 
 Structured refusal decisions are independently checked against native Reference and actual unconsumed Customer intentions. They cannot be earned by trying an illegal write and letting Engine reject it. Detailed task and necessity certificates are described in [TASK_CERTIFICATION.md](TASK_CERTIFICATION.md). The remaining three new domains and dataset-wide claims are still pending.
+
+
+## Canonical v2 model context and fixed Customer goal scope
+
+After-sales, Airline and Property now share canonical rendered private JSON, deterministic entity/candidate ordering and an exact disk-roundtrip model-journal Replay check. The model-run protocol versions are `business-dialogue-agents-v2` and `business-dialogue-task-agents-v2`; v1 archives retain their own source snapshots. These versions concern model-message rendering, not changes to historical Engine/Reference/Oracle semantics.
+
+A selected task can narrow a Customer's already frozen acceptable business choices. Task-scoped runtime validation rejects a generated preference/request that leaves those choices, records the Customer-side protocol error/cost and does not invoke Service for that invalid turn. It does not consult hidden Reference legality or shield Service from an unlawful operation. Service actions still execute through the actual Engine, with Sandbox failures independently observable.

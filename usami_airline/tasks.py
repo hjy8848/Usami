@@ -90,3 +90,12 @@ def customer_task_brief(world,private,task):
     else:brief='You want the additional baggage quantity in your frozen facts, within your actual fee limit. Obtain the actual terms before confirming.'
     if task.refusals:brief+=' You also want to request this same service again after it has been fulfilled; respond to the real explanation.'
     return prefix+brief
+
+
+def task_intent_allowed(private,task,intent):
+    service=task.family.removeprefix('refuse_')
+    if 'service' in intent.preferences and intent.preferences['service']!=service:return False
+    allowed_itineraries=task.goals[0].accepted_values if task.family=='rebook' else [task.refusals[0].operation['params']['flights']] if task.family=='refuse_rebook' else private.preference_space['itinerary']
+    if 'itinerary' in intent.preferences and intent.preferences['itinerary'] not in allowed_itineraries:return False
+    mapping={'quote_change':'rebook','quote_refund':'refund','quote_baggage':'baggage'}
+    return all(op.get('name') not in mapping or mapping[op['name']]==service for op in intent.requested_operations)

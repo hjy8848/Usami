@@ -82,3 +82,10 @@ def customer_task_brief(world,private,task):
     result='Seek help for order '+private.facts['order_id']+', item '+private.facts['line_id']+'. Resolve the actual issue with one of: '+', '.join(options[v] for v in task.goals[0].accepted_values)+'. Compare real offers against your frozen needs; provide facts when appropriate.'
     if task.refusals:result+=' You also want to request a further resolution for this same item after it has been resolved. Discuss the actual Service response.'
     return result
+
+
+def task_intent_allowed(private,task,intent):
+    values={'refunded':'refund','exchanged':'exchange','reshipped':'reship'}
+    allowed={values[v] for v in task.goals[0].accepted_values}
+    if 'resolution' in intent.preferences and intent.preferences['resolution'] not in allowed:return False
+    return all(op.get('name')!='quote_resolution' or op.get('params',{}).get('option') in allowed for op in intent.requested_operations)

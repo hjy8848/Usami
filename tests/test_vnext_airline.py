@@ -188,3 +188,28 @@ def test_service_can_query_own_payment_capacity_without_hidden_identity_facts():
     assert 'document_token' not in json.dumps(d.data) and 'simulated_identity_valid' not in json.dumps(d.data)
     actual=s.act(query);assert actual['success'] and actual['data']==d.data
     assert evaluate(adapter,s.finish())['status']=='pass'
+
+
+def test_refusal_scoring_checks_current_reference_reason_and_keeps_coverage_labels_separate():
+    from usami_dialogue.tasks import score
+    selected=None
+    for seed in range(5):
+        w=adapter.generate_world(seed)
+        for pid,p in w.profiles.items():
+            b=w.bookings[p.facts['booking_id']]
+            if w.users[p.identity].simulated_identity_valid and not w.fare_rules[b.fare_rule_id].refundable and not any(w.flights[f].status=='cancelled' for f in b.flights):selected=(w,pid,b);break
+        if selected:break
+    assert selected
+    w,pid,b=selected;probe=adapter.Operation(name='quote_refund',scope_id=b.carrier_id,resource_id=b.id,params={})
+    task,_,rows=certified_tasks(w,pid,family='refuse_refund',refusal_operation=probe.model_dump(mode='json'),refusal_code='FARE_REFUND_FORBIDDEN',max_nodes=64,max_paths=1)
+    assert rows
+    s=verified(w,pid,'baggage')
+    # An actual subsequent Customer request conflicts with their current choice.
+    # Refusing that request for the correct current reason is not a Service error.
+    declared(s,probe)
+    d=adapter.decide(s.state,s.private.identity,probe);assert d.error_code=='PREFERENCE_RESOLUTION_REQUIRED'
+    s.reply('Please resolve which service you want.',refused_operation=probe.model_dump(mode='json'),refusal_code=d.error_code)
+    result=score(adapter,w,task,s.finish())
+    assert result['protocol']=='dialogue-task-score-v2' and result['success']
+    assert result['intended_refusal_boundaries']==['FARE_REFUND_FORBIDDEN']
+    assert result['observed_refusal_reasons']==[['PREFERENCE_RESOLUTION_REQUIRED']]

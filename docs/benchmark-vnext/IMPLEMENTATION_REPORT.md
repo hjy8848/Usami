@@ -302,3 +302,38 @@ The current-tree full regression completed with exit 0: **1178 passed in 647.09s
 log `verification/logs/lifecycle-foundation-full-1178.log`. This result precedes
 subsequent common native-task adapter work. No model call or evolution experiment
 was run. Historical source snapshots and all previous logs remain unchanged.
+
+## Unified task execution checkpoint (2026-10-17; release incomplete)
+
+The common `usami_benchmark.tasks` compiler now dispatches all eight domains to
+native Reference proof construction against independently frozen worlds. Tool
+track certificates retain their actual search bounds, alternative witnesses,
+frame constraints and rejection proofs. Dialogue tasks use native customer
+profiles and business composers; proposed tasks cannot specify an Oracle answer
+or replace private facts. Pure-refusal reasons are discovered by bounded native
+Reference search, with protected business state preserved.
+
+`usami_benchmark.episodes` runs the original tool-domain Service runtimes and the
+four native dialogue Customer/Service runtimes through one configuration and
+journal interface. Raw model requests, tool results, actual engine events,
+Oracle results, role-separated costs and exact offline model Replay remain
+available. The public rulebook contains static business policy only. Private
+proofs are not injected into agent messages. Native interface hashes can be
+pinned in frozen evaluation plans. Immutable source-pinned archives and the
+`python -m usami_benchmark` prove/verify-task/replay/verify-archive/run commands
+are implemented; online execution requires explicit opt-in and a call ceiling.
+
+These are engineering interfaces, not evidence of model improvement. New tests
+use native Reference execution and explicitly scripted model transport fixtures;
+no real model execution or evolution experiment has been run. Earlier full-suite
+1178-pass evidence predates this checkpoint and is not a final release regression.
+Pilot320/Core800 certified dataset generation, task-semantic leakage and coverage
+audits, and complete eight-domain Frozen Discovery/Skill evolution integration
+remain unfinished. Historical native business rules and archived experiments
+have not been rewritten. This checkpoint must not be presented as the completed
+eight-domain benchmark release.
+
+Checkpoint verification: the seven compiler/tool-agent/public-policy/episode/
+archive/evaluation test modules completed with exit 0, **64 passed in 168.79s**.
+Raw log: `verification/logs/unified-task-execution-checkpoint-64.log`. The earlier
+failed development logs are retained verbatim, including their output whitespace.

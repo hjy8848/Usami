@@ -27,9 +27,11 @@ class EvaluationPlan(Model):
     evidence_kind:Literal['native_reference_witness','scripted_transport_fixture','real_model']
     model_configuration_hash:str=Field(pattern=r'^[0-9a-f]{64}$')
     tasks:dict[str,list[str]]
+    interface_hashes:dict[str,str]=Field(default_factory=dict,exclude_if=lambda v:not v)
     @model_validator(mode='after')
     def registered_tasks(self):
         if not self.tasks or set(self.tasks)-set(DOMAINS):raise ValueError('plan contains unknown or no domains')
+        if self.interface_hashes and (set(self.interface_hashes)!=set(self.tasks) or any(len(h)!=64 or set(h)-set('0123456789abcdef') for h in self.interface_hashes.values())):raise ValueError('interfaces must pin every registered domain')
         all_keys=[]
         for domain,keys in self.tasks.items():
             if not keys or len(keys)!=len(set(keys)):raise ValueError('plan requires distinct tasks per registered domain')
@@ -45,6 +47,7 @@ class EvaluationResult(Model):
     plan_hash:str=Field(pattern=r'^[0-9a-f]{64}$')
     domain:str
     task_hash:str=Field(pattern=r'^[0-9a-f]{64}$')
+    interface_hash:Optional[str]=Field(default=None,pattern=r'^[0-9a-f]{64}$',exclude_if=lambda v:v is None)
     world_hash:str=Field(pattern=r'^[0-9a-f]{64}$')
     execution_hash:str=Field(pattern=r'^[0-9a-f]{64}$')
     partition:Literal['train','validation','test_demo','heldout']
@@ -101,6 +104,7 @@ def aggregate(plan,results):
     seen=set();groups={d:[] for d in DOMAINS}
     for r in rows:
         if (r.plan_hash!=plan.plan_hash or r.partition!=plan.partition or r.evidence_kind!=plan.evidence_kind or r.model_configuration_hash!=plan.model_configuration_hash):raise ValueError('result differs from frozen plan/provenance')
+        if plan.interface_hashes and r.interface_hash!=plan.interface_hashes[r.domain]:raise ValueError('native interface differs from frozen evaluation plan')
         if r.task_hash not in plan.tasks.get(r.domain,[]):raise ValueError('unregistered task result')
         if r.task_hash in seen:raise ValueError('duplicate task result; use a separately frozen plan for repeated trials')
         seen.add(r.task_hash);groups[r.domain].append(r)
@@ -124,7 +128,7 @@ def aggregate(plan,results):
                 selected=[r for r in groups[domain] if value in r.capabilities] if attribute=='capabilities' else [r for r in groups[domain] if getattr(r,attribute)==value]
                 by_domain[domain]={'runs':len(selected),'task_success':_rate(selected,'task_success')}
             strata[label][value]={'domains':by_domain,'scope':'Observed descriptor strata; capability annotations require external certificate audit.'}
-    return {'protocol':'eight-domain-evaluation-summary-v1','plan_hash':plan.plan_hash,'complete':complete,'evidence_kind':plan.evidence_kind,'partition':plan.partition,
+    return {'protocol':'eight-domain-evaluation-summary-v1','plan_hash':plan.plan_hash,'complete':complete,'evidence_kind':plan.evidence_kind,'partition':plan.partition,'interface_validation':'pinned' if plan.interface_hashes else 'not_registered',
         'domain_weight':{d:1/8 for d in DOMAINS},'track_weight':{'A':.5,'B':.5},'domains':domain_scores,'macro':macro,'tracks':tracks,'strata':strata,'cost':cost,
         'missing_tasks':{d:sorted(set(keys)-{r.task_hash for r in groups[d]}) for d,keys in plan.tasks.items()},
         'interpretation':'Aggregation only; native proofs and scripted fixtures are not real-model performance. Unknown and inapplicable metrics are not silently converted to zero.'}

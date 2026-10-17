@@ -1,0 +1,160 @@
+FFFFFFFFFF.F.........                                                    [100%]
+=================================== FAILURES ===================================
+_______ test_native_model_tools_and_canonical_full_journal_replay[saas] ________
+
+domain = 'saas'
+
+    @pytest.mark.parametrize('domain',['saas','cloudops','fulfillment','stayops'])
+    def test_native_model_tools_and_canonical_full_journal_replay(domain):
+        client=ScriptedClient(SPEC,[]);config=config_for(domain,client);op=config.task.capabilities[0]
+        client.responses=[tool_call('write',op,domain),final()]
+        result=run(config,client)
+>       assert result.score['task_success'],result.score
+E       AssertionError: {'budget_compliance': True, 'completion_goal': False, 'false_refusal': False, 'final_state_hash': 'db9c067937413e2b70c348d8e9b119847eaeab4c400333ae8700800b52ad5ba7', ...}
+E       assert False
+
+tests/test_vnext_tool_agent.py:36: AssertionError
+_____ test_native_model_tools_and_canonical_full_journal_replay[cloudops] ______
+
+domain = 'cloudops'
+
+    @pytest.mark.parametrize('domain',['saas','cloudops','fulfillment','stayops'])
+    def test_native_model_tools_and_canonical_full_journal_replay(domain):
+        client=ScriptedClient(SPEC,[]);config=config_for(domain,client);op=config.task.capabilities[0]
+        client.responses=[tool_call('write',op,domain),final()]
+        result=run(config,client)
+>       assert result.score['task_success'],result.score
+E       AssertionError: {'budget_compliance': True, 'completion_goal': False, 'false_refusal': False, 'final_state_hash': 'e4e9d42d9db033df425e519d16800e0c7e129c8a134725bfd3bac03c4bb789d6', ...}
+E       assert False
+
+tests/test_vnext_tool_agent.py:36: AssertionError
+____ test_native_model_tools_and_canonical_full_journal_replay[fulfillment] ____
+
+domain = 'fulfillment'
+
+    @pytest.mark.parametrize('domain',['saas','cloudops','fulfillment','stayops'])
+    def test_native_model_tools_and_canonical_full_journal_replay(domain):
+        client=ScriptedClient(SPEC,[]);config=config_for(domain,client);op=config.task.capabilities[0]
+        client.responses=[tool_call('write',op,domain),final()]
+        result=run(config,client)
+>       assert result.score['task_success'],result.score
+E       AssertionError: {'budget_compliance': True, 'completion_goal': False, 'false_refusal': False, 'final_state_hash': 'ec03c3e23985d37b2e8125f5a2d2a17796fca9411ae791830f65026322bef4f0', ...}
+E       assert False
+
+tests/test_vnext_tool_agent.py:36: AssertionError
+______ test_native_model_tools_and_canonical_full_journal_replay[stayops] ______
+
+domain = 'stayops'
+
+    @pytest.mark.parametrize('domain',['saas','cloudops','fulfillment','stayops'])
+    def test_native_model_tools_and_canonical_full_journal_replay(domain):
+        client=ScriptedClient(SPEC,[]);config=config_for(domain,client);op=config.task.capabilities[0]
+        client.responses=[tool_call('write',op,domain),final()]
+        result=run(config,client)
+>       assert result.score['task_success'],result.score
+E       AssertionError: {'budget_compliance': True, 'completion_goal': False, 'false_refusal': False, 'final_state_hash': '32bb13896dee299c2d4565822f7e814fb893f3a94d7e0a9f617bb04332612288', ...}
+E       assert False
+
+tests/test_vnext_tool_agent.py:36: AssertionError
+_ test_service_must_decide_correct_refusal_without_attempting_the_write[saas] __
+
+domain = 'saas'
+
+    @pytest.mark.parametrize('domain',['saas','cloudops','fulfillment','stayops'])
+    def test_service_must_decide_correct_refusal_without_attempting_the_write(domain):
+        client=ScriptedClient(SPEC,[]);config=config_for(domain,client,True)
+        ref=config.certificate.witnesses[0]['refusals'][0]
+        client.responses=[final([{'operation':ref['operation'],'code':ref['reference_code']}])]
+        result=run(config,client)
+>       assert result.score['task_success'] and result.score['refusal_subgoals']==[True]
+E       assert (False)
+
+tests/test_vnext_tool_agent.py:52: AssertionError
+_ test_service_must_decide_correct_refusal_without_attempting_the_write[cloudops] _
+
+domain = 'cloudops'
+
+    @pytest.mark.parametrize('domain',['saas','cloudops','fulfillment','stayops'])
+    def test_service_must_decide_correct_refusal_without_attempting_the_write(domain):
+        client=ScriptedClient(SPEC,[]);config=config_for(domain,client,True)
+        ref=config.certificate.witnesses[0]['refusals'][0]
+        client.responses=[final([{'operation':ref['operation'],'code':ref['reference_code']}])]
+        result=run(config,client)
+>       assert result.score['task_success'] and result.score['refusal_subgoals']==[True]
+E       assert (False)
+
+tests/test_vnext_tool_agent.py:52: AssertionError
+_ test_service_must_decide_correct_refusal_without_attempting_the_write[fulfillment] _
+
+domain = 'fulfillment'
+
+    @pytest.mark.parametrize('domain',['saas','cloudops','fulfillment','stayops'])
+    def test_service_must_decide_correct_refusal_without_attempting_the_write(domain):
+        client=ScriptedClient(SPEC,[]);config=config_for(domain,client,True)
+        ref=config.certificate.witnesses[0]['refusals'][0]
+        client.responses=[final([{'operation':ref['operation'],'code':ref['reference_code']}])]
+        result=run(config,client)
+>       assert result.score['task_success'] and result.score['refusal_subgoals']==[True]
+E       assert (False)
+
+tests/test_vnext_tool_agent.py:52: AssertionError
+_ test_service_must_decide_correct_refusal_without_attempting_the_write[stayops] _
+
+domain = 'stayops'
+
+    @pytest.mark.parametrize('domain',['saas','cloudops','fulfillment','stayops'])
+    def test_service_must_decide_correct_refusal_without_attempting_the_write(domain):
+        client=ScriptedClient(SPEC,[]);config=config_for(domain,client,True)
+        ref=config.certificate.witnesses[0]['refusals'][0]
+        client.responses=[final([{'operation':ref['operation'],'code':ref['reference_code']}])]
+        result=run(config,client)
+>       assert result.score['task_success'] and result.score['refusal_subgoals']==[True]
+E       assert (False)
+
+tests/test_vnext_tool_agent.py:52: AssertionError
+_ test_engine_block_is_not_service_correct_refusal_and_has_no_fake_business_violation _
+
+    def test_engine_block_is_not_service_correct_refusal_and_has_no_fake_business_violation():
+        domain='cloudops';client=ScriptedClient(SPEC,[]);config=config_for(domain,client,True,mode='reference')
+        ref=config.certificate.witnesses[0]['refusals'][0]
+        client.responses=[tool_call('attempt',ref['operation'],domain),final([{'operation':ref['operation'],'code':ref['reference_code']}])]
+        result=run(config,client)
+        assert not result.score['task_success'] and result.score['refusal_subgoals']==[False]
+>       assert result.score['rejected_invalid_attempts']==1 and result.score['successful_business_violations']==0
+E       assert (0 == 1)
+
+tests/test_vnext_tool_agent.py:62: AssertionError
+_ test_actual_sandbox_violation_and_false_refusal_are_independently_identified _
+
+    def test_actual_sandbox_violation_and_false_refusal_are_independently_identified():
+        domain='cloudops';client=ScriptedClient(SPEC,[]);config=config_for(domain,client,True)
+        ref=config.certificate.witnesses[0]['refusals'][0];client.responses=[tool_call('badwrite',ref['operation'],domain),final()]
+        result=run(config,client)
+>       assert result.score['successful_business_violations']==1 and not result.score['task_success']
+E       assert (0 == 1)
+
+tests/test_vnext_tool_agent.py:70: AssertionError
+_ test_invalid_certificate_fails_before_any_model_call_and_budget_failure_is_replayable _
+
+    def test_invalid_certificate_fails_before_any_model_call_and_budget_failure_is_replayable():
+        client=ScriptedClient(SPEC,[]);config=config_for('cloudops',client);config.certificate.certificate_hash='0'*64
+        with pytest.raises(ValueError,match='certificate hash'):run(config,client)
+>       assert client.responses==[]
+E       assert <generator ob...t 0x105e616d0> == []
+E         
+E         Use -v to get more diff
+
+tests/test_vnext_tool_agent.py:90: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_vnext_tool_agent.py::test_native_model_tools_and_canonical_full_journal_replay[saas]
+FAILED tests/test_vnext_tool_agent.py::test_native_model_tools_and_canonical_full_journal_replay[cloudops]
+FAILED tests/test_vnext_tool_agent.py::test_native_model_tools_and_canonical_full_journal_replay[fulfillment]
+FAILED tests/test_vnext_tool_agent.py::test_native_model_tools_and_canonical_full_journal_replay[stayops]
+FAILED tests/test_vnext_tool_agent.py::test_service_must_decide_correct_refusal_without_attempting_the_write[saas]
+FAILED tests/test_vnext_tool_agent.py::test_service_must_decide_correct_refusal_without_attempting_the_write[cloudops]
+FAILED tests/test_vnext_tool_agent.py::test_service_must_decide_correct_refusal_without_attempting_the_write[fulfillment]
+FAILED tests/test_vnext_tool_agent.py::test_service_must_decide_correct_refusal_without_attempting_the_write[stayops]
+FAILED tests/test_vnext_tool_agent.py::test_engine_block_is_not_service_correct_refusal_and_has_no_fake_business_violation
+FAILED tests/test_vnext_tool_agent.py::test_actual_sandbox_violation_and_false_refusal_are_independently_identified
+FAILED tests/test_vnext_tool_agent.py::test_invalid_certificate_fails_before_any_model_call_and_budget_failure_is_replayable
+11 failed, 10 passed in 3.52s

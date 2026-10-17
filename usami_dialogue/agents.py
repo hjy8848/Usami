@@ -187,6 +187,7 @@ def run(adapter,world,config,customer_client,service_client):
     by_role={role:{**tokens,'calls':counts[role],'usage_complete':True} for role in ('customer','service')}
     for row in calls:
         usage=row.record.response.get('usage',{}) if isinstance(row.record.response,dict) else {}
+        if not isinstance(usage,dict):usage={}
         required=('prompt_tokens','completion_tokens','total_tokens')
         if not all(isinstance(usage.get(k),int) and not isinstance(usage[k],bool) and usage[k]>=0 for k in required):
             usage_complete=False;by_role[row.role]['usage_complete']=False;continue

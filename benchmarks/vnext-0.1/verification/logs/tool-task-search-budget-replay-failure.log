@@ -1,0 +1,41 @@
+...........F.                                                            [100%]
+=================================== FAILURES ===================================
+_ test_fulfillment_joint_goal_changes_two_existing_warehouses_without_editing_source _
+
+    def test_fulfillment_joint_goal_changes_two_existing_warehouses_without_editing_source():
+        selected=None
+        for seed in range(12):
+            frozen=freeze(default_spec('fulfillment',seed));w=load_world(frozen);b,_=binding('fulfillment',w)
+            for uid in w.users:
+                ops=[]
+                for warehouse in w.warehouses.values():
+                    op=b.Operation(name='set_warehouse_receiving',scope_id=warehouse.id,resource_id=warehouse.id,params={'enabled':not warehouse.receiving_enabled})
+                    if b.decide(w,uid,op).allowed:ops.append(op)
+                if len(ops)>=2:selected=(frozen,w,uid,ops[:2]);break
+            if selected:break
+        assert selected
+        frozen,w,uid,ops=selected;before=frozen.world_hash
+        goal=JointGoal(atoms=[{'collection':'warehouses','entity':o.resource_id,'field':'receiving_enabled','value':o.params['enabled']} for o in ops],allowed_changes={'warehouses/'+o.resource_id:['receiving_enabled'] for o in ops})
+        task=ToolTask(domain='fulfillment',registration_hash=frozen.registration_hash,world_hash=w.state_hash,identity=uid,family='two_warehouse_receiving',message='Update receiving at both warehouses as requested; leave other warehouse state unchanged.',goal=goal,capabilities=[o.model_dump(mode='json') for o in ops])
+        c=certify(frozen,task,max_depth=2,max_nodes=16)
+        assert len(c.witnesses[0]['operations'])==2 and c.witnesses[0]['causal_depth']==0
+        assert all(not o['objective_after_remaining_legal_steps'] for o in c.witnesses[0]['omissions'])
+>       assert verify(frozen,c) and frozen.world_hash==before
+
+tests/test_vnext_tool_tasks.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frozen = FrozenWorld(spec=WorldSpec(domain='fulfillment', seed=0, generator_version='fulfillment-structural-v1', rules_version=...cede', generation_diagnostics=[], rules_source_hash='7a8183c187ca3cc5b706dc25f55696d9a03eba5f3c739d36a3aeedcb21cfd674')
+certificate = ToolCertificate(protocol='native-tool-certificate-v1', task=ToolTask(protocol='native-tool-task-v1', domain='fulfillme...ps': False}], 'causal_depth': 0}], certificate_hash='6237569904981697e2f0cb678867c589f53289d730814fd67277bba0c235c1f7')
+
+    def verify(frozen,certificate):
+        c=ToolCertificate.model_validate(certificate.model_dump(mode='json') if isinstance(certificate,ToolCertificate) else certificate)
+        if c.certificate_hash!=c.computed_hash():raise ValueError('tool certificate hash differs')
+        rebuilt=certify(frozen,c.task,max_depth=c.max_depth,max_nodes=c.max_nodes,max_paths=len(c.witnesses))
+>       if rebuilt!=c:raise ValueError('native tool proof differs')
+E       ValueError: native tool proof differs
+
+usami_benchmark/tool_tasks.py:258: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_vnext_tool_tasks.py::test_fulfillment_joint_goal_changes_two_existing_warehouses_without_editing_source
+1 failed, 12 passed in 4.33s

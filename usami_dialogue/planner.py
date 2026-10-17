@@ -17,9 +17,17 @@ def _context(adapter,world,private,intent):
     return new
 
 
-def search(adapter,world,task,preference_options,*,max_nodes=1024,max_depth=12,max_paths=2):
+def search(adapter,world,task,preference_options,*,max_nodes=1024,max_depth=12,max_paths=2,refusal_code_options=None):
     task=checked_task(adapter,world,task);private=adapter.private_state(world,task.profile_id)
-    queue=deque();seen=set();paths=[];nodes=0
+    from .tasks import frame_preserved
+    codes=None
+    if refusal_code_options is not None:
+        if task.goals or len(task.refusals)!=1 or not refusal_code_options:raise ValueError('code discovery requires one pure native refusal probe')
+        codes=set(refusal_code_options)
+        for code in codes:
+            candidate=task.model_copy(deep=True);candidate.refusals[0].code=code;candidate.task_hash=''
+            checked_task(adapter,world,candidate)
+    queue=deque();seen=set();paths=[];nodes=0;matched=[]
     for preferences in preference_options:
         state=world.clone();state.interaction=initialize(private)
         intent=CustomerIntent(message='I am providing my actual facts and choosing an acceptable option.',disclosures=private.facts,preferences=preferences)
@@ -29,8 +37,10 @@ def search(adapter,world,task,preference_options,*,max_nodes=1024,max_depth=12,m
         state,path,depth=queue.popleft();key=state.state_hash
         if key in seen:continue
         seen.add(key);nodes+=1
-        refusal_ready=all(not (d:=adapter.decide(state,private.identity,adapter.Operation.model_validate(g.operation))).allowed and d.error_code==g.code for g in task.refusals)
-        if all(g.satisfied(state) for g in task.goals) and refusal_ready:paths.append(path);continue
+        decisions=[adapter.decide(state,private.identity,adapter.Operation.model_validate(g.operation)) for g in task.refusals]
+        refusal_ready=all(not d.allowed and d.error_code in (codes if codes is not None else {g.code}) for g,d in zip(task.refusals,decisions))
+        if all(g.satisfied(state) for g in task.goals) and refusal_ready and (codes is None or frame_preserved(world,state,task.frames)):
+            paths.append(path);matched.append([d.error_code for d in decisions]);continue
         if depth>=max_depth:continue
         for raw in adapter.candidate_intents(state,private):
             op=adapter.Operation.model_validate(raw)
@@ -46,12 +56,14 @@ def search(adapter,world,task,preference_options,*,max_nodes=1024,max_depth=12,m
                 steps=[{'kind':'customer','intent':intent.model_dump(mode='json')}]
             decision=adapter.decide(prepared,private.identity,op)
             if not decision.allowed or decision.expected_state==prepared:continue
-            queue.append((decision.expected_state,path+steps+[{'kind':'business','operation':raw}],depth+1))
+            if codes is None or frame_preserved(world,decision.expected_state,task.frames):queue.append((decision.expected_state,path+steps+[{'kind':'business','operation':raw}],depth+1))
         for eid in task.external_schedule:
             if adapter.external_ready(state,eid):
                 following=adapter.external_reference(state,eid)
-                if not adapter.invariants(following):queue.append((following,path+[{'kind':'external','event_id':eid}],depth+1))
-    return {'paths':paths,'nodes':nodes,'exhausted':not queue,'max_nodes':max_nodes,'max_depth':max_depth}
+                if not adapter.invariants(following) and (codes is None or frame_preserved(world,following,task.frames)):queue.append((following,path+[{'kind':'external','event_id':eid}],depth+1))
+    result={'paths':paths,'nodes':nodes,'exhausted':not queue,'max_nodes':max_nodes,'max_depth':max_depth}
+    if codes is not None:result['matched_refusal_codes']=matched
+    return result
 
 
 def execute_witness(adapter,world,task,path):

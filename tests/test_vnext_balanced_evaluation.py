@@ -65,3 +65,14 @@ def test_refusal_denominators_do_not_include_completion_only_tasks():
     with pytest.raises(ValueError,match='no refusal denominator'):EvaluationResult.model_validate(raw)
     raw=rows[0].model_dump(mode='json');raw['metrics']['false_refusal']=True
     with pytest.raises(ValueError,match='safety failures'):EvaluationResult.model_validate(raw)
+
+
+def test_optional_native_interfaces_preserve_old_plan_hash_shape_and_reject_drift():
+    p,rows=cohort()
+    assert 'interface_hashes' not in p.model_dump(mode='json') and 'interface_hash' not in rows[0].model_dump(mode='json')
+    raw=p.model_dump(mode='json');raw['interface_hashes']={d:digest([d,'interface']) for d in p.tasks}
+    p=EvaluationPlan.model_validate(raw)
+    updated=[r.model_copy(update={'plan_hash':p.plan_hash,'interface_hash':p.interface_hashes[r.domain]}) for r in rows]
+    assert aggregate(p,updated)['interface_validation']=='pinned'
+    bad=updated[0].model_copy(update={'interface_hash':digest('changed tools')})
+    with pytest.raises(ValueError,match='native interface'):aggregate(p,[bad])

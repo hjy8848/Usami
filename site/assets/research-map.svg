@@ -34,7 +34,7 @@
 <text x="21" y="26" fill="#61744f" font-family="monospace" font-size="9" letter-spacing="1">02 / SKILL CO-EVOLUTION</text>
 <path d="M88 71H151M233 71H296" stroke="#869a72" marker-end="url(#arr)"/>
 <circle cx="58" cy="71" r="28" fill="#f8f9f2" stroke="#a8b999"/>
-<text x="58" y="76" fill="#475e38" font-family="Georgia,serif" font-size="20" text-anchor="middle">Cₙ</text>
+<text x="58" y="76" fill="#475e38" font-family="Georgia,serif" font-size="20" text-anchor="middle">Dₙ</text>
 <rect x="156" y="47" width="74" height="48" rx="4" fill="#fcfaf4" stroke="#c1b393"/>
 <text x="193" y="69" fill="#95784c" font-family="monospace" font-size="10" text-anchor="middle">Evidence</text>
 <text x="193" y="84" fill="#a79675" font-family="monospace" font-size="8" text-anchor="middle">verified</text>

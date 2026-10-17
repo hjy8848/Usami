@@ -4,47 +4,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f6f3ec">
-  <meta name="description" content="Usami 研究介绍：可执行业务 Benchmark 与 Customer–Service Skill 共进化。通过任务、状态转移和证据流的交互示例解释两项方法。">
+  <meta name="description" content="Usami 把业务状态与规则组成任务空间；VAST-CoEvo 从 Service 的成功和失败中发现挑战，让选题与业务经验共同递归更新。">
   <meta property="og:title" content="Usami — Business environments and agent co-evolution">
   <meta property="og:description" content="可组合业务任务如何评测 Agent，交互证据如何用于 Skill 迭代。方法介绍与交互式示意。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://hjy8848.github.io/Usami/">
   <title>Usami — Business environments and agent co-evolution</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=83a58377e33d">
-  <script src="app.js?v=bd2f676940ef" defer></script>
+  <link rel="stylesheet" href="style.css?v=f0f7eb7fc039">
+  <script src="app.js?v=bcb5d5b2ece5" defer></script>
 </head>
 <body>
 <a class="skip" href="#introduction">跳到正文</a>
-<header class="site-header"><a class="wordmark" href="#" aria-label="Usami 首页">usami</a><nav aria-label="主导航"><a href="#benchmark">Benchmark</a><a href="#method">共进化</a><a href="#evaluation">评价设计</a><a href="https://github.com/hjy8848/Usami">代码 ↗</a></nav></header>
+<header class="site-header"><a class="wordmark" href="#" aria-label="Usami 首页">usami</a><nav aria-label="主导航"><a href="#benchmark">业务世界</a><a href="#method">共同进化</a><a href="#related-work">相关研究</a><a href="#evaluation">评价设计</a><a href="https://github.com/hjy8848/Usami">代码 ↗</a></nav></header>
 <main>
   <header class="article-header" id="overview">
-    <div class="hero-editorial">
-      <div class="hero-type">
-        <p class="overline"><span></span> Executable worlds · Agent co-evolution</p>
-        <h1>Usami<span class="title-period">.</span></h1>
-        <p class="subtitle">可执行业务世界，<br>与 Agent 共进化。</p>
-        <p class="abstract">四个业务领域，开放的场景构造空间。Customer 配置世界、组合任务，Service 在冻结的场景中执行，独立规则核验结果。</p>
-        <div class="hero-links"><a href="#benchmark">阅读方法 <span>↓</span></a><a href="https://github.com/hjy8848/Usami">GitHub <span>↗</span></a></div>
-      </div>
-      <figure class="hero-frontispiece"><img src="assets/research-map.svg" alt="上层为业务世界的状态依赖，下层为 Customer、交互证据和 Service Skill 的迭代；评测环境与进化方法是相互连接的两个部分。" width="560" height="510"><figcaption>业务世界定义操作边界，执行证据驱动策略迭代。</figcaption></figure>
-    </div>
-    <div class="article-meta"><a href="#benchmark"><span class="meta-index">01</span><div><span>Usami Benchmark</span><strong>有状态业务世界与开放探索</strong></div><span class="meta-arrow">↗</span></a><a href="#method"><span class="meta-index">02</span><div><span>VAST-CoEvo</span><strong>轨迹驱动的挑战与 Skill 共进化</strong></div><span class="meta-arrow">↗</span></a></div>
-    <p class="reading-note">Usami Benchmark × VAST-CoEvo · 环境、挑战与递归学习</p>
+    <div class="hero-editorial"><div class="hero-type">
+      <p class="overline"><span></span> Executable worlds · Recursive skill co-evolution</p>
+      <h1>Usami<span class="title-period">.</span></h1>
+      <p class="subtitle">可组合的业务世界，<br>让出题与解题共同进化。</p>
+      <p class="abstract">Usami 把业务状态与规则变成任务空间。VAST-CoEvo 从 Service 的成功和失败轨迹中发现挑战，让 Designer 与 Service 分别积累选题与业务经验。</p>
+      <div class="hero-links"><a href="#introduction">从一个问题开始 <span>↓</span></a><a href="https://github.com/hjy8848/Usami">GitHub <span>↗</span></a></div>
+    </div><figure class="hero-frontispiece"><img src="assets/research-map.svg?v=297e152a8b0a" alt="Usami 以有状态业务世界提供可执行任务；VAST-CoEvo 将核验后的交互证据用于 Designer 与 Service 两种 Skill 的递归更新。" width="560" height="510"><figcaption>业务关系产生任务，真实经历产生下一轮挑战。</figcaption></figure></div>
+    <div class="article-meta"><a href="#benchmark"><span class="meta-index">01</span><div><span>Usami Benchmark</span><strong>让新任务来自业务世界的关系</strong></div><span class="meta-arrow">↗</span></a><a href="#method"><span class="meta-index">02</span><div><span>VAST-CoEvo</span><strong>让新挑战来自 Service 的真实经历</strong></div><span class="meta-arrow">↗</span></a></div>
   </header>
 
   <section class="prose" id="introduction">
-    <h2>在业务交互中发现问题，积累解决问题的方法</h2>
-    <p>业务 Agent 的能力体现在行动中：它是否查清权限，是否理解资源依赖，是否在条件变化后仍能做出正确决策？一次任务的最终成功与失败，还需要结合工具调用和状态变化理解。</p>
-    <p><a href="#benchmark">Usami Benchmark</a> 将这些决策放进可组合的业务世界。领域定义对象、工具与固定业务规则；出题者组合合法初态、执行身份和目标，冻结场景后交给 Agent。Agent 自主查询和执行，独立裁判根据实际状态变化核验结果。</p>
-    <p><a href="#method">VAST-CoEvo</a> 在此基础上组织递归学习：Customer 以考官身份分析 Service 的执行轨迹，从错误与薄弱环节出发构造新场景和挑战；双方将交互经验提炼为 Skill，带入下一轮。环境与进化方法分别构成两项贡献，并通过同一套执行证据连接。</p>
+    <h2>完成一道题之后，下一步该学什么？</h2>
+    <p>设想一个能办理机票改签的智能客服。顾客先要求“越早到越好”，看过方案后又改口：“下午到就行，费用别超过 300 元。”客服需要重新比较航班、座位、费用和当前确认，才能执行改签。</p>
+    <p>它可能沿用旧方案而出错，也可能反复核对后终于办对。两种经历都有信息：错误暴露已经失守的边界；成功过程中的补救、遗漏和计划修正，则留下值得继续考察的线索。</p>
+    <p>要把这些经历变成持续学习，我们需要两样东西：<strong>能容纳新任务、又能客观判断结果的业务世界；能从当前表现中找到下一道有价值挑战的出题者。</strong></p>
+    <p>Usami 解决前一个问题，VAST-CoEvo 研究后一个问题，并让出题者与服务者共同积累经验。</p>
   </section>
 
   <section id="benchmark" class="chapter">
-    <div class="prose"><p class="chapter-label"><span>01</span> Usami Benchmark</p><h2>固定业务规则，开放场景构造</h2><p>SaaS、CloudOps、FulfillmentOps 与 StayOps 各自定义一种业务世界。出题者可以全局查看并配置其中的对象、状态与关系，组合执行身份、任务目标及授权范围。合法性校验通过后，场景被固定为一个独立实例，再交给 Service 执行。</p><p>复杂度来自规则之间的耦合：付款成功不等于项目恢复，组织负责人不等于拥有计算操作权限，资源能启动也不等于能安全停止或删除。Customer 可以把这些条件组合成题目，但不能修改规则或评分答案。下面先看业务关系，再亲手构造一个场景。</p></div>
-
+    <div class="prose"><p class="chapter-label"><span>01</span> Usami Benchmark</p><h2>任务，从世界里的关系组合出来</h2>
+      <p>Usami 把业务对象、状态、权限和操作规则放进一个可以实际运行的世界。企业里有员工、订阅和账单，云项目里有服务器、配额与依赖，酒店里有日期库存、预订与具体房间。一次操作会改变状态，也会改变后续操作的条件。</p>
+      <p>因此，复杂性来自业务关系本身。付款成功之后，项目仍需恢复；组织负责人也可能没有项目操作权限；应用启动之前，依赖与配额必须同时满足。下面这张图展示 CloudOps 中这些条件如何连接。</p>
+    </div>
     <figure class="wide-figure world-atlas" aria-labelledby="atlas-caption">
-      <div class="figure-heading"><span><b>01</b> CloudOps · 相互约束的业务系统</span><span class="example-label">6 类查询接口 / 11 类写操作</span></div>
+      <div class="figure-heading"><span><b>A</b> CloudOps · 相互约束的业务系统</span><span class="example-label">从账单、权限到依赖与资源生命周期</span></div>
       <div class="atlas-map">
         <svg viewBox="0 0 1000 350" role="img" aria-labelledby="atlas-title atlas-desc">
           <title id="atlas-title">CloudOps 的业务关系与操作边界</title><desc id="atlas-desc">账单支付约束项目恢复，项目状态与显式项目角色共同约束资源操作；运行资源受配额和依赖约束，停止、修改依赖与删除各有生命周期条件。</desc>
@@ -61,38 +60,40 @@
       </div>
       <div class="atlas-tabs" role="tablist" aria-label="选择业务边界"><button role="tab" id="boundary-billing" aria-selected="true" aria-controls="boundary-panel" data-boundary="billing">账单 × 项目恢复</button><button role="tab" id="boundary-access" aria-selected="false" tabindex="-1" aria-controls="boundary-panel" data-boundary="access">身份 × 项目权限</button><button role="tab" id="boundary-quota" aria-selected="false" tabindex="-1" aria-controls="boundary-panel" data-boundary="quota">配额 × 运行用量</button><button role="tab" id="boundary-lifecycle" aria-selected="false" tabindex="-1" aria-controls="boundary-panel" data-boundary="lifecycle">依赖 × 资源生命周期</button></div>
       <div class="boundary-panel" id="boundary-panel" role="tabpanel" aria-labelledby="boundary-billing"><div><span class="field-label">条件怎样相互影响</span><h3 id="boundary-title">支付成功，只完成了恢复链的一步</h3><p id="boundary-description">项目暂停且账单未支付。支付成功后仍须显式恢复项目；启动实例还需要项目角色、运行依赖与足够配额。</p></div><div class="boundary-sequence"><span class="field-label">业务路径 / 每一步均需授权</span><p id="boundary-path">查询账单 → 支付 → 恢复项目 → 核实角色与依赖 → 启动</p><code id="boundary-tools">get_invoice · pay_invoice · resume_project · start_instance</code></div></div>
-      <figcaption id="atlas-caption">业务关系示意。选择一类边界，查看相互关联的状态、规则与操作；各项写操作均受身份、业务权限和精确授权约束。</figcaption>
+      <figcaption id="atlas-caption"><strong>图 1.</strong> 业务关系示意。选择一类边界，查看相互关联的状态、规则与操作；各项写操作均受身份、业务权限和精确授权约束。</figcaption>
     </figure>
-
-    <div class="prose"><h3>Customer 是考官，Service 是应试者</h3><p>Customer 拥有出题阶段的全局观察与配置权：选择对象、设置状态、组织关系、指定执行身份和业务目标。它可以把权限、账单、配额与依赖组合成一道题。系统检查初态是否满足业务不变量，再固定场景，防止出题者在执行中改动条件。</p></div>
-    <div class="freedom-grid"><div><span>Customer / 场景构造权</span><h3>看全局，搭场景</h3><p>配置对象与业务条件，组合目标和授权范围；可根据已有轨迹放大薄弱环节。</p></div><div><span>Service / 正常业务接口</span><h3>查事实，做决策</h3><p>接收题面与执行身份，通过业务工具查询所需事实，自主规划；不获得考官的全量配置或标准答案。</p></div><div><span>Validator & Oracle / 固定规则</span><h3>先验初态，再判执行</h3><p>出题阶段拒绝非法世界；执行阶段独立核验行为。考官不能修改业务规则、伪造结果或替裁判打分。</p></div></div>
-    <div class="prose"><h3>构造空间与执行空间分开</h3><p>设置“用户只有 Viewer 权限”是出题配置，不是给 Service 一个修改权限的业务指令。场景冻结后，执行身份与授权范围固定；Service 的每一次写入仍须满足业务权限。考官能设计一道应当被拒绝的题，不能把正确拒绝算成错误。</p><h3>独立于进化方法的 Benchmark</h3><p>场景可以由研究者或出题模型构造，也可以保存为固定题集，用于评测单个 Agent、比较模型与规划方法、收集轨迹。任务运行不要求 Reflection 或 Skill 更新。VAST-CoEvo 进一步让 Customer 从旧轨迹学习出题方法、构造下一轮挑战，是对这套环境的一种使用方式。</p><h3>四个领域，各自保留完整规则</h3><p>同一套交互与证据接口连接不同业务结构。各领域有独立状态机与不变量，不能用一组通用条件替代。</p></div>
-    <div class="domain-index"><a href="https://github.com/hjy8848/Usami/blob/main/benchmarks/v0.2.0/README.md"><strong>SaaS</strong><span>成员权限、订阅、席位、账单与退款</span></a><a href="https://github.com/hjy8848/Usami/blob/main/benchmarks/cloudops-v0.1/README.md"><strong>CloudOps</strong><span>角色、账单恢复、依赖 DAG、配额与生命周期</span></a><a href="https://github.com/hjy8848/Usami/blob/main/benchmarks/fulfillment-v0.1/README.md"><strong>FulfillmentOps</strong><span>库存守恒、订单状态与运输生命周期</span></a><a href="https://github.com/hjy8848/Usami/blob/main/benchmarks/stayops-v0.1/README.md"><strong>StayOps</strong><span>跨日期库存、预订与物理房间分配</span></a></div>
-    <div class="prose"><h3>亲自当一次考官</h3><p>下面以 CloudOps 为例。先配置身份、项目、账单、依赖与资源初态，再选择业务目标。点击“校验并冻结题目”后查看 Service 题面，尝试业务操作。修改任何出题条件都会返回草稿阶段，必须重新校验。</p></div>
-
+    <div class="prose"><h3>八类业务世界，各有自己的约束</h3><p>世界库覆盖不同业务语义。它们共享交互与证据的组织方式，同时各自保留原生状态、规则和操作。</p></div>
+    <div class="domain-index domain-library">
+      <a href="https://github.com/hjy8848/Usami/tree/main/usami"><strong>SaaS · 企业软件</strong><span>成员权限、订阅席位、账单与退款</span></a>
+      <a href="https://github.com/hjy8848/Usami/tree/main/usami_cloudops"><strong>CloudOps · 云资源</strong><span>项目角色、依赖、配额与资源生命周期</span></a>
+      <a href="https://github.com/hjy8848/Usami/tree/main/usami_fulfillment"><strong>FulfillmentOps · 履约</strong><span>库存守恒、订单分配与运输状态</span></a>
+      <a href="https://github.com/hjy8848/Usami/tree/main/usami_stayops"><strong>StayOps · 酒店</strong><span>跨日期库存、预订与物理房间分配</span></a>
+      <a href="https://github.com/hjy8848/Usami/tree/main/usami_aftersales"><strong>AfterSales · 售后</strong><span>退换条件、凭证、报价、收货与结算</span></a>
+      <a href="https://github.com/hjy8848/Usami/tree/main/usami_airline"><strong>Airline · 航空</strong><span>联程、舱位、票规、费用与重新确认</span></a>
+      <a href="https://github.com/hjy8848/Usami/tree/main/usami_property"><strong>Property · 物业</strong><span>故障分级、维修方案、预约与住户确认</span></a>
+      <a href="https://github.com/hjy8848/Usami/tree/main/usami_education"><strong>Education · 教育</strong><span>课程资格、师生排期、学习进度与费用</span></a>
+    </div>
+    <div class="prose"><h3>为什么一个世界能产生许多任务？</h3><p>任务由几类选择共同决定：用哪个已有身份，处理哪些对象，组合什么业务目标，允许哪些操作。对象之间的关系又会形成先后条件；相同目标可以有不同的合法完成路径。</p><p>在同一个云世界中，可以请求启动数据库、让数据库与应用一起上线、扩容后部署完整服务，或同时启动两个项目的资源。任务构造接口在支持的操作与目标范围内检查这些组合。世界初态与规则始终固定，新的任务来自既有关系。</p></div>
+    <div class="task-space"><div><span>身份</span><strong>已有用户与权限</strong><p>谁在什么项目中，能做什么？</p></div><div><span>对象与关系</span><strong>单实体或跨实体</strong><p>资源依赖、账单、库存和时间怎样连接？</p></div><div><span>目标</span><strong>组合业务结果</strong><p>启动、恢复、调整、安排，哪些结果要一起达成？</p></div><div><span>执行路径</span><strong>多种合法解法</strong><p>由状态与规则约束顺序，按实际结果判断。</p></div></div>
+    <div class="prose"><h3>在同一个世界里，亲手组合一次</h3><p>下面只取云业务的一个小切片。选一位已有成员、一个项目和希望运行的资源。先尝试完整部署，再只请求启动 app，或更换成员：你会看到同一组对象为什么能形成不同任务。</p></div>
     <figure class="wide-figure task-figure" id="task-example" aria-labelledby="task-caption">
-      <div class="figure-heading"><span><b>A</b> 考官工作台 → 冻结题目 → Service 执行</span><span class="example-label">浏览器机制演示 · 不调用模型</span></div>
+      <div class="figure-heading"><span><b>B</b> 同一个世界，可以提出哪些不同的任务？</span><span class="example-label">浏览器机制示意 · 不调用模型</span></div>
       <div class="examiner-editor">
-        <div class="examiner-heading"><span class="field-label">01 / Customer 全局配置</span><span id="draft-status">草稿</span></div>
-        <div class="examiner-fields">
-          <label>执行身份角色<select id="exam-role"><option>Operator</option><option>Admin</option><option>Viewer</option></select></label>
-          <label>项目状态<select id="exam-project"><option value="active">活跃</option><option value="suspended">暂停</option></select></label>
-          <label>账单状态<select id="exam-invoice"><option value="paid">已支付</option><option value="unpaid">未支付</option></select></label>
-          <label>资源依赖<select id="exam-topology"><option value="parallel">并行：app 依赖 db、cache</option><option value="chain">链式：app → cache → db</option><option value="independent">三项独立，无依赖</option></select></label>
-          <label>CPU 配额<select id="exam-cpu"><option value="8">8 CPU</option><option value="4">4 CPU</option></select></label>
-          <label>内存配额<select id="exam-memory"><option value="16">16 单位</option><option value="8">8 单位</option></select></label>
-          <label>运行实例配额<select id="exam-limit"><option value="3">3 台</option><option value="2">2 台</option></select></label>
-          <label>任务目标<select id="exam-goal"><option value="app">启动 app</option><option value="all">启动全部三项资源</option></select></label>
+        <div class="examiner-heading"><span class="field-label">一个只读世界 · 三个项目 · 两位已有成员</span><span id="draft-status">WORLD-01</span></div>
+        <div class="examiner-fields frozen-fields">
+          <label>以谁的身份请求<select id="task-identity"><option value="lin">林 · 运维成员</option><option value="chen">陈 · 项目成员</option></select></label>
+          <label>选择已有项目<select id="frozen-scene"><option value="alpha">alpha · 并行依赖</option><option value="beta">beta · 链式依赖</option><option value="gamma">gamma · 暂停项目</option></select></label>
         </div>
-        <fieldset class="examiner-running"><legend>初始运行状态</legend><label><input type="checkbox" id="exam-db"> db 已运行</label><label><input type="checkbox" id="exam-cache"> cache 已运行</label><span>app 初始停止；依赖、项目状态与用量必须一致。</span></fieldset>
-        <div class="examiner-submit"><button id="freeze-exam">校验并冻结题目 →</button><p id="exam-validation" role="status">配置世界后，校验初始状态。</p></div>
-        <details class="examiner-snapshot"><summary>查看考官初态快照</summary><pre id="exam-snapshot"></pre></details>
+        <fieldset class="task-targets"><legend>组合目标 · 希望哪些资源运行？</legend><label><input type="checkbox" data-target="db" checked> 数据库 db</label><label><input type="checkbox" data-target="cache" checked> 缓存 cache</label><label><input type="checkbox" data-target="app" checked> 应用 app</label></fieldset>
+        <div class="frozen-scene-summary"><span class="field-label">世界中已有的事实 / 选择不会修改它们</span><p id="scene-summary">林在 alpha 中是 Operator；项目活跃，配额充足；db、cache、app 均停止。</p></div>
+        <div class="examiner-submit"><button id="freeze-exam">登记任务，开始执行 →</button><p id="exam-validation" role="status">选择身份、项目与目标，组合一项业务请求。</p></div>
+        <details class="examiner-snapshot"><summary>查看任务引用与只读世界</summary><pre id="exam-snapshot"></pre></details>
       </div>
-      <div class="exam-paper"><span class="field-label">02 / Service 接收题面，事实通过工具查询</span><h3 id="exam-request">请先冻结题目</h3><p>执行用户：u_demo · 可访问项目：alpha。只授权启动 db、cache、app；不授权付款、恢复项目或修改权限、配额与依赖。</p><p>下方全局状态图供讲解与检查使用；Service 不会直接收到这份全量世界配置。</p></div>
-      <div class="task-toolbar"><span class="field-label">03 / 模拟 Service 的操作选择</span><button id="reset-world" class="quiet-button" disabled>恢复冻结初态 ↺</button></div>
+      <div class="exam-paper"><span class="field-label">由当前选择组成的请求</span><h3 id="exam-request">请让 alpha 项目的 db、cache 和 app 全部运行。</h3><p>你选择目标，Service 自主决定查询与操作顺序。下方按钮供你模拟它的动作，观察业务规则如何约束结果。</p></div>
+      <div class="task-toolbar"><span class="field-label">在独立副本里尝试操作</span><button id="reset-world" class="quiet-button" disabled>恢复冻结初态 ↺</button></div>
       <div class="task-workspace">
         <div class="world-drawing">
-          <div class="project-line"><span>project / alpha</span><span id="project-state">ACTIVE</span></div>
+          <div class="project-line"><span id="world-instance">world / W-01</span><span id="project-state">ACTIVE</span></div>
           <svg viewBox="0 0 500 285" role="img" aria-labelledby="task-map-title task-map-description">
             <title id="task-map-title">应用与上游依赖</title><desc id="task-map-description">db 和 cache 独立，均为 app 启动所需的上游服务。节点旁显示当前状态。</desc>
             <defs><marker id="task-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10" fill="#8d998b"/></marker></defs>
@@ -101,86 +102,85 @@
             <g id="node-db" class="resource-node" transform="translate(65 38)"><rect width="160" height="67" rx="3"/><text x="18" y="26" class="resource-name">db</text><text x="18" y="49" class="resource-status">stopped</text><circle cx="138" cy="25" r="4"/></g>
             <g id="node-cache" class="resource-node" transform="translate(275 38)"><rect width="160" height="67" rx="3"/><text x="18" y="26" class="resource-name">cache</text><text x="18" y="49" class="resource-status">stopped</text><circle cx="138" cy="25" r="4"/></g>
             <g id="node-app" class="resource-node target" transform="translate(170 183)"><rect width="160" height="67" rx="3"/><text x="18" y="26" class="resource-name">app</text><text x="18" y="49" class="resource-status">stopped</text><circle cx="138" cy="25" r="4"/></g>
-            <text x="250" y="278" class="svg-note" text-anchor="middle">目标由考官选择</text>
+            <text x="250" y="278" class="svg-note" text-anchor="middle">每个 Episode 使用独立副本</text>
           </svg>
           <div class="state-facts"><span>角色 <b id="actor-role">Operator</b></span><span>CPU <b id="cpu-usage">0 / 8</b></span><span>内存 <b id="memory-usage">0 / 16</b></span><span>实例 <b id="instance-usage">0 / 3</b></span></div>
         </div>
-        <div class="task-decisions"><h3>选择查询后的业务动作</h3><p>这里手动模拟操作选择。可以尝试直接启动目标，或选择满足依赖的顺序；每次动作都按当前条件判定。</p><div class="operation-buttons"><button data-start="db">启动 db</button><button data-start="cache">启动 cache</button><button data-start="app">启动 app</button></div><div class="decision-output" aria-live="polite"><span class="field-label">最近一次判定</span><strong id="decision-title">等待操作</strong><code id="decision-code">—</code><p id="decision-reason">三项资源均处于 stopped 状态。db 与 cache 没有前置依赖。</p></div><div class="goal-status" id="goal-status">目标未完成</div></div>
+        <div class="task-decisions"><h3>规则允许这个动作吗？</h3><p>先试两种部署顺序，再只选择 app，或换一位已有成员。目标、权限和依赖会分别影响操作。</p><div class="operation-buttons"><button data-start="db" disabled>启动 db</button><button data-start="cache" disabled>启动 cache</button><button data-start="app" disabled>启动 app</button></div><div class="decision-output" aria-live="polite"><span class="field-label">规则预期 / 教学示意</span><strong id="decision-title">等待开始</strong><code id="decision-code">—</code><p id="decision-reason">选择已有身份、项目和资源目标，再开始尝试。</p></div><div class="goal-status" id="goal-status">等待开始</div></div>
       </div>
       <div class="action-log"><span>操作记录</span><ol id="action-log"><li class="empty-log">尚无操作</li></ol></div>
-      <figcaption id="task-caption"><strong>图 1.</strong> 考官配置与业务执行分离。此浏览器示例展示构造、校验、冻结和操作过程；下方动作是手动规则演示，不是真实 Service 模型运行。<a href="https://github.com/hjy8848/Usami/blob/main/usami_cloudops/rules.py">规则源码 ↗</a></figcaption>
-      <noscript><p class="no-js">启用 JavaScript 可配置并冻结场景。在默认并行依赖、权限与配额允许时，两条合法顺序是 db → cache → app 与 cache → db → app。</p></noscript>
+      <figcaption id="task-caption"><strong>图 2.</strong> 身份、项目与目标来自同一个只读世界。改变的是请求组合；业务操作只改变本次执行副本。此浏览器教学模型展示启动规则的一个切片，不调用真实模型。<a href="https://github.com/hjy8848/Usami/blob/main/usami_cloudops/rules.py">业务规则 ↗</a></figcaption>
+      <noscript><p class="no-js">林在 alpha 项目中有 Operator 权限。选择 db、cache 与 app 为目标时，两项上游可按任意顺序启动；只选择 app 时，未就绪的上游会使启动请求应被拒绝。陈在同一项目中是 Viewer，不能执行启动操作。</p></noscript>
     </figure>
-
-    <div class="prose"><h3>多条路径，相同的业务目标</h3><p>在默认并行依赖、配额充足且身份允许时，<code>db → cache → app</code> 和 <code>cache → db → app</code> 都能达成目标。链式依赖则要求先 db，再 cache，最后 app。评分不要求匹配其中一条序列，而是检查目标、允许变化的范围和安全条件。增加无关写操作，即使最后启动了应用，也可能违反任务约束。</p></div>
-    <div class="route-comparison"><div><span>合法路径 A</span><p>db <b>→</b> cache <b>→</b> app</p></div><div><span>合法路径 B</span><p>cache <b>→</b> db <b>→</b> app</p></div><div><span>共同条件</span><p>权限允许，上游就绪，项目活跃，配额足够。</p></div></div>
-    <div class="prose"><p>场景构造负责配置业务条件，目标生成与校验负责确认任务的判定依据。合法任务检查目标可达性与允许变化范围，拒绝任务检查明确的禁止条件；改变名称或资源 ID 不算新的业务结构。默认示例采用并行依赖，切换链式结构会改变合法顺序。</p><h3>将固定任务与开放探索分开测量</h3><p>Service Task 测量给定目标能否被安全完成；Customer Discovery 中，考官组合场景与请求，经初态校验后固定为挑战实例；它是开放测试 Track，不要求更新任何 Agent。一个应当被拒绝的请求也可以是有效测试，Service 正确拒绝与实际执行违规需要分别记录。</p></div>
-    <div class="table-wrap"><table><caption>表 1 · 两种 Track 的输入与评价对象</caption><thead><tr><th>Track</th><th>固定什么</th><th>观察什么</th></tr></thead><tbody><tr><th scope="row">Service Task</th><td>世界、身份、目标、操作范围、工具与预算</td><td>安全目标达成、终态约束、正确拒绝与执行成本</td></tr><tr><th scope="row">Customer Discovery</th><td>领域规则、构造边界、目标 Service、工具与双方预算</td><td>测试有效性、已执行违规、独立错误类型、覆盖与成本</td></tr></tbody></table></div>
-    <div class="prose"><p>二者通过版本化 Manifest 固定实例、初态 Hash、模型配置、源码与分区。顾客身份和精确写授权先于 Service 工具调用建立，不能从工具参数反推授权。训练、开发与独立测试使用明确分区，分别保存实例与证据。</p><h3>执行与判定分离</h3><p>Reference Rules 给出操作的预期结果；World Engine 产生实际状态变化；Oracle 核对两者与授权。研究用 Sandbox 保留错误操作实际执行的可观察性，使 Service 的决策能力与 Engine 的拦截能力可以分别分析。离线 Replay 则复现已记录的事件，核验这些判断。</p></div>
-    <figure class="verification-figure"><div class="verification-row"><span>请求 + 执行前状态</span><b>↙</b><b>↘</b></div><div class="verification-branches"><div><strong>Reference Rules</strong><span>预期允许 / 拒绝</span></div><div><strong>World Engine</strong><span>实际事件与状态变化</span></div></div><div class="verification-join">↘ <span>独立 Oracle</span> ↙</div><p>预期拒绝 + 实际成功写入 → 业务违规证据</p><figcaption><strong>图 2.</strong> 判定依据是执行前规则与实际结果的差异。被拒绝的错误尝试、普通查询失败和成功违规分开记录。</figcaption></figure>
-
+    <div class="prose"><h3>目标相同，也可以有不同路径</h3><p>alpha 中的 db 与 cache 互相独立：先启动哪一个都可以，app 在两项上游运行后启动即可。换到链式依赖项目，就必须遵守链的顺序。评价检查业务目标、状态变化与安全约束，而不要求照抄某条参考步骤。</p><h3>题目成立，与 Service 答对，是两次判断</h3><p>让只有 Viewer 权限的用户请求启动服务器，可以是一道有效的拒绝题。规则先确定它应当被拒绝；如果 Service 正确拒绝，它就答对了；如果实际成功执行了违规写入，才形成业务错误证据。</p><p>Reference 给出规则预期，Engine 记录真实执行，Oracle 核对行为与状态变化。Replay 让整段记录可以再次检查。这样，任务发现者负责提出挑战，业务规则负责判定答案。</p></div>
+    <figure class="verification-figure"><div class="verification-row"><span>请求 + 执行前状态</span><b>↙</b><b>↘</b></div><div class="verification-branches"><div><strong>Reference Rules</strong><span>预期允许 / 拒绝</span></div><div><strong>World Engine</strong><span>实际事件与状态变化</span></div></div><div class="verification-join">↘ <span>独立 Oracle</span> ↙</div><p>预期拒绝 + 实际成功写入 → 业务违规证据</p><figcaption><strong>图 3.</strong> 判定依据是执行前规则与实际结果的差异。被拒绝的错误尝试、普通查询失败和成功违规分开记录。</figcaption></figure>
+    <div class="prose"><p>这套世界与验证接口可以独立用于标准任务评测、规划方法、任务生成和开放探索。<strong>VAST-CoEvo 是使用 Usami 的一种方法，Benchmark 本身并不依赖进化流程。</strong></p></div>
   </section>
 
   <section id="method" class="chapter">
-    <div class="prose"><p class="chapter-label"><span>02</span> VAST-CoEvo</p><h2>先观察执行，再提出挑战</h2><p>挑战以 Service 的执行轨迹为依据。对于失败任务，Customer 分析错误发生的条件，扩大或变化同类测试；对于成功任务，Customer 检查中间的遗漏、补救与决策过程，提出假设，检验这次成功是否依赖特定条件。</p><p>Customer 将轨迹线索转化为场景配置与业务请求：改变角色、项目状态、资源关系等条件，初态校验通过后冻结题目。Service 在该实例的身份、权限与预算下应对，再由 Oracle 核验结果。下面沿用 app、db 和 cache，展示成功与失败两种起点如何导向针对性挑战。</p></div>
-
+    <div class="prose"><p class="chapter-label"><span>02</span> VAST-CoEvo</p><h2>从已经发生的交互，找到下一道挑战</h2><p>先让 Service 完成初始任务，留下顾客对话、查询、动作、计划修正和实际结果。Designer 读取这些经过核验的经历，提出关于 Service 薄弱环节的假设，再从冻结世界中选择能检验假设的新任务。</p><p>失败轨迹用于追查、复现和扩展已经暴露的问题。成功轨迹则用来检查：那些依靠补查或修正才完成的判断，在相邻业务条件下是否仍然可靠。<strong>后续挑战有明确的经历来源。</strong></p></div>
     <figure class="wide-figure trajectory-figure" aria-labelledby="trajectory-caption">
-      <div class="figure-heading"><span><b>B</b> 从执行轨迹寻找挑战</span><span class="example-label">机制示例 · 轨迹到挑战</span></div>
-      <div class="selection-demo"><label for="trace-source">已有任务的结果</label><select id="trace-source"><option value="failure">失败：跳过依赖，造成违规</option><option value="success">成功：分析过程中的薄弱环节</option></select></div>
-      <div class="trajectory-content" aria-live="polite"><div><span class="field-label">01 / 已有执行轨迹</span><pre id="trace-record">db、cache 均未运行
+      <div class="figure-heading"><span><b>C</b> 成功和失败，都能长出下一道题</span><span class="example-label">机制示例</span></div>
+      <div class="selection-demo"><label for="trace-source">选择一段已有经历</label><select id="trace-source"><option value="failure">任务失败：跳过依赖，造成违规</option><option value="success">任务成功：补查后修正了计划</option></select></div>
+      <div class="trajectory-content" aria-live="polite"><div><span class="field-label">01 / 发生过什么</span><pre id="trace-record">db、cache 均未运行
 Service 直接启动 app
-Sandbox：app 启动成功
-Oracle：依赖规则违规</pre></div><div><span class="field-label">02 / Customer 的测试假设</span><h3 id="trace-hypothesis">它是否忽略了依赖检查？</h3><p id="trace-clue">轨迹已暴露一次依赖违规。Customer 进一步检验 Service 是否只忽略了某个资源，还是遗漏了依赖检查方法。</p></div><div><span class="field-label">03 / 下一次挑战</span><h3 id="trace-challenge">改变依赖结构，再测试</h3><p id="trace-next">构造 app → cache → db 的链式依赖场景，提出对象与授权明确的启动请求，检验 Service 是否检查完整依赖链。</p></div></div>
-      <figcaption id="trajectory-caption"><strong>图 3.</strong> 从轨迹到挑战：识别薄弱环节，形成测试假设，再通过业务交互验证。轨迹中的反复查询或补救提供线索，是否构成错误由实际执行与 Oracle 判定。</figcaption>
-      <noscript><p class="no-js">成功轨迹也可以成为起点：Service 反复查询后最终按 db → cache → app 完成。重复查询不能证明它有缺陷，可以换成链式依赖继续检验判断是否可靠。</p></noscript>
+实际结果：app 启动
+Oracle：依赖规则违规</pre></div><div><span class="field-label">02 / 薄弱环节与假设</span><h3 id="trace-hypothesis">依赖检查被遗漏了吗？</h3><p id="trace-clue">Designer 根据实际轨迹提出假设，继续检查 Service 是否核实完整依赖。</p></div><div><span class="field-label">03 / 下一道针对性挑战</span><h3 id="trace-challenge">选择更深的依赖链</h3><p id="trace-next">从冻结世界选择已有的链式依赖任务，观察 Service 是否在操作前查清全部上游。</p></div></div>
+      <figcaption id="trajectory-caption"><strong>图 4.</strong> 从已验证的轨迹提出假设，再用新的真实执行检验。成功过程中的线索用于选择下一题；最终错误仍由业务规则判断。图中轨迹为讲解示例。</figcaption>
     </figure>
-
-    <div class="prose"><h3>把一次交互，变成下一轮可用的方法</h3><p>轨迹记录发生过什么，Skill 则保存以后怎样做。Customer 积累识别薄弱环节、组合挑战和继续追问的方法；Service 积累查询事实、检查前置条件、执行与验证的方法。它们应概括可迁移的经验，而不是记住某个资源 ID 或单道题的答案。</p><p>双方使用声明式 Skill 保存可迁移的方法，基础模型权重保持固定。每份 Skill 有明确角色、作用域与版本，修改内容可以检查，历史版本可以独立加载。上一轮形成的方法参与下一轮出题与决策，新交互再用于修订方法。</p><p>每一代先交互，再学习：Customer 构造并冻结挑战，Service 执行产生轨迹，Oracle 验证并保存证据，双方依次 Reflection、提出 SkillPatch，并按各自的选择规则保存版本。下一代加载选中的 Skill，继续产生挑战和处理业务。下面展开这一更新过程。</p></div>
-
+    <div class="prose"><h3>三个角色，各自做好一件事</h3><p>Designer 负责发现任务，Customer 把任务变成自然对话，Service 处理业务。固定 Customer 的角色策略，能够让挑战选择的变化与顾客交互行为的变化分开；固定策略仍会依据 Service 的真实回复多轮沟通。</p></div>
+    <div class="freedom-grid"><div><span>Designer / 选题</span><h3>下一题，考哪里？</h3><p>分析成功与失败的轨迹，选择已有世界、身份、对象和目标，构成针对性的挑战。</p></div><div><span>Customer / 对话</span><h3>把需求说成真实交互</h3><p>提出请求、回答追问、补充信息和确认方案。角色策略固定，具体对话随真实回复展开。</p></div><div><span>Service / 业务</span><h3>查清事实，再做决定</h3><p>自主查询、规划和调用业务工具。完成合法请求，准确拒绝规则禁止的操作。</p></div></div>
+    <div class="prose"><h3>为什么让出题者也学习？</h3><p>Service 的薄弱点会随着经验变化。修复依赖检查之后，反复考同一道依赖题能带来的新信息就减少了。Designer 需要积累的是寻找下一处边界的方法，而不只是记住哪些资源曾经出过错。</p><p>Service 学习如何处理新挑战；Designer 根据更新后的 Service 表现修订选题方法。<strong>双方的变化共同改变下一轮学习机会的来源。</strong></p><h3>用 Skill 保存两种不同的经验</h3><p>同一段依赖轨迹，进入两份不同的“工作手册”。Service 保存业务判断原则，Designer 保存寻找和验证薄弱环节的方法。下一轮模型调用使用各自当前版本的 Skill，基础模型权重保持固定。</p></div>
+    <div class="skill-pair"><div><span>Designer Skill / 怎样考察</span><p>当 Service 补查后才完善依赖计划，选择有多层上游的既有任务，检查它能否在首次写入前识别完整前置条件。</p></div><div><span>Service Skill / 怎样处理</span><p>启动前核实完整依赖与当前状态；需要额外操作才能完成目标时，先确认操作范围和顾客授权。</p></div></div>
+    <div class="prose"><p>Skill 让经验成为可读、可检查、可继承的策略。每代分别记录两份经验及其来源，下一代在新的交互中继续使用和修订，形成递归过程。</p></div>
     <figure class="wide-figure evolution-figure" id="evolution-example" aria-labelledby="evolution-caption">
-      <div class="figure-heading"><span><b>C</b> 证据与版本流</span><span class="example-label">机制示例 · 证据到版本</span></div>
-      <div class="evolution-diagram">
+      <div class="figure-heading"><span><b>D</b> 从已有经历，进入下一代</span><span class="example-label">机制示例 · 证据到版本</span></div>
+      <div class="bootstrap-strip"><span>第一次从哪里开始？</span><p>初始任务 T₀ <b>→</b> Service 实际执行 <b>→</b> 成功与失败轨迹</p><small>此后，每代完成的交互成为下一代的选题依据。</small></div><div class="evolution-diagram">
         <svg viewBox="0 0 1000 450" role="img" aria-labelledby="evolution-title evolution-description">
-          <title id="evolution-title">Customer 与 Service 的递归训练与独立评价</title><desc id="evolution-description">Customer 构造并冻结合法场景，Service 执行产生证据，同一证据分流到双方 Reflection，分别经过静态或静态加动态验收后保存版本，返回下一代。Held-out 在训练结束后独立评价。</desc>
+          <title id="evolution-title">Designer、固定 Customer 与 Service 的递归训练和独立评价</title><desc id="evolution-description">Designer 从冻结世界选择任务，固定 Customer 与 Service 交互并产生证据。Designer 与 Service 分别 Reflection，通过静态检查后保存各自版本并进入下一代。训练后的独立评价只读加载已保存 Snapshot。</desc>
           <defs><marker id="flow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10" fill="#9b9f93"/></marker></defs>
-          <g class="flow-lines"><path d="M240 83H420"/><path d="M660 83H770V173H660"/><path d="M420 173H230V248"/><path d="M660 173H770V248"/><path d="M230 310V340H420"/><path d="M770 310V340H660"/><path d="M420 365H95V84H140" class="recursion"/></g>
-          <text x="300" y="66" class="edge-label">校验后的场景 + 请求</text><text x="781" y="135" class="edge-label">工具与事件</text><text x="130" y="211" class="edge-label">同一组 Eₙ</text><text x="780" y="211" class="edge-label">+ 合法 / 拒绝任务</text><text x="46" y="246" class="edge-label" transform="rotate(-90 46 246)">下一代加载实际选中版本</text>
-          <g class="flow-node" data-flow="0" transform="translate(140 50)"><rect width="100" height="66"/><text x="50" y="29">Customer 考官</text><text x="50" y="49" class="sub">构造 Cₙ</text></g>
-          <g class="flow-node" data-flow="1" transform="translate(420 50)"><rect width="240" height="66"/><text x="120" y="29">Service / World Engine</text><text x="120" y="49" class="sub">Sₙ 执行校验后的场景 + 请求</text></g>
+          <g class="flow-lines"><path d="M240 83H300"/><path d="M460 75H520"/><path d="M520 91H460"/><path d="M650 116V140"/><path d="M420 173H230V248"/><path d="M660 173H770V248"/><path d="M230 310V340H420"/><path d="M770 310V340H660"/><path d="M420 365H65V83H80" class="recursion"/></g>
+          <text x="270" y="66" class="edge-label">任务</text><text x="475" y="66" class="edge-label">多轮对话</text><text x="690" y="136" class="edge-label">工具与事件</text><text x="130" y="211" class="edge-label">同一组 Eₙ</text><text x="780" y="211" class="edge-label">合法与失败交互</text><text x="46" y="246" class="edge-label" transform="rotate(-90 46 246)">下一代加载实际选中版本</text>
+          <g class="flow-node" data-flow="0" transform="translate(80 50)"><rect width="160" height="66"/><text x="80" y="29">Designer</text><text x="80" y="49" class="sub">读取轨迹，选择挑战</text></g>
+          <g class="flow-node" data-flow="1" transform="translate(300 50)"><rect width="160" height="66"/><text x="80" y="29">固定 Customer</text><text x="80" y="49" class="sub">自然语言多轮交互</text></g>
+          <g class="flow-node" data-flow="1" transform="translate(520 50)"><rect width="260" height="66"/><text x="130" y="29">Service / World Engine</text><text x="130" y="49" class="sub">Sₙ 查询、决策并执行</text></g>
           <g class="flow-node evidence-node" data-flow="2" transform="translate(420 140)"><rect width="240" height="66"/><text x="120" y="29">Oracle → Evidence Eₙ</text><text x="120" y="49" class="sub">请求 · 状态 · 预期 · 实际结果</text></g>
-          <g class="flow-node" data-flow="3,4" transform="translate(130 248)"><rect width="200" height="62"/><text x="100" y="25">Customer Reflection</text><text x="100" y="45" class="sub">SkillPatch → Static Gate</text></g>
-          <g class="flow-node" data-flow="3,4" transform="translate(670 248)"><rect width="200" height="62"/><text x="100" y="25">Service Reflection</text><text x="100" y="45" class="sub">Static + Dynamic Gate</text></g>
-          <g class="flow-node snapshot-node" data-flow="5" transform="translate(420 320)"><rect width="240" height="60"/><text x="120" y="25">保存选中 Snapshot</text><text x="120" y="45" class="sub" id="snapshot-versions">Cₙ₊₁ / Sₙ₊₁（通过分支）</text></g>
+          <g class="flow-node" data-flow="3,4" transform="translate(130 248)"><rect width="200" height="62"/><text x="100" y="25">Designer Reflection</text><text x="100" y="45" class="sub">形成各自的 SkillPatch</text></g>
+          <g class="flow-node" data-flow="3,4" transform="translate(670 248)"><rect width="200" height="62"/><text x="100" y="25">Service Reflection</text><text x="100" y="45" class="sub">形成各自的 SkillPatch</text></g>
+          <g class="flow-node snapshot-node" data-flow="5" transform="translate(420 320)"><rect width="240" height="60"/><text x="120" y="25">保存下一代 Skill 版本</text><text x="120" y="45" class="sub" id="snapshot-versions">Dₙ₊₁ / Sₙ₊₁（静态通过）</text></g>
           <path class="evaluation-edge" d="M660 350H910V407H660"/>
           <g class="heldout-node" transform="translate(420 393)"><rect width="240" height="40"/><text x="120" y="25">训练后：独立评价，不回流</text></g>
           <text x="784" y="389" class="edge-label">只读加载</text>
         </svg>
       </div>
       <div class="evolution-controls"><button id="play-evolution" class="quiet-button" aria-pressed="false">播放过程 ▶</button><label class="sr-only" for="evolution-progress">选择机制步骤</label><input id="evolution-progress" type="range" min="0" max="5" step="1" value="0"><span id="evolution-count">1 / 6</span><span>可点击步骤或拖动进度查看证据</span></div>
-      <div class="stage-tabs" role="tablist" aria-label="证据流步骤"><button role="tab" aria-selected="true" id="stage-0" aria-controls="stage-panel" data-stage="0">1 出题</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-1" aria-controls="stage-panel" data-stage="1">2 执行</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-2" aria-controls="stage-panel" data-stage="2">3 验证</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-3" aria-controls="stage-panel" data-stage="3">4 反思</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-4" aria-controls="stage-panel" data-stage="4">5 验收</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-5" aria-controls="stage-panel" data-stage="5">6 版本</button></div>
-      <div id="stage-panel" role="tabpanel" aria-labelledby="stage-0" tabindex="0"><div class="stage-copy"><span id="stage-kicker">请求 / Cₙ</span><h3 id="stage-title">先固定身份与请求范围</h3><p id="stage-description">沿用依赖测试：顾客有 Operator 权限，项目活跃、配额充足，cache 已运行而 db 未运行。顾客仅明确请求启动 app，未授权启动 db；Service 应解释前置条件并请求必要授权。</p></div><div class="evidence-slip"><span id="artifact-label">顾客请求与可见事实</span><pre id="artifact-content">“请启动 alpha 项目的 app。”
-
-身份：Operator
-项目：active
-上游：db stopped / cache running
-操作范围：仅 start_instance(app)</pre></div></div>
-      <div class="selection-demo"><label for="service-outcome">Service 版本选择</label><select id="service-outcome"><option value="accepted">静态与动态验收均通过</option><option value="rejected">动态验收未通过</option><option value="noop">Reflection 返回 NOOP</option></select><p id="selected-versions">Customer 静态通过 → Cₙ₊₁；Service 验收通过 → Sₙ₊₁。</p></div>
-      <figcaption id="evolution-caption"><strong>图 4.</strong> 同一代的验证证据进入双方学习，按 Customer、Service 的顺序更新。切换版本选择分支，可查看通过、拒绝与 NOOP 对下一代的影响。</figcaption>
+      <div class="stage-tabs" role="tablist" aria-label="证据流步骤"><button role="tab" aria-selected="true" id="stage-0" aria-controls="stage-panel" data-stage="0">1 选题</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-1" aria-controls="stage-panel" data-stage="1">2 交互</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-2" aria-controls="stage-panel" data-stage="2">3 验证</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-3" aria-controls="stage-panel" data-stage="3">4 反思</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-4" aria-controls="stage-panel" data-stage="4">5 检查</button><button role="tab" aria-selected="false" tabindex="-1" id="stage-5" aria-controls="stage-panel" data-stage="5">6 下一代</button></div>
+      <div id="stage-panel" role="tabpanel" aria-labelledby="stage-0" tabindex="0"><div class="stage-copy"><span id="stage-kicker">线索 → 挑战</span><h3 id="stage-title">从已完成的经历中选择下一题</h3><p id="stage-description">第一次使用初始任务的执行轨迹，之后使用上一代完成的交互。Designer 找到具体薄弱环节，再选择能检验它的任务。</p></div><div class="evidence-slip"><span id="artifact-label">任务提案 / 机制示例</span><pre id="artifact-content">已有经历：补查后才完善依赖计划
+测试假设：多层依赖下是否仍会漏查？
+任务选择：已有项目的完整依赖链
+验证目标：写入前是否检查全部前置条件</pre></div></div>
+      <details class="protocol-details"><summary>实现细节：Skill 如何检查和继承</summary><p>默认训练核验 Patch 的结构、角色、作用范围与版本关系；有效更新发布后进入下一代，NOOP 或静态失败沿用父版本。独立行为评价在训练之外运行。</p><div class="selection-demo"><label for="service-outcome">Service Patch 分支示意</label><select id="service-outcome"><option value="accepted">静态检查通过</option><option value="rejected">静态检查失败</option><option value="noop">Reflection 返回 NOOP</option></select><p id="selected-versions">Designer 静态通过 → Dₙ₊₁；Service 静态通过 → Sₙ₊₁。</p></div></details>
+      <figcaption id="evolution-caption"><strong>图 5.</strong> 每代先交互，再学习。Designer 和 Service 从本代证据中更新各自的经验；下一代使用选中的版本继续出题与处理业务。Customer 的对话策略保持固定。</figcaption>
     </figure>
-
-    <div class="prose"><h3>两种角色，学习目标不同</h3><p>在这个依赖案例中，Customer 可以进一步构造并比较并行与链式依赖，检验 Service 是否只检查了部分前置条件。Service 可以提炼的原则是：启动前确认依赖状态；需要额外写操作时先确认授权，不能为完成目标自行扩大操作范围。</p><p>这类经验应描述可复用的策略，而不是记住一个资源 ID。Reflection 产生的 SkillPatch 仍需要满足 Schema、父版本、作用域、工具与资源标识限制，内容完整性由不可变 Snapshot 校验。</p><h3>按角色选择版本，保留完整证据</h3><p>Customer 采用 Static-Only Selection：静态检查通过即可更新，质量、发现能力和成本诊断不决定接受或回滚。Service 保留静态与动态 Gate，检查已知错误、合法业务完成、正确拒绝、违规和授权异常；候选被拒绝或返回 NOOP 时保留旧版。</p><p>每次 Reflection 至多生成一个提案，保留提案、选择结果与来源证据。下一代继承实际选中的 Skill；业务 Episode 从冻结初态开始，策略经验跨代积累，世界状态按实验实例独立管理。</p></div>
+  </section>
+    <section id="related-work" class="chapter related-work">
+    <div class="prose"><p class="chapter-label"><span>03</span> 相关研究</p><h2>两个不同的研究对象，一条相互连接的学习链</h2><p>Usami 与 VAST-CoEvo 回应两个相连的问题：业务任务怎样从真实规则关系中组合出来；交互经验又怎样改变下一代的出题策略与执行策略。</p></div>
+    <div class="related-grid">
+      <article class="related-card"><div class="related-index">01 / 交互式 Benchmark</div><h3><a href="https://arxiv.org/abs/2406.12045" target="_blank" rel="noreferrer">τ-bench ↗</a></h3><p class="related-summary">以多轮用户对话、领域工具和业务规则评测 Agent，并核对最终数据库状态。</p><div class="related-bridge"><span>Usami 的任务单位</span><p>从冻结业务实例中的既有身份、关系与目标组合任务；Service Task 与开放式 Discovery 分为独立 Track。</p></div></article>
+      <article class="related-card"><div class="related-index">02 / 自主任务生成与学习</div><h3><a href="https://arxiv.org/abs/2506.01716" target="_blank" rel="noreferrer">Self-Challenging Language Model Agents ↗</a></h3><p class="related-summary">Challenger 探索工具环境，生成 Code-as-Task。论文实验固定 Challenger，用生成任务训练 Executor。</p><div class="related-bridge"><span>VAST-CoEvo 的递归对象</span><p>Designer 的选题方法也跨代更新，与 Service 的业务 Skill 分开积累；真实交互证据连接两种策略。</p></div></article>
+      <article class="related-card"><div class="related-index">03 / 递归自我改进</div><h3><a href="https://arxiv.org/abs/2610.12176" target="_blank" rel="noreferrer">MASS ↗</a></h3><p class="related-summary">搜索多 Agent 工作流，再将团队经验蒸馏进共享模型，由同一模型承担执行、优化与评价。</p><div class="related-bridge"><span>VAST-CoEvo 的学习载体</span><p>基础模型权重固定，Designer 与 Service 各自更新可审计的 Skill，在可执行业务世界中递归学习。</p></div></article>
+    </div>
+    <p class="related-note">三条脉络分别锚定交互式评测、自主任务生成和递归学习。Usami 将可组合的业务基准作为环境，VAST-CoEvo 则把“下一题怎么选”和“业务怎么做好”设为两个不同的学习对象。</p>
   </section>
 
-  <section id="evaluation" class="chapter">
-    <div class="prose"><p class="chapter-label"><span>03</span> 评价设计</p><h2>让发现、修复与泛化分别可测</h2><p>训练交互负责产生学习证据，开发验收负责选择 Service 候选，独立测试负责测量跨场景表现。训练结束后加载冻结版本，分别比较 Service 的改进与 Customer 对学习过程的贡献。</p></div>
-    <div class="evaluation-layout"><div><span>训练</span><h3>自主交互与学习</h3><p>当前 Cₙ × Sₙ 产生证据，用于本代双方 Reflection。场景构造、合法与失败交互均保留。</p></div><div><span>开发</span><h3>候选验收与诊断</h3><p>Service 动态 Gate 验收候选。Customer 诊断可选，且没有版本选择权。</p></div><div><span>独立测试</span><h3>冻结版本再比较</h3><p>固定 Customer、世界与预算比较 S₀ / Sₙ，另以交叉组合研究 Customer 的影响。结果不回流训练。</p></div></div>
-    <div class="prose"><p>Service 评价同时统计合法任务完成、正确拒绝、真实违规与授权异常。Customer 评价区分有效请求、独立错误根因、重复探针与探索覆盖；双方分别记录模型调用、Token 和工具成本。比较版本时，初态、身份、模型、工具、预算与评分规则保持一致。</p><p>固定 Customer 的训练组与进化 Customer 的训练组采用相同条件，用于分离测试策略迭代的贡献。独立 Held-out 采用新世界与固定任务，测试结果不回流训练；交叉组合只加载已有 Snapshot，分别观察不同 Customer 与 Service 版本的作用。</p></div>
-  </section>
 
-  <section id="resources" class="chapter resources-section">
-    <div class="prose"><h2>代码与方法说明</h2><p>实现保留实际请求、回复、工具参数、事件、Oracle 判断、快照与成本。离线 Replay 核验已记录轨迹；在线模型重新生成的文本不保证逐字一致。</p><ul class="resource-list"><li><a href="https://github.com/hjy8848/Usami">项目代码</a><span>业务环境、Agent 接口与独立进化层</span></li><li><a href="https://github.com/hjy8848/Usami/blob/main/usami/benchmark/README.md">Benchmark 协议</a><span>双 Track、目标、Manifest 与评分</span></li><li><a href="https://github.com/hjy8848/Usami/blob/main/docs/vast-coevo/RECURSIVE_TRAINING.md">递归训练协议</a><span>证据流、版本选择与独立评价</span></li><li><a href="https://github.com/hjy8848/Usami/blob/main/docs/vast-coevo/CUSTOMER_STATIC_ONLY.md">Customer Static-Only Selection</a><span>静态选择与诊断边界</span></li></ul></div>
+  <section id="evaluation" class="chapter"><div class="prose"><p class="chapter-label"><span>04</span> 评价设计</p><h2>发现能力和解决能力，分别衡量</h2><p>Designer 找到更多问题与 Service 变得更可靠，是两个不同结果。评价同时跟踪两条变化，并在独立业务世界中比较保存的版本。</p></div>
+    <div class="evaluation-layout"><div><span>Designer</span><h3>能否持续找到有价值的新挑战？</h3><p>任务是否有效，是否发现可复现的新错误或业务边界，是否避免反复触发同一个问题。</p></div><div><span>Service</span><h3>能否处理旧问题与新情境？</h3><p>既要减少违规和错误拒绝，也要继续完成合法业务；在没有参与学习的世界中检查迁移。</p></div><div><span>共同过程</span><h3>新挑战是否带来了新的学习？</h3><p>比较固定与进化 Designer，以及不同代的 Service；同时记录覆盖、调用和 Token 成本。</p></div></div>
+    <div class="prose"><p>配对比较固定世界初态、身份、模型、工具和预算。训练保存证据与版本；训练后的对照只读取这些版本。独立 Held-out 的结果不回流训练。</p></div>
   </section>
-</main>
-<footer><span>Usami / VAST-CoEvo</span><span>Executable Benchmark · Skill Co-evolution</span><a href="https://github.com/hjy8848/Usami">GitHub ↗</a></footer>
-</body>
-</html>
+  <section id="resources" class="chapter resources-section"><div class="prose"><h2>实现与研究接口</h2><p>业务世界、任务与执行记录均有明确版本。原始对话、工具调用、状态事件、Oracle 判断、Skill 更新及成本保留为可回放证据。</p>
+    <details class="protocol-details"><summary>Benchmark Track 与训练协议</summary><p>Service Task 固定业务目标，测量执行能力；Customer Discovery 固定世界、身份、目标 Service 与预算，由 Customer 自主提出逐轮请求。VAST-CoEvo 的 Frozen Task Discovery 另设 Designer 选题层，保持 Customer 对话策略固定。</p><p>当前训练默认按静态约束发布有效 SkillPatch。Schema、角色范围、父版本及安全检查保留，NOOP 或失败沿用父版本。动态性能评价与独立对照使用单独的评价入口。</p></details>
+    <ul class="resource-list"><li><a href="https://github.com/hjy8848/Usami">项目代码</a><span>业务环境、Agent 接口与进化实现</span></li><li><a href="https://github.com/hjy8848/Usami/tree/main/benchmarks">Benchmark 协议与领域</a><span>固定任务、开放探索与版本化实例</span></li><li><a href="https://github.com/hjy8848/Usami/blob/main/docs/vast-coevo/FROZEN_TASK_DISCOVERY.md">Frozen-World Task Discovery</a><span>任务组合、证据流与递归训练</span></li><li><a href="https://github.com/hjy8848/Usami/blob/main/docs/vast-coevo/EVIDENCE_ONLY_SELECTION.md">Skill 更新协议</a><span>静态检查、版本继承与独立评价</span></li></ul>
+  </div></section>
+</main><footer><span>Usami / VAST-CoEvo</span><span>Executable Benchmark · Skill Co-evolution</span><a href="https://github.com/hjy8848/Usami">GitHub ↗</a></footer>
+</body></html>

@@ -1,45 +1,47 @@
-# Usami method article
+# Usami research presentation
 
-https://hjy8848.github.io/Usami/
+Static GitHub Pages article for Usami Benchmark and VAST-CoEvo, independent of the
+local World Explorer. The editorial direction is inspired by the MASS research
+page. No third-party text, figures, code or result plots are copied.
 
-Standalone static research article, separate from the local World Explorer.
-No model requests, external fonts, telemetry, storage, build step or backend.
-The editorial form is inspired by https://pub.sakana.ai/mass/; no third-party text,
-figures or code is copied.
+## Narrative
 
-The page presents two distinct contributions:
+The article starts with a concrete service interaction and asks where the next
+useful learning problem comes from. It then explains two distinct contributions:
 
-1. Usami Benchmark: executable state, causal prerequisites, multiple valid paths,
-   two evaluation Tracks, versioned manifests and independent verification.
-2. VAST-CoEvo: shared interaction evidence, role-specific Reflection and selection,
-   immutable snapshots, recursion and separate post-training evaluation.
+1. Usami: executable business worlds whose identities, objects, relationships,
+   goals and valid action paths support task composition, independent of any
+   evolution algorithm. The world library includes eight native domain modules;
+   this is not a claim that an eight-domain benchmark release is complete.
+2. VAST-CoEvo: initial Service execution produces verified success/failure
+   trajectories; a Designer uses their weak points to choose new challenges; a
+   fixed Customer mediates real multi-turn interaction; Designer and Service
+   retain separate, recursively used Skills while model weights remain fixed.
 
-## Teaching examples (not experimental results)
+Implementation-level Track names and static selection details are folded into
+optional disclosures, after the main explanation. Related work links to primary
+papers for tau-bench, Self-Challenging Language Model Agents and MASS.
 
-The website intentionally contains **no real experimental performance data**,
-result plots, online traces or claims of measured improvement. Historical repository
-records are unchanged, and are not included in the Pages artifact.
+## Teaching interactions
 
-Example A is a local JavaScript teaching model for a small subset of the public
-CloudOps `start_instance` rules in `usami_cloudops/rules.py`. It is not the actual
-Python Engine or an official benchmark instance. The fixed authorization scope
-contains only starts of `db`, `cache`, `app`; identity does not come from actions.
+The page contains no real model-run results or live inference, telemetry, browser
+storage, external fonts, backend service, or build step.
 
-- All resources start stopped; dependencies are db/cache → app, project-local DAG.
-- db: CPU 2 / memory 4, cache: 1 / 2, app: 2 / 4.
-- Normal quota: CPU 8 / memory 16 / instances 3. Restricted preset CPU 4.
-- Four presets isolate normal operation, Viewer denial, project suspension and quota.
-- Check order mirrors selected reference rules: role, running no-op, project,
-  dependencies, three quota dimensions. Denials do not change state.
-- Normal goal admits db → cache → app and cache → db → app.
-- Changing preset resets all mutable state. No role, quota or dependency writes.
-
-Example B is a **fictional** Viewer unauthorized-write case. Its request, engine event,
-Oracle classification, reflection principles and selection branches are illustrative,
-not actual model output. Principle excerpts are not complete publishable SkillPatch
-objects. Customer static PASS and the selected Service Gate outcome are assumptions.
-The diagram shows evidence flow; actual updates run Customer first, Service second.
-NOOP/rejection retains the old Service. No new generation of models is claimed.
+- The CloudOps task composer uses one deeply frozen teaching world, containing
+  three projects and two existing members with project-scoped roles. Readers
+  select an identity, a project and any nonempty subset of db/cache/app targets.
+  Selecting an identity derives its existing role; it does not edit permissions.
+- Each run copies the selected project. Actions and reset never mutate the world
+  or other projects. The browser illustrates a subset of Reference-style startup
+  decisions, not research Sandbox execution or the actual Python Engine.
+- Parallel dependency tasks admit multiple valid orders. Chain, quota, project
+  state, role and task-scope constraints affect the decisions independently.
+- The success/failure trajectories and Skill examples are authored mechanism
+  illustrations, not raw model outputs or experimental measurements. A successful
+  trajectory includes an observable plan correction that motivates a new probe.
+- The recursive diagram explicitly starts from initial-task execution. Its
+  default static-only version branches preserve the current implementation's
+  publication semantics; evaluation remains separate from training.
 
 ## Preview and deploy
 
@@ -47,7 +49,7 @@ NOOP/rejection retains the old Service. No new generation of models is claimed.
 python3 -m http.server 4173 --bind 127.0.0.1 --directory site
 ```
 
-GitHub Pages uses `.github/workflows/pages.yml`, deploying only `site/` on changes
-under `main`. All paths are relative to support `/Usami/`. No experimental bundles
-or backend files are published. Schematics have captions and text alternatives;
-core explanations remain visible without JavaScript. Animations start only on request.
+`.github/workflows/pages.yml` deploys only `site/` from main. Relative assets work
+under `/Usami/`; experiment bundles and backend files are not part of the artifact.
+Animations require user input. Figures have captions, text alternatives and
+keyboard-accessible controls. Asset cache versions are derived from content hashes.

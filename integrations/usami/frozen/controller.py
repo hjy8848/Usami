@@ -59,6 +59,10 @@ def preparation(specs,budget):
 
 class FrozenPlan(DesignerPlan):
     protocol: Literal['frozen-task-discovery-v1']='frozen-task-discovery-v1'
+    training_selection_protocol: Literal['explicit-selection-v2','legacy-dynamic-v1']='explicit-selection-v2'
+    designer_quality_scoring: bool=False
+    designer_dynamic_gate: bool=False
+    service_dynamic_gate: bool=False
     world_specs: Tuple[WorldSpec,...]=Field(min_length=1,max_length=128)
     max_prompt_worlds: int=Field(default=4,ge=1,le=8)
     @model_validator(mode='before')
@@ -103,3 +107,12 @@ def frozen_static_inputs(anchors,pool):
     pool_ids.update(pool.entries);pool_ids.update(e.world_hash for e in pool.entries.values())
     value['forbidden_identifiers']=sorted(set(value['forbidden_identifiers'])|pool_ids);value['world_pool_hash']=pool.pool_hash
     return value
+
+
+def archived_plan(raw):
+    """Missing selector in an archived manifest denotes the original dynamic protocol."""
+    raw=dict(raw)
+    if 'training_selection_protocol' not in raw:
+        raw.update(training_selection_protocol='legacy-dynamic-v1',designer_quality_scoring=True,
+                   designer_dynamic_gate=True,service_dynamic_gate=True)
+    return FrozenPlan.model_validate(raw)

@@ -1,4 +1,4 @@
-"""Single-patch evolution: static Customer selection, gated Service selection."""
+"""Single-patch evolution: static Customer; Service gated by default, explicitly optional."""
 from __future__ import annotations
 import json
 
@@ -17,7 +17,7 @@ class Evolver:
         self.library_store, self.archive = library_store, archive
         self.policy = policy or GatePolicy()
 
-    def update(self, generation, customer, service, evidence, discovery_cases, service_task_cases=(), episode_prefix=None):
+    def update(self, generation, customer, service, evidence, discovery_cases, service_task_cases=(), episode_prefix=None, *, dynamic_gate=True):
         discovery_cases, service_task_cases = tuple(discovery_cases), tuple(service_task_cases)
         parent = customer if self.role == "customer" else service
         evidence = tuple(EpisodeEvidence.model_validate(row.model_dump(mode="json")) for row in evidence)
@@ -36,7 +36,7 @@ class Evolver:
             raise ValueError("heldout cases cannot influence evolution")
         prefix = episode_prefix or ("g" + str(generation) + "." + self.role + ".validation")
         preflight = []
-        if self.role == "service":
+        if self.role == "service" and dynamic_gate:
             # The actual normal-task results are part of the one Reflection,
             # including legal completion and correct refusal, not only attacks.
             gate = DynamicGate(self.adapter, self.archive, gate_policy)
@@ -57,6 +57,8 @@ class Evolver:
         fields = dict(generation=generation, role=self.role, parent_customer_hash=customer.snapshot_hash,
                       parent_service_hash=service.snapshot_hash, reflection=reflection, patch=reflection.patch,
                       selected_snapshot_hash=parent.snapshot_hash)
+        if self.role == 'service' and not dynamic_gate:
+            fields.update(skill_updated=False,selection_mode='evidence_only_static',performance_validated=False,performance_improved='unknown')
         if self.role == "customer":
             fields["customer_selection"] = "customer-static-only-v1"
         if reflection.error or reflection.patch is None:
@@ -74,11 +76,12 @@ class Evolver:
             candidate = apply_patch(parent, reflection.patch, source=prefix + ".reflection")
             self.library_store.save(candidate, publish=False)
             fields["candidate_snapshot_hash"] = candidate.snapshot_hash
-            if self.role == "customer":
+            if self.role == "customer" or not dynamic_gate:
                 # Publication still verifies immutable contents/version collisions.
                 # Performance diagnostics have no place in this selection path.
                 self.library_store.save(candidate)
                 fields["selected_snapshot_hash"] = candidate.snapshot_hash
+                if self.role=='service':fields['skill_updated']=True
                 return EvolutionRecord(**fields, outcome="accepted",
                                        reasons=("static_gate_passed_snapshot_updated",), consumption=costs)
             if (self.role == 'service' and gate_policy.customer_quality is not None and

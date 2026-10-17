@@ -28,7 +28,15 @@ from .attribution import static_context, known_contracts
 
 class DesignerPlan(FrozenModel):
     protocol: Literal['designer-service-v1'] = 'designer-service-v1'
+    training_selection_protocol: Optional[Literal['explicit-selection-v2','legacy-dynamic-v1']] = Field(default=None, exclude_if=lambda v:v is None)
+    designer_quality_scoring: Optional[bool] = Field(default=None, exclude_if=lambda v:v is None)
+    designer_dynamic_gate: Optional[bool] = Field(default=None, exclude_if=lambda v:v is None)
+    service_dynamic_gate: Optional[bool] = Field(default=None, exclude_if=lambda v:v is None)
     strategy: Ablation = 'bidirectional'
+
+    def enabled(self, name):
+        value=getattr(self,name)
+        return True if value is None else value
     random_seed: int = 731
     generations: int = Field(default=2, ge=1, le=100)
     max_prompt_sources: int = Field(default=8, ge=2, le=32)
@@ -53,6 +61,8 @@ class DesignerPlan(FrozenModel):
 
     @model_validator(mode='after')
     def isolated(self):
+        if self.enabled('designer_dynamic_gate') and not self.enabled('designer_quality_scoring'):
+            raise ValueError('Designer dynamic gate requires explicit quality scoring')
         # Preserve byte-exact native query observations across JSON persistence.
         object.__setattr__(self,'profiles',tuple(UsamiProfile.model_validate(json.loads(json.dumps(p.model_dump(mode='json'),sort_keys=True))) for p in self.profiles))
         profiles={p.config_id:p for p in self.profiles}; tasks={t.task_ref:t for t in self.tasks}
@@ -153,6 +163,13 @@ class DesignerServiceController:
         tasks=tuple(self.task_case(t,'legal_completion') for t in self.plan.legal_tasks)+tuple(self.task_case(t,'correct_refusal') for t in self.plan.refusal_tasks)
         return discovery,tasks
 
+    def selection_metadata(self, role, parent, selected):
+        if self.plan.training_selection_protocol is None:return {}
+        if self.plan.enabled(role+'_dynamic_gate'):return {}
+        return {'selection_mode':'evidence_only_static',
+                'performance_validated':False,
+                'skill_updated':parent!=selected,'performance_improved':'unknown'}
+
     def designer_update(self, generation, training):
         parent=self.designer;prefix='g'+str(generation)
         if self.plan.strategy in {'random_legal','bidirectional_fixed_designer'}:
@@ -172,6 +189,10 @@ class DesignerServiceController:
         if patch.action=='NOOP':record['outcome']='noop';return record
         candidate=apply_patch(parent,patch,prefix+'.designer-reflection');self.store.save(candidate,publish=False)
         record['candidate_hash']=candidate.snapshot_hash
+        if not self.plan.enabled('designer_dynamic_gate'):
+            self.store.save(candidate);self.designer=candidate
+            record.update(outcome='accepted',selected_hash=candidate.snapshot_hash,reason='static_gate_passed_snapshot_updated')
+            return record
         anchors=tuple(sorted((a for a in self.bank.anchors.values() if self.plan.strategy!='error_only' or a.branch=='error_amplification'),key=lambda a:a.anchor_hash))
         if self.plan.strategy=='correct_only':anchors=tuple(a for a in anchors if a.branch=='correct_to_failure')
         # Both arms start from identical verified memory; no opposite-arm feedback.
@@ -228,6 +249,7 @@ class DesignerServiceController:
                         try:self.bank.add_anchor(self.adapter,trial.evidence)
                         except ValueError:pass # Untriggered/uncertain episodes remain complete evidence, never become valid search sources.
                 d_record=self.designer_update(generation,training)
+                d_record.update(self.selection_metadata('designer',parent_d.snapshot_hash,self.designer.snapshot_hash))
                 atomic_json(self.root/f'g{generation}.designer.json',d_record,immutable=True)
                 if not current:
                     s_record={'outcome':'no_training_execution','selected_snapshot_hash':self.service.snapshot_hash}
@@ -235,8 +257,10 @@ class DesignerServiceController:
                     model=self.plan.service_reflector_model or self.plan.service_model
                     reflector=ServiceReflector(self.ledger.client(model,'service_reflector',f'g{generation}.service-reflection'),model)
                     result=ServiceEvolver(self.adapter,reflector,self.store,self.archive,self.plan.service_policy).update(
-                        generation,self.customer,self.service,tuple(current),discovery,tasks,f'g{generation}.service')
+                        generation,self.customer,self.service,tuple(current),discovery,tasks,f'g{generation}.service',
+                        dynamic_gate=self.plan.enabled('service_dynamic_gate'))
                     s_record=result.model_dump(mode='json');self.service=self.store.load(result.selected_snapshot_hash)
+                s_record.update(self.selection_metadata('service',parent_s.snapshot_hash,self.service.snapshot_hash))
                 if self.customer.snapshot_hash!=self.fixed_customer_hash:raise ValueError('fixed Customer mutated')
                 row={'generation':generation,'customer_hash':self.fixed_customer_hash,'parent_designer':parent_d.snapshot_hash,
                     'parent_service':parent_s.snapshot_hash,'selected_designer':self.designer.snapshot_hash,'selected_service':self.service.snapshot_hash,
@@ -249,8 +273,12 @@ class DesignerServiceController:
         unfinished=[str(p.parent) for p in (self.root/'trials').glob('*/registered.json') if not p.with_name('trial.json').exists()]
         report={'unfinalized_trials':unfinished,'cost_complete':not unfinished,'protocol':self.plan.protocol,'status':status,'error':error,'generations':self.history,
             'selected_designer':self.designer.snapshot_hash,'selected_service':self.service.snapshot_hash,'fixed_customer':self.fixed_customer_hash,
-            'metrics':summarize(self.bank.records,costs),'cost':costs,
+            **({'metrics':summarize(self.bank.records,costs)} if self.plan.enabled('designer_quality_scoring') else {}),'cost':costs,
             'cost_by_role':{role:_sum([SimpleNamespace(response=r['response']) for r in self.ledger.logs if r['role']==role]) for role in sorted({r['role'] for r in self.ledger.logs})},
             'trials':[t.trial_hash for t in self.backend.trials],'research_claim':'implementation only; no generalization claim'}
+        if self.plan.training_selection_protocol is not None:
+            report['selection_configuration']={'version':self.plan.training_selection_protocol,**{k:self.plan.enabled(k) for k in
+                ('designer_quality_scoring','designer_dynamic_gate','service_dynamic_gate')}}
+            report['performance_improved']='unknown'
         atomic_json(self.root/'report.json',report,immutable=True)
         return report

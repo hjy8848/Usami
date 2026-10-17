@@ -16,7 +16,7 @@ from integrations.usami.designer.discovery import anchor_from
 
 
 def plan(**updates):
-    data=dict(protocol='frozen-task-discovery-v1',world_specs=[{'id':'dev42','seed':42}],designer_model=SPEC.model_dump(mode='json'),
+    data=dict(protocol='frozen-task-discovery-v1',designer_quality_scoring=True,designer_dynamic_gate=True,service_dynamic_gate=True,world_specs=[{'id':'dev42','seed':42}],designer_model=SPEC.model_dump(mode='json'),
         customer_model=SPEC.model_dump(mode='json'),service_model=SPEC.model_dump(mode='json'),budget=BUDGET.model_dump(mode='json'),
         generations=1,trials_per_generation=2,designer_validation_pairs=4,max_llm_calls=400,max_tool_calls=1000,
         search_policy={'version':'designer-paired-v2','min_pairs':4,'min_sources':2,'bootstrap_samples':100})

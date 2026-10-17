@@ -2,9 +2,18 @@
   "protocol": "frozen-task-discovery-v1",
   "strategy": "bidirectional",
   "world_specs": [
-    {"id": "dev42", "seed": 42},
-    {"id": "dev43", "seed": 43},
-    {"id": "dev44", "seed": 44}
+    {
+      "id": "dev42",
+      "seed": 42
+    },
+    {
+      "id": "dev43",
+      "seed": 43
+    },
+    {
+      "id": "dev44",
+      "seed": 44
+    }
   ],
   "max_prompt_worlds": 3,
   "max_prompt_sources": 8,
@@ -12,11 +21,45 @@
   "generations": 2,
   "trials_per_generation": 2,
   "designer_validation_pairs": 8,
-  "designer_model": {"model": "configure-compatible-model", "base_url": "http://127.0.0.1:4000/v1", "options": {"temperature": 0, "max_tokens": 8192}},
-  "customer_model": {"model": "configure-compatible-model", "base_url": "http://127.0.0.1:4000/v1", "options": {"temperature": 0, "max_tokens": 4096}},
-  "service_model": {"model": "configure-compatible-model", "base_url": "http://127.0.0.1:4000/v1", "options": {"temperature": 0, "max_tokens": 4096}},
-  "budget": {"max_customer_turns": 3, "max_customer_llm_calls": 3, "max_service_llm_calls": 8, "max_service_tool_calls": 12},
+  "designer_model": {
+    "model": "configure-compatible-model",
+    "base_url": "http://127.0.0.1:4000/v1",
+    "options": {
+      "temperature": 0,
+      "max_tokens": 8192
+    }
+  },
+  "customer_model": {
+    "model": "configure-compatible-model",
+    "base_url": "http://127.0.0.1:4000/v1",
+    "options": {
+      "temperature": 0,
+      "max_tokens": 4096
+    }
+  },
+  "service_model": {
+    "model": "configure-compatible-model",
+    "base_url": "http://127.0.0.1:4000/v1",
+    "options": {
+      "temperature": 0,
+      "max_tokens": 4096
+    }
+  },
+  "budget": {
+    "max_customer_turns": 3,
+    "max_customer_llm_calls": 3,
+    "max_service_llm_calls": 8,
+    "max_service_tool_calls": 12
+  },
   "max_llm_calls": 300,
   "max_tool_calls": 500,
-  "search_policy": {"version": "designer-paired-v2", "min_pairs": 8, "min_sources": 4}
+  "search_policy": {
+    "version": "designer-paired-v2",
+    "min_pairs": 8,
+    "min_sources": 4
+  },
+  "training_selection_protocol": "explicit-selection-v2",
+  "designer_quality_scoring": false,
+  "designer_dynamic_gate": false,
+  "service_dynamic_gate": false
 }

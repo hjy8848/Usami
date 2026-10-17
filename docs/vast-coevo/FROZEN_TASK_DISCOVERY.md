@@ -1,5 +1,7 @@
 # Frozen-World Task Discovery v1
 
+**当前选代默认值已调整：** 新训练默认关闭 Designer 综合评分、Designer Dynamic Gate 与 Service Dynamic Gate，双方仅通过静态检查继承 Skill。下文配对 Gate 的描述属于保留的显式可选动态模式；最少来源簇限制不再阻止默认静态更新。详见 [Evidence-only static selection](EVIDENCE_ONLY_SELECTION.md)。
+
 本协议的出题对象是**业务任务**，不是世界初始状态。协议标识为 `frozen-task-discovery-v1`；历史 `designer-service-v1` 的 SceneEdit 路径保留，但不用于本协议。
 
 ## 职责与执行顺序

@@ -367,3 +367,5 @@ web/frontend/     React + TypeScript + Vite World Explorer
 只有一个 SaaS 领域、固定模拟时钟、五个写操作、四个查询；没有邀请/删除成员、owner 转让、周期自动推进、按比例收费、部分退款、真实支付或通用自然语言授权理解。一般不处理某个未知/已非法 pre-state 的后续业务语义，此时 Oracle 返回 unknown，同时保留已确定的不变量违规。哈希提供完整性，不提供敌手环境的签名认证；最终私有 Test 的保密性由独立托管方负责。
 
 真实验收命令、结果和公开 Manifest hash 见 [VERIFICATION.md](VERIFICATION.md)。
+
+Frozen-World 新训练默认使用 [证据驱动、仅静态选代](docs/vast-coevo/EVIDENCE_ONLY_SELECTION.md)：Designer / Service 的动态 Gate 与综合评分关闭，业务 Oracle、任务证明和 Replay 保留。Skill 更新不代表性能已经改善。

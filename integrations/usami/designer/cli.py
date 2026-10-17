@@ -21,11 +21,11 @@ def replay_run(root):
     root=Path(root);manifest=json.loads((root/'manifest.json').read_text())
     frozen=manifest['plan']['protocol']=='frozen-task-discovery-v1'
     if frozen:
-        from integrations.usami.frozen.controller import FrozenPlan,preparation
+        from integrations.usami.frozen.controller import FrozenPlan,preparation,archived_plan
         from integrations.usami.frozen.pool import WorldPool
         from integrations.usami.frozen.backend import FrozenSearchBackend
         from integrations.usami.frozen.composer import FrozenTask
-    plan=(FrozenPlan if frozen else DesignerPlan).model_validate(manifest['plan'])
+    plan=archived_plan(manifest['plan']) if frozen else DesignerPlan.model_validate(manifest['plan'])
     if manifest['source_pins']!=source_hashes():raise ValueError('original source snapshot required')
     artifacts=[NativeArtifact.model_validate_json(p.read_text()) for p in (root/'native'/'episodes').glob('*/native.json')]
     profiles={p.config_id:p for p in plan.profiles}

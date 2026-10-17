@@ -87,6 +87,10 @@ class EvolutionRecord(FrozenModel):
     reasons: Tuple[str, ...] = ()
     consumption: Consumption
     domain_coverage: Optional[DomainCoverage] = Field(default=None, exclude_if=lambda value: value is None)
+    skill_updated: Optional[bool] = Field(default=None, exclude_if=lambda v:v is None)
+    selection_mode: Optional[Literal['evidence_only_static']] = Field(default=None, exclude_if=lambda v:v is None)
+    performance_validated: Optional[Literal[False]] = Field(default=None, exclude_if=lambda v:v is None)
+    performance_improved: Optional[Literal['unknown']] = Field(default=None, exclude_if=lambda v:v is None)
     customer_selection: Optional[Literal["customer-static-only-v1"]] = Field(
         default=None, exclude_if=lambda value: value is None)
 
@@ -100,6 +104,17 @@ class EvolutionRecord(FrozenModel):
                 raise ValueError("only a fixed Customer may skip Reflection, without patch, validation, cost or version change")
         elif self.outcome == "fixed":
             raise ValueError("fixed Customer must not fabricate a Reflection")
+        if self.selection_mode is not None:
+            if self.skill_updated != (self.selected_snapshot_hash!=self.parent_service_hash):
+                raise ValueError('static-only update marker differs from selected version')
+            if self.role!='service' or self.performance_validated is not False or self.performance_improved!='unknown' or self.dynamic_validation is not None:
+                raise ValueError('static-only Service cannot carry performance validation')
+            if self.outcome=='inconclusive':raise ValueError('static-only selection has no performance uncertainty gate')
+            if self.outcome!='accepted' and self.selected_snapshot_hash!=self.parent_service_hash:
+                raise ValueError('failed/static NOOP selection must retain the parent')
+            if self.outcome=='accepted' and (not self.static_validation or not self.static_validation.passed or
+                    self.candidate_snapshot_hash!=self.selected_snapshot_hash):
+                raise ValueError('static-only selection requires static PASS and exact candidate')
         if self.customer_selection is not None:
             if self.role != "customer" or self.dynamic_validation is not None:
                 raise ValueError("static-only Customer selection cannot carry a performance gate")

@@ -1,0 +1,10 @@
+{
+  "offline_only": true,
+  "model_calls": 0,
+  "request_hash": "2d9419840f26e999b86292e3bac73949603362d6ac643c481d2c3f1e7ac0e14a",
+  "response_hash": "90543086fce060173d2b49e2d807fc071d8448f5388f9a786c6d9017358fba0e",
+  "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "rejection_reproduced": true,
+  "error_type": "ValueError",
+  "error": "completion targets must name an existing frozen business object"
+}

@@ -1,0 +1,10 @@
+{
+  "offline_only": true,
+  "model_calls": 0,
+  "request_hash": "9e4001a89696a6d66783e4d7433fca522c1c87457613844479000bd7d0bd2e80",
+  "response_hash": "36c16b4d0743b3bda11728aab844bd68055dd195ef809ed6c50e513d99343fc1",
+  "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "rejection_reproduced": true,
+  "error_type": "ValueError",
+  "error": "bounded Reference search did not prove the open composition"
+}

@@ -1,0 +1,10 @@
+{
+  "offline_only": true,
+  "model_calls": 0,
+  "request_hash": "9b3c70bf998639abd2b471394c6a70fe5d82dab496b6015bdabda094a1136a1e",
+  "response_hash": "1a13285dc248bd8dc6008372c841105bcba202290656b89d1bd12beb0541f388",
+  "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "rejection_reproduced": true,
+  "error_type": "ServiceError",
+  "error": "Expected one complete assistant message with valid, distinct function-call IDs or a final reply"
+}

@@ -1,0 +1,1 @@
+{"message":"Expected one complete assistant message with valid, distinct function-call IDs or a final reply","type":"ServiceError"}

@@ -1,0 +1,141 @@
+{
+  "status": "BLOCKED",
+  "scope": "Three-task real-model engineering loop; not a performance experiment",
+  "run_directories": [
+    "aftersales-coevo-live-20261018-attempt-007",
+    "aftersales-coevo-live-20261018-attempt-008",
+    "aftersales-coevo-live-20261018-attempt-009",
+    "aftersales-coevo-live-20261018-attempt-010"
+  ],
+  "initial_git_head": "a0db603",
+  "max_total_model_calls_across_these_attempts": 41,
+  "actual_model_calls": 4,
+  "service_tasks_executed": 0,
+  "service_tasks_planned": 3,
+  "designer_reflection_calls": 0,
+  "service_reflection_calls": 0,
+  "designer_skill_updated": false,
+  "service_skill_updated": false,
+  "business_episode_replays": 0,
+  "offline_proposal_rejections_verified": 4,
+  "usage": {
+    "input_tokens": 130332,
+    "output_tokens": 15744,
+    "total_tokens": 146076
+  },
+  "attempts": [
+    {
+      "run": "aftersales-coevo-live-20261018-attempt-007",
+      "status": "BLOCKED",
+      "model": "dashscope/qwen3.7-plus",
+      "model_calls": 1,
+      "service_tasks": 0,
+      "error": {
+        "message": "completion targets must name an existing frozen business object",
+        "type": "ValueError"
+      },
+      "usage": {
+        "by_role": {
+          "designer": {
+            "calls": 1,
+            "input_tokens": 33826,
+            "output_tokens": 3210,
+            "total_tokens": 37036,
+            "usage_complete": true
+          }
+        },
+        "input_tokens": 33826,
+        "output_tokens": 3210,
+        "total_tokens": 37036,
+        "usage_complete": true
+      },
+      "finish_reason": "tool_calls",
+      "offline_rejection_verified": true
+    },
+    {
+      "run": "aftersales-coevo-live-20261018-attempt-008",
+      "status": "BLOCKED",
+      "model": "dashscope/kimi-k2.6",
+      "model_calls": 1,
+      "service_tasks": 0,
+      "error": {
+        "message": "composed frame exceeds the native Customer object contract",
+        "type": "ValueError"
+      },
+      "usage": {
+        "by_role": {
+          "designer": {
+            "calls": 1,
+            "input_tokens": 31063,
+            "output_tokens": 1925,
+            "total_tokens": 32988,
+            "usage_complete": true
+          }
+        },
+        "input_tokens": 31063,
+        "output_tokens": 1925,
+        "total_tokens": 32988,
+        "usage_complete": true
+      },
+      "finish_reason": "tool_calls",
+      "offline_rejection_verified": true
+    },
+    {
+      "run": "aftersales-coevo-live-20261018-attempt-009",
+      "status": "BLOCKED",
+      "model": "dashscope/qwen3.7-plus",
+      "model_calls": 1,
+      "service_tasks": 0,
+      "error": {
+        "message": "bounded Reference search did not prove the open composition",
+        "type": "ValueError"
+      },
+      "usage": {
+        "by_role": {
+          "designer": {
+            "calls": 1,
+            "input_tokens": 34032,
+            "output_tokens": 6513,
+            "total_tokens": 40545,
+            "usage_complete": true
+          }
+        },
+        "input_tokens": 34032,
+        "output_tokens": 6513,
+        "total_tokens": 40545,
+        "usage_complete": true
+      },
+      "finish_reason": "tool_calls",
+      "offline_rejection_verified": true
+    },
+    {
+      "run": "aftersales-coevo-live-20261018-attempt-010",
+      "status": "BLOCKED",
+      "model": "dashscope/kimi-k2.6",
+      "model_calls": 1,
+      "service_tasks": 0,
+      "error": {
+        "message": "Expected one complete assistant message with valid, distinct function-call IDs or a final reply",
+        "type": "ServiceError"
+      },
+      "usage": {
+        "by_role": {
+          "designer": {
+            "calls": 1,
+            "input_tokens": 31411,
+            "output_tokens": 4096,
+            "total_tokens": 35507,
+            "usage_complete": true
+          }
+        },
+        "input_tokens": 31411,
+        "output_tokens": 4096,
+        "total_tokens": 35507,
+        "usage_complete": true
+      },
+      "finish_reason": "length",
+      "offline_rejection_verified": true
+    }
+  ],
+  "claim_boundary": "No completed coevolution or model learning benefit demonstrated."
+}

@@ -1,0 +1,8 @@
+{
+  "git_head": "a0db6039845ae9698383f63273e1aa6f21a06560",
+  "files": {
+    "experiments/vast_coevo/examples/aftersales_coevo_live.py": "bb2935716fb28b4bee0922be9fad37a5a9f3c9856afdaf45fa3efba2c5a65a26",
+    "experiments/vast_coevo/examples/aftersales_coevo_support.py": "c1ba3cc643d8f61f12f67da63bba72d3bb3db476c9efa32fe13a60e6df9a73ec",
+    "tests/test_aftersales_coevo_live.py": "d1e7635ba070d9466d178036f224549c8ec56bf0d75e8c66fee4cd0bee41116b"
+  }
+}

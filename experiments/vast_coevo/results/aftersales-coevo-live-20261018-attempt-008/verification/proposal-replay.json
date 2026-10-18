@@ -1,0 +1,10 @@
+{
+  "offline_only": true,
+  "model_calls": 0,
+  "request_hash": "156ad1ca4dc9418900c656483334aca06cf6af89ba30fb90be0194dd138433c6",
+  "response_hash": "37ac426778e222a544328440d5b375bbb4d64ebe1b8e71d9b72085f517e675b8",
+  "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "rejection_reproduced": true,
+  "error_type": "ValueError",
+  "error": "composed frame exceeds the native Customer object contract"
+}

@@ -8,7 +8,7 @@ A task must select an existing registered world, an existing actor, permitted ob
 
 Mixed tasks must carry independently evaluable completion/refusal subgoals and a joint frame. A failed allowed subgoal is not excused merely because a different subgoal was correctly refused. Illegal successful side effects, blocked attempts, invalid task proposals, query errors and uncertain attribution remain separate facts.
 
-Every dialogue task also requires a frozen Customer profile and an independently proved information/consent dependency. The profile cannot authorize fabricated entities, retroactive objective fact changes, arbitrary preference drift or hidden reference-path disclosures. A necessary process fact changes the actual allowed action set; conversation length is descriptive only.
+Every dialogue task requires a frozen Customer profile. Completion tasks also require an independently proved information/consent dependency: a necessary process fact must change the actual allowed action set, and conversation length is descriptive only. A refusal-only task may instead be certified against its exact frozen policy boundary, with the Reference reason, Oracle decision and Replay verified independently. Open-composition v1 keeps the original dependency requirement for all tasks; v2 makes this refusal-only distinction explicit. Neither protocol lets the Designer invent entities, permissions, facts or expected outcomes.
 
 ## Track A — existing native business contracts
 

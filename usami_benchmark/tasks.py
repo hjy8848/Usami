@@ -26,7 +26,10 @@ class ConstructionBudget(Model):
 
 class OpenDialogueComposition(Model):
     """Designer-authored objectives bound to selected profiles in a frozen world."""
-    protocol:Literal['open-dialogue-composition-v1']='open-dialogue-composition-v1'
+    # v2 aligns the open-composition compiler with native refusal-only tasks:
+    # a verified refusal is a complete objective and need not invent a
+    # separate information/consent dependency. Serialized v1 remains replayable.
+    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2']='open-dialogue-composition-v2'
     profile_ids:list[str]=Field(min_length=1,max_length=64)
     customer_request:str=Field(min_length=1,max_length=6000)
     goals:list[Goal]=Field(default_factory=list,max_length=32)
@@ -130,7 +133,8 @@ def _dialogue(frozen,selection,budget):
             private_hash=p.private_hash,family='open_composition_v1',goals=spec.goals,
             refusals=[RefusalGoal(operation=raw,code=codes[0]) for raw in spec.refusal_operations],
             frames=spec.frames,external_schedule=spec.external_schedule,
-            composition=DialogueComposition(profile_ids=spec.profile_ids,customer_request=spec.customer_request,
+            require_dependency=(spec.protocol=='open-dialogue-composition-v1' or bool(spec.goals)),
+            composition=DialogueComposition(protocol=spec.protocol,profile_ids=spec.profile_ids,customer_request=spec.customer_request,
                 information_requirements=spec.information_requirements,preference_requirements=spec.preference_requirements,
                 confirmation_requirements=spec.confirmation_requirements))
         task=checked_dialogue(adapter,w,task)

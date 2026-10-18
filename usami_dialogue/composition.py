@@ -64,6 +64,9 @@ def _rule_key(rule):
 def validate_composed_task(adapter,world,task):
     composition=DialogueComposition.model_validate(task.composition.model_dump(mode='json'))
     if task.family!='open_composition_v1':raise ValueError('composition protocol requires its registered family')
+    expected_dependency=(composition.protocol=='open-dialogue-composition-v1' or bool(task.goals))
+    if task.require_dependency!=expected_dependency:
+        raise ValueError('composed task dependency policy differs from its registered protocol')
     profile_rows=load_profiles(adapter,world,task.profile_id,composition.profile_ids)
     if not task.goals and not task.refusals:raise ValueError('composed task needs at least one completion or refusal objective')
     if len(task.goals)>32 or len(task.refusals)>16:raise ValueError('composed task exceeds objective limits')

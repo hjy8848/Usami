@@ -51,7 +51,10 @@ class PreferenceRequirement(Model):
 
 class DialogueComposition(Model):
     """Versioned task scope for evaluator-composed, multi-profile challenges."""
-    protocol:Literal['open-dialogue-composition-v1']='open-dialogue-composition-v1'
+    # v1 preserves the original rule that every composed task claims a process
+    # dependency. v2 permits an explicit refusal-only task with no completion
+    # goal to be certified on its native policy boundary alone.
+    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2']='open-dialogue-composition-v1'
     profile_ids:list[str]=Field(min_length=1,max_length=64)
     customer_request:str=Field(min_length=1,max_length=6000)
     information_requirements:list[InformationRequirement]=Field(default_factory=list,max_length=64)

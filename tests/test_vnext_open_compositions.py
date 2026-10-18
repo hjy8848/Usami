@@ -62,6 +62,53 @@ def test_open_composition_certifies_multiple_objects_with_exact_replay():
     assert verify_task(record)
 
 
+def _expired_open_case_refusal_selection(frozen, *, protocol='open-dialogue-composition-v2'):
+    world=aftersales.World.model_validate(frozen.world)
+    profile_id='profile_u0_order0_line0'
+    private=world.profiles[profile_id]
+    line=world.lines[private.facts['line_id']]
+    order=world.orders[line.order_id]
+    operation=aftersales.Operation(name='open_case',scope_id=order.merchant_id,
+        resource_id=order.id,params={'line_id':line.id,'issue':private.facts['issue']})
+    return TaskSelection(kind='dialogue',family='open_composition_v1',profile_id=profile_id,
+        composition=OpenDialogueComposition(protocol=protocol,profile_ids=[profile_id],
+            customer_request='I received this order with missing parts. Please open a case; if policy prevents it, explain why.',
+            goals=[],refusal_operations=[operation.model_dump(mode='json')],
+            frames=aftersales_tasks.frame_contract(world,private),
+            information_requirements=[InformationRequirement(profile_id=profile_id,fact_keys=['line_id','issue'])],
+            preference_requirements=[PreferenceRequirement(profile_id=profile_id,preference='resolution',accepted_values=['exchange'])]))
+
+
+def test_v2_open_composition_certifies_a_native_refusal_without_fabricating_dependency():
+    frozen=freeze(default_spec('aftersales',1))
+    selection=_expired_open_case_refusal_selection(frozen)
+    record=compile_task(frozen,selection,ConstructionBudget(max_nodes=4096,max_depth=16,max_paths=1))
+    witness=record.dialogue_witnesses[0]
+    assert witness.certificate.task.composition.protocol=='open-dialogue-composition-v2'
+    assert witness.certificate.task.require_dependency is False
+    assert witness.certificate.dependencies==[]
+    assert witness.certificate.evaluation['success']
+    assert witness.certificate.evaluation['refusal_subgoals']==[True]
+    assert witness.certificate.oracle['status']=='pass'
+    assert verify_task(record)
+
+
+def test_v1_refusal_dependency_semantics_remain_unchanged():
+    frozen=freeze(default_spec('aftersales',1))
+    selection=_expired_open_case_refusal_selection(frozen,protocol='open-dialogue-composition-v1')
+    with pytest.raises(ValueError,match='claimed dialogue task has no actual information/consent dependency'):
+        compile_task(frozen,selection,ConstructionBudget(max_nodes=4096,max_depth=16,max_paths=1))
+
+
+def test_v2_completion_cannot_opt_out_of_process_dependency():
+    from usami_dialogue.tasks import checked_task
+    frozen=freeze(default_spec('aftersales',0))
+    record=compile_task(frozen,multi_order_selection(frozen),ConstructionBudget(max_nodes=512,max_depth=16,max_paths=1))
+    task=record.dialogue_witnesses[0].certificate.task.model_copy(update={'require_dependency':False,'task_hash':''})
+    with pytest.raises(ValueError,match='dependency policy differs'):
+        checked_task(aftersales,aftersales.World.model_validate(frozen.world),task)
+
+
 def test_open_composition_rejects_cross_identity_profile_scope():
     frozen=freeze(default_spec('aftersales',0))
     selection=multi_order_selection(frozen)

@@ -9,6 +9,7 @@ prove that a selected composition is executable and valid.
 import importlib
 import re
 from usami_harness.goals import field_value
+from usami_harness.models import digest
 from .scope import load_profiles
 from .tasks import DialogueComposition
 
@@ -61,15 +62,46 @@ def _rule_key(rule):
     return (rule.collection,rule.selector_field,rule.selector_value,rule.allow_create)
 
 
+def _collection_fields(adapter,collection):
+    schema=adapter.World.model_json_schema()
+    raw=schema.get('properties',{}).get(collection,{})
+    entity=(raw.get('additionalProperties') or {}).get('$ref','').rsplit('/',1)[-1]
+    definition=schema.get('$defs',{}).get(entity,{})
+    return definition.get('properties',{})
+
+
+def _scalar(value):
+    return value is None or type(value) in {str,int,float,bool}
+
+
+def _add_grounded_values(values,raw):
+    if isinstance(raw,dict):
+        for key,value in raw.items():
+            if _scalar(value):values.setdefault(key,[]).append(value)
+            _add_grounded_values(values,value)
+    elif isinstance(raw,(list,tuple)):
+        for value in raw:_add_grounded_values(values,value)
+
+
+def _created_goal_matches(goal,row):
+    try:return all(_scalar(value) and field_value(row,key)==value and type(field_value(row,key)) is type(value)
+                   for key,value in goal.selectors.items())
+    except ValueError:return False
+
+
 def validate_composed_task(adapter,world,task):
     composition=DialogueComposition.model_validate(task.composition.model_dump(mode='json'))
     if task.family!='open_composition_v1':raise ValueError('composition protocol requires its registered family')
-    expected_dependency=(composition.protocol=='open-dialogue-composition-v1' or bool(task.goals))
+    expected_dependency=(composition.protocol=='open-dialogue-composition-v1' or bool(task.goals or task.created_goals))
     if task.require_dependency!=expected_dependency:
         raise ValueError('composed task dependency policy differs from its registered protocol')
     profile_rows=load_profiles(adapter,world,task.profile_id,composition.profile_ids)
-    if not task.goals and not task.refusals:raise ValueError('composed task needs at least one completion or refusal objective')
-    if len(task.goals)>32 or len(task.refusals)>16:raise ValueError('composed task exceeds objective limits')
+    if not task.goals and not task.created_goals and not task.refusals:raise ValueError('composed task needs at least one completion or refusal objective')
+    if len(task.goals)>32 or len(task.created_goals)>32 or len(task.refusals)>16:raise ValueError('composed task exceeds objective limits')
+    if task.created_goals and composition.protocol!='open-dialogue-composition-v3':
+        raise ValueError('created-object goals require open-dialogue-composition-v3')
+    if composition.protocol=='open-dialogue-composition-v3' and not task.created_goals:
+        raise ValueError('open-dialogue-composition-v3 requires at least one created-object goal')
 
     contracts={pid:_contract(adapter,world,private) for pid,private in profile_rows}
     scope_by_profile={pid:_scope_ids(adapter,world,private,contracts[pid]) for pid,private in profile_rows}
@@ -99,6 +131,62 @@ def validate_composed_task(adapter,world,task):
         except ValueError as exc:raise ValueError('completion field is not part of the frozen business state') from exc
         if not any(_matches(rule,goal,world) and set(parts)<=set(rule.mutable_fields) for rule in task.frames):
             raise ValueError('completion target is not covered by its declared native frame')
+
+    seen_created=set()
+    for goal in task.created_goals:
+        if goal.profile_id not in scope_by_profile:
+            raise ValueError('created-object goal must be anchored to a selected Customer profile')
+        if not goal.selectors or any(not _scalar(value) for value in goal.selectors.values()):
+            raise ValueError('created-object selectors must be nonempty grounded scalar values')
+        if any(not key or key=='id' or key.startswith('_') or key in _PRIVATE_FIELDS for key in goal.selectors):
+            raise ValueError('created-object selectors cannot use generated IDs or private fields')
+        if not goal.field or goal.field=='id' or set(goal.field.split('.'))&_PRIVATE_FIELDS:
+            raise ValueError('created-object completion cannot inspect private or generated-ID fields')
+        field_schema=_collection_fields(adapter,goal.collection)
+        if goal.field not in field_schema:
+            raise ValueError('created-object target field is not part of the native business object schema')
+        if goal.profile_id not in contracts:
+            raise ValueError('created-object goal profile is not selected')
+        private=next(p for pid,p in profile_rows if pid==goal.profile_id)
+        grounded={}
+        _add_grounded_values(grounded,private.facts)
+        _add_grounded_values(grounded,private.preference_space)
+        _add_grounded_values(grounded,private.initial_preferences)
+        _add_grounded_values(grounded,adapter.candidate_intents(world,private))
+        for collection,rows in world.model_dump(mode='json').items():
+            if not isinstance(rows,dict):continue
+            for key,row in rows.items():
+                if key in scope_by_profile[goal.profile_id] or (isinstance(row,dict) and row.get('id') in scope_by_profile[goal.profile_id]):
+                    _add_grounded_values(grounded,row)
+        for key,value in goal.selectors.items():
+            if key not in field_schema:
+                raise ValueError(f'created-object selector {goal.collection}.{key} is not a native field')
+            matches=[candidate for candidate in grounded.get(key,[]) if type(candidate) is type(value) and candidate==value]
+            if not matches:
+                raise ValueError(f'created-object selector {goal.collection}.{key}={value!r} is not grounded in the selected Customer profile')
+
+        candidates=[rule for rule in contracts[goal.profile_id]
+                    if rule.collection==goal.collection and rule.allow_create
+                    and goal.field in rule.mutable_fields
+                    and any(key==rule.selector_field and value==rule.selector_value
+                            for key,value in goal.selectors.items())]
+        candidates=[rule for rule in candidates if all(key not in rule.mutable_fields for key in goal.selectors)]
+        if not candidates:
+            raise ValueError('created-object goal is not covered by a native create-enabled Customer frame')
+        if not any(any(_rule_key(rule)==_rule_key(base) and set(rule.mutable_fields)<=set(base.mutable_fields)
+                       and rule.allow_create for rule in task.frames) for base in candidates):
+            raise ValueError('created-object goal exceeds the task native create-enabled frame')
+        collection=getattr(world,goal.collection,None)
+        if not isinstance(collection,dict):
+            raise ValueError('created-object target must use a registered native collection')
+        if any(_created_goal_matches(goal,row) for row in collection.values()):
+            raise ValueError('created-object goal must not match an object already present in the frozen world')
+        signature=digest(goal.model_dump(mode='json'))
+        if signature in seen_created:raise ValueError('duplicate created-object goal')
+        seen_created.add(signature)
+        enum=field_schema[goal.field].get('enum')
+        if enum is not None and any(value not in enum for value in goal.accepted_values):
+            raise ValueError(f'created-object values for {goal.collection}.{goal.field} are outside the native vocabulary')
 
     for refusal in task.refusals:
         op=adapter.Operation.model_validate(refusal.operation)

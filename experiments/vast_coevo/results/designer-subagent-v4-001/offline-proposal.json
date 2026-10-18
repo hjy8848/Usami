@@ -1,0 +1,192 @@
+{
+  "label": "Codex offline subagent proposal; no external execution",
+  "external_api_calls": 0,
+  "customer_executions": 0,
+  "service_executions": 0,
+  "proposal": {
+    "profile_ids": [
+      "profile_u1_order1_line0"
+    ],
+    "customer_request": "Hypothesis: a correctly scoped wrong-item claim should create exactly one open Case when it is within the actual product return window. Buyer u1 reports the wrong item on order u1_order1, line u1_order1_line0, holds photo_u1_order1_line0, and asks for a case to be opened.",
+    "goals": [],
+    "created_goals": [
+      {
+        "profile_id": "profile_u1_order1_line0",
+        "collection": "cases",
+        "selectors": {
+          "issue": "wrong_item"
+        },
+        "field": "status",
+        "accepted_values": [
+          "open"
+        ]
+      }
+    ],
+    "refusal_operations": [],
+    "information_requirements": [
+      {
+        "profile_id": "profile_u1_order1_line0",
+        "fact_keys": [
+          "order_id",
+          "line_id",
+          "issue",
+          "evidence_id"
+        ]
+      }
+    ],
+    "preference_requirements": [],
+    "confirmation_requirements": [],
+    "external_schedule": []
+  },
+  "schema_validation": "passed: DialogueDesignerProposal.model_validate",
+  "compile_proposal": "not run: archived Designer/API context contains no frozen input; current compile_proposal requires frozen.spec.domain and frozen.world",
+  "verify_task": "not run: no compiled CertifiedTask record was produced",
+  "oracle": "not called",
+  "replay": "not run",
+  "revision_pass": {
+    "attempt": 2,
+    "prior_compiler_feedback_exact": "created-object goal is not covered by a native create-enabled Customer frame",
+    "proposal": {
+      "profile_ids": [
+        "profile_u1_order1_line0"
+      ],
+      "customer_request": "Hypothesis: a correctly scoped wrong-item claim should create exactly one open Case when it is within the actual product return window. Buyer u1 reports the wrong item on order u1_order1, line u1_order1_line0, holds photo_u1_order1_line0, and asks for a case to be opened.",
+      "goals": [],
+      "created_goals": [
+        {
+          "profile_id": "profile_u1_order1_line0",
+          "collection": "cases",
+          "selectors": {
+            "line_id": "u1_order1_line0"
+          },
+          "field": "status",
+          "accepted_values": [
+            "open"
+          ]
+        }
+      ],
+      "refusal_operations": [],
+      "information_requirements": [
+        {
+          "profile_id": "profile_u1_order1_line0",
+          "fact_keys": [
+            "order_id",
+            "line_id",
+            "issue",
+            "evidence_id"
+          ]
+        }
+      ],
+      "preference_requirements": [],
+      "confirmation_requirements": [],
+      "external_schedule": []
+    },
+    "grounding": {
+      "archived_context": "experiments/vast_coevo/results/designer-subagent-v3-004/designer-context.json",
+      "archived_message_count": 30,
+      "world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+      "profile_id": "profile_u1_order1_line0",
+      "observed_facts": {
+        "order_id": "u1_order1",
+        "line_id": "u1_order1_line0",
+        "issue": "wrong_item",
+        "evidence_id": "photo_u1_order1_line0"
+      },
+      "observed_customer_operation": {
+        "name": "open_case",
+        "scope_id": "m1",
+        "resource_id": "u1_order1",
+        "params": {
+          "line_id": "u1_order1_line0",
+          "issue": "wrong_item"
+        }
+      },
+      "initial_cases_count": 0,
+      "native_frame_contract": {
+        "collection": "cases",
+        "selector_field": "line_id",
+        "selector_value": "u1_order1_line0",
+        "mutable_fields": [
+          "status",
+          "evidence_id",
+          "evidence_notice",
+          "review_requested",
+          "agreement_quote",
+          "agreement_revision"
+        ],
+        "allow_create": true
+      },
+      "selector_reason": "The selected create-enabled cases frame is keyed by line_id; this exact line_id is present in the selected profile facts and open_case params."
+    },
+    "construction_budget": {
+      "max_depth": 16,
+      "max_nodes": 4096,
+      "max_paths": 1
+    },
+    "compile_proposal": {
+      "protocol": "frozen-world-designer-exploration-v4",
+      "status": "passed"
+    },
+    "verify_task": true,
+    "native_certification": {
+      "witness_count": 1,
+      "search_summary": {
+        "nodes": 2,
+        "exhausted": true,
+        "max_depth": 16,
+        "max_nodes": 4096,
+        "preference_combinations": 1,
+        "preference_combinations_truncated": false
+      },
+      "oracle": {
+        "status": "pass",
+        "trace_valid": true,
+        "final_invariants": [],
+        "operation": {
+          "name": "open_case",
+          "classification": "legal_execution",
+          "authorized": true,
+          "reference_allowed": true,
+          "operation_correct": true,
+          "success": true,
+          "violations": []
+        },
+        "metrics": {
+          "authorization_only": 0,
+          "correct_refusal": 0,
+          "false_rejection": 0,
+          "legal_execution": 1,
+          "rejected_invalid_attempt": 0,
+          "successful_business_violation": 0,
+          "unscored": 0
+        }
+      },
+      "replay": {
+        "verify_task": true,
+        "witness_evaluation_replay_verified": true
+      },
+      "evaluation": {
+        "success": true,
+        "created_completion_subgoals": [
+          true
+        ],
+        "information_requirements": [
+          true
+        ],
+        "frame_preserved": true,
+        "external_schedule_compliant": true,
+        "oracle_status": "pass",
+        "replay_verified": true
+      }
+    },
+    "execution_scope": {
+      "external_api_calls": 0,
+      "network_calls": 0,
+      "live_customer_agent_runs": 0,
+      "live_service_agent_runs": 0,
+      "local_native_certificate_witnesses": 1,
+      "local_witness_customer_turns": 2,
+      "local_witness_business_operations": 1
+    }
+  }
+}

@@ -158,7 +158,9 @@ def search_composed(adapter,world,task,*,max_nodes=1024,max_depth=12,max_paths=2
         seen.add(key);nodes+=1
         decisions=refusal_decisions(state)
         refusal_ready=all(not decision.allowed and decision.error_code in codes[index] for index,decision in enumerate(decisions))
-        if all(g.satisfied(state) for g in task.goals) and refusal_ready and frame_preserved(world,state,task.frames):
+        if (all(g.satisfied(state) for g in task.goals)
+                and all(g.satisfied(world,state) for g in task.created_goals)
+                and refusal_ready and frame_preserved(world,state,task.frames)):
             paths.append(path);matched.append([d.error_code for d in decisions]);continue
         if depth>=max_depth:continue
         # Expand only exact native writes attached to selected frozen profiles;

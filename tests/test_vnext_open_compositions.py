@@ -130,6 +130,72 @@ def test_mixed_completion_and_refusal_search_uses_the_refusal_profiles_customer_
     assert verify_task(record)
 
 
+def _created_case_proposal(frozen):
+    world=aftersales.World.model_validate(frozen.world)
+    profile_id='profile_u0_order0_line0'
+    private=world.profiles[profile_id]
+    return {
+        'profile_ids':[profile_id],
+        'customer_request':'Please open a support case for the issue on this item.',
+        'created_goals':[{'profile_id':profile_id,'collection':'cases',
+            'selectors':{'line_id':private.facts['line_id'],'issue':private.facts['issue']},
+            'field':'status','accepted_values':['evidence_verified']}],
+        'information_requirements':[{'profile_id':profile_id,'fact_keys':['line_id','issue','evidence_id']}],
+    }
+
+
+def test_created_object_goal_is_proven_by_native_engine_oracle_and_replay():
+    from usami_benchmark.designer_exploration import PROTOCOL, compile_proposal
+
+    frozen=freeze(default_spec('aftersales',0))
+    proposal=_created_case_proposal(frozen)
+    selection,record=compile_proposal(frozen,proposal,
+        ConstructionBudget(max_nodes=512,max_depth=12,max_paths=1),protocol=PROTOCOL)
+
+    witness=record.dialogue_witnesses[0]
+    task=witness.certificate.task
+    assert task.protocol=='certified-dialogue-task-v2'
+    assert task.composition.protocol=='open-dialogue-composition-v3'
+    assert task.goals==[] and len(task.created_goals)==1
+    assert task.created_goals[0].selectors==proposal['created_goals'][0]['selectors']
+    assert witness.certificate.evaluation['created_completion_subgoals']==[True]
+    assert witness.certificate.evaluation['oracle_status']=='pass'
+    assert witness.certificate.oracle['status']=='pass'
+    assert verify_task(record)
+    final=aftersales.World.model_validate(witness.trace.final_world)
+    cases=[case for case in final.cases.values()
+           if case.line_id==task.created_goals[0].selectors['line_id']
+           and case.issue==task.created_goals[0].selectors['issue']]
+    assert len(cases)==1 and cases[0].status=='evidence_verified'
+    assert selection.composition.created_goals==task.created_goals
+
+
+def test_created_object_goal_rejects_ungrounded_ids_unselected_profiles_and_missing_frame_anchor():
+    from usami_benchmark.designer_exploration import PROTOCOL, compile_proposal
+
+    frozen=freeze(default_spec('aftersales',0))
+    proposal=_created_case_proposal(frozen)
+
+    proposal['created_goals'][0]['selectors']['line_id']='invented-line-id'
+    with pytest.raises(ValueError,match='not grounded in the selected Customer profile'):
+        compile_proposal(frozen,proposal,ConstructionBudget(),protocol=PROTOCOL)
+    proposal=_created_case_proposal(frozen)
+
+    proposal['created_goals'][0]['selectors']={'issue':proposal['created_goals'][0]['selectors']['issue']}
+    with pytest.raises(ValueError,match='not covered by a native create-enabled Customer frame'):
+        compile_proposal(frozen,proposal,ConstructionBudget(),protocol=PROTOCOL)
+    proposal=_created_case_proposal(frozen)
+
+    proposal['created_goals'][0]['profile_id']='profile_u1_order0_line0'
+    with pytest.raises(ValueError,match='created-object goal must be anchored to a selected Customer profile'):
+        compile_proposal(frozen,proposal,ConstructionBudget(),protocol=PROTOCOL)
+
+    proposal=_created_case_proposal(frozen)
+    proposal['created_goals'][0]['field']='evidence_notice'
+    with pytest.raises(ValueError,match='private or generated-ID fields'):
+        compile_proposal(frozen,proposal,ConstructionBudget(),protocol=PROTOCOL)
+
+
 def test_v1_refusal_dependency_semantics_remain_unchanged():
     frozen=freeze(default_spec('aftersales',1))
     selection=_expired_open_case_refusal_selection(frozen,protocol='open-dialogue-composition-v1')

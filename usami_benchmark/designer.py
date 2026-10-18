@@ -85,8 +85,9 @@ def _dialogue_contract(frozen,world):
 def designer_view(frozen, *, protocol=None):
     """Compact by default for dialogue worlds; explicit v1 stays replayable."""
     if protocol is None:
-        protocol = "frozen-world-designer-exploration-v3" if TRACKS[frozen.spec.domain] == "B" else "frozen-world-task-designer-v1"
-    if protocol in {"frozen-world-designer-exploration-v2", "frozen-world-designer-exploration-v3"}:
+        protocol = "frozen-world-designer-exploration-v4" if TRACKS[frozen.spec.domain] == "B" else "frozen-world-task-designer-v1"
+    if protocol in {"frozen-world-designer-exploration-v2", "frozen-world-designer-exploration-v3",
+                    "frozen-world-designer-exploration-v4"}:
         from .designer_exploration import exploration_view
         return exploration_view(frozen, protocol=protocol)
     if protocol != "frozen-world-task-designer-v1":
@@ -160,8 +161,9 @@ def design_and_compile(frozen,client,construction_budget=None,prompt_context=Non
     No protocol retries transport failures or accepts model-authored proofs.
     """
     if protocol is None:
-        protocol = "frozen-world-designer-exploration-v3" if TRACKS[frozen.spec.domain] == "B" else "frozen-world-task-designer-v1"
-    if protocol in {"frozen-world-designer-exploration-v2", "frozen-world-designer-exploration-v3"}:
+        protocol = "frozen-world-designer-exploration-v4" if TRACKS[frozen.spec.domain] == "B" else "frozen-world-task-designer-v1"
+    if protocol in {"frozen-world-designer-exploration-v2", "frozen-world-designer-exploration-v3",
+                    "frozen-world-designer-exploration-v4"}:
         from .designer_exploration import design
         return design(frozen, client, construction_budget, prompt_context,
                       budget=designer_budget, journal_path=journal_path, protocol=protocol)
@@ -184,7 +186,8 @@ def design_and_compile(frozen,client,construction_budget=None,prompt_context=Non
 
 def verify_designer_execution(record):
     protocol = record.get("protocol") if isinstance(record,dict) else record.protocol
-    if protocol in {"frozen-world-designer-exploration-v2", "frozen-world-designer-exploration-v3"}:
+    if protocol in {"frozen-world-designer-exploration-v2", "frozen-world-designer-exploration-v3",
+                    "frozen-world-designer-exploration-v4"}:
         from .designer_exploration import verify_execution
         return verify_execution(record)
     row=DesignerExecution.model_validate(record.model_dump(mode='json') if isinstance(record,DesignerExecution) else record)

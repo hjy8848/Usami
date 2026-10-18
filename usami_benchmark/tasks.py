@@ -10,7 +10,7 @@ from pydantic import Field
 from usami_harness.models import Model,digest
 from usami_harness.goals import JointGoal
 from usami_dialogue.tasks import (TaskCertificate,DialogueComposition,InformationRequirement,PreferenceRequirement,
-    Goal,FrameRule,RefusalGoal,checked_task as checked_dialogue,certify as certify_dialogue)
+    Goal,CreatedObjectGoal,FrameRule,RefusalGoal,checked_task as checked_dialogue,certify as certify_dialogue)
 from usami_dialogue.engine import ExecutionTrace
 from usami_dialogue.planner import search as dialogue_search,certified_paths
 from .contracts import TRACKS
@@ -29,10 +29,11 @@ class OpenDialogueComposition(Model):
     # v2 aligns the open-composition compiler with native refusal-only tasks:
     # a verified refusal is a complete objective and need not invent a
     # separate information/consent dependency. Serialized v1 remains replayable.
-    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2']='open-dialogue-composition-v2'
+    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2','open-dialogue-composition-v3']='open-dialogue-composition-v2'
     profile_ids:list[str]=Field(min_length=1,max_length=64)
     customer_request:str=Field(min_length=1,max_length=6000)
     goals:list[Goal]=Field(default_factory=list,max_length=32)
+    created_goals:list[CreatedObjectGoal]=Field(default_factory=list,max_length=32,exclude_if=lambda value:not value)
     refusal_operations:list[dict]=Field(default_factory=list,max_length=16)
     frames:list[FrameRule]=Field(min_length=1,max_length=128)
     external_schedule:list[str]=Field(default_factory=list,max_length=64)
@@ -130,10 +131,12 @@ def _dialogue(frozen,selection,budget):
         codes=list(catalogue(domain,frozen.spec.rules_version)['errors'])
         if spec.refusal_operations and not codes:raise ValueError('native Reference has no registered refusal codes')
         task=DialogueTask(domain=domain,rules_version=w.version,world_hash=w.state_hash,profile_id=selection.profile_id,
-            private_hash=p.private_hash,family='open_composition_v1',goals=spec.goals,
+            private_hash=p.private_hash,family='open_composition_v1',
+            protocol='certified-dialogue-task-v2' if spec.created_goals else 'certified-dialogue-task-v1',
+            goals=spec.goals,created_goals=spec.created_goals,
             refusals=[RefusalGoal(operation=raw,code=codes[0]) for raw in spec.refusal_operations],
             frames=spec.frames,external_schedule=spec.external_schedule,
-            require_dependency=(spec.protocol=='open-dialogue-composition-v1' or bool(spec.goals)),
+            require_dependency=(spec.protocol=='open-dialogue-composition-v1' or bool(spec.goals or spec.created_goals)),
             composition=DialogueComposition(protocol=spec.protocol,profile_ids=spec.profile_ids,customer_request=spec.customer_request,
                 information_requirements=spec.information_requirements,preference_requirements=spec.preference_requirements,
                 confirmation_requirements=spec.confirmation_requirements))

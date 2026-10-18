@@ -18,7 +18,7 @@ from usami.service.models import ModelSettings, ServiceError, strict_json
 from usami.service.runner import completion_message
 from usami_dialogue.composition import _contract
 from usami_dialogue.scope import load_profiles
-from usami_dialogue.tasks import Goal, InformationRequirement, PreferenceRequirement
+from usami_dialogue.tasks import CreatedObjectGoal, Goal, InformationRequirement, PreferenceRequirement
 from usami_harness.models import Model, digest
 from vast_coevo.schema import atomic_json
 
@@ -29,7 +29,8 @@ from .tasks import CertifiedTask, ConstructionBudget, OpenDialogueComposition, T
 
 
 LEGACY_PROTOCOL = "frozen-world-designer-exploration-v2"
-PROTOCOL = "frozen-world-designer-exploration-v3"
+PROTOCOL_V3 = "frozen-world-designer-exploration-v3"
+PROTOCOL = "frozen-world-designer-exploration-v4"
 
 
 class DesignerBudget(Model):
@@ -44,6 +45,7 @@ class DesignerBudget(Model):
 
 
 class DialogueDesignerProposal(Model):
+    """v4 proposal: goals may target existing or newly-created objects."""
     profile_ids: list[str] = Field(min_length=1, max_length=8)
     customer_request: str = Field(min_length=1, max_length=6000)
     goals: list[Goal] = Field(default_factory=list, max_length=32,
@@ -51,6 +53,11 @@ class DialogueDesignerProposal(Model):
                                             "business objects and fields allowed by their native mutable frame. "
                                             "Do not target event records, evidence, immutable facts, or a state "
                                             "that already holds."))
+    created_goals: list[CreatedObjectGoal] = Field(
+        default_factory=list, max_length=32, exclude_if=lambda value: not value,
+        description=("Goals for exactly one new object created through a selected Customer's native operation. "
+                     "Name the selected profile, native collection, grounded immutable selector fields and desired "
+                     "public field value; never provide a generated object ID."))
     refusal_operations: list[dict] = Field(
         default_factory=list, max_length=16,
         description=("Exact canonical business writes Service should correctly refuse. Include every native parameter; "
@@ -71,11 +78,41 @@ class DialogueDesignerProposal(Model):
 
     @model_validator(mode="after")
     def require_objective(self):
-        if not self.goals and not self.refusal_operations:
+        if not self.goals and not self.created_goals and not self.refusal_operations:
             raise ValueError(
                 "proposal needs at least one machine-checkable completion goal or exact correct-refusal operation; "
                 "information and preference requirements alone are not task objectives"
             )
+        return self
+
+
+class _V3DialogueDesignerProposal(Model):
+    """Frozen schema for v3 request and journal replay compatibility."""
+    model_config = {"title": "DialogueDesignerProposal"}
+    profile_ids: list[str] = Field(min_length=1, max_length=8)
+    customer_request: str = Field(min_length=1, max_length=6000)
+    goals: list[Goal] = Field(default_factory=list, max_length=32,
+                               description=("Machine-checkable desired final states for existing, customer-scoped "
+                                            "business objects and fields allowed by their native mutable frame. "
+                                            "Do not target event records, evidence, immutable facts, or a state "
+                                            "that already holds."))
+    refusal_operations: list[dict] = Field(default_factory=list, max_length=16,
+        description=("Exact canonical business writes Service should correctly refuse. Include every native parameter; "
+                     "never guess IDs or fields. A Customer-authorized operation is not automatically a refusal."))
+    information_requirements: list[InformationRequirement] = Field(default_factory=list, max_length=64)
+    preference_requirements: list[PreferenceRequirement] = Field(default_factory=list, max_length=64)
+    confirmation_requirements: list[dict] = Field(default_factory=list, max_length=16,
+        description=("Optional evaluator assertion, not authorization; usually omit. Only include an exact "
+                     "canonical write copied from the selected Customer profile's customer_operations. "
+                     "Never guess operation parameters or invent case, quote, or resource IDs. Omitting this "
+                     "does not bypass live Customer consent. Supplied operations remain subject to native scope checks."))
+    external_schedule: list[str] = Field(default_factory=list, max_length=64)
+
+    @model_validator(mode="after")
+    def require_objective(self):
+        if not self.goals and not self.refusal_operations:
+            raise ValueError("proposal needs at least one machine-checkable completion goal or exact correct-refusal operation; "
+                             "information and preference requirements alone are not task objectives")
         return self
 
 
@@ -128,7 +165,7 @@ def exploration_view(frozen, *, include_context=True, protocol=PROTOCOL):
     identities = {}
     for profile in world.profiles.values():
         identities[profile.identity] = identities.get(profile.identity, 0) + 1
-    if protocol not in {LEGACY_PROTOCOL, PROTOCOL}:
+    if protocol not in {LEGACY_PROTOCOL, PROTOCOL_V3, PROTOCOL}:
         raise ValueError("unknown frozen-world Designer exploration protocol")
     result = {"protocol": protocol, "world_hash": frozen.world_hash,
             "frozen_registration_hash": frozen.registration_hash, "domain": frozen.spec.domain,
@@ -140,7 +177,7 @@ def exploration_view(frozen, *, include_context=True, protocol=PROTOCOL):
     return result
 
 
-def inspect_world(frozen, raw, *, include_related_objects=False, include_profile_events=True):
+def inspect_world(frozen, raw, *, include_related_objects=False, include_profile_events=True, protocol=PROTOCOL):
     """Read from registered world data only; no Engine writes or Reference calls."""
     query = ReadQuery.model_validate(raw)
     adapter, world = _adapter_world(frozen)
@@ -210,7 +247,7 @@ def inspect_world(frozen, raw, *, include_related_objects=False, include_profile
                 name.endswith("_id") and isinstance(value, str) and event.get(name) == value
                 for name, value in private.facts.items())
 
-        return {"profile_id": query.profile_id, "identity": private.identity,
+        result={"profile_id": query.profile_id, "identity": private.identity,
                 "facts": private.facts, "preference_space": private.preference_space,
                 "initial_preferences": private.initial_preferences,
                 "confirmable_actions": list(private.confirmable_actions),
@@ -218,6 +255,9 @@ def inspect_world(frozen, raw, *, include_related_objects=False, include_profile
                 "related_objects": related,
                 "registered_external_events": [row.model_dump(mode="json") for row in world.external_events.values()
                     if event_matches(row.model_dump(mode="json"))]}
+        if protocol==PROTOCOL:
+            result["native_frame_contract"]=[frame.model_dump(mode="json") for frame in _contract(adapter,world,private)]
+        return result
     collection = frozen.world.get(query.collection)
     if not isinstance(collection, dict):
         raise ValueError("collection must name a registered frozen collection")
@@ -232,7 +272,11 @@ def inspect_world(frozen, raw, *, include_related_objects=False, include_profile
 
 def compile_proposal(frozen, proposal, construction_budget, *, protocol=PROTOCOL):
     """Derive native scope without choosing, repairing or replacing objectives."""
-    proposal_model = DialogueDesignerProposal if protocol == PROTOCOL else _LegacyDialogueDesignerProposal
+    proposal_model = {LEGACY_PROTOCOL: _LegacyDialogueDesignerProposal,
+                      PROTOCOL_V3: _V3DialogueDesignerProposal,
+                      PROTOCOL: DialogueDesignerProposal}.get(protocol)
+    if proposal_model is None:
+        raise ValueError("unknown frozen-world Designer exploration protocol")
     proposal = proposal_model.model_validate(proposal)
     adapter, world = _adapter_world(frozen)
     profiles = load_profiles(adapter, world, proposal.profile_ids[0], proposal.profile_ids)
@@ -240,14 +284,17 @@ def compile_proposal(frozen, proposal, construction_budget, *, protocol=PROTOCOL
     for _, private in profiles:
         for frame in _contract(adapter, world, private):
             frames.setdefault(digest(frame), frame)
-    if protocol == PROTOCOL:
+    if protocol in {PROTOCOL_V3, PROTOCOL}:
         _validate_goal_targets(world, proposal.goals, frames)
     enums = field_enums(adapter)
     for goal in proposal.goals:
         values = enums.get(goal.collection, {}).get(goal.field)
         if values is not None and any(value not in values for value in goal.accepted_values):
             raise ValueError(f"invalid values for {goal.collection}.{goal.field}; native vocabulary is {values}")
-    composition = OpenDialogueComposition(**proposal.model_dump(mode="json"), frames=list(frames.values()))
+    created_goals = getattr(proposal, "created_goals", [])
+    composition_protocol = "open-dialogue-composition-v3" if created_goals else "open-dialogue-composition-v2"
+    composition = OpenDialogueComposition(protocol=composition_protocol,
+        **proposal.model_dump(mode="json"), frames=list(frames.values()))
     selection = TaskSelection(kind="dialogue", family="open_composition_v1",
                               profile_id=proposal.profile_ids[0], composition=composition)
     return selection, compile_task(frozen, selection, construction_budget)
@@ -282,7 +329,7 @@ def _validate_goal_targets(world, goals, frames):
             )
 
 
-POLICY = (
+POLICY_V3 = (
     "You are the autonomous Benchmark Task Designer in a read-only frozen business world. "
     "Use inspect_frozen_world to choose whom and what to investigate; you have a bounded exploration phase. "
     "Read the business rules and field vocabulary, inspect profiles and actual related objects. "
@@ -305,6 +352,29 @@ POLICY = (
     "Call ready_to_submit when prepared. The next phase forces submit_frozen_world_task. "
     "On rejection, correct your own proposal using the feedback; do not claim search failure proves impossibility. "
     "Keep replies concise and use the tools, rather than writing an essay."
+)
+
+POLICY = (
+    "You are the autonomous Benchmark Task Designer in a read-only frozen business world. "
+    "Use inspect_frozen_world to choose whom and what to investigate; you have a bounded exploration phase. "
+    "Read the business rules and field vocabulary, inspect profiles and actual related objects. "
+    "Select useful business challenges yourself, not a task supplied by the harness. Every submission MUST include "
+    "at least one existing-object completion goal, one created-object completion goal, or one exact correct-refusal "
+    "operation. Information and preference requirements alone are not task objectives. Existing-object goals target "
+    "an existing selected-Customer object and a mutable field. A created-object goal names a selected profile, a "
+    "native create-enabled collection, immutable selector fields/values grounded in that profile's observed facts or "
+    "customer_operations, and a public mutable field's accepted final value. The initial world must have no object "
+    "matching those selectors; Reference requires exactly one matching object after native execution. Do not guess or "
+    "supply the generated object's ID. Never use event records, evidence, private fields, immutable facts, or a state "
+    "that already holds as a completion goal; select external events separately in external_schedule. A refusal "
+    "operation must be a complete canonical write that the Customer requests but native rules require Service to "
+    "refuse. customer_operations grounds Customer authority but does not mean an operation should be refused. Check "
+    "read_rules and observed state before classifying it. Never guess missing operation IDs or params. You may combine "
+    "profiles only for the same authenticated identity. Do not invent facts, permissions, entities, events, proofs, "
+    "or expected refusal codes. The compiler derives native frames; never write frames or selector fields. An external "
+    "event occurs only if you select its registered ID in external_schedule. Call ready_to_submit when prepared. On "
+    "rejection, correct your own proposal using the feedback; a bounded search failure is not proof of impossibility. "
+    "Keep replies concise and use the tools."
 )
 
 _LEGACY_POLICY = (
@@ -365,8 +435,9 @@ _OPTIONAL_CONFIRMATION_GUIDANCE = (
 )
 
 
-def _proposal_schema(frozen=None):
-    schema = DialogueDesignerProposal.model_json_schema()
+def _proposal_schema(frozen=None, *, protocol=PROTOCOL):
+    model = _V3DialogueDesignerProposal if protocol == PROTOCOL_V3 else DialogueDesignerProposal
+    schema = model.model_json_schema()
     goal_definition = schema.get("$defs", {}).get("Goal", {})
     goal_definition["description"] = (
         "Desired final business state on an existing selected-Customer object. The target field must be mutable "
@@ -380,6 +451,27 @@ def _proposal_schema(frozen=None):
     }.items():
         if name in goal_definition.get("properties", {}):
             goal_definition["properties"][name]["description"] = description
+    created_definition = schema.get("$defs", {}).get("CreatedObjectGoal", {})
+    if created_definition:
+        created_definition["description"] = (
+            "Target exactly one new native object without providing its generated ID. Selectors must be "
+            "grounded in the named Customer profile, absent from the initial world, and covered by a native "
+            "create-enabled frame."
+        )
+        for name, description in {
+            "profile_id": "Selected frozen Customer profile whose facts ground the object selectors.",
+            "collection": "Existing native object collection with a selected Customer create-enabled frame.",
+            "selectors": "Immutable public field/value pairs from the selected Customer facts or customer_operations.",
+            "field": "Public mutable native field whose value should hold on the uniquely created object.",
+            "accepted_values": "Desired final values from the native object vocabulary.",
+        }.items():
+            if name in created_definition.get("properties", {}):
+                created_definition["properties"][name]["description"] = description
+        selector_schema=created_definition.get("properties",{}).get("selectors")
+        if selector_schema is not None:
+            selector_schema.update({"type":"object","minProperties":1,"maxProperties":16,
+                "additionalProperties":{"anyOf":[{"type":"string"},{"type":"integer"},
+                    {"type":"number"},{"type":"boolean"},{"type":"null"}]}})
     # Reject information-only proposals at the tool boundary as well as in the
     # runtime model, before they spend a submission or revision.
     schema["anyOf"] = [
@@ -387,18 +479,32 @@ def _proposal_schema(frozen=None):
         {"required": ["refusal_operations"],
          "properties": {"refusal_operations": {"minItems": 1}}},
     ]
+    if protocol == PROTOCOL:
+        schema["anyOf"].append({"required": ["created_goals"],
+                                "properties": {"created_goals": {"minItems": 1}}})
     if frozen is not None:
         adapter, _ = _adapter_world(frozen)
         write_schemas = _native_write_schemas(adapter)
         schema["properties"]["refusal_operations"]["items"] = {"anyOf": write_schemas}
         schema["properties"]["confirmation_requirements"]["items"] = {"anyOf": write_schemas}
+        if created_definition:
+            _, world = _adapter_world(frozen)
+            contracts=[frame for profile_id in sorted(world.profiles)
+                       for frame in _contract(adapter,world,adapter.private_state(world,profile_id)) if frame.allow_create]
+            collections=sorted({frame.collection for frame in contracts})
+            fields=sorted({field for frame in contracts for field in frame.mutable_fields})
+            created_definition["properties"]["profile_id"]["enum"]=sorted(world.profiles)
+            created_definition["properties"]["collection"]["enum"]=collections
+            created_definition["properties"]["field"]["enum"]=fields
     return schema
 
 
 def _tools(stage, *, guide_optional_confirmations=False, frozen=None, protocol=PROTOCOL):
     if stage == "submission":
-        schema = (_proposal_schema(frozen) if protocol == PROTOCOL
-                  else _LegacyDialogueDesignerProposal.model_json_schema())
+        if protocol in {PROTOCOL_V3, PROTOCOL}:
+            schema = _proposal_schema(frozen, protocol=protocol)
+        else:
+            schema = _LegacyDialogueDesignerProposal.model_json_schema()
         if not guide_optional_confirmations:
             schema["properties"]["confirmation_requirements"].pop("description", None)
         return [_tool("submit_frozen_world_task", "Submit business targets and objectives; native scope is compiler-owned.",
@@ -409,7 +515,8 @@ def _tools(stage, *, guide_optional_confirmations=False, frozen=None, protocol=P
 
 
 def _messages(frozen, context, budget, *, protocol=PROTOCOL):
-    policy = _LEGACY_POLICY if protocol == LEGACY_PROTOCOL else POLICY
+    policy = (_LEGACY_POLICY if protocol == LEGACY_PROTOCOL else
+              POLICY_V3 if protocol == PROTOCOL_V3 else POLICY)
     if budget.confirmation_guidance:
         policy += "\n" + _OPTIONAL_CONFIRMATION_GUIDANCE
     if context.get("skill_rendered"):
@@ -423,7 +530,8 @@ def _messages(frozen, context, budget, *, protocol=PROTOCOL):
 
 
 class ExplorationExecution(Model):
-    protocol: Literal["frozen-world-designer-exploration-v2", "frozen-world-designer-exploration-v3"] = PROTOCOL
+    protocol: Literal["frozen-world-designer-exploration-v2", "frozen-world-designer-exploration-v3",
+                      "frozen-world-designer-exploration-v4"] = PROTOCOL
     frozen_hash: str
     model: ModelSettings
     budget: DesignerBudget
@@ -452,7 +560,7 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
            protocol=PROTOCOL):
     frozen = verified_world(frozen)
     _adapter_world(frozen)
-    if protocol not in {LEGACY_PROTOCOL, PROTOCOL}:
+    if protocol not in {LEGACY_PROTOCOL, PROTOCOL_V3, PROTOCOL}:
         raise ValueError("unknown frozen-world Designer exploration protocol")
     # New sessions use the complete query context. Explicit old serialized
     # budgets retain their omitted/default flags for exact historical replay.
@@ -485,7 +593,13 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
     while True:
         request = settings.request(copy.deepcopy(messages), _tools(
             stage, guide_optional_confirmations=budget.confirmation_guidance,
-            frozen=frozen if protocol == PROTOCOL else None, protocol=protocol))
+            frozen=frozen if protocol in {PROTOCOL_V3, PROTOCOL} else None, protocol=protocol))
+        if protocol == PROTOCOL:
+            # v4 Designer submissions are schema-bounded; do not add a
+            # harness-side output token cap. Providers may still enforce their
+            # own limits. Historical v2/v3 requests remain byte-for-byte stable.
+            for key in ("max_tokens", "max_completion_tokens", "max_output_tokens"):
+                request.pop(key, None)
         if stage == "submission":
             request["tool_choice"] = {"type": "function", "function": {"name": "submit_frozen_world_task"}}
             # DashScope Qwen supports thinking for exploration, but rejects a
@@ -516,7 +630,9 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
                 if len(calls) != 1 or calls[0]["function"]["name"] != "submit_frozen_world_task":
                     raise ValueError("submission requires exactly one submit_frozen_world_task call")
                 raw = strict_json(calls[0]["function"]["arguments"])
-                proposal_model = DialogueDesignerProposal if protocol == PROTOCOL else _LegacyDialogueDesignerProposal
+                proposal_model = {LEGACY_PROTOCOL: _LegacyDialogueDesignerProposal,
+                                  PROTOCOL_V3: _V3DialogueDesignerProposal,
+                                  PROTOCOL: DialogueDesignerProposal}[protocol]
                 parsed = proposal_model.model_validate(raw)
                 selection, task = compile_proposal(frozen, parsed.model_dump(mode="json"),
                                                    construction_budget, protocol=protocol)
@@ -537,7 +653,7 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
                                 raise ValueError("read-only query budget exhausted")
                             result = {"status": "ok", "data": inspect_world(frozen, args,
                                 include_related_objects=budget.include_related_objects,
-                                include_profile_events=budget.include_profile_events)}
+                                include_profile_events=budget.include_profile_events, protocol=protocol)}
                         else:
                             raise ValueError("only registered read-only exploration tools are allowed")
                     except (ValueError, TypeError, KeyError) as exc:
@@ -593,6 +709,9 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
             cost[dest] = sum(usage.get(source, 0) or 0 for usage in usages)
         signature = {"goals": [{"collection": g.collection, "field": g.field, "values": g.accepted_values} for g in parsed.goals],
                      "refusal_operations": [op.get("name") for op in parsed.refusal_operations]}
+        if getattr(parsed, "created_goals", None):
+            signature["created_goals"] = [{"collection": goal.collection, "selectors": goal.selectors,
+                "field": goal.field, "values": goal.accepted_values} for goal in parsed.created_goals]
         metrics = {"proposal_attempts": journal["proposal_attempts"], "certified_proposals": 1,
                    "valid_proposal_rate": 1 / journal["proposal_attempts"], "queries": journal["queries"],
                    "objective_signature": digest(signature), "selected_profiles": len(parsed.profile_ids),

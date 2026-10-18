@@ -24,6 +24,40 @@ class Goal(Model):
         except ValueError:return False
 
 
+class CreatedObjectGoal(Model):
+    """A goal for one newly-created object, identified without guessing its ID.
+
+    Selectors are grounded in a selected frozen Customer profile. The initial
+    world must contain no matching object and the final world must contain
+    exactly one whose public target field has an accepted value.
+    """
+    profile_id:str
+    collection:str
+    selectors:dict[str,Any]=Field(min_length=1,max_length=16)
+    field:str
+    accepted_values:list[Any]=Field(min_length=1,max_length=32)
+
+    def matches(self,world):
+        rows=getattr(world,self.collection,None)
+        if not isinstance(rows,dict):return []
+        matches=[]
+        for row in rows.values():
+            try:
+                if all(type(field_value(row,key)) is type(value) and field_value(row,key)==value
+                       for key,value in self.selectors.items()):
+                    matches.append(row)
+            except ValueError:
+                continue
+        return matches
+
+    def satisfied(self,initial,final):
+        if self.matches(initial):return False
+        matches=self.matches(final)
+        if len(matches)!=1:return False
+        try:return field_value(matches[0],self.field) in self.accepted_values
+        except ValueError:return False
+
+
 class FrameRule(Model):
     collection:str
     selector_field:str='id'
@@ -54,7 +88,7 @@ class DialogueComposition(Model):
     # v1 preserves the original rule that every composed task claims a process
     # dependency. v2 permits an explicit refusal-only task with no completion
     # goal to be certified on its native policy boundary alone.
-    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2']='open-dialogue-composition-v1'
+    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2','open-dialogue-composition-v3']='open-dialogue-composition-v1'
     profile_ids:list[str]=Field(min_length=1,max_length=64)
     customer_request:str=Field(min_length=1,max_length=6000)
     information_requirements:list[InformationRequirement]=Field(default_factory=list,max_length=64)
@@ -63,7 +97,7 @@ class DialogueComposition(Model):
 
 
 class DialogueTask(Model):
-    protocol:Literal['certified-dialogue-task-v1']='certified-dialogue-task-v1'
+    protocol:Literal['certified-dialogue-task-v1','certified-dialogue-task-v2']='certified-dialogue-task-v1'
     domain:str
     rules_version:str
     world_hash:str
@@ -71,6 +105,7 @@ class DialogueTask(Model):
     private_hash:str
     family:str
     goals:list[Goal]=Field(default_factory=list)
+    created_goals:list[CreatedObjectGoal]=Field(default_factory=list,max_length=32,exclude_if=lambda value:not value)
     refusals:list[RefusalGoal]=Field(default_factory=list)
     frames:list[FrameRule]=Field(default_factory=list)
     external_schedule:list[str]=Field(default_factory=list)
@@ -95,7 +130,11 @@ def checked_task(adapter,world,task):
     task=DialogueTask.model_validate(task.model_dump(mode='json') if isinstance(task,DialogueTask) else task)
     private=adapter.private_state(world,task.profile_id)
     if (task.domain!=adapter.name or task.rules_version!=world.version or task.world_hash!=world.state_hash or task.private_hash!=private.private_hash):raise ValueError('task source registration differs')
-    if not task.goals and not task.refusals:raise ValueError('task needs an objective completion or refusal goal')
+    if not task.goals and not task.created_goals and not task.refusals:raise ValueError('task needs an objective completion or refusal goal')
+    if task.created_goals and (task.protocol!='certified-dialogue-task-v2' or task.composition is None):
+        raise ValueError('created-object goals require certified-dialogue-task-v2 and a versioned open composition')
+    if task.protocol=='certified-dialogue-task-v2' and not task.created_goals:
+        raise ValueError('certified-dialogue-task-v2 requires a created-object goal')
     if task.composition is None:
         adapter.validate_task(world,private,task)
     else:
@@ -143,6 +182,7 @@ def score(adapter,world,task,trace):
         except ValueError:pass
     final=adapter.World.model_validate(trace.final_world)
     completed=[g.satisfied(final) for g in task.goals]
+    created_completed=[g.satisfied(world,final) for g in task.created_goals]
     refused=[any(r['classification']=='correct_refusal' and r['operation']==g.operation for r in report['service_decisions']) for g in task.refusals]
     frame=frame_preserved(world,final,task.frames)
     scheduled=all(e.payload['event_id'] in task.external_schedule for e in trace.events if e.kind=='external')
@@ -162,10 +202,10 @@ def score(adapter,world,task,trace):
                     for event in trace.events if event.kind=='customer' and not event.payload.get('setup')
                     and event.payload.get('profile_id')==requirement.profile_id]
             preferences.append(any(value in requirement.accepted_values for value in values))
-    success=source_ok and report['status']=='pass' and replay_ok and all(completed) and all(refused) and frame and scheduled
+    success=source_ok and report['status']=='pass' and replay_ok and all(completed) and all(created_completed) and all(refused) and frame and scheduled
     if task.composition is not None:
         success=success and all(information) and all(confirmations) and all(preferences)
-    result={'protocol':'dialogue-task-score-v2','success':bool(success),'source_verified':source_ok,'completion_subgoals':completed,'refusal_subgoals':refused,
+    result={'protocol':'dialogue-task-score-v3' if task.created_goals else 'dialogue-task-score-v2','success':bool(success),'source_verified':source_ok,'completion_subgoals':completed,'refusal_subgoals':refused,
         'intended_refusal_boundaries':[g.code for g in task.refusals],
         'observed_refusal_reasons':[[r['reference_code'] for r in report['service_decisions'] if r['classification']=='correct_refusal' and r['operation']==g.operation] for g in task.refusals],
         'frame_preserved':frame,'external_schedule_compliant':scheduled,'oracle_status':report['status'],'replay_verified':replay_ok,
@@ -176,6 +216,8 @@ def score(adapter,world,task,trace):
     if task.composition is not None:
         result.update(information_requirements=information,preference_requirements=preferences,
             confirmation_requirements=confirmations)
+    if task.created_goals:
+        result['created_completion_subgoals']=created_completed
     return result
 
 

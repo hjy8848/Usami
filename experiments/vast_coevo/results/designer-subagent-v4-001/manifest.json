@@ -1,0 +1,145 @@
+{
+  "archived_context_bytes": 120164,
+  "archived_context_path": "experiments/vast_coevo/results/designer-subagent-v3-004/designer-context.json",
+  "archived_context_sha256": "ddc6d0e67b3a5d4504229dbfea41aae078673ac22bb1457881daeaa00d5e97e6",
+  "certificate_path": "experiments/vast_coevo/results/designer-subagent-v4-001/native-certified-task.json",
+  "certificate_sha256": "2a55c27b8db40949670e6177af282d3dd93c7a0594f4c9223a3bdfab19d2457c",
+  "customer_agent_runs": 0,
+  "designer_protocol": "frozen-world-designer-exploration-v4",
+  "external_api_calls": 0,
+  "external_network_calls": 0,
+  "first_attempt_compiler_feedback": "created-object goal is not covered by a native create-enabled Customer frame",
+  "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "local_reference_witnesses": 1,
+  "proposal_attempts": 2,
+  "proposal_hash": "5fbb268a91e3a1ba335df1df149603f6863c9fc891cbb6a86cdb5bc5759d7532",
+  "proposal_path": "experiments/vast_coevo/results/designer-subagent-v4-001/offline-proposal.json",
+  "protocol": "offline-designer-subagent-certificate-v1",
+  "provenance": "Codex offline subagent proposed from the archived Designer/API context; local deterministic compiler and native verifier independently certified the revised proposal.",
+  "reference_oracle": "pass",
+  "reflection_runs": 0,
+  "replay": "verified",
+  "selection": {
+    "capabilities": [],
+    "composition": {
+      "confirmation_requirements": [],
+      "created_goals": [
+        {
+          "accepted_values": [
+            "open"
+          ],
+          "collection": "cases",
+          "field": "status",
+          "profile_id": "profile_u1_order1_line0",
+          "selectors": {
+            "line_id": "u1_order1_line0"
+          }
+        }
+      ],
+      "customer_request": "Hypothesis: a correctly scoped wrong-item claim should create exactly one open Case when it is within the actual product return window. Buyer u1 reports the wrong item on order u1_order1, line u1_order1_line0, holds photo_u1_order1_line0, and asks for a case to be opened.",
+      "external_schedule": [],
+      "frames": [
+        {
+          "allow_create": false,
+          "collection": "lines",
+          "mutable_fields": [
+            "status"
+          ],
+          "selector_field": "id",
+          "selector_value": "u1_order1_line0"
+        },
+        {
+          "allow_create": false,
+          "collection": "products",
+          "mutable_fields": [
+            "stock"
+          ],
+          "selector_field": "id",
+          "selector_value": "m1_product2"
+        },
+        {
+          "allow_create": true,
+          "collection": "cases",
+          "mutable_fields": [
+            "status",
+            "evidence_id",
+            "evidence_notice",
+            "review_requested",
+            "agreement_quote",
+            "agreement_revision"
+          ],
+          "selector_field": "line_id",
+          "selector_value": "u1_order1_line0"
+        },
+        {
+          "allow_create": true,
+          "collection": "quotes",
+          "mutable_fields": [
+            "status"
+          ],
+          "selector_field": "case_id",
+          "selector_value": "case_36a42f43c4471848"
+        },
+        {
+          "allow_create": true,
+          "collection": "returns",
+          "mutable_fields": [
+            "status",
+            "receipt_notice"
+          ],
+          "selector_field": "case_id",
+          "selector_value": "case_36a42f43c4471848"
+        },
+        {
+          "allow_create": true,
+          "collection": "refunds",
+          "mutable_fields": [],
+          "selector_field": "line_id",
+          "selector_value": "u1_order1_line0"
+        },
+        {
+          "allow_create": true,
+          "collection": "replacements",
+          "mutable_fields": [],
+          "selector_field": "line_id",
+          "selector_value": "u1_order1_line0"
+        },
+        {
+          "allow_create": true,
+          "collection": "approvals",
+          "mutable_fields": [],
+          "selector_field": "$key",
+          "selector_value": "u1_order1_line0"
+        }
+      ],
+      "goals": [],
+      "information_requirements": [
+        {
+          "fact_keys": [
+            "order_id",
+            "line_id",
+            "issue",
+            "evidence_id"
+          ],
+          "profile_id": "profile_u1_order1_line0"
+        }
+      ],
+      "preference_requirements": [],
+      "profile_ids": [
+        "profile_u1_order1_line0"
+      ],
+      "protocol": "open-dialogue-composition-v3",
+      "refusal_operations": []
+    },
+    "family": "open_composition_v1",
+    "goal": null,
+    "identity": null,
+    "kind": "dialogue",
+    "message": null,
+    "parameters": {},
+    "profile_id": "profile_u1_order1_line0",
+    "refusal_operations": []
+  },
+  "service_agent_runs": 0,
+  "verified": true
+}

@@ -5,7 +5,7 @@ import pytest
 
 from usami_benchmark.designer import design_and_compile, designer_view, verify_designer_execution
 from usami_benchmark.designer_exploration import (
-    PROTOCOL, DialogueDesignerProposal, DesignerBudget, DesignerFailure,
+    PROTOCOL, PROTOCOL_V3, DialogueDesignerProposal, DesignerBudget, DesignerFailure,
     compile_proposal, inspect_world,
     verify_failed_journal,
 )
@@ -43,6 +43,10 @@ def test_compact_view_and_bounded_read_tools_do_not_mutate_world(frozen):
     assert len(page["items"]) == 2 and page["total"] > 2
     detail = inspect_world(frozen, {"action": "read_profile", "profile_id": page["items"][0]["profile_id"]})
     assert detail["identity"] == "u0" and detail["facts"] and detail["related_objects"]
+    assert detail["native_frame_contract"]
+    v3_detail = inspect_world(frozen, {"action": "read_profile", "profile_id": page["items"][0]["profile_id"]},
+                              protocol=PROTOCOL_V3)
+    assert "native_frame_contract" not in v3_detail
     rules = inspect_world(frozen, {"action": "read_rules"})
     assert "refunded" in rules["native_field_enums"]["lines"]["status"]
     with pytest.raises(ValueError):
@@ -91,7 +95,7 @@ def test_submission_schema_requires_an_objective_and_types_native_refusal_params
 
     schema = _tools("submission", frozen=frozen)[0]["function"]["parameters"]
     assert {tuple(branch["required"]) for branch in schema["anyOf"]} == {
-        ("goals",), ("refusal_operations",)
+        ("goals",), ("refusal_operations",), ("created_goals",)
     }
     refusal_items = schema["properties"]["refusal_operations"]["items"]["anyOf"]
     quote = next(branch for branch in refusal_items
@@ -111,9 +115,16 @@ def test_submission_schema_requires_an_objective_and_types_native_refusal_params
     assert "customer_operations" not in schema["properties"]["refusal_operations"]["description"]
     assert "Customer-authorized operation is not automatically a refusal" in schema["properties"]["refusal_operations"]["description"]
     assert "native Customer frame" in schema["$defs"]["Goal"]["description"]
+    created = schema["$defs"]["CreatedObjectGoal"]
+    assert created["properties"]["collection"]["enum"]
+    assert created["properties"]["selectors"]["additionalProperties"]["anyOf"]
 
-    v3_policy = _messages(frozen, {}, DesignerBudget(), protocol=PROTOCOL)[0]["content"]
-    assert "its presence does not mean the operation should be refused" in v3_policy
+    v4_policy = _messages(frozen, {}, DesignerBudget(), protocol=PROTOCOL)[0]["content"]
+    assert "customer_operations grounds Customer authority but does not mean an operation should be refused" in v4_policy
+    assert "created-object goal" in v4_policy
+    historical_v3_policy = _messages(frozen, {}, DesignerBudget(), protocol=PROTOCOL_V3)[0]["content"]
+    assert "its presence does not mean the operation should be refused" in historical_v3_policy
+    assert "created-object predicates are not supported yet" in historical_v3_policy
     legacy_policy = _messages(frozen, {}, DesignerBudget(),
                               protocol="frozen-world-designer-exploration-v2")[0]["content"]
     assert "its presence does not mean the operation should be refused" not in legacy_policy
@@ -136,6 +147,30 @@ def test_submission_schema_requires_an_objective_and_types_native_refusal_params
     }]
     with pytest.raises(ValueError, match="confirmation requirement is outside selected Customer authority"):
         compile_proposal(frozen, raw, ConstructionBudget(max_nodes=512, max_depth=16))
+
+
+def test_v3_protocol_schema_and_execution_replay_remain_compatible(frozen):
+    from usami_benchmark.designer_exploration import _tools
+
+    schema = _tools("submission", frozen=frozen, protocol=PROTOCOL_V3)[0]["function"]["parameters"]
+    assert {tuple(branch["required"]) for branch in schema["anyOf"]} == {
+        ("goals",), ("refusal_operations",)
+    }
+    assert "CreatedObjectGoal" not in schema.get("$defs", {})
+    client = ScriptedClient(SPEC, [submit(proposal(frozen))])
+    result = design_and_compile(frozen, client, ConstructionBudget(max_nodes=512, max_depth=16),
+        protocol=PROTOCOL_V3, designer_budget=DesignerBudget(max_exploration_calls=0))
+    assert result.protocol == PROTOCOL_V3
+    assert verify_designer_execution(result)["verified"]
+
+
+def test_v4_designer_request_has_no_harness_output_cap_and_v3_keeps_its_config(frozen):
+    configured = SPEC.model_copy(update={"options": {"max_tokens": 4096}})
+    for protocol, capped in ((PROTOCOL, False), (PROTOCOL_V3, True)):
+        client = ScriptedClient(configured, [submit(proposal(frozen))])
+        result = design_and_compile(frozen, client, ConstructionBudget(max_nodes=512, max_depth=16),
+            protocol=protocol, designer_budget=DesignerBudget(max_exploration_calls=0))
+        assert ("max_tokens" in result.request) is capped
 
 
 def test_v3_goal_feedback_explains_external_events_are_not_completion_targets(frozen):

@@ -96,6 +96,28 @@ def search_composed(adapter,world,task,*,max_nodes=1024,max_depth=12,max_paths=2
         if any(not x for x in codes):raise ValueError('every refusal needs a nonempty native code vocabulary')
     elif task.refusals:codes=[{g.code} for g in task.refusals]
     else:codes=[]
+
+    def refusal_decisions(state):
+        """Evaluate each refusal in the same Customer context as witness replay.
+
+        A composed path may end after operating on a different selected profile
+        than the one named by a refusal objective. Inspecting ``state`` directly
+        can then mistake missing facts from the previous profile for the reason
+        the requested write should be refused. The executable witness explicitly
+        submits the refused operation as a new Customer turn, so Reference
+        search must construct that exact turn before comparing native codes.
+        """
+        scoped=state
+        decisions=[]
+        for goal in task.refusals:
+            intent=CustomerIntent(message='Please perform this exact requested action.',
+                requested_operations=[goal.operation])
+            scoped=_scoped_context(adapter,scoped,profiles,intent)
+            from .scope import profile_for_intent
+            _,private=profile_for_intent(adapter,scoped,profiles,intent)
+            decisions.append(adapter.decide(scoped,private.identity,
+                adapter.Operation.model_validate(goal.operation)))
+        return decisions
     preference_choices=[]
     for profile_id,private in profiles:
         requirements=[r for r in task.composition.preference_requirements if r.profile_id==profile_id]
@@ -134,7 +156,7 @@ def search_composed(adapter,world,task,*,max_nodes=1024,max_depth=12,max_paths=2
         state,path,depth,selected_by_profile=stack.pop();key=state.state_hash
         if key in seen:continue
         seen.add(key);nodes+=1
-        decisions=[adapter.decide(state,profiles[0][1].identity,adapter.Operation.model_validate(g.operation)) for g in task.refusals]
+        decisions=refusal_decisions(state)
         refusal_ready=all(not decision.allowed and decision.error_code in codes[index] for index,decision in enumerate(decisions))
         if all(g.satisfied(state) for g in task.goals) and refusal_ready and frame_preserved(world,state,task.frames):
             paths.append(path);matched.append([d.error_code for d in decisions]);continue

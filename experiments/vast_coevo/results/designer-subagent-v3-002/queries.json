@@ -1,0 +1,589 @@
+[
+  {
+    "request": {
+      "action": "read_rules"
+    },
+    "result": {
+      "status": "ok",
+      "data": {
+        "policy": {
+          "business_rules": [
+            "Authenticate the order buyer and merchant/order/line scope. Ask for the actual order, issue, evidence and relevant customer deadline before committing a remedy.",
+            "Delivery, product returnability, native return window, verified evidence, settlement state, merchant approval limit and replacement stock constrain refund, exchange and reship.",
+            "Return-required refunds need actual receipt; pickup, current remedy choice and irreversible settlement require the applicable exact customer confirmation. Use the original payment channel and remaining paid value."
+          ],
+          "catalogue_hash": "df9e3e575e071e2595f758711291a4416edb853291186f53661c2bfdab2c70f4",
+          "domain": "aftersales",
+          "errors": {
+            "AFTERSALES_WINDOW_EXPIRED": "Create/agree remedies only inside the product return window following actual delivery.",
+            "ALREADY_RESOLVED": "A line can be settled only once; another order or stale agreement cannot be substituted.",
+            "APPROVAL_REQUIRED": "Refunds over the merchant support limit require a simulated manager approval; agents cannot assert approval.",
+            "CASE_SCOPE_MISMATCH": "Case scope mismatch. Consult the applicable current public contract and resource facts.",
+            "CUSTOMER_CONTEXT_REQUIRED": "Customer context required. Consult the applicable current public contract and resource facts.",
+            "DELIVERY_DEADLINE_UNMET": "Delivery deadline unmet. Consult the applicable current public contract and resource facts.",
+            "EVIDENCE_INVALID": "Evidence invalid. Consult the applicable current public contract and resource facts.",
+            "EVIDENCE_REQUIRED": "Damage, wrong-item and missing-parts remedies require independently verified evidence bound to the line and issue.",
+            "EVIDENCE_SCOPE_MISMATCH": "Evidence scope mismatch. Consult the applicable current public contract and resource facts.",
+            "EXPLICIT_CONSENT_REQUIRED": "Irreversible settlement needs current exact consent to the actual quote; revised preferences invalidate old quotes.",
+            "INVALID_WORLD": "Invalid world. Consult the applicable current public contract and resource facts.",
+            "LINE_SCOPE_MISMATCH": "Line scope mismatch. Consult the applicable current public contract and resource facts.",
+            "MERCHANT_NOT_FOUND": "Merchant not found. Consult the applicable current public contract and resource facts.",
+            "MERCHANT_SCOPE_MISMATCH": "Merchant scope mismatch. Consult the applicable current public contract and resource facts.",
+            "ORDER_ACCESS_DENIED": "Only the authenticated buyer may service their order; merchant scope is explicit.",
+            "ORDER_NOT_DELIVERED": "Order not delivered. Consult the applicable current public contract and resource facts.",
+            "ORDER_NOT_FOUND": "Order not found. Consult the applicable current public contract and resource facts.",
+            "ORIGINAL_CHANNEL_REQUIRED": "Refunds return to the original paid channel and never exceed eligible paid line value.",
+            "PICKUP_ALREADY_SCHEDULED": "Pickup already scheduled. Consult the applicable current public contract and resource facts.",
+            "PICKUP_CONFIRMATION_REQUIRED": "Pickup confirmation required. Consult the applicable current public contract and resource facts.",
+            "PREFERENCE_RESOLUTION_REQUIRED": "Preference resolution required. Consult the applicable current public contract and resource facts.",
+            "PRODUCT_NOT_RETURNABLE": "Product not returnable. Consult the applicable current public contract and resource facts.",
+            "QUOTE_EXPIRED": "Quote expired. Consult the applicable current public contract and resource facts.",
+            "QUOTE_SCOPE_MISMATCH": "Quote scope mismatch. Consult the applicable current public contract and resource facts.",
+            "REFUND_EXCEEDS_PAYMENT": "Refund exceeds payment. Consult the applicable current public contract and resource facts.",
+            "REFUND_NOT_AGREED": "Refund not agreed. Consult the applicable current public contract and resource facts.",
+            "REPLACEMENT_UNAVAILABLE": "Replacement stock is conserved; promised delivery must meet the stated deadline.",
+            "REQUIRED_INFORMATION_MISSING": "Select the order/line and state the issue before opening a case; disclose required evidence held by the customer.",
+            "RETURN_NOT_AGREED": "Return not agreed. Consult the applicable current public contract and resource facts.",
+            "RETURN_RECEIPT_REQUIRED": "A return-required refund settles only after independently attested physical receipt.",
+            "STALE_CUSTOMER_CHOICE": "Stale customer choice. Consult the applicable current public contract and resource facts.",
+            "UNKNOWN_ACTOR": "Unknown actor. Consult the applicable current public contract and resource facts."
+          },
+          "protocol": "eight-domain-public-rulebook-v1",
+          "rules_version": "aftersales-0.1.0",
+          "scope": "Static public policy and code vocabulary; not the expected answer for any particular world or task."
+        },
+        "native_field_enums": {
+          "orders": {
+            "status": [
+              "processing",
+              "shipped",
+              "delivered"
+            ]
+          },
+          "lines": {
+            "status": [
+              "unresolved",
+              "return_pending",
+              "refunded",
+              "exchanged",
+              "reshipped"
+            ]
+          },
+          "evidence": {
+            "issue": [
+              "damaged",
+              "wrong_item",
+              "missing_parts"
+            ]
+          },
+          "cases": {
+            "issue": [
+              "damaged",
+              "wrong_item",
+              "missing_parts"
+            ],
+            "status": [
+              "open",
+              "evidence_verified",
+              "return_pending",
+              "resolved"
+            ]
+          },
+          "quotes": {
+            "option": [
+              "refund",
+              "exchange",
+              "reship"
+            ],
+            "status": [
+              "offered",
+              "committed"
+            ]
+          },
+          "returns": {
+            "status": [
+              "scheduled",
+              "received"
+            ]
+          },
+          "replacements": {
+            "kind": [
+              "exchange",
+              "reship"
+            ]
+          },
+          "external_events": {
+            "kind": [
+              "manager_review",
+              "return_received"
+            ],
+            "outcome": [
+              "approved",
+              "denied",
+              "received",
+              "missing"
+            ]
+          }
+        },
+        "operation_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "title": "Name",
+              "type": "string"
+            },
+            "scope_id": {
+              "minLength": 1,
+              "title": "Scope Id",
+              "type": "string"
+            },
+            "resource_id": {
+              "minLength": 1,
+              "title": "Resource Id",
+              "type": "string"
+            },
+            "params": {
+              "additionalProperties": true,
+              "title": "Params",
+              "type": "object"
+            }
+          },
+          "required": [
+            "name",
+            "scope_id",
+            "resource_id"
+          ],
+          "title": "Operation",
+          "type": "object"
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "action": "list_profiles",
+      "limit": 8,
+      "offset": 0
+    },
+    "result": {
+      "status": "ok",
+      "data": {
+        "items": [
+          {
+            "profile_id": "profile_u0_order0_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order1_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order2_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order2_line1",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order2_line2",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order3_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order3_line1",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u1_order0_line0",
+            "identity": "u1"
+          }
+        ],
+        "total": 31,
+        "offset": 0,
+        "limit": 8
+      }
+    }
+  },
+  {
+    "request": {
+      "action": "read_profile",
+      "profile_id": "profile_u0_order0_line0"
+    },
+    "result": {
+      "status": "ok",
+      "data": {
+        "profile_id": "profile_u0_order0_line0",
+        "identity": "u0",
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u0_order0_line0",
+          "issue": "missing_parts",
+          "line_id": "u0_order0_line0",
+          "order_id": "u0_order0",
+          "pickup_slot": "morning"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m0",
+            "resource_id": "u0_order0",
+            "params": {
+              "line_id": "u0_order0_line0",
+              "issue": "missing_parts"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u0_order0_line0": {
+              "id": "u0_order0_line0",
+              "order_id": "u0_order0",
+              "product_id": "m0_product0",
+              "quantity": 2,
+              "status": "unresolved",
+              "unit_price_cents": 800
+            }
+          },
+          "products": {
+            "m0_product0": {
+              "id": "m0_product0",
+              "merchant_id": "m0",
+              "name": "Item 0",
+              "opening_stock": 3,
+              "replacement_days": 7,
+              "return_days": 14,
+              "return_required": true,
+              "returnable": true,
+              "stock": 3
+            }
+          },
+          "evidence": {
+            "photo_u0_order0_line0": {
+              "holder_id": "u0",
+              "id": "photo_u0_order0_line0",
+              "issue": "missing_parts",
+              "line_id": "u0_order0_line0",
+              "order_id": "u0_order0",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u0_order0": {
+              "customer_id": "u0",
+              "delivered_at": "2025-12-01T12:00:00Z",
+              "id": "u0_order0",
+              "merchant_id": "m0",
+              "paid_cents": 1600,
+              "payment_channel": "original_u0",
+              "status": "delivered"
+            }
+          },
+          "merchants": {
+            "m0": {
+              "id": "m0",
+              "name": "Merchant 0",
+              "refund_approval_limit_cents": 5000
+            }
+          },
+          "users": {
+            "u0": {
+              "id": "u0",
+              "name": "Buyer 0"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u0_order0_line0",
+            "kind": "manager_review",
+            "line_id": "u0_order0_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "denied"
+          },
+          {
+            "id": "return_received_u0_order0_line0",
+            "kind": "return_received",
+            "line_id": "u0_order0_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "missing"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "action": "read_profile",
+      "profile_id": "profile_u0_order1_line0"
+    },
+    "result": {
+      "status": "ok",
+      "data": {
+        "profile_id": "profile_u0_order1_line0",
+        "identity": "u0",
+        "facts": {
+          "deadline": "2026-01-18T12:00:00+00:00",
+          "evidence_id": "photo_u0_order1_line0",
+          "issue": "wrong_item",
+          "line_id": "u0_order1_line0",
+          "order_id": "u0_order1",
+          "pickup_slot": "afternoon"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m0",
+            "resource_id": "u0_order1",
+            "params": {
+              "line_id": "u0_order1_line0",
+              "issue": "wrong_item"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u0_order1_line0": {
+              "id": "u0_order1_line0",
+              "order_id": "u0_order1",
+              "product_id": "m0_product0",
+              "quantity": 2,
+              "status": "unresolved",
+              "unit_price_cents": 800
+            }
+          },
+          "products": {
+            "m0_product0": {
+              "id": "m0_product0",
+              "merchant_id": "m0",
+              "name": "Item 0",
+              "opening_stock": 3,
+              "replacement_days": 7,
+              "return_days": 14,
+              "return_required": true,
+              "returnable": true,
+              "stock": 3
+            }
+          },
+          "evidence": {
+            "photo_u0_order1_line0": {
+              "holder_id": "u0",
+              "id": "photo_u0_order1_line0",
+              "issue": "wrong_item",
+              "line_id": "u0_order1_line0",
+              "order_id": "u0_order1",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u0_order1": {
+              "customer_id": "u0",
+              "delivered_at": "2026-01-12T12:00:00Z",
+              "id": "u0_order1",
+              "merchant_id": "m0",
+              "paid_cents": 1600,
+              "payment_channel": "original_u0",
+              "status": "delivered"
+            }
+          },
+          "merchants": {
+            "m0": {
+              "id": "m0",
+              "name": "Merchant 0",
+              "refund_approval_limit_cents": 5000
+            }
+          },
+          "users": {
+            "u0": {
+              "id": "u0",
+              "name": "Buyer 0"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u0_order1_line0",
+            "kind": "manager_review",
+            "line_id": "u0_order1_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u0_order1_line0",
+            "kind": "return_received",
+            "line_id": "u0_order1_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "missing"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "action": "read_profile",
+      "profile_id": "profile_u0_order2_line0"
+    },
+    "result": {
+      "status": "ok",
+      "data": {
+        "profile_id": "profile_u0_order2_line0",
+        "identity": "u0",
+        "facts": {
+          "deadline": "2026-01-16T12:00:00+00:00",
+          "evidence_id": "photo_u0_order2_line0",
+          "issue": "damaged",
+          "line_id": "u0_order2_line0",
+          "order_id": "u0_order2",
+          "pickup_slot": "afternoon"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u0_order2",
+            "params": {
+              "line_id": "u0_order2_line0",
+              "issue": "damaged"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u0_order2_line0": {
+              "id": "u0_order2_line0",
+              "order_id": "u0_order2",
+              "product_id": "m1_product2",
+              "quantity": 2,
+              "status": "unresolved",
+              "unit_price_cents": 6000
+            }
+          },
+          "products": {
+            "m1_product2": {
+              "id": "m1_product2",
+              "merchant_id": "m1",
+              "name": "Item 2",
+              "opening_stock": 4,
+              "replacement_days": 3,
+              "return_days": 30,
+              "return_required": false,
+              "returnable": true,
+              "stock": 4
+            }
+          },
+          "evidence": {
+            "photo_u0_order2_line0": {
+              "holder_id": "u0",
+              "id": "photo_u0_order2_line0",
+              "issue": "damaged",
+              "line_id": "u0_order2_line0",
+              "order_id": "u0_order2",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u0_order2": {
+              "customer_id": "u0",
+              "delivered_at": "2025-12-01T12:00:00Z",
+              "id": "u0_order2",
+              "merchant_id": "m1",
+              "paid_cents": 24800,
+              "payment_channel": "original_u0",
+              "status": "delivered"
+            }
+          },
+          "merchants": {
+            "m1": {
+              "id": "m1",
+              "name": "Merchant 1",
+              "refund_approval_limit_cents": 5000
+            }
+          },
+          "users": {
+            "u0": {
+              "id": "u0",
+              "name": "Buyer 0"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u0_order2_line0",
+            "kind": "manager_review",
+            "line_id": "u0_order2_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u0_order2_line0",
+            "kind": "return_received",
+            "line_id": "u0_order2_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "received"
+          }
+        ]
+      }
+    }
+  }
+]

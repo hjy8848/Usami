@@ -93,6 +93,43 @@ def test_v2_open_composition_certifies_a_native_refusal_without_fabricating_depe
     assert verify_task(record)
 
 
+def test_mixed_completion_and_refusal_search_uses_the_refusal_profiles_customer_context():
+    """A prior profile's missing facts must not mask the target policy refusal."""
+    from usami_benchmark.designer_exploration import compile_proposal
+
+    frozen=freeze(default_spec('aftersales',1))
+    proposal={
+        'profile_ids':['profile_u0_order0_line0','profile_u0_order1_line0'],
+        'customer_request':(
+            'Please assess each order on its own facts. The older missing-parts report may be outside its remedy '
+            'window, while the recent wrong-item return may still be started.'
+        ),
+        'goals':[{'collection':'lines','entity':'u0_order1_line0','field':'status',
+                  'accepted_values':['return_pending']}],
+        'refusal_operations':[{'name':'open_case','scope_id':'m0','resource_id':'u0_order0',
+                               'params':{'line_id':'u0_order0_line0','issue':'missing_parts'}}],
+        'information_requirements':[
+            {'profile_id':'profile_u0_order0_line0','fact_keys':['order_id','line_id','issue','evidence_id']},
+            {'profile_id':'profile_u0_order1_line0','fact_keys':['order_id','line_id','issue','evidence_id','deadline','pickup_slot']},
+        ],
+        'preference_requirements':[
+            {'profile_id':'profile_u0_order1_line0','preference':'resolution','accepted_values':['refund']},
+        ],
+        'confirmation_requirements':[],
+        'external_schedule':[],
+    }
+    _,record=compile_proposal(frozen,proposal,
+        ConstructionBudget(max_nodes=4096,max_depth=16,max_paths=1))
+
+    witness=record.dialogue_witnesses[0]
+    task=witness.certificate.task
+    assert task.refusals[0].code=='AFTERSALES_WINDOW_EXPIRED'
+    assert witness.certificate.evaluation['success']
+    assert witness.certificate.evaluation['refusal_subgoals']==[True]
+    assert witness.certificate.oracle['status']=='pass'
+    assert verify_task(record)
+
+
 def test_v1_refusal_dependency_semantics_remain_unchanged():
     frozen=freeze(default_spec('aftersales',1))
     selection=_expired_open_case_refusal_selection(frozen,protocol='open-dialogue-composition-v1')

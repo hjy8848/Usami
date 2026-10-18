@@ -1,0 +1,108 @@
+{
+  "agent_kind": "Codex subagent offline Designer; no provider API call",
+  "turns": [
+    {
+      "stage": "exploration",
+      "agent_tool_calls": [
+        {
+          "name": "inspect_frozen_world",
+          "arguments": {
+            "action": "read_rules"
+          }
+        },
+        {
+          "name": "inspect_frozen_world",
+          "arguments": {
+            "action": "list_profiles",
+            "limit": 8,
+            "offset": 0
+          }
+        }
+      ],
+      "result_file": "queries.json#0-1"
+    },
+    {
+      "stage": "exploration",
+      "agent_tool_calls": [
+        {
+          "name": "inspect_frozen_world",
+          "arguments": {
+            "action": "read_profile",
+            "profile_id": "profile_u0_order0_line0"
+          }
+        },
+        {
+          "name": "inspect_frozen_world",
+          "arguments": {
+            "action": "read_profile",
+            "profile_id": "profile_u0_order1_line0"
+          }
+        },
+        {
+          "name": "inspect_frozen_world",
+          "arguments": {
+            "action": "read_profile",
+            "profile_id": "profile_u0_order2_line0"
+          }
+        }
+      ],
+      "result_file": "queries.json#2-4"
+    },
+    {
+      "stage": "ready_to_submit",
+      "agent_tool_calls": [
+        {
+          "name": "ready_to_submit",
+          "arguments": {}
+        }
+      ]
+    },
+    {
+      "stage": "submission",
+      "agent_proposal": {
+        "profile_ids": [
+          "profile_u0_order1_line0"
+        ],
+        "customer_request": "I received the wrong item in a recent order and would prefer a refund. Please check whether I’m still eligible, then help arrange an afternoon pickup so the return is underway by Sunday. My hypothesis is that the return can be scheduled if the order qualifies, while the refund must wait until the item is physically received.",
+        "goals": [
+          {
+            "collection": "lines",
+            "entity": "u0_order1_line0",
+            "field": "status",
+            "accepted_values": [
+              "return_pending"
+            ]
+          }
+        ],
+        "information_requirements": [
+          {
+            "profile_id": "profile_u0_order1_line0",
+            "fact_keys": [
+              "order_id",
+              "line_id",
+              "issue",
+              "evidence_id",
+              "deadline",
+              "pickup_slot"
+            ]
+          }
+        ],
+        "preference_requirements": [
+          {
+            "profile_id": "profile_u0_order1_line0",
+            "preference": "resolution",
+            "accepted_values": [
+              "refund"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "stage": "independent_compilation",
+      "status": "certified",
+      "task_hash": "444ebe791ef7ddf336dd0df48975e8863c8f0a8bc7b944c27daeaf6c5531119e",
+      "certificate_hash": "83eae18c63a17753f1ad34cca412ab86bf38c07f22a86d8712520f30ea11c651"
+    }
+  ]
+}

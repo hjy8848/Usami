@@ -1,0 +1,38 @@
+{
+  "profile_ids": [
+    "profile_u0_order1_line0"
+  ],
+  "customer_request": "I received the wrong item in a recent order and would prefer a refund. Please check whether I’m still eligible, then help arrange an afternoon pickup so the return is underway by Sunday. My hypothesis is that the return can be scheduled if the order qualifies, while the refund must wait until the item is physically received.",
+  "goals": [
+    {
+      "collection": "lines",
+      "entity": "u0_order1_line0",
+      "field": "status",
+      "accepted_values": [
+        "return_pending"
+      ]
+    }
+  ],
+  "information_requirements": [
+    {
+      "profile_id": "profile_u0_order1_line0",
+      "fact_keys": [
+        "order_id",
+        "line_id",
+        "issue",
+        "evidence_id",
+        "deadline",
+        "pickup_slot"
+      ]
+    }
+  ],
+  "preference_requirements": [
+    {
+      "profile_id": "profile_u0_order1_line0",
+      "preference": "resolution",
+      "accepted_values": [
+        "refund"
+      ]
+    }
+  ]
+}

@@ -19,3 +19,10 @@ def test_readable_schema_codes_include_education_decisions_beyond_old_short_poli
     c=catalogue('education',RULES['education'])
     assert {'TEACHER_QUALIFICATION_REQUIRED','EXTENSION_TOO_SHORT','STALE_ENROLLMENT_QUOTE'}<=set(c['errors'])
     with pytest.raises(ValueError):catalogue('education','unregistered')
+
+
+def test_aftersales_public_rules_explain_case_creation_window_boundary():
+    c=catalogue('aftersales',RULES['aftersales'])
+    assert any('A case can be opened only' in rule and 'actual delivery date' in rule
+               and 'manager approval does not extend it' in rule for rule in c['business_rules'])
+    assert 'AFTERSALES_WINDOW_EXPIRED' in c['errors']

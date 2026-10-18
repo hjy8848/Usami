@@ -33,7 +33,8 @@ RULEBOOK={
  ],
  'aftersales':[
   'Authenticate the order buyer and merchant/order/line scope. Ask for the actual order, issue, evidence and relevant customer deadline before committing a remedy.',
-  'Delivery, product returnability, native return window, verified evidence, settlement state, merchant approval limit and replacement stock constrain refund, exchange and reship.',
+  'A case can be opened only for an eligible delivered line inside its product return window. Opening a case and offering or agreeing to a remedy all use the actual delivery date and the same window; manager approval does not extend it.',
+  'Product returnability, verified evidence, settlement state, merchant approval limit and replacement stock further constrain refund, exchange and reship.',
   'Return-required refunds need actual receipt; pickup, current remedy choice and irreversible settlement require the applicable exact customer confirmation. Use the original payment channel and remaining paid value.'
  ],
  'airline':[

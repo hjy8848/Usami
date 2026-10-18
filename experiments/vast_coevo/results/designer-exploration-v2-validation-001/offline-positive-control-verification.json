@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "is_offline_positive_control": true,
+  "autonomous_designer_task": false,
+  "actual_llm_calls": 0,
+  "actual_service_tasks": 0,
+  "proof_business_steps": 5,
+  "world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "task_hash": "4d725113edf6f35a902c2580ab4905a4ecf3288682081ede06cbad3d2026dd54"
+}

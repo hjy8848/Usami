@@ -1,0 +1,383 @@
+{
+  "scope": "Offline diagnosis only; not Reflection input or task repair",
+  "selected_goal_checks": [
+    {
+      "run": "aftersales-coevo-exploration-v2-002",
+      "exchange": 6,
+      "proposal_hash": "98eee5f5e50bb9a17829432c26317d30e96cb510d876ec8002a829cd1d4022c3",
+      "profile_ids": [
+        "profile_u0_order2_line0"
+      ],
+      "line_id": "u0_order2_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order2_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 30,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-002",
+      "exchange": 7,
+      "proposal_hash": "98eee5f5e50bb9a17829432c26317d30e96cb510d876ec8002a829cd1d4022c3",
+      "profile_ids": [
+        "profile_u0_order2_line0"
+      ],
+      "line_id": "u0_order2_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order2_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 30,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-002",
+      "exchange": 8,
+      "proposal_hash": "98eee5f5e50bb9a17829432c26317d30e96cb510d876ec8002a829cd1d4022c3",
+      "profile_ids": [
+        "profile_u0_order2_line0"
+      ],
+      "line_id": "u0_order2_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order2_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 30,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-002",
+      "exchange": 9,
+      "proposal_hash": "98eee5f5e50bb9a17829432c26317d30e96cb510d876ec8002a829cd1d4022c3",
+      "profile_ids": [
+        "profile_u0_order2_line0"
+      ],
+      "line_id": "u0_order2_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order2_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 30,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-003",
+      "exchange": 4,
+      "proposal_hash": "591a16fb0000a125e184dedb0a555a7f3e895ed4e1fb137c6d93722a28d6ab43",
+      "profile_ids": [
+        "profile_u0_order0_line0"
+      ],
+      "line_id": "u0_order0_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order0_line0",
+        "field": "status",
+        "accepted_values": [
+          "exchanged"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 14,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-003",
+      "exchange": 7,
+      "proposal_hash": "ac868c38158e9b7a0773135f09e501622a01614e7c2c11aa754f4d0b7d315396",
+      "profile_ids": [
+        "profile_u0_order1_line0"
+      ],
+      "line_id": "u0_order1_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order1_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2026-01-12T12:00:00+00:00",
+      "return_days": 14,
+      "initial_eligibility_code": null,
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-003",
+      "exchange": 8,
+      "proposal_hash": "591a16fb0000a125e184dedb0a555a7f3e895ed4e1fb137c6d93722a28d6ab43",
+      "profile_ids": [
+        "profile_u0_order0_line0"
+      ],
+      "line_id": "u0_order0_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order0_line0",
+        "field": "status",
+        "accepted_values": [
+          "exchanged"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 14,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-003",
+      "exchange": 9,
+      "proposal_hash": "591a16fb0000a125e184dedb0a555a7f3e895ed4e1fb137c6d93722a28d6ab43",
+      "profile_ids": [
+        "profile_u0_order0_line0"
+      ],
+      "line_id": "u0_order0_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order0_line0",
+        "field": "status",
+        "accepted_values": [
+          "exchanged"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 14,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-004",
+      "exchange": 4,
+      "proposal_hash": "3a3595fc579e91f16f8507ac6717792dad800d9ce6d1780c5411a26aed5adf53",
+      "profile_ids": [
+        "profile_u0_order0_line0"
+      ],
+      "line_id": "u0_order0_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order0_line0",
+        "field": "status",
+        "accepted_values": [
+          "exchanged"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 14,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-004",
+      "exchange": 7,
+      "proposal_hash": "1fa0327dcbee6166c955fa3f59ea3c67f6e12d22a62e00c4c4d5ca9ab3d0b586",
+      "profile_ids": [
+        "profile_u0_order2_line0"
+      ],
+      "line_id": "u0_order2_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order2_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 30,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-004",
+      "exchange": 8,
+      "proposal_hash": "1fa0327dcbee6166c955fa3f59ea3c67f6e12d22a62e00c4c4d5ca9ab3d0b586",
+      "profile_ids": [
+        "profile_u0_order2_line0"
+      ],
+      "line_id": "u0_order2_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order2_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 30,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-004",
+      "exchange": 9,
+      "proposal_hash": "1fa0327dcbee6166c955fa3f59ea3c67f6e12d22a62e00c4c4d5ca9ab3d0b586",
+      "profile_ids": [
+        "profile_u0_order2_line0"
+      ],
+      "line_id": "u0_order2_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order2_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 30,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-005",
+      "exchange": 5,
+      "proposal_hash": "f55bdf3c78f815710805de055b854c61dee7cca40553acb9372ce7e1e3604340",
+      "profile_ids": [
+        "profile_u0_order2_line0"
+      ],
+      "line_id": "u0_order2_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order2_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 30,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-005",
+      "exchange": 7,
+      "proposal_hash": "f55bdf3c78f815710805de055b854c61dee7cca40553acb9372ce7e1e3604340",
+      "profile_ids": [
+        "profile_u0_order2_line0"
+      ],
+      "line_id": "u0_order2_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order2_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 30,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-005",
+      "exchange": 8,
+      "proposal_hash": "bb666311403d1690aa6cfc82bebbb480b9217bbf87a1b8e9668d167573527905",
+      "profile_ids": [
+        "profile_u0_order1_line0"
+      ],
+      "line_id": "u0_order1_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order1_line0",
+        "field": "status",
+        "accepted_values": [
+          "refunded"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2026-01-12T12:00:00+00:00",
+      "return_days": 14,
+      "initial_eligibility_code": null,
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-005",
+      "exchange": 9,
+      "proposal_hash": "809e0f808b140801a8c68fc0d8ef96b0475aa68d927efbfc2b0bbdcb08db643c",
+      "profile_ids": [
+        "profile_u0_order0_line0"
+      ],
+      "line_id": "u0_order0_line0",
+      "goal": {
+        "collection": "lines",
+        "entity": "u0_order0_line0",
+        "field": "status",
+        "accepted_values": [
+          "exchanged"
+        ]
+      },
+      "clock": "2026-01-15T12:00:00+00:00",
+      "delivered_at": "2025-12-01T12:00:00+00:00",
+      "return_days": 14,
+      "initial_eligibility_code": "AFTERSALES_WINDOW_EXPIRED",
+      "diagnostic_only": true,
+      "not_sent_to_designer": true
+    }
+  ],
+  "selected_counts": {
+    "AFTERSALES_WINDOW_EXPIRED": 14,
+    "initially_eligible": 2
+  },
+  "all_world_initial_eligibility_counts": {
+    "AFTERSALES_WINDOW_EXPIRED": 19,
+    "initially_eligible": 11,
+    "ORDER_NOT_DELIVERED": 1
+  },
+  "eligibility_is_not_complete_task_reachability": true
+}

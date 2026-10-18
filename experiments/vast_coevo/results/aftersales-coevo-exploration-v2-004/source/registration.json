@@ -1,0 +1,12 @@
+{
+  "git_base": "181808938e564c1a90cfdea256d4e90d64a10578",
+  "python": "3.9.6",
+  "pydantic": "2.13.5",
+  "httpx": "0.28.1",
+  "files": {
+    "usami_benchmark/designer.py": "6953446fa89bd0e70b4d668dfc4cb4a1cc7dd32000cc2df924a803c359a0b1ed",
+    "usami_benchmark/designer_exploration.py": "0330ada69d963e7f5e588b8678c2b4015d7da51a70a04e604a3034a80998d9bc",
+    "experiments/vast_coevo/examples/aftersales_coevo_live.py": "10ce8be6dd72246b59d78ee0f8892f6b4ea413a8ef583e6b78f52e86ef53d0cd",
+    "experiments/vast_coevo/examples/aftersales_coevo_support.py": "c1ba3cc643d8f61f12f67da63bba72d3bb3db476c9efa32fe13a60e6df9a73ec"
+  }
+}

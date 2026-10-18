@@ -1,8 +1,8 @@
 """LLM-facing task Designer for frozen, native benchmark worlds.
 
-The Designer receives the complete frozen scenario and may compose task goals;
-it cannot edit the world or supply Reference outcomes. The existing task compiler
-then checks the proposal against native scope, rules, Engine, Oracle and Replay.
+Dialogue Designers query a compact, frozen catalogue and submit business goals.
+The explicit legacy protocol retains full-context single-shot behavior. Neither
+may edit the world or supply Reference outcomes; native certification is shared.
 """
 
 import importlib
@@ -51,8 +51,9 @@ class DesignerExecution(Model):
     def computed_hash(self):return digest(self.model_dump(mode='json',exclude={'execution_hash'}))
 
 
-class DialogueDesignerProposal(Model):
+class LegacyDialogueDesignerProposal(Model):
     """Dialogue-track proposal shape excludes tool-only and compiler-owned fields."""
+    model_config = {"title": "DialogueDesignerProposal"}
     kind:Literal['dialogue']
     family:Literal['open_composition_v1']
     profile_id:str=Field(min_length=1)
@@ -81,8 +82,15 @@ def _dialogue_contract(frozen,world):
     return profiles
 
 
-def designer_view(frozen):
-    """Deterministic, full-context read view for an LLM task Designer."""
+def designer_view(frozen, *, protocol=None):
+    """Compact by default for dialogue worlds; explicit v1 stays replayable."""
+    if protocol is None:
+        protocol = "frozen-world-designer-exploration-v2" if TRACKS[frozen.spec.domain] == "B" else "frozen-world-task-designer-v1"
+    if protocol == "frozen-world-designer-exploration-v2":
+        from .designer_exploration import exploration_view
+        return exploration_view(frozen)
+    if protocol != "frozen-world-task-designer-v1":
+        raise ValueError("unknown Designer protocol")
     frozen=verified_world(frozen)
     domain=frozen.spec.domain;world_module=importlib.import_module('usami_benchmark.tool_tasks')
     body={'protocol':'frozen-world-designer-view-v1','frozen_registration_hash':frozen.registration_hash,
@@ -109,7 +117,7 @@ def designer_view(frozen):
 
 def _designer_tools(frozen):
     if TRACKS[frozen.spec.domain]=='B':
-        schema=DialogueDesignerProposal.model_json_schema()
+        schema=LegacyDialogueDesignerProposal.model_json_schema()
         world=importlib.import_module('usami_'+frozen.spec.domain+'.adapter').World.model_validate(frozen.world)
         schema['properties']['profile_id']['enum']=sorted(world.profiles)
     else:
@@ -126,7 +134,7 @@ def _designer_messages(frozen,prompt_context=None):
     if rendered:
         policy+='\n\nApplied declarative Designer Skill from snapshot '+str(context.get('skill_snapshot_hash','unknown'))+':\n'+rendered
     messages=[{'role':'system','content':policy},
-        {'role':'user','content':json.dumps(designer_view(frozen),ensure_ascii=False,sort_keys=True,separators=(',',':'))}]
+        {'role':'user','content':json.dumps(designer_view(frozen,protocol='frozen-world-task-designer-v1'),ensure_ascii=False,sort_keys=True,separators=(',',':'))}]
     if context:
         visible={key:value for key,value in context.items() if key!='skill_rendered'}
         messages.append({'role':'user','content':'Verified interaction evidence and current discovery hypothesis:\n'+json.dumps(visible,ensure_ascii=False,sort_keys=True,separators=(',',':'))})
@@ -139,17 +147,26 @@ def _selection_from_response(response,frozen=None):
         raise ValueError('Designer must return exactly one submit_frozen_world_task call')
     raw=strict_json(actions[0]['function']['arguments'])
     if frozen is not None and TRACKS[frozen.spec.domain]=='B':
-        proposal=DialogueDesignerProposal.model_validate(raw)
+        proposal=LegacyDialogueDesignerProposal.model_validate(raw)
         return TaskSelection.model_validate(proposal.model_dump(mode='json'))
     return TaskSelection.model_validate(raw)
 
 
-def design_and_compile(frozen,client,construction_budget=None,prompt_context=None):
-    """Make one model call, compile its exact proposal, and preserve the record.
+def design_and_compile(frozen,client,construction_budget=None,prompt_context=None, *,
+                       protocol=None, designer_budget=None, journal_path=None):
+    """Explore and correct dialogue proposals within explicit budgets.
 
-    This function intentionally performs no retries. It does not accept a model
-    authored answer or proof; the separate native compiler must certify it.
+    Tool domains and explicit v1 calls retain their single-shot protocol.
+    No protocol retries transport failures or accepts model-authored proofs.
     """
+    if protocol is None:
+        protocol = "frozen-world-designer-exploration-v2" if TRACKS[frozen.spec.domain] == "B" else "frozen-world-task-designer-v1"
+    if protocol == "frozen-world-designer-exploration-v2":
+        from .designer_exploration import design
+        return design(frozen, client, construction_budget, prompt_context,
+                      budget=designer_budget, journal_path=journal_path)
+    if protocol != "frozen-world-task-designer-v1":
+        raise ValueError("unknown Designer protocol")
     frozen=verified_world(frozen)
     settings=client.settings.model_copy(deep=True)
     prompt_context=dict(prompt_context or {})
@@ -166,6 +183,10 @@ def design_and_compile(frozen,client,construction_budget=None,prompt_context=Non
 
 
 def verify_designer_execution(record):
+    protocol = record.get("protocol") if isinstance(record,dict) else record.protocol
+    if protocol == "frozen-world-designer-exploration-v2":
+        from .designer_exploration import verify_execution
+        return verify_execution(record)
     row=DesignerExecution.model_validate(record.model_dump(mode='json') if isinstance(record,DesignerExecution) else record)
     if row.execution_hash!=row.computed_hash():raise ValueError('Designer execution integrity differs')
     if row.frozen_hash!=row.task.frozen.registration_hash or row.selection!=row.task.selection:
@@ -177,3 +198,8 @@ def verify_designer_execution(record):
         raise ValueError('compiled task selection differs from the raw Designer model response')
     if verify_task(row.task) is not True:raise ValueError('native task proof failed to replay')
     return {'verified':True,'model_calls':1,'task_hash':row.task.task_hash,'task_replay':True}
+
+
+# The current high-level proposal excludes compiler-owned frames. Historical
+# v1 parsing above explicitly retains its original wire model and prompt.
+from .designer_exploration import DialogueDesignerProposal

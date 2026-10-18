@@ -69,7 +69,7 @@ def test_live_initial_snapshots_are_distinct_from_the_offline_smoke_provenance()
 def test_live_execution_returns_saved_replayable_artifacts(tmp_path):
     from pathlib import Path
     from experiments.vast_coevo.examples.aftersales_coevo_live import (
-        _execute_task, _initial_world,
+        _execute_task, _initial_world, _summary,
     )
     from experiments.vast_coevo.examples.aftersales_coevo_smoke import (
         _single_task, _task_customer_client, ServiceScriptClient,
@@ -89,3 +89,5 @@ def test_live_execution_returns_saved_replayable_artifacts(tmp_path):
         assert Path(result[key]).is_file()
     status = json.loads((tmp_path / "tasks/task-1/status.json").read_text())
     assert status["status"] == "COMPLETED"
+    # The existing Designer Reflector resolves citations against feedback['id'].
+    assert _summary(result)["id"] == "task-1"

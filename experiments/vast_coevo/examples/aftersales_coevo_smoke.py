@@ -798,7 +798,8 @@ def run_smoke(output_dir, *, resume=False, resume_from=None):
         task2_client = TaskDesignerClient(task2_selection, expected_skill_hash=d0.snapshot_hash,
                                           expected_version=1, expected_evidence_ids=("task-1",))
         task2_designer = design_and_compile(frozen, task2_client,
-            ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1), prompt_context=task2_context)
+            ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1), prompt_context=task2_context,
+            protocol="frozen-world-task-designer-v1")
         verify_designer_execution(task2_designer)
         _write(root, "designer/task-2-execution.json", task2_designer)
         if not task2_client.context_verified or len(task2_designer.task.dialogue_witnesses[0].certificate.task.composition.profile_ids) != 2:
@@ -836,7 +837,8 @@ def run_smoke(output_dir, *, resume=False, resume_from=None):
         task3_client = TaskDesignerClient(task3_selection, expected_skill_hash=d1.snapshot_hash,
             expected_version=2, expected_evidence_ids=("task-1", "task-2"))
         task3_designer = design_and_compile(frozen, task3_client,
-            ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1), prompt_context=task3_context)
+            ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1), prompt_context=task3_context,
+            protocol="frozen-world-task-designer-v1")
         verify_designer_execution(task3_designer)
         if not task3_client.context_verified:
             raise AssertionError("Task 3 Designer Skill/history context was not consumed")

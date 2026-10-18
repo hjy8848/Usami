@@ -1,0 +1,178 @@
+{
+  "status": "BLOCKED",
+  "implementation": "phase-one interfaces implemented; autonomous legal task production not demonstrated",
+  "scope": "First round only; no created-object Goal predicates",
+  "protocol": "frozen-world-designer-exploration-v2",
+  "max_actual_calls_across_registrations": 65,
+  "actual_calls": 42,
+  "received_proposals": 16,
+  "submission_attempts": 17,
+  "certified_designer_tasks": 0,
+  "actual_customer_calls": 0,
+  "actual_service_calls": 0,
+  "actual_reflection_calls": 0,
+  "actual_service_tasks": 0,
+  "planned_service_tasks_max": 3,
+  "actual_designer_skill_updates": 0,
+  "actual_service_skill_updates": 0,
+  "query_tool_calls": 34,
+  "successful_query_tool_calls": 34,
+  "input_tokens_known": 223164,
+  "output_tokens_known": 9682,
+  "total_tokens_known": 232846,
+  "usage_complete": false,
+  "attempts": [
+    {
+      "run": "aftersales-coevo-exploration-v2-001",
+      "actual_calls": 6,
+      "known_tokens": 23260,
+      "usage_complete": false,
+      "proposal_attempts": 1,
+      "received_proposals": 0,
+      "status": "BLOCKED",
+      "failure": {
+        "message": "Designer transport failed; no retry performed: LLM endpoint returned HTTP 400; no retry performed",
+        "type": "DesignerFailure"
+      },
+      "designer_model_options": {
+        "max_tokens": 8192,
+        "temperature": 0
+      },
+      "designer_budget": {
+        "max_exploration_calls": 5,
+        "max_queries": 20,
+        "max_revisions": 3
+      },
+      "initial_prompt_tokens": 2114,
+      "initial_response_tokens": 126
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-002",
+      "actual_calls": 9,
+      "known_tokens": 43789,
+      "usage_complete": true,
+      "proposal_attempts": 4,
+      "received_proposals": 4,
+      "status": "BLOCKED",
+      "failure": {
+        "message": "Designer submission budget exhausted: bounded Reference search did not prove the open composition",
+        "type": "DesignerFailure"
+      },
+      "designer_model_options": {
+        "enable_thinking": false,
+        "max_tokens": 8192,
+        "temperature": 0
+      },
+      "designer_budget": {
+        "max_exploration_calls": 5,
+        "max_queries": 20,
+        "max_revisions": 3
+      },
+      "initial_prompt_tokens": 2116,
+      "initial_response_tokens": 67
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-003",
+      "actual_calls": 9,
+      "known_tokens": 44853,
+      "usage_complete": true,
+      "proposal_attempts": 4,
+      "received_proposals": 4,
+      "status": "BLOCKED",
+      "failure": {
+        "message": "Designer submission budget exhausted: bounded Reference search did not prove the open composition",
+        "type": "DesignerFailure"
+      },
+      "designer_model_options": {
+        "enable_thinking": false,
+        "max_tokens": 8192,
+        "temperature": 0
+      },
+      "designer_budget": {
+        "actionable_feedback": true,
+        "initial_exploration_calls": 3,
+        "max_exploration_calls": 5,
+        "max_queries": 20,
+        "max_revisions": 3
+      },
+      "initial_prompt_tokens": 2177,
+      "initial_response_tokens": 67
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-004",
+      "actual_calls": 9,
+      "known_tokens": 49259,
+      "usage_complete": true,
+      "proposal_attempts": 4,
+      "received_proposals": 4,
+      "status": "BLOCKED",
+      "failure": {
+        "message": "Designer submission budget exhausted: bounded Reference search did not prove the open composition",
+        "type": "DesignerFailure"
+      },
+      "designer_model_options": {
+        "enable_thinking": false,
+        "max_tokens": 8192,
+        "temperature": 0
+      },
+      "designer_budget": {
+        "actionable_feedback": true,
+        "include_related_objects": true,
+        "initial_exploration_calls": 3,
+        "max_exploration_calls": 5,
+        "max_queries": 20,
+        "max_revisions": 3
+      },
+      "initial_prompt_tokens": 2209,
+      "initial_response_tokens": 57
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-005",
+      "actual_calls": 9,
+      "known_tokens": 71685,
+      "usage_complete": true,
+      "proposal_attempts": 4,
+      "received_proposals": 4,
+      "status": "BLOCKED",
+      "failure": {
+        "message": "Designer submission budget exhausted: bounded Reference search did not prove the open composition",
+        "type": "DesignerFailure"
+      },
+      "designer_model_options": {
+        "enable_thinking": true,
+        "max_tokens": 8192,
+        "temperature": 0
+      },
+      "designer_budget": {
+        "actionable_feedback": true,
+        "include_related_objects": true,
+        "initial_exploration_calls": 4,
+        "max_exploration_calls": 5,
+        "max_queries": 20,
+        "max_revisions": 3
+      },
+      "initial_prompt_tokens": 2207,
+      "initial_response_tokens": 115
+    }
+  ],
+  "legal_proposal_rate": 0.0,
+  "distinct_certified_challenge_signatures": 0,
+  "certified_reference_difficulty": null,
+  "execution_rate_among_certified_tasks": null,
+  "offline_designer_replays_verified": 5,
+  "offline_positive_control": {
+    "verified": true,
+    "is_offline_positive_control": true,
+    "autonomous_designer_task": false,
+    "actual_llm_calls": 0,
+    "actual_service_tasks": 0,
+    "proof_business_steps": 5,
+    "world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+    "task_hash": "4d725113edf6f35a902c2580ab4905a4ecf3288682081ede06cbad3d2026dd54"
+  },
+  "initial_input_comparison": {
+    "legacy_prompt_tokens": 33826,
+    "latest_prompt_tokens": 2207,
+    "scope": "initial request only; not total-cost or task-quality noninferiority evidence"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "all_failed_designer_runs_replayed": true,
+  "actual_online_calls_during_replay": 0,
+  "runs": [
+    {
+      "run": "aftersales-coevo-exploration-v2-001",
+      "verified": true,
+      "failure_reproduced": true,
+      "model_calls": 6,
+      "actual_online_calls": 0
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-002",
+      "verified": true,
+      "failure_reproduced": true,
+      "model_calls": 9,
+      "actual_online_calls": 0
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-003",
+      "verified": true,
+      "failure_reproduced": true,
+      "model_calls": 9,
+      "actual_online_calls": 0
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-004",
+      "verified": true,
+      "failure_reproduced": true,
+      "model_calls": 9,
+      "actual_online_calls": 0
+    },
+    {
+      "run": "aftersales-coevo-exploration-v2-005",
+      "verified": true,
+      "failure_reproduced": true,
+      "model_calls": 9,
+      "actual_online_calls": 0
+    }
+  ],
+  "note": "No Service Episodes exist to replay; offline positive control is separately labelled."
+}

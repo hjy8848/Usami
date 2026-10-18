@@ -1,0 +1,7 @@
+{
+  "status": "unproven",
+  "actual_llm_calls": 0,
+  "actual_service_tasks": 0,
+  "counts_as_designer_task": false,
+  "reason": "An initial control omitted an explicit refund preference while the frozen initial preference was exchange; native open search did not prove that declaration. The separate successful control explicitly declares the existing allowed refund preference. No world or business rule was changed."
+}

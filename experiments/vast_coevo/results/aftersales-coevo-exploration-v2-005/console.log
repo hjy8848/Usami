@@ -1,0 +1,129 @@
+{
+  "protocol": "aftersales-real-model-coevolution-v2",
+  "status": "BLOCKED",
+  "seed": 1,
+  "service_tasks_max": 3,
+  "service_tasks_completed": 0,
+  "max_total_model_calls": 32,
+  "per_task_budget": {
+    "customer_turns": 4,
+    "customer_model_calls": 4,
+    "service_model_calls": 8,
+    "service_tool_calls": 12,
+    "format_recoveries": 0
+  },
+  "construction_budget": {
+    "max_nodes": 4096,
+    "max_depth": 16,
+    "max_paths": 1
+  },
+  "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "frozen_registration_hash": "200f77794e7f9c5ee739ec946462621f8167224f5e98de9907b024868b7db0fd",
+  "partition": "train",
+  "generator_source_hash": "d99f2226ce465aaed93ebb13a30b3e5a9c627979a02559a91baf1c9ddf0b569a",
+  "rules_source_hash": "69900ba26dac2f8a07637f1d6155b99a40d23d73d9c03070d98f757244e08ad0",
+  "initial_designer_snapshot_hash": "96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb",
+  "initial_service_snapshot_hash": "52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd",
+  "fixed_customer_snapshot_hash": "e39daeec262ea94daa6e7836b5c32ca61d4c88b30a5d09a074e2c5c6e469d98f",
+  "models": {
+    "designer": {
+      "schema_version": 1,
+      "model": "dashscope/qwen3.7-plus",
+      "base_url": "http://10.130.138.46:8010/v1",
+      "options": {
+        "max_tokens": 8192,
+        "temperature": 0,
+        "enable_thinking": true
+      },
+      "timeout_seconds": 120.0,
+      "trust_env": false
+    },
+    "customer": {
+      "schema_version": 1,
+      "model": "dashscope/qwen3.7-plus",
+      "base_url": "http://10.130.138.46:8010/v1",
+      "options": {
+        "max_tokens": 4096,
+        "temperature": 0
+      },
+      "timeout_seconds": 120.0,
+      "trust_env": false
+    },
+    "service": {
+      "schema_version": 1,
+      "model": "dashscope/qwen3.7-plus",
+      "base_url": "http://10.130.138.46:8010/v1",
+      "options": {
+        "max_tokens": 4096,
+        "temperature": 0
+      },
+      "timeout_seconds": 120.0,
+      "trust_env": false
+    },
+    "reflector": {
+      "schema_version": 1,
+      "model": "dashscope/qwen3.7-plus",
+      "base_url": "http://10.130.138.46:8010/v1",
+      "options": {
+        "max_tokens": 4096,
+        "temperature": 0,
+        "enable_thinking": false
+      },
+      "timeout_seconds": 120.0,
+      "trust_env": false
+    }
+  },
+  "dynamic_gate": "disabled_for_this_three-task_live_smoke_only",
+  "task_choices": "model-generated; no fixed family, profile, operation, or expected outcome",
+  "dialogue_responses": "live Customer and Service models; no scripted operation plan",
+  "reflection": "one live call per role; no retries; NOOP/rejected patch preserves parent",
+  "designer_protocol": "frozen-world-designer-exploration-v2",
+  "designer_budget": {
+    "max_exploration_calls": 5,
+    "max_revisions": 3,
+    "max_queries": 20,
+    "initial_exploration_calls": 4,
+    "actionable_feedback": true,
+    "include_related_objects": true
+  },
+  "skill_update_claim_boundary": "Static acceptance is not a performance-improvement claim.",
+  "failure": {
+    "type": "DesignerFailure",
+    "message": "Designer submission budget exhausted: bounded Reference search did not prove the open composition"
+  },
+  "task_outcomes": [],
+  "model_usage": {
+    "input_tokens": 66908,
+    "output_tokens": 4777,
+    "total_tokens": 71685,
+    "usage_complete": true,
+    "by_role": {
+      "designer": {
+        "calls": 9,
+        "input_tokens": 66908,
+        "output_tokens": 4777,
+        "total_tokens": 71685,
+        "usage_complete": true
+      }
+    }
+  },
+  "model_calls": 9,
+  "denied_over_budget_requests": 0,
+  "denied_model_call_events": [],
+  "designer_diagnostics": {
+    "submission_attempts": 4,
+    "certified_tasks": 0,
+    "valid_proposal_rate": 0.0,
+    "unique_objective_signatures": 0,
+    "reference_path_business_steps": [],
+    "service_tasks_executed": 0,
+    "service_sessions_with_model_calls": 0,
+    "termination_statuses": [],
+    "normally_finished_interactions": 0,
+    "certified_task_execution_rate": null,
+    "normal_interaction_finish_rate": null,
+    "final_goal_reached": 0,
+    "strict_task_successes": 0,
+    "interpretation": "Proposal validity, objective diversity, reference path length and actual execution are separate diagnostics; none implies learning benefit."
+  }
+}

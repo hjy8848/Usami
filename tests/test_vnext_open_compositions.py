@@ -91,7 +91,7 @@ def test_legacy_task_selection_serialization_omits_new_composition_field():
 def test_designer_view_is_frozen_and_includes_native_contract(domain):
     frozen=freeze(default_spec(domain,0))
     before=frozen.world_hash
-    view=designer_view(frozen)
+    view=designer_view(frozen,protocol='frozen-world-task-designer-v1')
     assert view['world_hash']==before
     assert view['world']==frozen.world
     if domain in {'saas','cloudops','fulfillment','stayops'}:
@@ -116,7 +116,7 @@ def test_designer_skill_and_verified_history_are_in_the_replayed_request():
         'hypothesis':'Test whether a second existing order can be composed safely.',
         'source_evidence':[{'episode_id':'task-1','process_errors':[{'classification':'false_rejection'}]}]}
     execution=design_and_compile(frozen,client,ConstructionBudget(max_nodes=512,max_depth=16,max_paths=1),
-                                 prompt_context=context)
+                                 prompt_context=context,protocol='frozen-world-task-designer-v1')
     system=execution.request['messages'][0]['content']
     evidence='\n'.join(row['content'] for row in execution.request['messages'][1:] if row['role']=='user')
     assert skill in system and context['skill_snapshot_hash'] in system

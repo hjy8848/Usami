@@ -1,0 +1,29 @@
+{
+  "profile_ids": [
+    "profile_u1_order0_line1"
+  ],
+  "customer_request": "I need help with an item from one of my purchases.",
+  "goals": [
+    {
+      "collection": "lines",
+      "entity": "u1_order0_line1",
+      "field": "status",
+      "accepted_values": [
+        "refunded"
+      ]
+    }
+  ],
+  "external_schedule": [
+    "manager_review_u1_order0_line1",
+    "return_received_u1_order0_line1"
+  ],
+  "preference_requirements": [
+    {
+      "profile_id": "profile_u1_order0_line1",
+      "preference": "resolution",
+      "accepted_values": [
+        "refund"
+      ]
+    }
+  ]
+}

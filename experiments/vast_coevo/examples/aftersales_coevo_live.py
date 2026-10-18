@@ -21,6 +21,7 @@ from usami.service.models import ModelSettings, ServiceError
 from usami_aftersales import adapter as aftersales
 from usami_aftersales import tasks as aftersales_tasks
 from usami_benchmark.designer import design_and_compile, verify_designer_execution
+from usami_benchmark.designer_exploration import PROTOCOL as DESIGNER_V2, DesignerBudget
 from usami_benchmark.registry import default_spec
 from usami_benchmark.tasks import ConstructionBudget, verify_task
 from usami_benchmark.worlds import FrozenWorld, freeze
@@ -43,9 +44,9 @@ from experiments.vast_coevo.examples.aftersales_coevo_support import (
 )
 
 
-PROTOCOL = "aftersales-real-model-coevolution-v1"
+PROTOCOL = "aftersales-real-model-coevolution-v2"
 MAX_SERVICE_TASKS = 3
-DEFAULT_MAX_MODEL_CALLS = 41  # 3 task proposals + 2 reflections + 3*(4 Customer + 8 Service)
+DEFAULT_MAX_MODEL_CALLS = 65  # 3*(5 exploration + 4 submissions + 4 Customer + 8 Service) + 2 reflections
 
 
 def _role_settings(role: str) -> ModelSettings:
@@ -154,7 +155,7 @@ def _save(root: Path, relative: str, value: Any, *, immutable=True):
     return path
 
 
-def _designer_context(snapshot: LibrarySnapshot, rows: list[dict], stage: str):
+def _designer_context(snapshot: LibrarySnapshot, rows: list[dict], stage: str, *, exploration=False):
     # No task family, profile, objective, expected error, or operation is fixed
     # here. The model receives registered facts and prior verified outcomes.
     rendered = SkillRenderer().render(snapshot.skills)
@@ -167,7 +168,7 @@ def _designer_context(snapshot: LibrarySnapshot, rows: list[dict], stage: str):
                  if "enum" in value}
         if enums:
             field_enums[collection] = enums
-    return {
+    result = {
         "skill_snapshot_hash": snapshot.snapshot_hash,
         "skill_rendered": rendered,
         "stage": stage,
@@ -182,12 +183,17 @@ def _designer_context(snapshot: LibrarySnapshot, rows: list[dict], stage: str):
             "events": "external_schedule may contain only registered event IDs for the selected business objects. The Designer cannot create events or provide a reference witness.",
         },
     }
+    if exploration:
+        result["proposal_contract"]["frames"] = "Do not submit frames or selector fields; the compiler derives the union of native scopes for your selected profiles."
+        result["instruction"] += " Choose optional information requirements deliberately, not by copying every fact key. If your goal depends on registered external events, select their actual IDs in external_schedule. A precise refusal challenge is also legitimate when a business boundary prevents fulfillment."
+    return result
 
 
 def _summary(row: dict) -> dict:
     execution = row["execution"]
     trace = execution.trace
     return {
+        "id": f"task-{row['task_number']}",
         "episode_id": f"task-{row['task_number']}",
         "task_hash": row["task_record"].task_hash,
         "selection": row["task_record"].selection.model_dump(mode="json"),
@@ -333,8 +339,31 @@ def _forbidden_ids(world):
     return tuple(sorted(ids))
 
 
+def _designer_metrics(root, task_rows):
+    journals = [json.loads(path.read_text()) for path in sorted((root / "designer").glob("task-*-journal.json"))]
+    records = [json.loads(path.read_text()) for path in sorted((root / "designer").glob("task-*-execution.json"))]
+    attempts = sum(row.get("proposal_attempts", 0) for row in journals)
+    metrics = [row["metrics"] for row in records if "metrics" in row]
+    certified = sum(row.get("status") == "CERTIFIED" for row in journals)
+    statuses = [row["execution"].status for row in task_rows]
+    finished = statuses.count("customer_finished")
+    return {"submission_attempts": attempts, "certified_tasks": certified,
+            "valid_proposal_rate": certified / attempts if attempts else None,
+            "unique_objective_signatures": len({row["objective_signature"] for row in metrics}),
+            "reference_path_business_steps": [row["reference_path_business_steps"] for row in metrics],
+            "service_tasks_executed": len(task_rows),
+            "service_sessions_with_model_calls": sum(row["execution"].cost["service_calls"] > 0 for row in task_rows),
+            "termination_statuses": statuses, "normally_finished_interactions": finished,
+            "certified_task_execution_rate": len(task_rows) / certified if certified else None,
+            "normal_interaction_finish_rate": finished / certified if certified else None,
+            "final_goal_reached": sum(row["final_goal_reached"] for row in task_rows),
+            "strict_task_successes": sum(bool(row["score"].get("success")) for row in task_rows),
+            "interpretation": "Proposal validity, objective diversity, reference path length and actual execution are separate diagnostics; none implies learning benefit."}
+
+
 def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MODEL_CALLS,
-             turns: int = 4, construction_nodes: int = 4096, construction_depth: int = 16):
+             turns: int = 4, construction_nodes: int = 4096, construction_depth: int = 16,
+             designer_protocol: str = DESIGNER_V2):
     root = Path(output_dir).resolve()
     if root.exists():
         raise FileExistsError("Live runs are append-only; select a new output directory")
@@ -358,6 +387,7 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
         if role != "customer":
             LibraryStore(root / "libraries" / role).save(snapshot)
     _save(root, "world/frozen_world.json", frozen)
+    designer_budget = DesignerBudget(initial_exploration_calls=4, actionable_feedback=True, include_related_objects=True)
     manifest = {
         "protocol": PROTOCOL, "status": "RUNNING", "seed": seed,
         "service_tasks_max": MAX_SERVICE_TASKS, "service_tasks_completed": 0,
@@ -376,6 +406,8 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
         "task_choices": "model-generated; no fixed family, profile, operation, or expected outcome",
         "dialogue_responses": "live Customer and Service models; no scripted operation plan",
         "reflection": "one live call per role; no retries; NOOP/rejected patch preserves parent",
+        "designer_protocol": designer_protocol,
+        "designer_budget": designer_budget.model_dump(mode="json"),
         "skill_update_claim_boundary": "Static acceptance is not a performance-improvement claim.",
     }
     _save(root, "manifest.json", manifest, immutable=False)
@@ -386,10 +418,11 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
     try:
         for number in (1, 2):
             previous = [_summary(row) for row in task_rows]
-            context = _designer_context(d_selected, previous, f"task-{number}")
+            context = _designer_context(d_selected, previous, f"task-{number}", exploration=designer_protocol == DESIGNER_V2)
             designer_result = design_and_compile(frozen, clients["designer"],
                 ConstructionBudget(max_nodes=construction_nodes, max_depth=construction_depth, max_paths=1),
-                prompt_context=context)
+                prompt_context=context, protocol=designer_protocol, designer_budget=designer_budget,
+                journal_path=root / f"designer/task-{number}-journal.json")
             verify_designer_execution(designer_result)
             _save(root, f"designer/task-{number}-execution.json", designer_result)
             _save(root, f"designer/task-{number}-selection.json", {
@@ -452,11 +485,12 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
         manifest["reflection_selections"] = reflection_results
         _save(root, "manifest.json", manifest, immutable=False)
 
-        context = _designer_context(d_selected, [_summary(row) for row in task_rows], "task-3-after-reflection")
+        context = _designer_context(d_selected, [_summary(row) for row in task_rows], "task-3-after-reflection", exploration=designer_protocol == DESIGNER_V2)
         context["reflection_selections"] = reflection_results
         designer_result = design_and_compile(frozen, clients["designer"],
             ConstructionBudget(max_nodes=construction_nodes, max_depth=construction_depth, max_paths=1),
-            prompt_context=context)
+            prompt_context=context, protocol=designer_protocol, designer_budget=designer_budget,
+            journal_path=root / "designer/task-3-journal.json")
         verify_designer_execution(designer_result)
         _save(root, "designer/task-3-execution.json", designer_result)
         _save(root, "designer/task-3-selection.json", {
@@ -531,6 +565,7 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
     finally:
         for client in raw_clients.values():
             client.close()
+        manifest["designer_diagnostics"] = _designer_metrics(root, task_rows)
         _save(root, "manifest.json", manifest, immutable=False)
     return manifest
 
@@ -543,12 +578,13 @@ def main(argv=None):
     parser.add_argument("--customer-turns", type=int, default=4)
     parser.add_argument("--construction-nodes", type=int, default=4096)
     parser.add_argument("--construction-depth", type=int, default=16)
+    parser.add_argument("--designer-protocol", choices=[DESIGNER_V2, "frozen-world-task-designer-v1"], default=DESIGNER_V2)
     args = parser.parse_args(argv)
     output = args.output or Path("experiments/vast_coevo/results") / (
         "aftersales-coevo-live-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"))
     result = run_live(output, seed=args.seed, max_calls=args.max_model_calls,
         turns=args.customer_turns, construction_nodes=args.construction_nodes,
-        construction_depth=args.construction_depth)
+        construction_depth=args.construction_depth, designer_protocol=args.designer_protocol)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result.get("status") == "EXECUTED" else 2
 

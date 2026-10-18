@@ -13,9 +13,11 @@ import subprocess
 from pathlib import Path
 
 from usami.service.client import OpenAICompatibleClient, key_from_env, settings_from_env
+from usami.service.models import strict_json
 from usami_benchmark.designer import design_and_compile, verify_designer_execution
 from usami_benchmark.designer_exploration import (
-    PROTOCOL, DesignerBudget, DesignerFailure, compile_proposal, inspect_world, verify_failed_journal,
+    PROTOCOL, DialogueDesignerProposal, DesignerBudget, DesignerFailure,
+    compile_proposal, inspect_world, verify_failed_journal,
 )
 from usami_benchmark.tasks import ConstructionBudget, verify_task
 from vast_coevo.schema import atomic_json
@@ -24,6 +26,65 @@ from experiments.vast_coevo.examples.aftersales_coevo_live import (
 )
 from experiments.vast_coevo.examples.aftersales_coevo_support import initial_skill_libraries
 
+MAX_LIVE_MODEL_CALLS = 5
+
+
+def _proposal_validation(journal):
+    """Classify each recorded submission without conflating schema and proof."""
+    rows = []
+    for row in journal.get("exchanges", []):
+        if row.get("stage") != "submission":
+            continue
+        response = row.get("response", {})
+        choices = response.get("choices", []) if isinstance(response, dict) else []
+        message = choices[0].get("message", {}) if choices else {}
+        calls = message.get("tool_calls") or []
+        result = {"attempt": len(rows) + 1, "proposal_schema_valid": None,
+                  "native_constraints_valid": None, "reference_certified": None,
+                  "stage": "submission_protocol", "detail": None}
+        if "transport_error" in row:
+            error = row["transport_error"]
+            result.update(stage="provider_error", detail={"type": error.get("type"),
+                "message": error.get("message")})
+            rows.append(result)
+            continue
+        if len(calls) != 1 or calls[0].get("function", {}).get("name") != "submit_frozen_world_task":
+            result["detail"] = "submission did not contain exactly one task proposal tool call"
+            rows.append(result)
+            continue
+        try:
+            raw = strict_json(calls[0]["function"]["arguments"])
+            DialogueDesignerProposal.model_validate(raw)
+        except (KeyError, TypeError, ValueError) as exc:
+            result.update(proposal_schema_valid=False, stage="proposal_schema", detail=str(exc))
+            rows.append(result)
+            continue
+
+        result["proposal_schema_valid"] = True
+        tool_results = row.get("tool_results", [])
+        if any(item.get("status") == "certified" for item in tool_results):
+            result.update(native_constraints_valid=True, reference_certified=True,
+                          stage="reference_certified")
+        else:
+            feedback = row.get("feedback", {})
+            detail = feedback.get("detail", "")
+            if feedback.get("category") == "search_unproven" or "bounded Reference search did not prove" in detail:
+                result.update(native_constraints_valid=True, reference_certified=False,
+                              stage="reference_search", detail=detail)
+            else:
+                result.update(native_constraints_valid=False, reference_certified=None,
+                              stage="native_constraints", detail=detail)
+        rows.append(result)
+    return {
+        "attempts": len(rows),
+        "proposal_tool_submissions": sum(row["proposal_schema_valid"] is not None for row in rows),
+        "schema_valid": sum(row["proposal_schema_valid"] is True for row in rows),
+        "native_constraints_valid": sum(row["native_constraints_valid"] is True for row in rows),
+        "reference_certified": sum(row["reference_certified"] is True for row in rows),
+        "provider_errors": sum(row["stage"] == "provider_error" for row in rows),
+        "stages": rows,
+    }
+
 
 def run_check(root, *, live=False):
     if root.exists():
@@ -31,11 +92,16 @@ def run_check(root, *, live=False):
     root.mkdir(parents=True)
     frozen = _initial_world(1)
     budget = ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1)
-    designer_budget = DesignerBudget(initial_exploration_calls=4, actionable_feedback=True,
-                                     include_related_objects=True, include_profile_events=True)
-    manifest = {"protocol": "designer-event-link-check-v1", "status": "RUNNING",
+    designer_budget = DesignerBudget(max_exploration_calls=3, max_revisions=1,
+                                     initial_exploration_calls=2, actionable_feedback=True,
+                                     include_related_objects=True, include_profile_events=True,
+                                     confirmation_guidance=True)
+    manifest = {"protocol": "designer-event-link-check-v2-confirmation-optional", "status": "RUNNING",
         "git_base": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-        "live_authorized": live, "max_live_designer_sessions": int(live), "max_model_calls": 9 if live else 0,
+        "live_authorized": live, "max_live_designer_sessions": int(live),
+        "max_model_calls": MAX_LIVE_MODEL_CALLS if live else 0,
+        "max_tokens_request_option": None if live else "offline",
+        "output_token_limit": "omitted from request options" if live else "offline",
         "service_tasks": 0, "reflection_calls": 0, "skill_updates": 0,
         "frozen_world_hash": frozen.world_hash, "designer_budget": designer_budget.model_dump(mode="json"),
         "construction_budget": budget.model_dump(mode="json"),
@@ -43,7 +109,7 @@ def run_check(root, *, live=False):
     atomic_json(root / "manifest.json", manifest)
     atomic_json(root / "world.json", frozen)
     summary = []
-    ledger = CallLedger(root, 9)
+    ledger = CallLedger(root, MAX_LIVE_MODEL_CALLS if live else 0)
     raw_client = None
     try:
         query = {"action": "read_profile", "profile_id": "profile_u1_order0_line1"}
@@ -99,8 +165,10 @@ def run_check(root, *, live=False):
             manifest["status"] = "OFFLINE_VERIFIED"
         else:
             settings = settings_from_env()
+            if "max_tokens" in settings.options:
+                raise ValueError("live Designer check requires max_tokens to be omitted; output length is not capped by this runner")
             manifest["model"] = settings.model_dump(mode="json")
-            manifest["prior_provider_check"] = "inferai-deepseek-v41-validation-001 (exact ID listed; JSON probe succeeded)"
+            manifest["provider_check"] = "DeepSeek v4.1 Flash availability was verified in the preceding authorized run"
             d0, _, _ = initial_skill_libraries()
             context = _designer_context(d0, [], "task-1", exploration=True)
             atomic_json(root / "designer-snapshot.json", d0)
@@ -122,6 +190,10 @@ def run_check(root, *, live=False):
                 manifest["status"] = "DESIGNER_CERTIFIED"
                 manifest["task_hash"] = result.task.task_hash
                 manifest["metrics"] = result.metrics
+            journal = json.loads((root / "designer-journal.json").read_text())
+            validation = _proposal_validation(journal)
+            atomic_json(root / "proposal-validation.json", validation)
+            manifest["proposal_validation"] = validation
     except Exception as exc:
         manifest["status"] = "BLOCKED"
         manifest["failure"] = {"type": type(exc).__name__, "message": str(exc)}
@@ -139,7 +211,7 @@ def run_check(root, *, live=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--live", action="store_true", help="one Designer session only, max 9 model calls; no Service")
+    parser.add_argument("--live", action="store_true", help="one Designer session only, max 5 model calls; max_tokens omitted; no Service")
     args = parser.parse_args()
     result = run_check(args.output, live=args.live)
     print(json.dumps(result, ensure_ascii=False, indent=2))

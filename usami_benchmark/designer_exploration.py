@@ -39,6 +39,7 @@ class DesignerBudget(Model):
     actionable_feedback: bool = Field(default=False, exclude_if=lambda value: value is False)
     include_related_objects: bool = Field(default=False, exclude_if=lambda value: value is False)
     include_profile_events: bool = Field(default=False, exclude_if=lambda value: value is False)
+    confirmation_guidance: bool = Field(default=False, exclude_if=lambda value: value is False)
 
 
 class DialogueDesignerProposal(Model):
@@ -48,7 +49,16 @@ class DialogueDesignerProposal(Model):
     refusal_operations: list[dict] = Field(default_factory=list, max_length=16)
     information_requirements: list[InformationRequirement] = Field(default_factory=list, max_length=64)
     preference_requirements: list[PreferenceRequirement] = Field(default_factory=list, max_length=64)
-    confirmation_requirements: list[dict] = Field(default_factory=list, max_length=16)
+    confirmation_requirements: list[dict] = Field(
+        default_factory=list,
+        max_length=16,
+        description=(
+            "Optional evaluator assertion, not authorization; usually omit. Only include an exact "
+            "canonical write copied from the selected Customer profile's customer_operations. "
+            "Never guess operation parameters or invent case, quote, or resource IDs. Omitting this "
+            "does not bypass live Customer consent. Supplied operations remain subject to native scope checks."
+        ),
+    )
     external_schedule: list[str] = Field(default_factory=list, max_length=64)
 
 
@@ -228,10 +238,22 @@ def _tool(name, description, schema):
     return {"type": "function", "function": {"name": name, "description": description, "parameters": schema}}
 
 
-def _tools(stage):
+_OPTIONAL_CONFIRMATION_GUIDANCE = (
+    "confirmation_requirements is optional and normally omitted: it is an evaluator assertion, not Customer "
+    "authorization. Include one only if you can copy the exact canonical write and all parameters from the "
+    "selected profile's customer_operations; never guess case_id, quote_id, line_id, or parameters. Omitting "
+    "it does not waive live Customer consent. Any supplied operation is still checked against native identity, "
+    "object scope, and business rules."
+)
+
+
+def _tools(stage, *, guide_optional_confirmations=False):
     if stage == "submission":
+        schema = DialogueDesignerProposal.model_json_schema()
+        if not guide_optional_confirmations:
+            schema["properties"]["confirmation_requirements"].pop("description", None)
         return [_tool("submit_frozen_world_task", "Submit business targets and objectives; native scope is compiler-owned.",
-                      DialogueDesignerProposal.model_json_schema())]
+                      schema)]
     return [_tool("inspect_frozen_world", "Bounded read-only inspection; never writes or evaluates a future answer.", ReadQuery.model_json_schema()),
             _tool("ready_to_submit", "Finish exploration and proceed to the forced submission phase.",
                   {"type": "object", "properties": {}, "additionalProperties": False})]
@@ -239,6 +261,8 @@ def _tools(stage):
 
 def _messages(frozen, context, budget):
     policy = POLICY
+    if budget.confirmation_guidance:
+        policy += "\n" + _OPTIONAL_CONFIRMATION_GUIDANCE
     if context.get("skill_rendered"):
         policy += "\nApplied Designer Skill from snapshot " + str(context.get("skill_snapshot_hash")) + ":\n" + context["skill_rendered"]
     return [{"role": "system", "content": policy},
@@ -280,7 +304,8 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
     # New sessions use the complete query context. Explicit old serialized
     # budgets retain their omitted/default flags for exact historical replay.
     budget = budget or DesignerBudget(initial_exploration_calls=3, actionable_feedback=True,
-                                      include_related_objects=True, include_profile_events=True)
+                                      include_related_objects=True, include_profile_events=True,
+                                      confirmation_guidance=True)
     construction_budget = construction_budget or ConstructionBudget()
     context = copy.deepcopy(prompt_context or {})
     settings = client.settings.model_copy(deep=True)
@@ -305,7 +330,8 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
     stage = "exploration" if budget.max_exploration_calls else "submission"
     exploration_calls = 0
     while True:
-        request = settings.request(copy.deepcopy(messages), _tools(stage))
+        request = settings.request(copy.deepcopy(messages), _tools(
+            stage, guide_optional_confirmations=budget.confirmation_guidance))
         if stage == "submission":
             request["tool_choice"] = {"type": "function", "function": {"name": "submit_frozen_world_task"}}
             # DashScope Qwen supports thinking for exploration, but rejects a

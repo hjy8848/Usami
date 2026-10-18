@@ -65,6 +65,66 @@ def test_high_level_schema_derives_exact_native_scope_and_certifies_multi_order(
         compile_proposal(frozen, raw, ConstructionBudget())
 
 
+def test_confirmation_requirements_are_optional_but_supplied_scope_stays_native(frozen):
+    from usami_benchmark.designer_exploration import _tools
+
+    schema = DialogueDesignerProposal.model_json_schema()
+    assert "confirmation_requirements" not in schema["required"]
+    assert "Optional evaluator assertion" in schema["properties"]["confirmation_requirements"]["description"]
+    legacy_schema = _tools("submission")[0]["function"]["parameters"]
+    guided_schema = _tools("submission", guide_optional_confirmations=True)[0]["function"]["parameters"]
+    assert "description" not in legacy_schema["properties"]["confirmation_requirements"]
+    assert "Optional evaluator assertion" in guided_schema["properties"]["confirmation_requirements"]["description"]
+
+    raw = proposal(frozen)
+    raw.pop("confirmation_requirements", None)
+    parsed = DialogueDesignerProposal.model_validate(raw)
+    assert parsed.confirmation_requirements == []
+    # An omitted evaluator assertion does not change native task certification.
+    _, task = compile_proposal(frozen, raw, ConstructionBudget(max_nodes=512, max_depth=16))
+    assert task.selection.composition.confirmation_requirements == []
+
+    # Supplying a well-shaped operation for an object outside these selected
+    # Customer profiles remains a hard native scope error.
+    identities = {frozen.world["profiles"][profile_id]["identity"] for profile_id in raw["profile_ids"]}
+    foreign_order = next(key for key in frozen.world["orders"] if key.split("_", 1)[0] not in identities)
+    raw["confirmation_requirements"] = [{
+        "name": "open_case", "scope_id": "m0", "resource_id": foreign_order,
+        "params": {"line_id": "u0_order0_line0", "issue": "wrong_item"},
+    }]
+    with pytest.raises(ValueError, match="confirmation requirement is outside selected Customer authority"):
+        compile_proposal(frozen, raw, ConstructionBudget(max_nodes=512, max_depth=16))
+
+
+def test_proposal_report_separates_schema_constraints_and_reference(frozen):
+    from experiments.vast_coevo.examples.designer_event_link_check import _proposal_validation
+
+    valid = proposal(frozen)
+    malformed = copy.deepcopy(valid)
+    malformed.pop("profile_ids")
+    # Build raw completion-response records from the same fixture helper used by the live journal.
+    records = [
+        {"stage": "submission", "response": submit(malformed)},
+        {"stage": "submission", "response": submit(valid),
+         "feedback": {"category": "invalid_proposal", "detail": "confirmation requirement is outside selected Customer authority"}},
+        {"stage": "submission", "response": submit(valid),
+         "feedback": {"category": "search_unproven", "detail": "bounded Reference search did not prove the open composition"}},
+        {"stage": "submission", "response": submit(valid),
+         "tool_results": [{"status": "certified", "task_hash": "fixture"}]},
+    ]
+    report = _proposal_validation({"exchanges": records})
+    assert report["attempts"] == 4
+    assert [row["proposal_schema_valid"] for row in report["stages"]] == [False, True, True, True]
+    assert [row["native_constraints_valid"] for row in report["stages"]] == [None, False, True, True]
+    assert [row["reference_certified"] for row in report["stages"]] == [None, None, False, True]
+
+    provider_failure = _proposal_validation({"exchanges": [{"stage": "submission",
+        "transport_error": {"type": "ServiceError", "message": "HTTP 502"}}]})
+    assert provider_failure["stages"][0]["stage"] == "provider_error"
+    assert provider_failure["stages"][0]["proposal_schema_valid"] is None
+    assert provider_failure["stages"][0]["reference_certified"] is None
+
+
 def test_cross_identity_and_invented_state_are_not_repaired(frozen):
     raw = proposal(frozen)
     raw["profile_ids"].append("profile_u1_order0_line1")
@@ -138,6 +198,8 @@ def test_transport_failure_is_not_retried(frozen, tmp_path):
     with pytest.raises(DesignerFailure, match="no retry") as caught:
         design_and_compile(frozen, client, protocol=PROTOCOL, journal_path=tmp_path / "journal.json")
     assert len(client.requests) == 1
+    assert caught.value.journal["budget"]["confirmation_guidance"] is True
+    assert "confirmation_requirements is optional" in client.requests[0]["messages"][0]["content"]
     assert caught.value.journal["exchanges"][0]["transport_error"]["type"] == "RuntimeError"
     assert verify_failed_journal(frozen, caught.value.journal)["verified"]
 

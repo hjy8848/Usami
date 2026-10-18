@@ -1,0 +1,22 @@
+{
+  "analysis_protocol": "designer-proposal-stage-audit-v1",
+  "attempts": 1,
+  "native_constraints_valid": 0,
+  "proposal_tool_submissions": 0,
+  "provider_errors": 1,
+  "reference_certified": 0,
+  "schema_valid": 0,
+  "stages": [
+    {
+      "attempt": 1,
+      "detail": {
+        "message": "LLM endpoint returned HTTP 502; no retry performed",
+        "type": "ServiceError"
+      },
+      "native_constraints_valid": null,
+      "proposal_schema_valid": null,
+      "reference_certified": null,
+      "stage": "provider_error"
+    }
+  ]
+}

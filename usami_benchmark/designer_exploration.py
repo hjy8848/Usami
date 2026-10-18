@@ -38,6 +38,7 @@ class DesignerBudget(Model):
     initial_exploration_calls: Optional[int] = Field(default=None, ge=1, le=12, exclude_if=lambda value: value is None)
     actionable_feedback: bool = Field(default=False, exclude_if=lambda value: value is False)
     include_related_objects: bool = Field(default=False, exclude_if=lambda value: value is False)
+    include_profile_events: bool = Field(default=False, exclude_if=lambda value: value is False)
 
 
 class DialogueDesignerProposal(Model):
@@ -98,7 +99,7 @@ def exploration_view(frozen, *, include_context=True):
     return result
 
 
-def inspect_world(frozen, raw, *, include_related_objects=False):
+def inspect_world(frozen, raw, *, include_related_objects=False, include_profile_events=True):
     """Read from registered world data only; no Engine writes or Reference calls."""
     query = ReadQuery.model_validate(raw)
     adapter, world = _adapter_world(frozen)
@@ -158,6 +159,16 @@ def inspect_world(frozen, raw, *, include_related_objects=False):
                         following.update(references(entity))
                         count += 1
                 pending = following
+        def event_matches(event):
+            if any(value in private.protected_objects for value in event.values()):
+                return True
+            # Native After-sales events bind to a line_id, while protected
+            # objects contain the order_id. Match existing identifier fields
+            # only; shared issue/outcome text does not establish a relation.
+            return include_profile_events and any(
+                name.endswith("_id") and isinstance(value, str) and event.get(name) == value
+                for name, value in private.facts.items())
+
         return {"profile_id": query.profile_id, "identity": private.identity,
                 "facts": private.facts, "preference_space": private.preference_space,
                 "initial_preferences": private.initial_preferences,
@@ -165,7 +176,7 @@ def inspect_world(frozen, raw, *, include_related_objects=False):
                 "customer_operations": adapter.candidate_intents(world, private),
                 "related_objects": related,
                 "registered_external_events": [row.model_dump(mode="json") for row in world.external_events.values()
-                    if any(value in private.protected_objects for value in row.model_dump(mode="json").values())]}
+                    if event_matches(row.model_dump(mode="json"))]}
     collection = frozen.world.get(query.collection)
     if not isinstance(collection, dict):
         raise ValueError("collection must name a registered frozen collection")
@@ -268,7 +279,8 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
     _adapter_world(frozen)
     # New sessions use the complete query context. Explicit old serialized
     # budgets retain their omitted/default flags for exact historical replay.
-    budget = budget or DesignerBudget(initial_exploration_calls=3, actionable_feedback=True, include_related_objects=True)
+    budget = budget or DesignerBudget(initial_exploration_calls=3, actionable_feedback=True,
+                                      include_related_objects=True, include_profile_events=True)
     construction_budget = construction_budget or ConstructionBudget()
     context = copy.deepcopy(prompt_context or {})
     settings = client.settings.model_copy(deep=True)
@@ -341,7 +353,9 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
                             journal["queries"] += 1
                             if journal["queries"] > budget.max_queries:
                                 raise ValueError("read-only query budget exhausted")
-                            result = {"status": "ok", "data": inspect_world(frozen, args, include_related_objects=budget.include_related_objects)}
+                            result = {"status": "ok", "data": inspect_world(frozen, args,
+                                include_related_objects=budget.include_related_objects,
+                                include_profile_events=budget.include_profile_events)}
                         else:
                             raise ValueError("only registered read-only exploration tools are allowed")
                     except (ValueError, TypeError, KeyError) as exc:

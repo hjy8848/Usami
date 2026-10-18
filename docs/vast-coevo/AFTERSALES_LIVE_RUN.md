@@ -57,3 +57,18 @@ Manifest 的 `designer_diagnostics` 分别记录提交合法率、目标结构�
 - 本入口只关闭这次三任务集成验证中的动态性能 Gate。静态接受不能解释成能力提升；一个小闭环也不能支持跨场景泛化或自我改进有效性的研究结论。
 
 运行前可分别设置角色模型；实际端点、模型与采样选项会写入 Manifest。认证信息不会写入结果。模型请求和回复包含合成业务世界与对话内容，运行前应确认配置的端点适合接收这些数据。
+
+### 关联事件查询与单独 Reference 对照
+
+新查询通过顾客画像中的同名 `*_id` 事实（包括 `line_id`）关联原生外部事件，同时保留受保护对象匹配。它只返回已登记事件，不生成事件、不触发事件、不替 Designer 选择 `external_schedule`。新会话和真实运行入口记录 `include_profile_events=true`；缺省该字段的历史 v2 日志仍采用原查询语义，以便精确 Replay。
+
+不调用模型的最小检查：
+
+```sh
+.venv/bin/python -m experiments.vast_coevo.examples.designer_event_link_check \
+  --output experiments/vast_coevo/results/designer-event-links-local-001
+```
+
+检查包含已有五步退款题的稳定性，以及两个独立原生事件对照：需要审批/退货的任务在登记事件后通过，删除必要事件后搜索不获证明。原五步题本身不需要审批和退货，不能用它缺少事件后的成功推断验证器出错。
+
+只有明确加 `--live` 才会调用模型：使用环境中固定的模型和凭据，最多一次 Designer 会话、9 次请求（5 次探索加 4 次提交机会），不执行 Customer、Service、Reflection 或 Skill 更新。离线对照必须先通过，且不会把它们的答案或对象选择传给 Designer。所有输出目录必须是新的，失败不自动重新开始。

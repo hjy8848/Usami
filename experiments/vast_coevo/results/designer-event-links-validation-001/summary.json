@@ -1,0 +1,53 @@
+{
+  "engineering_status": "EXECUTED",
+  "live_designer_status": "BLOCKED",
+  "live_sessions": 1,
+  "actual_model_calls": 9,
+  "query_calls": 8,
+  "submission_attempts": 4,
+  "profile_queries_with_linked_events": 2,
+  "exposed_event_ids": [
+    "manager_review_u0_order2_line0",
+    "return_received_u0_order2_line0",
+    "manager_review_u0_order3_line0",
+    "return_received_u0_order3_line0"
+  ],
+  "length_terminated_responses": 4,
+  "certified_tasks": 0,
+  "service_tasks": 0,
+  "reflection_calls": 0,
+  "skill_updates": 0,
+  "usage": {
+    "by_role": {
+      "designer": {
+        "calls": 9,
+        "input_tokens": 80151,
+        "output_tokens": 23150,
+        "total_tokens": 103301,
+        "usage_complete": false
+      }
+    },
+    "input_tokens": 80151,
+    "output_tokens": 23150,
+    "total_tokens": 103301,
+    "usage_complete": false
+  },
+  "failure": "Designer transport failed; no retry performed: LLM endpoint returned HTTP 502; no retry performed",
+  "live_replay": {
+    "actual_online_calls": 0,
+    "failure_reproduced": true,
+    "model_calls": 9,
+    "verified": true
+  },
+  "tests": {
+    "regression_passed": 43,
+    "event_replay_passed": 1
+  },
+  "claim": "Query visibility fixed and native Reference controls verified; no autonomous task success or learning claim.",
+  "source_integrity": {
+    "usami_benchmark/designer_exploration.py": true,
+    "experiments/vast_coevo/examples/aftersales_coevo_live.py": true,
+    "experiments/vast_coevo/examples/designer_event_link_check.py": true,
+    "tests/test_designer_event_links.py": true
+  }
+}

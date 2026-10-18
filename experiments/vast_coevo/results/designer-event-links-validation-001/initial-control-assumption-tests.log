@@ -1,0 +1,67 @@
+.FFFF.                                                                   [100%]
+=================================== FAILURES ===================================
+________ test_native_five_step_refund_control_is_stable_and_replayable _________
+
+frozen = FrozenWorld(spec=WorldSpec(domain='aftersales', seed=1, generator_version='aftersales-generator-v1', rules_version='af...569a', generation_diagnostics=[], rules_source_hash='69900ba26dac2f8a07637f1d6155b99a40d23d73d9c03070d98f757244e08ad0')
+
+    def test_native_five_step_refund_control_is_stable_and_replayable(frozen):
+        raw = json.loads((CONTROL / "offline-positive-control-proposal.json").read_text())
+        budget = ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1)
+        _, first = compile_proposal(frozen, raw, budget)
+        _, second = compile_proposal(frozen, raw, budget)
+        assert first == second
+>       assert verify_task(first)["verified"]
+E       TypeError: 'bool' object is not subscriptable
+
+tests/test_designer_event_links.py:45: TypeError
+_ test_missing_required_events_are_not_silently_supplied[manager_review_u1_order0_line1] _
+
+frozen = FrozenWorld(spec=WorldSpec(domain='aftersales', seed=1, generator_version='aftersales-generator-v1', rules_version='af...569a', generation_diagnostics=[], rules_source_hash='69900ba26dac2f8a07637f1d6155b99a40d23d73d9c03070d98f757244e08ad0')
+removed = 'manager_review_u1_order0_line1'
+
+    @pytest.mark.parametrize("removed", ["manager_review_u1_order0_line1", "return_received_u1_order0_line1", "all"])
+    def test_missing_required_events_are_not_silently_supplied(frozen, removed):
+        raw = copy.deepcopy(json.loads((CONTROL / "offline-positive-control-proposal.json").read_text()))
+        raw["external_schedule"] = [] if removed == "all" else [row for row in raw["external_schedule"] if row != removed]
+        before = frozen.model_dump(mode="json")
+        with pytest.raises(ValueError, match="bounded Reference search did not prove"):
+>           compile_proposal(frozen, raw, ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1))
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_designer_event_links.py:58: Failed
+_ test_missing_required_events_are_not_silently_supplied[return_received_u1_order0_line1] _
+
+frozen = FrozenWorld(spec=WorldSpec(domain='aftersales', seed=1, generator_version='aftersales-generator-v1', rules_version='af...569a', generation_diagnostics=[], rules_source_hash='69900ba26dac2f8a07637f1d6155b99a40d23d73d9c03070d98f757244e08ad0')
+removed = 'return_received_u1_order0_line1'
+
+    @pytest.mark.parametrize("removed", ["manager_review_u1_order0_line1", "return_received_u1_order0_line1", "all"])
+    def test_missing_required_events_are_not_silently_supplied(frozen, removed):
+        raw = copy.deepcopy(json.loads((CONTROL / "offline-positive-control-proposal.json").read_text()))
+        raw["external_schedule"] = [] if removed == "all" else [row for row in raw["external_schedule"] if row != removed]
+        before = frozen.model_dump(mode="json")
+        with pytest.raises(ValueError, match="bounded Reference search did not prove"):
+>           compile_proposal(frozen, raw, ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1))
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_designer_event_links.py:58: Failed
+_________ test_missing_required_events_are_not_silently_supplied[all] __________
+
+frozen = FrozenWorld(spec=WorldSpec(domain='aftersales', seed=1, generator_version='aftersales-generator-v1', rules_version='af...569a', generation_diagnostics=[], rules_source_hash='69900ba26dac2f8a07637f1d6155b99a40d23d73d9c03070d98f757244e08ad0')
+removed = 'all'
+
+    @pytest.mark.parametrize("removed", ["manager_review_u1_order0_line1", "return_received_u1_order0_line1", "all"])
+    def test_missing_required_events_are_not_silently_supplied(frozen, removed):
+        raw = copy.deepcopy(json.loads((CONTROL / "offline-positive-control-proposal.json").read_text()))
+        raw["external_schedule"] = [] if removed == "all" else [row for row in raw["external_schedule"] if row != removed]
+        before = frozen.model_dump(mode="json")
+        with pytest.raises(ValueError, match="bounded Reference search did not prove"):
+>           compile_proposal(frozen, raw, ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1))
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_designer_event_links.py:58: Failed
+=========================== short test summary info ============================
+FAILED tests/test_designer_event_links.py::test_native_five_step_refund_control_is_stable_and_replayable
+FAILED tests/test_designer_event_links.py::test_missing_required_events_are_not_silently_supplied[manager_review_u1_order0_line1]
+FAILED tests/test_designer_event_links.py::test_missing_required_events_are_not_silently_supplied[return_received_u1_order0_line1]
+FAILED tests/test_designer_event_links.py::test_missing_required_events_are_not_silently_supplied[all]
+4 failed, 2 passed in 9.34s

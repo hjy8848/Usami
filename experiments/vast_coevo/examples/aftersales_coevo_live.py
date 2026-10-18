@@ -387,7 +387,8 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
         if role != "customer":
             LibraryStore(root / "libraries" / role).save(snapshot)
     _save(root, "world/frozen_world.json", frozen)
-    designer_budget = DesignerBudget(initial_exploration_calls=4, actionable_feedback=True, include_related_objects=True)
+    designer_budget = DesignerBudget(initial_exploration_calls=4, actionable_feedback=True,
+                                     include_related_objects=True, include_profile_events=True)
     manifest = {
         "protocol": PROTOCOL, "status": "RUNNING", "seed": seed,
         "service_tasks_max": MAX_SERVICE_TASKS, "service_tasks_completed": 0,

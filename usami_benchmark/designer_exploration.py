@@ -326,6 +326,36 @@ def _tool(name, description, schema):
     return {"type": "function", "function": {"name": name, "description": description, "parameters": schema}}
 
 
+def _native_write_schemas(adapter):
+    """Build strict schemas for canonical native writes used in proposals.
+
+    Operation-shaped proposal values must not inherit ``dict``'s permissive
+    JSON schema. Otherwise a model can put ``line_id`` or a guessed ``case_id``
+    at the wrong level and discover the mistake only after submission.
+    """
+    alternatives = []
+    for operation, params_model in adapter.Operation.parameters.items():
+        if operation in adapter.Operation.queries:
+            continue
+        params_schema = params_model.model_json_schema()
+        # Native operation dumps include defaults, and the composer checks
+        # canonical operations, so require each declared parameter.
+        if params_model.model_fields:
+            params_schema["required"] = list(params_model.model_fields)
+        alternatives.append({
+            "type": "object",
+            "properties": {
+                "name": {"enum": [operation]},
+                "scope_id": {"type": "string", "minLength": 1},
+                "resource_id": {"type": "string", "minLength": 1},
+                "params": params_schema,
+            },
+            "required": ["name", "scope_id", "resource_id", "params"],
+            "additionalProperties": False,
+        })
+    return alternatives
+
+
 _OPTIONAL_CONFIRMATION_GUIDANCE = (
     "confirmation_requirements is optional and normally omitted: it is an evaluator assertion, not Customer "
     "authorization. Include one only if you can copy the exact canonical write and all parameters from the "
@@ -359,27 +389,9 @@ def _proposal_schema(frozen=None):
     ]
     if frozen is not None:
         adapter, _ = _adapter_world(frozen)
-        alternatives = []
-        for operation, params_model in adapter.Operation.parameters.items():
-            if operation in adapter.Operation.queries:
-                continue
-            params_schema = params_model.model_json_schema()
-            # Operation.model_dump() serializes defaults too, and the native
-            # composer requires an exact canonical operation object.
-            if params_model.model_fields:
-                params_schema["required"] = list(params_model.model_fields)
-            alternatives.append({
-                "type": "object",
-                "properties": {
-                    "name": {"enum": [operation]},
-                    "scope_id": {"type": "string", "minLength": 1},
-                    "resource_id": {"type": "string", "minLength": 1},
-                    "params": params_schema,
-                },
-                "required": ["name", "scope_id", "resource_id", "params"],
-                "additionalProperties": False,
-            })
-        schema["properties"]["refusal_operations"]["items"] = {"anyOf": alternatives}
+        write_schemas = _native_write_schemas(adapter)
+        schema["properties"]["refusal_operations"]["items"] = {"anyOf": write_schemas}
+        schema["properties"]["confirmation_requirements"]["items"] = {"anyOf": write_schemas}
     return schema
 
 

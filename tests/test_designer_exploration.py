@@ -98,6 +98,16 @@ def test_submission_schema_requires_an_objective_and_types_native_refusal_params
                  if branch["properties"]["name"].get("enum") == ["quote_resolution"])
     assert "params" in quote["required"]
     assert set(quote["properties"]["params"]["required"]) == {"case_id", "option"}
+    # Confirmation operations are optional, but if supplied their structure
+    # must be canonical too. This prevents line_id/case_id from being guessed
+    # at the operation root or from silently accepting extra parameters.
+    confirmation_items = schema["properties"]["confirmation_requirements"]["items"]["anyOf"]
+    confirmation_quote = next(branch for branch in confirmation_items
+                              if branch["properties"]["name"].get("enum") == ["quote_resolution"])
+    assert set(confirmation_quote["required"]) == {"name", "scope_id", "resource_id", "params"}
+    assert "case_id" not in confirmation_quote["properties"]
+    assert set(confirmation_quote["properties"]["params"]["required"]) == {"case_id", "option"}
+    assert "confirmation_requirements" not in schema["required"]
     assert "customer_operations" not in schema["properties"]["refusal_operations"]["description"]
     assert "Customer-authorized operation is not automatically a refusal" in schema["properties"]["refusal_operations"]["description"]
     assert "native Customer frame" in schema["$defs"]["Goal"]["description"]

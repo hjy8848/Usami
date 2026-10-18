@@ -37,6 +37,28 @@ class RefusalGoal(Model):
     code:str
 
 
+class InformationRequirement(Model):
+    """Customer facts a composed challenge requires the Service to obtain."""
+    profile_id:str
+    fact_keys:list[str]=Field(min_length=1,max_length=32)
+
+class PreferenceRequirement(Model):
+    """Permitted task-specific choices drawn from one frozen profile."""
+    profile_id:str
+    preference:str=Field(min_length=1,max_length=96)
+    accepted_values:list[Any]=Field(min_length=1,max_length=32)
+
+
+class DialogueComposition(Model):
+    """Versioned task scope for evaluator-composed, multi-profile challenges."""
+    protocol:Literal['open-dialogue-composition-v1']='open-dialogue-composition-v1'
+    profile_ids:list[str]=Field(min_length=1,max_length=64)
+    customer_request:str=Field(min_length=1,max_length=6000)
+    information_requirements:list[InformationRequirement]=Field(default_factory=list,max_length=64)
+    preference_requirements:list[PreferenceRequirement]=Field(default_factory=list,max_length=64)
+    confirmation_requirements:list[dict]=Field(default_factory=list,max_length=16)
+
+
 class DialogueTask(Model):
     protocol:Literal['certified-dialogue-task-v1']='certified-dialogue-task-v1'
     domain:str
@@ -50,6 +72,7 @@ class DialogueTask(Model):
     frames:list[FrameRule]=Field(default_factory=list)
     external_schedule:list[str]=Field(default_factory=list)
     require_dependency:bool=True
+    composition:Optional[DialogueComposition]=Field(default=None,exclude_if=lambda value:value is None)
     task_hash:str=''
     def computed_hash(self):return digest(self.model_dump(mode='json',exclude={'task_hash'}))
 
@@ -70,7 +93,11 @@ def checked_task(adapter,world,task):
     private=adapter.private_state(world,task.profile_id)
     if (task.domain!=adapter.name or task.rules_version!=world.version or task.world_hash!=world.state_hash or task.private_hash!=private.private_hash):raise ValueError('task source registration differs')
     if not task.goals and not task.refusals:raise ValueError('task needs an objective completion or refusal goal')
-    adapter.validate_task(world,private,task)
+    if task.composition is None:
+        adapter.validate_task(world,private,task)
+    else:
+        from .composition import validate_composed_task
+        validate_composed_task(adapter,world,task)
     if len(set(task.external_schedule))!=len(task.external_schedule) or set(task.external_schedule)-set(world.external_events):raise ValueError('unregistered external schedule')
     value=task.computed_hash()
     if task.task_hash and task.task_hash!=value:raise ValueError('task content hash differs')
@@ -104,7 +131,8 @@ def frame_preserved(initial,final,frames):
 
 def score(adapter,world,task,trace):
     task=checked_task(adapter,world,task)
-    source_ok=(trace.initial_world==world.model_dump(mode='json') and trace.profile_id==task.profile_id and trace.private.private_hash==task.private_hash)
+    scope_ok=(trace.scoped_profile_ids==task.composition.profile_ids) if task.composition is not None else not trace.scoped_profile_ids
+    source_ok=(trace.initial_world==world.model_dump(mode='json') and trace.profile_id==task.profile_id and trace.private.private_hash==task.private_hash and scope_ok)
     report=evaluate(adapter,trace,initial_world=world,private=adapter.private_state(world,task.profile_id))
     replay_ok=False
     if report['trace_valid']:
@@ -115,13 +143,37 @@ def score(adapter,world,task,trace):
     refused=[any(r['classification']=='correct_refusal' and r['operation']==g.operation for r in report['service_decisions']) for g in task.refusals]
     frame=frame_preserved(world,final,task.frames)
     scheduled=all(e.payload['event_id'] in task.external_schedule for e in trace.events if e.kind=='external')
+    information=[];confirmations=[];preferences=[]
+    if task.composition is not None:
+        for requirement in task.composition.information_requirements:
+            profile=adapter.private_state(world,requirement.profile_id)
+            disclosed={}
+            for event in trace.events:
+                if event.kind!='customer' or event.payload.get('setup') or event.payload.get('profile_id')!=requirement.profile_id:continue
+                disclosed.update(event.payload['intent'].get('disclosures',{}))
+            information.append(all(key in profile.facts and disclosed.get(key)==profile.facts[key] for key in requirement.fact_keys))
+        actual_consents={digest(row['operation']) for row in report['consents']}
+        confirmations=[digest(op) in actual_consents for op in task.composition.confirmation_requirements]
+        for requirement in task.composition.preference_requirements:
+            values=[event.payload['intent'].get('preferences',{}).get(requirement.preference)
+                    for event in trace.events if event.kind=='customer' and not event.payload.get('setup')
+                    and event.payload.get('profile_id')==requirement.profile_id]
+            preferences.append(any(value in requirement.accepted_values for value in values))
     success=source_ok and report['status']=='pass' and replay_ok and all(completed) and all(refused) and frame and scheduled
-    return {'protocol':'dialogue-task-score-v2','success':bool(success),'source_verified':source_ok,'completion_subgoals':completed,'refusal_subgoals':refused,
+    if task.composition is not None:
+        success=success and all(information) and all(confirmations) and all(preferences)
+    result={'protocol':'dialogue-task-score-v2','success':bool(success),'source_verified':source_ok,'completion_subgoals':completed,'refusal_subgoals':refused,
         'intended_refusal_boundaries':[g.code for g in task.refusals],
         'observed_refusal_reasons':[[r['reference_code'] for r in report['service_decisions'] if r['classification']=='correct_refusal' and r['operation']==g.operation] for g in task.refusals],
         'frame_preserved':frame,'external_schedule_compliant':scheduled,'oracle_status':report['status'],'replay_verified':replay_ok,
         'actual_business_operations':len(report['operations']),'actual_customer_turns':sum(e.kind=='customer' and not e.payload.get('setup') for e in trace.events),
         'metrics':report['metrics']}
+    # Do not change the serialized certificate of a legacy task just because
+    # the composition protocol adds new diagnostic fields.
+    if task.composition is not None:
+        result.update(information_requirements=information,preference_requirements=preferences,
+            confirmation_requirements=confirmations)
+    return result
 
 
 def certify(adapter,world,task,trace):

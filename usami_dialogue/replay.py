@@ -8,7 +8,7 @@ def replay(adapter,trace,*,initial_world=None,private=None):
     report=evaluate(adapter,trace,initial_world=initial_world,private=private)
     if not report['trace_valid']:raise ValueError('dialogue evidence invalid: '+str(report['errors']))
     world=adapter.World.model_validate(trace.initial_world)
-    session=DialogueSession(adapter,world,trace.profile_id,max_operations=trace.max_operations)
+    session=DialogueSession(adapter,world,trace.profile_id,max_operations=trace.max_operations,profile_ids=trace.scoped_profile_ids or None)
     for event in trace.events[1:]:
         if event.kind=='customer':session.customer(event.payload['intent'])
         elif event.kind=='service':session.reply(event.payload['message'],event.payload['offered_operation'],refused_operation=event.payload['refused_operation'],refusal_code=event.payload['refusal_code'])

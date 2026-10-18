@@ -14,6 +14,11 @@ def evaluate(adapter,trace,*,initial_world=None,private=None):
     if initial_world is not None and initial_world!=world:fail('REGISTERED_WORLD_MISMATCH')
     expected_private=adapter.private_state(world,trace.profile_id)
     adapter.validate_private(world,expected_private)
+    if trace.scoped_profile_ids:
+        from .scope import load_profiles
+        profile_rows=load_profiles(adapter,world,trace.profile_id,trace.scoped_profile_ids)
+    else:profile_rows=[(trace.profile_id,expected_private)]
+    profiles=dict(profile_rows);active_profile_id=trace.profile_id
     if trace.private!=expected_private or (private is not None and private!=expected_private):fail('PRIVATE_SOURCE_MISMATCH')
     if world.version!=trace.rules_version or adapter.invariants(world):fail('INITIAL_DOMAIN_INVALID')
     for index,event in enumerate(trace.events):
@@ -29,13 +34,21 @@ def evaluate(adapter,trace,*,initial_world=None,private=None):
                     if p['turn_id']!=tid:raise ValueError('turn identity differs')
                     offer=adapter.offer_for(world,intent.confirm_operation)
                     if intent.confirm_operation is not None and (offer is None or offer!=presented_offer):raise ValueError('offer was not actually presented')
-                    normalized=adapter.normalize_intent(expected_private,intent)
-                    context=customer_event(world.interaction,expected_private,normalized,turn_id=tid,world_hash=world.state_hash,offer=offer,consent_check=adapter.consent_allowed)
+                    if trace.scoped_profile_ids:
+                        from .scope import profile_for_intent
+                        selected_id,selected_private=profile_for_intent(adapter,world,profile_rows,intent)
+                        if p.get('profile_id')!=selected_id:raise ValueError('Customer profile selection differs from frozen scope')
+                    else:
+                        selected_id,selected_private=trace.profile_id,expected_private
+                        if 'profile_id' in p:raise ValueError('legacy customer event declares an unregistered profile')
+                    active_profile_id=selected_id
+                    normalized=adapter.normalize_intent(selected_private,intent)
+                    context=customer_event(world.interaction,selected_private,normalized,turn_id=tid,world_hash=world.state_hash,offer=offer,consent_check=adapter.consent_allowed)
                     declarations=list(intent.requested_operations)+([intent.confirm_operation] if intent.confirm_operation else [])
                     grants=[];seen=set()
                     for raw in declarations:
                         op=adapter.Operation.model_validate(raw)
-                        if not adapter.intent_allowed(world,expected_private,op.model_dump(mode='json')):raise ValueError('customer intent outside scope')
+                        if not adapter.intent_allowed(world,selected_private,op.model_dump(mode='json')):raise ValueError('customer intent outside scope')
                         if digest(op) not in seen:grants.append(op.model_dump(mode='json'));seen.add(digest(op))
                     if grants!=p['grants']:raise ValueError('trusted grants differ')
                     disclosures.append({'event_id':event.id,'keys':sorted(intent.disclosures)})
@@ -55,6 +68,9 @@ def evaluate(adapter,trace,*,initial_world=None,private=None):
             elif event.kind=='business':
                 native=Trace.model_validate(p['trace'])
                 if native.initial_state!=world.model_dump(mode='json') or p['turn_id']!='turn_'+str(turn):raise ValueError('business prestate/turn differs')
+                if trace.scoped_profile_ids:
+                    if p.get('profile_id')!=active_profile_id:raise ValueError('business action detached from the active scoped Customer turn')
+                elif 'profile_id' in p:raise ValueError('legacy business event declares an unregistered profile')
                 native_ops=[e for e in native.events if e.kind=='operation']
                 if len(native_ops)!=1:raise ValueError('one event must contain exactly one business operation')
                 op=adapter.Operation.model_validate(native_ops[0].payload['operation']);canonical=op.model_dump(mode='json')

@@ -28,6 +28,7 @@ def event_states(adapter,trace):
     """Recover actual pre/post states after checking Engine/process/external replay."""
     replay(adapter,trace)
     world=adapter.World.model_validate(trace.initial_world)
+    profiles={pid:adapter.private_state(world,pid) for pid in (trace.scoped_profile_ids or [trace.profile_id])}
     rows=[]
     for event in trace.events:
         before=world.clone();p=event.payload
@@ -36,7 +37,10 @@ def event_states(adapter,trace):
             else:
                 from .models import CustomerIntent
                 intent=CustomerIntent.model_validate(p['intent'])
-                world.interaction=customer_event(world.interaction,trace.private,adapter.normalize_intent(trace.private,intent),
+                profile_id=p.get('profile_id',trace.profile_id)
+                if profile_id not in profiles:raise ValueError('Customer event references an unselected profile')
+                private=profiles[profile_id]
+                world.interaction=customer_event(world.interaction,private,adapter.normalize_intent(private,intent),
                     turn_id=p['turn_id'],world_hash=world.state_hash,
                     offer=adapter.offer_for(world,intent.confirm_operation),consent_check=adapter.consent_allowed)
         elif event.kind=='business':world=adapter.World.model_validate(p['trace']['final_state'])
@@ -114,19 +118,23 @@ def certify_dependencies(adapter,trace):
             row=_certificate(adapter,trace,event,before,after,operation,'partial_completion',intervention)
             if row:result.append(row)
         if event.kind=='business':
+            private=adapter.private_state(adapter.World.model_validate(trace.initial_world),event.payload.get('profile_id',trace.profile_id))
             ops=[e['payload']['operation'] for e in event.payload['trace']['events'] if e['kind']=='operation']
             op=adapter.Operation.model_validate(ops[0])
             if op.is_query or not adapter.decide(before,trace.private.identity,op).allowed:continue
-            interventions=[('missing_information',{'fact':key}) for key in before.interaction.known_facts]
+            interventions=[('missing_information',{'fact':key}) for key,value in before.interaction.known_facts.items() if private.facts.get(key)==value]
             interventions+=[('explicit_consent',{})]
-            interventions+=[('preference_resolution',{'preference':k,'value':v}) for k,values in trace.private.preference_space.items() for v in values if v!=before.interaction.preferences.get(k)]
+            interventions+=[('preference_resolution',{'preference':k,'value':v}) for k,values in private.preference_space.items() for v in values if v!=before.interaction.preferences.get(k)]
             for kind,intervention in interventions:
-                changed=intervene(adapter,trace.private,before,kind,intervention)
+                changed=intervene(adapter,private,before,kind,intervention)
                 row=_certificate(adapter,trace,event,before,changed,op,kind,intervention)
                 if row:result.append(row)
         elif event.kind=='external':
             # The paired states are actual replayed states, not invented outcomes.
-            candidates=adapter.candidate_intents(before,trace.private)+adapter.candidate_intents(after,trace.private)
+            candidates=[]
+            for profile_id in (trace.scoped_profile_ids or [trace.profile_id]):
+                private=adapter.private_state(adapter.World.model_validate(trace.initial_world),profile_id)
+                candidates+=adapter.candidate_intents(before,private)+adapter.candidate_intents(after,private)
             seen=set()
             for op in candidates:
                 if digest(op) in seen:continue
@@ -157,7 +165,8 @@ def verify_dependency(adapter,trace,certificate):
         if event.kind!='business':raise ValueError('process dependency lacks business source')
         operations=[e['payload']['operation'] for e in event.payload['trace']['events'] if e['kind']=='operation']
         if c.proof.operation!=operations[0]:raise ValueError('dependency operation differs from actual source action')
-        changed=intervene(adapter,trace.private,control,c.proof.kind,c.intervention)
+        private=adapter.private_state(adapter.World.model_validate(trace.initial_world),event.payload.get('profile_id',trace.profile_id))
+        changed=intervene(adapter,private,control,c.proof.kind,c.intervention)
     if c.control_world!=control.model_dump(mode='json') or c.changed_world!=changed.model_dump(mode='json'):raise ValueError('counterfactual edits exceed the declared intervention')
     rebuilt=_certificate(adapter,trace,event,control,changed,c.proof.operation,c.proof.kind,c.intervention)
     if rebuilt is None or rebuilt!=c:raise ValueError('Reference dependency does not reproduce')

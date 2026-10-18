@@ -9,7 +9,8 @@ from typing import Literal,Optional
 from pydantic import Field
 from usami_harness.models import Model,digest
 from usami_harness.goals import JointGoal
-from usami_dialogue.tasks import TaskCertificate,checked_task as checked_dialogue
+from usami_dialogue.tasks import (TaskCertificate,DialogueComposition,InformationRequirement,PreferenceRequirement,
+    Goal,FrameRule,RefusalGoal,checked_task as checked_dialogue,certify as certify_dialogue)
 from usami_dialogue.engine import ExecutionTrace
 from usami_dialogue.planner import search as dialogue_search,certified_paths
 from .contracts import TRACKS
@@ -23,6 +24,19 @@ class ConstructionBudget(Model):
     max_depth:int=Field(default=12,strict=True,ge=1,le=16)
     max_paths:int=Field(default=1,strict=True,ge=1,le=8)
 
+class OpenDialogueComposition(Model):
+    """Designer-authored objectives bound to selected profiles in a frozen world."""
+    protocol:Literal['open-dialogue-composition-v1']='open-dialogue-composition-v1'
+    profile_ids:list[str]=Field(min_length=1,max_length=64)
+    customer_request:str=Field(min_length=1,max_length=6000)
+    goals:list[Goal]=Field(default_factory=list,max_length=32)
+    refusal_operations:list[dict]=Field(default_factory=list,max_length=16)
+    frames:list[FrameRule]=Field(min_length=1,max_length=128)
+    external_schedule:list[str]=Field(default_factory=list,max_length=64)
+    information_requirements:list[InformationRequirement]=Field(default_factory=list,max_length=64)
+    preference_requirements:list[PreferenceRequirement]=Field(default_factory=list,max_length=64)
+    confirmation_requirements:list[dict]=Field(default_factory=list,max_length=16)
+
 class TaskSelection(Model):
     kind:Literal['tool','dialogue']
     family:str=Field(min_length=1,max_length=160)
@@ -33,6 +47,7 @@ class TaskSelection(Model):
     capabilities:list[dict]=Field(default_factory=list,max_length=16)
     refusal_operations:list[dict]=Field(default_factory=list,max_length=4)
     parameters:dict=Field(default_factory=dict)
+    composition:Optional[OpenDialogueComposition]=Field(default=None,exclude_if=lambda value:value is None)
 
 class DialogueWitness(Model):
     certificate:TaskCertificate
@@ -100,6 +115,37 @@ def _dialogue(frozen,selection,budget):
     w=adapter.World.model_validate(frozen.world)
     if selection.profile_id not in w.profiles:raise ValueError('profile is not in the frozen world')
     p=adapter.private_state(w,selection.profile_id)
+    if selection.composition is not None:
+        spec=OpenDialogueComposition.model_validate(selection.composition.model_dump(mode='json'))
+        if selection.family!='open_composition_v1' or spec.profile_ids[0]!=selection.profile_id:
+            raise ValueError('open composition needs family open_composition_v1 and its primary frozen profile')
+        if selection.identity not in {None,p.identity} or selection.parameters or selection.message or selection.goal or selection.capabilities or selection.refusal_operations:
+            raise ValueError('open composition cannot override identity, world, task, or operation scope')
+        if len({digest(row) for row in spec.refusal_operations})!=len(spec.refusal_operations):raise ValueError('duplicate composed refusal request')
+        from usami_dialogue.tasks import DialogueTask
+        from usami_dialogue.planner import search_composed,execute_witness
+        codes=list(catalogue(domain,frozen.spec.rules_version)['errors'])
+        if spec.refusal_operations and not codes:raise ValueError('native Reference has no registered refusal codes')
+        task=DialogueTask(domain=domain,rules_version=w.version,world_hash=w.state_hash,profile_id=selection.profile_id,
+            private_hash=p.private_hash,family='open_composition_v1',goals=spec.goals,
+            refusals=[RefusalGoal(operation=raw,code=codes[0]) for raw in spec.refusal_operations],
+            frames=spec.frames,external_schedule=spec.external_schedule,
+            composition=DialogueComposition(profile_ids=spec.profile_ids,customer_request=spec.customer_request,
+                information_requirements=spec.information_requirements,preference_requirements=spec.preference_requirements,
+                confirmation_requirements=spec.confirmation_requirements))
+        task=checked_dialogue(adapter,w,task)
+        result=search_composed(adapter,w,task,max_nodes=budget.max_nodes,max_depth=budget.max_depth,
+            max_paths=budget.max_paths,refusal_code_options=[set(codes) for _ in task.refusals])
+        rows=[]
+        for path,matched in zip(result['paths'],result.get('matched_refusal_codes',[[] for _ in result['paths']])):
+            resolved=task.model_copy(deep=True)
+            for refusal,code in zip(resolved.refusals,matched):refusal.code=code
+            resolved.task_hash='';resolved=checked_dialogue(adapter,w,resolved)
+            trace=execute_witness(adapter,w,resolved,path)
+            rows.append(DialogueWitness(trace=trace,certificate=certify_dialogue(adapter,w,resolved,trace)))
+        if not rows:raise ValueError('bounded Reference search did not prove the open composition')
+        return rows,{k:v for k,v in result.items() if k not in {'paths','matched_refusal_codes'}}
+    if selection.family=='open_composition_v1':raise ValueError('open composition payload required')
     if selection.identity is not None and selection.identity!=p.identity:raise ValueError('execution identity differs from frozen Customer profile')
     if selection.message is not None or selection.goal is not None or selection.capabilities or selection.refusal_operations:raise ValueError('dialogue goals must use native Customer choices, not replace facts, frames or requests')
     if set(selection.parameters)-PARAMETERS[domain]:raise ValueError('unregistered native task parameters')
@@ -137,7 +183,7 @@ def compile_task(frozen,selection,budget=None):
     budget=ConstructionBudget.model_validate(budget.model_dump(mode='json') if isinstance(budget,ConstructionBudget) else budget or {})
     if (selection.kind=='tool')!=(TRACKS[frozen.spec.domain]=='A'):raise ValueError('selection kind differs from native domain track')
     if selection.kind=='tool':
-        if selection.parameters or selection.profile_id is not None or not selection.identity or not selection.message:raise ValueError('tool task needs exact identity, ordinary message and native capabilities')
+        if selection.composition is not None or selection.parameters or selection.profile_id is not None or not selection.identity or not selection.message:raise ValueError('tool task needs exact identity, ordinary message and native capabilities')
         goal=selection.goal
         if goal is None and not selection.refusal_operations and len(selection.capabilities)==1:
             world=tool_world(frozen);b,_=binding(frozen.spec.domain,world);d=b.decide(world,selection.identity,b.Operation.model_validate(selection.capabilities[0]))

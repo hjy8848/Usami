@@ -12,6 +12,36 @@ The bounded Reference search enumerates available native operations and pre-regi
 
 `execute_witness()` executes each resulting plan using the actual dialogue session and independent native mutation implementation. `certify()` requires the objective goal, frame, Oracle and full offline Replay to agree. The witness is a private certificate, never a production Service script or required path. `score()` evaluates an Agent's actual trace using the same terminal predicates and independent judgments; legal extra queries and different valid paths are accepted.
 
+## Frozen-world open composition
+
+Task construction is no longer limited to the four dialogue domains' fixed
+`compose()` families. `usami_benchmark.designer.designer_view()` gives a task
+Designer the complete sealed world, public rules and the native operation and
+scope contracts. For dialogue worlds it also enumerates existing Customer
+profiles, their permitted facts/preferences, candidate intents and frame
+contracts. A proposal can select multiple profiles only when they belong to the
+same authenticated identity, and can combine multiple completion goals, exact
+refusal probes, information/preference requirements, confirmations and
+pre-registered external events. Track A already supports multiple native
+capabilities and a `JointGoal`; the Designer view exposes its registered
+operations and per-identity visible entities.
+
+The model proposal enters `compile_task()` as `TaskSelection`. It cannot edit
+the world, invent IDs, choose a Reference refusal code, provide an execution
+witness or override native rules. Static scope checks run first; bounded native
+Reference search then finds a witness, and the ordinary Engine, independent
+Oracle, task certificate and exact Replay must agree. A bounded search that
+finds no witness is unproven, not proof that the task is impossible. The
+versioned dialogue payload is `open-dialogue-composition-v1` and is preserved in
+the task hash. `design_and_compile()` makes one Designer call without retry and
+retains its raw request, response, proposal, certificate and reported token
+usage; `verify_designer_execution()` reconstructs the prompt, checks that the
+proposal matches the raw function call, and replays the certified task.
+
+This opens the task language; it does not establish that an LLM Designer
+reliably proposes diverse or useful challenges. This change has no real-model
+Designer run.
+
 ## Mixed task
 
 A reproducible mixed After-sales task asks for a valid remedy and then requests another resolution of the same real order line. The first subgoal requires the actual refund/exchange/reship state. The second requires a Service refusal of the exact requested operation with the native `ALREADY_RESOLVED` reason. The original order and item exist; no invented ID is needed.

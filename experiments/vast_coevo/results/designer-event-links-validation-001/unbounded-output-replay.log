@@ -1,0 +1,46 @@
+{
+  "status": "BLOCKED",
+  "model": "deepseek-v4.1-flash",
+  "max_tokens_in_requests": false,
+  "actual_calls": 9,
+  "designer_queries": 10,
+  "proposal_attempts": 4,
+  "certified_tasks": 0,
+  "service_tasks": 0,
+  "reflections": 0,
+  "skill_updates": 0,
+  "all_responses_ended_before_provider_length": true,
+  "usage": {
+    "by_role": {
+      "designer": {
+        "calls": 9,
+        "input_tokens": 95341,
+        "output_tokens": 19899,
+        "total_tokens": 115240,
+        "usage_complete": true
+      }
+    },
+    "input_tokens": 95341,
+    "output_tokens": 19899,
+    "total_tokens": 115240,
+    "usage_complete": true
+  },
+  "failure": "Designer submission budget exhausted: confirmation requirement is outside selected Customer authority",
+  "failed_session_offline_replay": {
+    "verified": true,
+    "failure_reproduced": true,
+    "model_calls": 9,
+    "actual_online_calls": 0
+  },
+  "events_visible_to_designer": [
+    "manager_review_u0_order0_line0",
+    "return_received_u0_order0_line0",
+    "manager_review_u0_order2_line0",
+    "return_received_u0_order2_line0",
+    "manager_review_u0_order3_line0",
+    "return_received_u0_order3_line0",
+    "manager_review_u1_order1_line0",
+    "return_received_u1_order1_line0"
+  ],
+  "report": "designer-event-links-validation-001/REPORT.zh.md"
+}

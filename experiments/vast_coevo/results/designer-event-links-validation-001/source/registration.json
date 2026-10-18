@@ -1,10 +1,13 @@
 {
-  "git_base": "33d940bcbcda33fdd502df999a24e6258417a71a",
+  "git_base": "bdd412a19064a37eb34c24fbeeb3f852f9039af2",
   "python": "3.9.6",
+  "pydantic": "2.13.5",
+  "httpx": "0.28.1",
   "files": {
     "usami_benchmark/designer_exploration.py": "9944a14cf65a5e314ed36017dd577f7a7b11ee849e74abaa9387b8a8e77c8227",
     "experiments/vast_coevo/examples/aftersales_coevo_live.py": "6601ac46ef46ca950296a6b8d910212ba061634e3e2e1631da02b701bb4b553d",
     "experiments/vast_coevo/examples/designer_event_link_check.py": "96e9a4aa373f1f51964e7a824fe2e87bc1dcf261f78c47ff5013ad40c657a321",
+    "experiments/vast_coevo/examples/verify_designer_event_links_live.py": "87dbb88e16e6bb2a0b1e774d68a28eb46d3598126097c2d8ff5d8f11fc43bf7a",
     "tests/test_designer_event_links.py": "a47cc38f16931882ff8fe3acec90d1ac519a61fbbbf21b0cb72d0e586ed2f27e"
   }
 }

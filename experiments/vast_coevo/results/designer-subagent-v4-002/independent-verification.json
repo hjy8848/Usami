@@ -1,0 +1,25 @@
+{
+  "certificate_count": 1,
+  "certified_record_hash": "21fde6831ca60647bab5ead1c6426f2ed7884daa360e277b4e31416d604627c0",
+  "certified_task_hash": "bc5358c280eabe48ca285b7e36ee5eca10ba4fde6413a565dddf1bf46933f57e",
+  "customer_executions": 0,
+  "external_api_calls": 0,
+  "frozen_registration_hash": "200f77794e7f9c5ee739ec946462621f8167224f5e98de9907b024868b7db0fd",
+  "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "native_evaluation_replay_verified": [
+    true
+  ],
+  "native_evaluation_success": [
+    true
+  ],
+  "oracle_certificate_statuses": [
+    "pass"
+  ],
+  "proposal_hash": "d8ac730b8c15c16a56a8a9fd3b9a3093dbbe069bd3d3a726782ca36f661cb522",
+  "protocol": "designer-subagent-v4-independent-verification-v1",
+  "provenance": "Root-side native compile and exact verify_task replay; no model/API calls and no Service execution.",
+  "reference_correct_refusal_count": 1,
+  "reference_successful_business_violation_count": 0,
+  "service_executions": 0,
+  "verify_task_replay": "verified"
+}

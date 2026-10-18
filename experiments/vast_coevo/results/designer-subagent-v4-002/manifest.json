@@ -1,0 +1,48 @@
+{
+  "archived_api_request_sha256": "539cd1e81248344fec2b828378f6a4837e3172a3c11c9d0438695bfc70c24565",
+  "artifacts": {
+    "archived-api-request-v2.json": {
+      "bytes": 9415,
+      "sha256": "539cd1e81248344fec2b828378f6a4837e3172a3c11c9d0438695bfc70c24565"
+    },
+    "independent-verification.json": {
+      "bytes": 1043,
+      "sha256": "f1775a3cbf6a918aa70a583f150f5e991c4bda84a794036610d493e75f0be2a4"
+    },
+    "native-certified-task.json": {
+      "bytes": 259384,
+      "sha256": "4ce7407f32762df4856a412d25dcaa72789fc6c412cda714cf94be64301c7e06"
+    },
+    "offline-run.json": {
+      "bytes": 18446,
+      "sha256": "02b32f9751c57cf8a98565b30537dcc53ece1d4d954388eff1caa09fb30bd6fc"
+    },
+    "report.md": {
+      "bytes": 2418,
+      "sha256": "01c7b6f2f05ba72aa5a28c917fdcbe6ca65e87fc43ad4d6f1caf3ef84b045eaa"
+    },
+    "request-context.json": {
+      "bytes": 49005,
+      "sha256": "0b99b3f1e2f8718a334e82049df9db905dc3065174873d5d0493669c4d8a609e"
+    }
+  },
+  "commit": "9a17d8748a4384bb65521cc1c2bb25e2a3ca307e",
+  "compiler_certified": true,
+  "customer_executions": 0,
+  "designer_protocol": "frozen-world-designer-exploration-v4",
+  "domain": "aftersales",
+  "exploration_request_hash": "81ad8d3860ffc2abb60f68a945f9658719588b31745df05b4371e25efcda60a6",
+  "external_api_calls": 0,
+  "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "model_label_in_context": "deepseek-v4.1-flash",
+  "native_replay_verified": true,
+  "protocol": "offline-designer-api-context-v4-run-v1",
+  "provenance": "Codex subagent used the archived v2 API request for comparison, the current v4 exploration request/context, and registered local read-only inspection/compiler functions. This is an offline agent simulation, not an external model result.",
+  "queries": 3,
+  "reflection_calls": 0,
+  "registration_hash": "200f77794e7f9c5ee739ec946462621f8167224f5e98de9907b024868b7db0fd",
+  "run_id": "designer-subagent-v4-002",
+  "service_executions": 0,
+  "submission_attempts": 1,
+  "submission_request_hash": "122b4a7f5469087baf1d0b8c3d40098eecdf563c8acf77bc43d52e6ed61add18"
+}

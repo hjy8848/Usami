@@ -1,0 +1,503 @@
+{
+  "record_type": "offline_designer_run",
+  "agent_label": "Codex offline subagent",
+  "protocol": "frozen-world-designer-exploration-v4",
+  "domain": "aftersales",
+  "provenance": "Local constrained simulation using the current v4 read-only and compile functions. External API calls=0. Customer/Service executions=0.",
+  "world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "registration_hash": "200f77794e7f9c5ee739ec946462621f8167224f5e98de9907b024868b7db0fd",
+  "exploration_request_hash": "81ad8d3860ffc2abb60f68a945f9658719588b31745df05b4371e25efcda60a6",
+  "submission_request_hash": "122b4a7f5469087baf1d0b8c3d40098eecdf563c8acf77bc43d52e6ed61add18",
+  "archived_api_request_sha256": "539cd1e81248344fec2b828378f6a4837e3172a3c11c9d0438695bfc70c24565",
+  "budget": {
+    "exploration_query_limit": 20,
+    "exploration_queries_used": 3,
+    "submission_attempt_limit": 4,
+    "submission_attempts_used": 1,
+    "revision_limit": 3,
+    "construction": {
+      "max_nodes": 4096,
+      "max_depth": 16,
+      "max_paths": 1
+    },
+    "external_api_calls": 0,
+    "customer_executions": 0,
+    "service_executions": 0
+  },
+  "tool_availability": {
+    "available_tool_inventory_count": 221,
+    "matching_designer_tools_found": [],
+    "checked_names": [
+      "inspect_world",
+      "inspect_frozen_world",
+      "ready_to_submit",
+      "submit_frozen_world_task",
+      "compile_proposal"
+    ],
+    "result": "Using constrained Python helper for the local v4 implementation, as directed by the parent task."
+  },
+  "world_hash_verification": {
+    "generated_from": "freeze(default_spec('aftersales', 1))",
+    "expected": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+    "actual": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+    "matches": true
+  },
+  "world_queries": [
+    {
+      "query": {
+        "action": "read_rules"
+      },
+      "result": {
+        "policy": {
+          "business_rules": [
+            "Authenticate the order buyer and merchant/order/line scope. Ask for the actual order, issue, evidence and relevant customer deadline before committing a remedy.",
+            "A case can be opened only for an eligible delivered line inside its product return window. Opening a case and offering or agreeing to a remedy all use the actual delivery date and the same window; manager approval does not extend it.",
+            "Product returnability, verified evidence, settlement state, merchant approval limit and replacement stock further constrain refund, exchange and reship.",
+            "Return-required refunds need actual receipt; pickup, current remedy choice and irreversible settlement require the applicable exact customer confirmation. Use the original payment channel and remaining paid value."
+          ],
+          "catalogue_hash": "7faf63ebb0aeabf1880e5cf49e9178a9cbeae0ee3dcdc1b7bfe874c5a4274693",
+          "domain": "aftersales",
+          "errors": {
+            "AFTERSALES_WINDOW_EXPIRED": "Create/agree remedies only inside the product return window following actual delivery.",
+            "ALREADY_RESOLVED": "A line can be settled only once; another order or stale agreement cannot be substituted.",
+            "APPROVAL_REQUIRED": "Refunds over the merchant support limit require a simulated manager approval; agents cannot assert approval.",
+            "CASE_SCOPE_MISMATCH": "Case scope mismatch. Consult the applicable current public contract and resource facts.",
+            "CUSTOMER_CONTEXT_REQUIRED": "Customer context required. Consult the applicable current public contract and resource facts.",
+            "DELIVERY_DEADLINE_UNMET": "Delivery deadline unmet. Consult the applicable current public contract and resource facts.",
+            "EVIDENCE_INVALID": "Evidence invalid. Consult the applicable current public contract and resource facts.",
+            "EVIDENCE_REQUIRED": "Damage, wrong-item and missing-parts remedies require independently verified evidence bound to the line and issue.",
+            "EVIDENCE_SCOPE_MISMATCH": "Evidence scope mismatch. Consult the applicable current public contract and resource facts.",
+            "EXPLICIT_CONSENT_REQUIRED": "Irreversible settlement needs current exact consent to the actual quote; revised preferences invalidate old quotes.",
+            "INVALID_WORLD": "Invalid world. Consult the applicable current public contract and resource facts.",
+            "LINE_SCOPE_MISMATCH": "Line scope mismatch. Consult the applicable current public contract and resource facts.",
+            "MERCHANT_NOT_FOUND": "Merchant not found. Consult the applicable current public contract and resource facts.",
+            "MERCHANT_SCOPE_MISMATCH": "Merchant scope mismatch. Consult the applicable current public contract and resource facts.",
+            "ORDER_ACCESS_DENIED": "Only the authenticated buyer may service their order; merchant scope is explicit.",
+            "ORDER_NOT_DELIVERED": "Order not delivered. Consult the applicable current public contract and resource facts.",
+            "ORDER_NOT_FOUND": "Order not found. Consult the applicable current public contract and resource facts.",
+            "ORIGINAL_CHANNEL_REQUIRED": "Refunds return to the original paid channel and never exceed eligible paid line value.",
+            "PICKUP_ALREADY_SCHEDULED": "Pickup already scheduled. Consult the applicable current public contract and resource facts.",
+            "PICKUP_CONFIRMATION_REQUIRED": "Pickup confirmation required. Consult the applicable current public contract and resource facts.",
+            "PREFERENCE_RESOLUTION_REQUIRED": "Preference resolution required. Consult the applicable current public contract and resource facts.",
+            "PRODUCT_NOT_RETURNABLE": "Product not returnable. Consult the applicable current public contract and resource facts.",
+            "QUOTE_EXPIRED": "Quote expired. Consult the applicable current public contract and resource facts.",
+            "QUOTE_SCOPE_MISMATCH": "Quote scope mismatch. Consult the applicable current public contract and resource facts.",
+            "REFUND_EXCEEDS_PAYMENT": "Refund exceeds payment. Consult the applicable current public contract and resource facts.",
+            "REFUND_NOT_AGREED": "Refund not agreed. Consult the applicable current public contract and resource facts.",
+            "REPLACEMENT_UNAVAILABLE": "Replacement stock is conserved; promised delivery must meet the stated deadline.",
+            "REQUIRED_INFORMATION_MISSING": "Select the order/line and state the issue before opening a case; disclose required evidence held by the customer.",
+            "RETURN_NOT_AGREED": "Return not agreed. Consult the applicable current public contract and resource facts.",
+            "RETURN_RECEIPT_REQUIRED": "A return-required refund settles only after independently attested physical receipt.",
+            "STALE_CUSTOMER_CHOICE": "Stale customer choice. Consult the applicable current public contract and resource facts.",
+            "UNKNOWN_ACTOR": "Unknown actor. Consult the applicable current public contract and resource facts."
+          },
+          "protocol": "eight-domain-public-rulebook-v1",
+          "rules_version": "aftersales-0.1.0",
+          "scope": "Static public policy and code vocabulary; not the expected answer for any particular world or task."
+        },
+        "native_field_enums": {
+          "orders": {
+            "status": [
+              "processing",
+              "shipped",
+              "delivered"
+            ]
+          },
+          "lines": {
+            "status": [
+              "unresolved",
+              "return_pending",
+              "refunded",
+              "exchanged",
+              "reshipped"
+            ]
+          },
+          "evidence": {
+            "issue": [
+              "damaged",
+              "wrong_item",
+              "missing_parts"
+            ]
+          },
+          "cases": {
+            "issue": [
+              "damaged",
+              "wrong_item",
+              "missing_parts"
+            ],
+            "status": [
+              "open",
+              "evidence_verified",
+              "return_pending",
+              "resolved"
+            ]
+          },
+          "quotes": {
+            "option": [
+              "refund",
+              "exchange",
+              "reship"
+            ],
+            "status": [
+              "offered",
+              "committed"
+            ]
+          },
+          "returns": {
+            "status": [
+              "scheduled",
+              "received"
+            ]
+          },
+          "replacements": {
+            "kind": [
+              "exchange",
+              "reship"
+            ]
+          },
+          "external_events": {
+            "kind": [
+              "manager_review",
+              "return_received"
+            ],
+            "outcome": [
+              "approved",
+              "denied",
+              "received",
+              "missing"
+            ]
+          }
+        },
+        "operation_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "title": "Name",
+              "type": "string"
+            },
+            "scope_id": {
+              "minLength": 1,
+              "title": "Scope Id",
+              "type": "string"
+            },
+            "resource_id": {
+              "minLength": 1,
+              "title": "Resource Id",
+              "type": "string"
+            },
+            "params": {
+              "additionalProperties": true,
+              "title": "Params",
+              "type": "object"
+            }
+          },
+          "required": [
+            "name",
+            "scope_id",
+            "resource_id"
+          ],
+          "title": "Operation",
+          "type": "object"
+        }
+      }
+    },
+    {
+      "query": {
+        "action": "list_profiles",
+        "offset": 0,
+        "limit": 8
+      },
+      "result": {
+        "items": [
+          {
+            "profile_id": "profile_u0_order0_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order1_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order2_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order2_line1",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order2_line2",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order3_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order3_line1",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u1_order0_line0",
+            "identity": "u1"
+          }
+        ],
+        "total": 31,
+        "offset": 0,
+        "limit": 8
+      }
+    },
+    {
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u0_order0_line0"
+      },
+      "result": {
+        "profile_id": "profile_u0_order0_line0",
+        "identity": "u0",
+        "facts": {
+          "order_id": "u0_order0",
+          "line_id": "u0_order0_line0",
+          "issue": "missing_parts",
+          "evidence_id": "photo_u0_order0_line0",
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "pickup_slot": "morning"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m0",
+            "resource_id": "u0_order0",
+            "params": {
+              "line_id": "u0_order0_line0",
+              "issue": "missing_parts"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u0_order0_line0": {
+              "id": "u0_order0_line0",
+              "order_id": "u0_order0",
+              "product_id": "m0_product0",
+              "quantity": 2,
+              "unit_price_cents": 800,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m0_product0": {
+              "id": "m0_product0",
+              "merchant_id": "m0",
+              "name": "Item 0",
+              "stock": 3,
+              "opening_stock": 3,
+              "returnable": true,
+              "return_days": 14,
+              "return_required": true,
+              "replacement_days": 7
+            }
+          },
+          "evidence": {
+            "photo_u0_order0_line0": {
+              "id": "photo_u0_order0_line0",
+              "order_id": "u0_order0",
+              "line_id": "u0_order0_line0",
+              "holder_id": "u0",
+              "issue": "missing_parts",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u0_order0": {
+              "id": "u0_order0",
+              "merchant_id": "m0",
+              "customer_id": "u0",
+              "status": "delivered",
+              "delivered_at": "2025-12-01T12:00:00Z",
+              "payment_channel": "original_u0",
+              "paid_cents": 1600
+            }
+          },
+          "merchants": {
+            "m0": {
+              "id": "m0",
+              "name": "Merchant 0",
+              "refund_approval_limit_cents": 5000
+            }
+          },
+          "users": {
+            "u0": {
+              "id": "u0",
+              "name": "Buyer 0"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u0_order0_line0",
+            "kind": "manager_review",
+            "line_id": "u0_order0_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "denied"
+          },
+          {
+            "id": "return_received_u0_order0_line0",
+            "kind": "return_received",
+            "line_id": "u0_order0_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "missing"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m0_product0",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_2e6fab2637e3a8f4",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_2e6fab2637e3a8f4",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    }
+  ],
+  "proposal_attempts": [
+    {
+      "attempt": 1,
+      "proposal": {
+        "profile_ids": [
+          "profile_u0_order0_line0"
+        ],
+        "customer_request": "The item in order u0_order0 arrived with missing parts on December 1. I have a photo, and my stated deadline is January 25. Please open a case for a replacement.",
+        "goals": [],
+        "refusal_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m0",
+            "resource_id": "u0_order0",
+            "params": {
+              "line_id": "u0_order0_line0",
+              "issue": "missing_parts"
+            }
+          }
+        ],
+        "information_requirements": [],
+        "preference_requirements": [],
+        "confirmation_requirements": [],
+        "external_schedule": []
+      },
+      "compile_result": {
+        "certified": true
+      }
+    }
+  ],
+  "final_proposal": {
+    "profile_ids": [
+      "profile_u0_order0_line0"
+    ],
+    "customer_request": "The item in order u0_order0 arrived with missing parts on December 1. I have a photo, and my stated deadline is January 25. Please open a case for a replacement.",
+    "goals": [],
+    "refusal_operations": [
+      {
+        "name": "open_case",
+        "scope_id": "m0",
+        "resource_id": "u0_order0",
+        "params": {
+          "line_id": "u0_order0_line0",
+          "issue": "missing_parts"
+        }
+      }
+    ],
+    "information_requirements": [],
+    "preference_requirements": [],
+    "confirmation_requirements": [],
+    "external_schedule": []
+  },
+  "final_compile_status": "certified",
+  "blocking_reason": null,
+  "challenge_difficulty_observed": "Challenge selection depends on grounding objectives in visible mutable state, supported Customer operations, and registered external events."
+}

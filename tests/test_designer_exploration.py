@@ -76,6 +76,38 @@ def test_confirmation_requirements_are_optional_but_supplied_scope_stays_native(
     assert "description" not in legacy_schema["properties"]["confirmation_requirements"]
     assert "Optional evaluator assertion" in guided_schema["properties"]["confirmation_requirements"]["description"]
 
+
+def test_submission_schema_requires_an_objective_and_types_native_refusal_params(frozen):
+    from usami_benchmark.designer_exploration import _messages, _tools
+
+    with pytest.raises(ValueError, match="information and preference requirements alone"):
+        DialogueDesignerProposal.model_validate({
+            "profile_ids": ["profile_u0_order0_line0"],
+            "customer_request": "Please check what options are available.",
+            "information_requirements": [{
+                "profile_id": "profile_u0_order0_line0", "fact_keys": ["line_id"]
+            }],
+        })
+
+    schema = _tools("submission", frozen=frozen)[0]["function"]["parameters"]
+    assert {tuple(branch["required"]) for branch in schema["anyOf"]} == {
+        ("goals",), ("refusal_operations",)
+    }
+    refusal_items = schema["properties"]["refusal_operations"]["items"]["anyOf"]
+    quote = next(branch for branch in refusal_items
+                 if branch["properties"]["name"].get("enum") == ["quote_resolution"])
+    assert "params" in quote["required"]
+    assert set(quote["properties"]["params"]["required"]) == {"case_id", "option"}
+    assert "customer_operations" not in schema["properties"]["refusal_operations"]["description"]
+    assert "Customer-authorized operation is not automatically a refusal" in schema["properties"]["refusal_operations"]["description"]
+    assert "native Customer frame" in schema["$defs"]["Goal"]["description"]
+
+    v3_policy = _messages(frozen, {}, DesignerBudget(), protocol=PROTOCOL)[0]["content"]
+    assert "its presence does not mean the operation should be refused" in v3_policy
+    legacy_policy = _messages(frozen, {}, DesignerBudget(),
+                              protocol="frozen-world-designer-exploration-v2")[0]["content"]
+    assert "its presence does not mean the operation should be refused" not in legacy_policy
+
     raw = proposal(frozen)
     raw.pop("confirmation_requirements", None)
     parsed = DialogueDesignerProposal.model_validate(raw)
@@ -93,6 +125,17 @@ def test_confirmation_requirements_are_optional_but_supplied_scope_stays_native(
         "params": {"line_id": "u0_order0_line0", "issue": "wrong_item"},
     }]
     with pytest.raises(ValueError, match="confirmation requirement is outside selected Customer authority"):
+        compile_proposal(frozen, raw, ConstructionBudget(max_nodes=512, max_depth=16))
+
+
+def test_v3_goal_feedback_explains_external_events_are_not_completion_targets(frozen):
+    raw = proposal(frozen)
+    event_id = next(iter(frozen.world["external_events"]))
+    raw["goals"] = [{
+        "collection": "external_events", "entity": event_id,
+        "field": "outcome", "accepted_values": ["missing"],
+    }]
+    with pytest.raises(ValueError, match="external events belong in external_schedule, not goals"):
         compile_proposal(frozen, raw, ConstructionBudget(max_nodes=512, max_depth=16))
 
 

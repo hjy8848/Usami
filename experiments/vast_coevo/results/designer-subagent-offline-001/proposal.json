@@ -1,0 +1,21 @@
+{
+  "confirmation_requirements": [],
+  "customer_request": "Hypothesis under test: a wrong-item exchange depends on valid evidence, replacement availability, and meeting the stated deadline. The item on order u1_order1, line u1_order1_line0, was the wrong item; photo_u1_order1_line0 is the evidence. I prefer an exchange and need it completed by 2026-01-25T12:00:00+00:00. Please arrange the exchange.",
+  "external_schedule": [],
+  "goals": [
+    {
+      "accepted_values": [
+        "exchanged"
+      ],
+      "collection": "lines",
+      "entity": "u1_order1_line0",
+      "field": "status"
+    }
+  ],
+  "information_requirements": [],
+  "preference_requirements": [],
+  "profile_ids": [
+    "profile_u1_order1_line0"
+  ],
+  "refusal_operations": []
+}

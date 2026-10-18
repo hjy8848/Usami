@@ -1,0 +1,55 @@
+{
+  "agent_kind": "Codex child agent used as an offline proposal generator; not an API model response",
+  "base_commit": "5e99fe243f55f2811f5975e7ce0874eba59afeef",
+  "certificate_hash": "d6e4d7ffdf3e848c45917bfc090fdd5143229a5b8aa6b92b85b8db485312054c",
+  "construction_budget": {
+    "max_depth": 16,
+    "max_nodes": 4096,
+    "max_paths": 1
+  },
+  "external_api_requests": 0,
+  "limitations": [
+    "No external LLM API was called.",
+    "No Service execution or Reflection was performed.",
+    "This validates proposal generation and native certification only; it is not evidence of model performance or co-evolution."
+  ],
+  "oracle_status": "pass",
+  "proposal_attempts": [
+    {
+      "reason": "used task_request/completion_goals instead of customer_request/goals",
+      "stage": "proposal schema",
+      "status": "rejected"
+    },
+    {
+      "reason": "used an external event record as a completion goal",
+      "stage": "native target scope",
+      "status": "rejected"
+    },
+    {
+      "stage": "native Reference and Replay",
+      "status": "certified",
+      "task_hash": "e49cc8aedb24b62977265bfec7fd80910eb398860fa23bf80726c32572fa94f4"
+    }
+  ],
+  "protocol": "offline-designer-proposal-diagnostic-v1",
+  "query_count": 5,
+  "reference_task_certificate_success": true,
+  "reference_witness_business_operations": 5,
+  "reflection_calls": 0,
+  "replay_verified": true,
+  "search_summary": {
+    "exhausted": false,
+    "max_depth": 16,
+    "max_nodes": 4096,
+    "nodes": 6,
+    "preference_combinations": 1,
+    "preference_combinations_truncated": false
+  },
+  "service_executions": 0,
+  "source_frozen_world": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/world.json",
+  "source_live_context": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/live-prompt-context.json",
+  "source_registration_hash": "200f77794e7f9c5ee739ec946462621f8167224f5e98de9907b024868b7db0fd",
+  "source_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "task_hash": "e49cc8aedb24b62977265bfec7fd80910eb398860fa23bf80726c32572fa94f4",
+  "witness_trace_hash": "6c24fd95e039ed5f09ebaf997e7930519b4d30cdf9b1b666f52f777e3f9ae5d9"
+}

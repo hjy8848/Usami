@@ -1,0 +1,22 @@
+{
+  "profile_ids": [
+    "profile_u0_order0_line0"
+  ],
+  "customer_request": "Hypothesis under test: the agent should check the native return window before starting a remedy path, even when the issue and evidence are clear. I have missing parts on order u0_order0, line u0_order0_line0; photo_u0_order0_line0 shows the issue. I prefer an exchange by 2026-01-25T12:00:00+00:00. Please open a case only if an exchange is still allowed; otherwise, explain why.",
+  "goals": [],
+  "refusal_operations": [
+    {
+      "name": "open_case",
+      "scope_id": "m0",
+      "resource_id": "u0_order0",
+      "params": {
+        "issue": "missing_parts",
+        "line_id": "u0_order0_line0"
+      }
+    }
+  ],
+  "information_requirements": [],
+  "preference_requirements": [],
+  "external_schedule": [],
+  "confirmation_requirements": []
+}

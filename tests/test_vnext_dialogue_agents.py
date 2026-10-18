@@ -5,7 +5,7 @@ from test_vast_usami import ScriptedClient,answer,call,SPEC
 from test_vnext_aftersales import prepared,operation
 from usami_aftersales import adapter
 from usami_aftersales.rules import case_key,quote_key
-from usami_dialogue.agents import run,replay,RunConfig
+from usami_dialogue.agents import run,replay,RunConfig,SkillPromptContext
 from usami_harness.models import Budget
 
 
@@ -82,3 +82,22 @@ def test_budget_stop_and_transport_failure_are_preserved_without_retry():
     failed=run(adapter,world,configured(world,pid),broken,service)
     assert failed.status=='customer_provider_error' and failed.cost['customer_calls']==1
     assert replay(adapter,failed)['verified']
+
+
+def test_service_skill_context_is_injected_and_bound_to_exact_replay():
+    source,_,_=prepared();world=source.initial;pid=source.profile_id
+    context=SkillPromptContext(snapshot_hash='a'*64,skill_ids=['aftersales.test'],
+        rendered='<VAST_SKILLS><VAST_SKILL id="aftersales.test" version="2">inspect live order</VAST_SKILL></VAST_SKILLS>')
+    config=configured(world,pid).model_copy(update={'skill_contexts':{'service':context}})
+    customer=CheckedClient(SPEC,[intent('c0'),intent('c1',finish=True)])
+    service=CheckedClient(SPEC,[reply('r0','I can help with this request.')])
+    result=run(adapter,world,config,customer,service)
+    service_call=next(row for row in result.calls if row.role=='service')
+    assert context.rendered in service_call.record.request['messages'][0]['content']
+    assert result.config.skill_contexts['service'].context_hash==context.context_hash
+    assert replay(adapter,result,world=world,config=config)['verified']
+
+    tampered=context.model_copy(update={'rendered':context.rendered+' altered'})
+    bad_config=config.model_copy(update={'skill_contexts':{'service':tampered}})
+    with pytest.raises(ValueError,match='Skill prompt context hash differs'):
+        run(adapter,world,bad_config,customer,service)

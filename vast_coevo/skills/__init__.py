@@ -1,7 +1,7 @@
 """Public skill schemas, version storage, deterministic retrieval and framing."""
 
 from .library import LibrarySnapshot, LibraryStore, apply_patch, empty_snapshot
-from .models import DecisionSkill, ExplorationSkill, Patch, Scope, Skill, SkillPatch, SkillRole, SkillType, Trigger
+from .models import DecisionSkill, DesignerSkill, ExplorationSkill, Patch, Scope, Skill, SkillPatch, SkillRole, SkillType, Trigger
 from .renderer import SkillRenderer, render_skills
 from .retriever import RetrievalResult, Retriever, SkillContext, SkillHit, SkillRetriever
 from .validation import StaticSkillGate, StaticValidation, ValidationResult, validate_patch
@@ -20,7 +20,7 @@ def json_schemas():
 
 
 __all__ = [
-    "DecisionSkill", "ExplorationSkill", "LibrarySnapshot", "LibraryStore", "Patch",
+    "DecisionSkill", "DesignerSkill", "ExplorationSkill", "LibrarySnapshot", "LibraryStore", "Patch",
     "RetrievalResult", "Retriever", "Scope", "Skill", "SkillContext", "SkillHit",
     "SkillPatch", "SkillRenderer", "SkillRetriever", "SkillRole", "SkillType",
     "StaticSkillGate", "StaticValidation", "Trigger", "ValidationResult",

@@ -60,7 +60,7 @@ def _patch_arguments(response):
     return data
 
 
-def reflect(client, model, library, feedback, prefix, objective=OBJECTIVE):
+def reflect(client, model, library, feedback, prefix, objective=OBJECTIVE, domain_policy=None):
     schema=SkillPatch.model_json_schema();schema['properties']['role']['const']='designer'
     for name in ('DesignerSkill',):
         schema['$defs'][name]['required']=[k for k in schema['$defs'][name]['required'] if k!='scope']
@@ -76,7 +76,7 @@ def reflect(client, model, library, feedback, prefix, objective=OBJECTIVE):
     call=ModelCall(**fields,response=response)
     try:
         raw=_patch_arguments(response)
-        data,_=resolve_scope(raw,library,DomainPolicy(add_domains=('cloudops',)))
+        data,_=resolve_scope(raw,library,domain_policy or DomainPolicy(add_domains=('cloudops',)))
         patch=SkillPatch.model_validate(data)
         if patch.role!='designer' or patch.base_snapshot_hash!=library.snapshot_hash:raise ValueError('wrong Designer parent or role')
         if set(patch.evidence_ids)-{f['id'] for f in feedback}:raise ValueError('unavailable evidence citation')

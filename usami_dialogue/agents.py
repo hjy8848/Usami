@@ -1,7 +1,7 @@
 """Real function-calling Customer/Service interaction; fixtures use this exact runner."""
 import copy,json
 from typing import Literal,Union
-from pydantic import Field
+from pydantic import Field,model_validator
 from usami_harness.models import Model,Budget,digest
 from usami_harness.tools import schemas,parse
 from usami.service.models import LLMRecord,ModelSettings,strict_json,ServiceError
@@ -12,6 +12,27 @@ from .oracle import evaluate
 from .tasks import DialogueTask,TaskCertificate,verify_certificate
 
 
+class SkillPromptContext(Model):
+    """Exact rendered Skill text placed in an agent's system message."""
+    snapshot_hash:str
+    skill_ids:list[str]=Field(default_factory=list)
+    rendered:str
+    context_hash:str=''
+    @model_validator(mode='after')
+    def seal(self):
+        expected=self.computed_hash()
+        if self.context_hash and self.context_hash!=expected:raise ValueError('Skill prompt context hash differs')
+        object.__setattr__(self,'context_hash',expected)
+        return self
+    def computed_hash(self):
+        return digest({'snapshot_hash':self.snapshot_hash,'skill_ids':self.skill_ids,'rendered':self.rendered})
+    @classmethod
+    def checked(cls,value):
+        row=cls.model_validate(value.model_dump(mode='json') if hasattr(value,'model_dump') else value)
+        if row.context_hash and row.context_hash!=row.computed_hash():raise ValueError('Skill prompt context hash differs')
+        return row.model_copy(update={'context_hash':row.computed_hash()})
+
+
 class RunConfig(Model):
     protocol:Literal['business-dialogue-agents-v2']='business-dialogue-agents-v2'
     profile_id:str
@@ -20,6 +41,9 @@ class RunConfig(Model):
     tools:list[str]
     budget:Budget=Field(default_factory=Budget)
     external_schedule:list[str]=Field(default_factory=list)
+    # Optional content-addressed Skill context. Omitted when empty so archived
+    # v2 configurations retain their original serialization and replay behavior.
+    skill_contexts:dict[str,SkillPromptContext]=Field(default_factory=dict,exclude_if=lambda value:not value)
 
 
 class TaskRunConfig(RunConfig):
@@ -97,6 +121,9 @@ def run(adapter,world,config,customer_client,service_client):
     stool=schemas(adapter,config.tools)+[{'type':'function','function':{'name':'respond_to_customer','description':'Reply, ask or present real quote-backed terms.',
         'parameters':{'type':'object','properties':{'message':{'type':'string','minLength':1},'offered_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refused_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refusal_code':{'anyOf':[{'type':'string'},{'type':'null'}]}},'required':['message','offered_operation'],'additionalProperties':False}}}]
     smessages=[{'role':'system','content':SERVICE_POLICY+' Identity: '+session.private.identity+'. Public policy: '+json.dumps(adapter.POLICY,sort_keys=True)+'. Budget: '+config.budget.model_dump_json()}]
+    if 'service' in config.skill_contexts:
+        skill_context=SkillPromptContext.checked(config.skill_contexts['service'])
+        smessages[0]['content']+='\n\nApplied declarative Service Skills from snapshot '+skill_context.snapshot_hash+':\n'+skill_context.rendered
     if session.scoped_profile_ids:
         private_profiles=[{'profile_id':pid,'profile':private.model_dump(mode='json')} for pid,private in session.profiles.items()]
         private_context=json.dumps(private_profiles,sort_keys=True,separators=(',',':'),ensure_ascii=False)

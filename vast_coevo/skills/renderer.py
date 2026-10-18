@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import Iterable, Union
 
-from .models import DecisionSkill, ExplorationSkill
+from .models import DecisionSkill, DesignerSkill, ExplorationSkill
 
 
 GUIDANCE = (
@@ -16,7 +16,7 @@ GUIDANCE = (
 )
 
 
-def render_skills(skills: Iterable[Union[ExplorationSkill, DecisionSkill]]) -> str:
+def render_skills(skills: Iterable[Union[ExplorationSkill, DecisionSkill, DesignerSkill]]) -> str:
     skills = tuple(skills)
     if not skills:
         return ""
@@ -34,5 +34,5 @@ def render_skills(skills: Iterable[Union[ExplorationSkill, DecisionSkill]]) -> s
 
 
 class SkillRenderer:
-    def render(self, skills: Iterable[Union[ExplorationSkill, DecisionSkill]]) -> str:
+    def render(self, skills: Iterable[Union[ExplorationSkill, DecisionSkill, DesignerSkill]]) -> str:
         return render_skills(skills)

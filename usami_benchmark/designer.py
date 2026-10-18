@@ -42,6 +42,7 @@ class DesignerExecution(Model):
     response:Any
     selection:TaskSelection
     task:CertifiedTask
+    prompt_context:dict=Field(default_factory=dict,exclude_if=lambda value:not value)
     cost:dict=Field(default_factory=dict)
     execution_hash:str=''
     def computed_hash(self):return digest(self.model_dump(mode='json',exclude={'execution_hash'}))
@@ -101,9 +102,18 @@ def _designer_tools():
         'parameters':TaskSelection.model_json_schema()}}]
 
 
-def _designer_messages(frozen):
-    return [{'role':'system','content':DESIGNER_POLICY},
+def _designer_messages(frozen,prompt_context=None):
+    context=prompt_context or {}
+    policy=DESIGNER_POLICY
+    rendered=context.get('skill_rendered')
+    if rendered:
+        policy+='\n\nApplied declarative Designer Skill from snapshot '+str(context.get('skill_snapshot_hash','unknown'))+':\n'+rendered
+    messages=[{'role':'system','content':policy},
         {'role':'user','content':json.dumps(designer_view(frozen),ensure_ascii=False,sort_keys=True,separators=(',',':'))}]
+    if context:
+        visible={key:value for key,value in context.items() if key!='skill_rendered'}
+        messages.append({'role':'user','content':'Verified interaction evidence and current discovery hypothesis:\n'+json.dumps(visible,ensure_ascii=False,sort_keys=True,separators=(',',':'))})
+    return messages
 
 
 def _selection_from_response(response):
@@ -113,7 +123,7 @@ def _selection_from_response(response):
     return TaskSelection.model_validate(strict_json(actions[0]['function']['arguments']))
 
 
-def design_and_compile(frozen,client,construction_budget=None):
+def design_and_compile(frozen,client,construction_budget=None,prompt_context=None):
     """Make one model call, compile its exact proposal, and preserve the record.
 
     This function intentionally performs no retries. It does not accept a model
@@ -121,7 +131,8 @@ def design_and_compile(frozen,client,construction_budget=None):
     """
     frozen=verified_world(frozen)
     settings=client.settings.model_copy(deep=True)
-    request=settings.request(_designer_messages(frozen),_designer_tools())
+    prompt_context=dict(prompt_context or {})
+    request=settings.request(_designer_messages(frozen,prompt_context),_designer_tools())
     response=client.complete(request)
     selection=_selection_from_response(response)
     task=compile_task(frozen,selection,construction_budget or ConstructionBudget())
@@ -129,7 +140,7 @@ def design_and_compile(frozen,client,construction_budget=None):
     cost={'calls':1,'input_tokens':usage.get('prompt_tokens'),'output_tokens':usage.get('completion_tokens'),
           'total_tokens':usage.get('total_tokens'),'usage_complete':all(isinstance(usage.get(k),int) for k in ('prompt_tokens','completion_tokens','total_tokens'))}
     row=DesignerExecution(frozen_hash=frozen.registration_hash,model=settings,request=request,response=response,
-        selection=selection,task=task,cost=cost)
+        selection=selection,task=task,prompt_context=prompt_context,cost=cost)
     return row.model_copy(update={'execution_hash':row.computed_hash()})
 
 
@@ -138,7 +149,7 @@ def verify_designer_execution(record):
     if row.execution_hash!=row.computed_hash():raise ValueError('Designer execution integrity differs')
     if row.frozen_hash!=row.task.frozen.registration_hash or row.selection!=row.task.selection:
         raise ValueError('Designer proposal differs from the compiled frozen task')
-    expected_request=row.model.request(_designer_messages(row.task.frozen),_designer_tools())
+    expected_request=row.model.request(_designer_messages(row.task.frozen,row.prompt_context),_designer_tools())
     if row.request!=expected_request:raise ValueError('recorded Designer request differs from the frozen-world task prompt')
     if _selection_from_response(row.response)!=row.selection:
         raise ValueError('compiled task selection differs from the raw Designer model response')

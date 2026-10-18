@@ -7,10 +7,11 @@ from usami_benchmark.worlds import freeze
 from usami_benchmark.tasks import (
     ConstructionBudget, OpenDialogueComposition, TaskSelection, compile_task, verify_task,
 )
-from usami_benchmark.designer import designer_view
+from usami_benchmark.designer import designer_view, design_and_compile, verify_designer_execution
 from usami_benchmark.contracts import DOMAINS
 from usami_dialogue.tasks import Goal, PreferenceRequirement, InformationRequirement
 from usami_harness.models import digest
+from test_vast_usami import ScriptedClient, SPEC, answer, call
 
 
 def multi_order_selection(frozen):
@@ -98,3 +99,22 @@ def test_designer_view_is_frozen_and_includes_native_contract(domain):
         assert view['track']=='B'
         assert view['customer_profiles_and_native_task_contracts']
         assert all(row['native_candidate_intents'] for row in view['customer_profiles_and_native_task_contracts'])
+
+
+def test_designer_skill_and_verified_history_are_in_the_replayed_request():
+    frozen=freeze(default_spec('aftersales',0))
+    selection=multi_order_selection(frozen)
+    skill='<VAST_SKILLS><VAST_SKILL id="designer.test" version="2">keep order facts separate</VAST_SKILL></VAST_SKILLS>'
+    selection_response=answer(calls=[call('designer-task','submit_frozen_world_task',selection.model_dump(mode='json'))])
+    client=ScriptedClient(SPEC,[selection_response])
+    context={'skill_snapshot_hash':'a'*64,'skill_rendered':skill,'evidence_ids':['task-1'],
+        'hypothesis':'Test whether a second existing order can be composed safely.',
+        'source_evidence':[{'episode_id':'task-1','process_errors':[{'classification':'false_rejection'}]}]}
+    execution=design_and_compile(frozen,client,ConstructionBudget(max_nodes=512,max_depth=16,max_paths=1),
+                                 prompt_context=context)
+    system=execution.request['messages'][0]['content']
+    evidence='\n'.join(row['content'] for row in execution.request['messages'][1:] if row['role']=='user')
+    assert skill in system and context['skill_snapshot_hash'] in system
+    assert 'task-1' in evidence and 'false_rejection' in evidence and context['hypothesis'] in evidence
+    assert len(execution.task.selection.composition.profile_ids)==2
+    assert verify_designer_execution(execution)['verified']

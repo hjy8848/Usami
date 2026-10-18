@@ -1,0 +1,233 @@
+{
+  "note": "Post-run native eligibility checks only; never fed back to model. Initial eligibility is not a complete proof of task reachability.",
+  "proposals": [
+    {
+      "call": "0005-designer.json",
+      "proposal": {
+        "profile_ids": [
+          "profile_u0_order2_line0",
+          "profile_u0_order2_line1",
+          "profile_u0_order2_line2"
+        ],
+        "customer_request": "I'm the buyer on order u0_order2 (Merchant 1). All three lines arrived damaged and I have photos for each. I want a full refund of the whole order back to my original payment method. Please open the cases, verify my evidence, and settle the refunds now. I don't want replacements or exchanges — just the money back. My deadline is 2026-01-16 and I can be available for pickup in the afternoon.",
+        "goals": [
+          {
+            "collection": "lines",
+            "entity": "u0_order2_line0",
+            "field": "status",
+            "accepted_values": [
+              "refunded"
+            ]
+          },
+          {
+            "collection": "lines",
+            "entity": "u0_order2_line1",
+            "field": "status",
+            "accepted_values": [
+              "refunded"
+            ]
+          },
+          {
+            "collection": "lines",
+            "entity": "u0_order2_line2",
+            "field": "status",
+            "accepted_values": [
+              "refunded"
+            ]
+          }
+        ],
+        "information_requirements": [
+          {
+            "profile_id": "profile_u0_order2_line0",
+            "fact_keys": [
+              "order_id",
+              "line_id",
+              "issue",
+              "evidence_id",
+              "deadline"
+            ]
+          },
+          {
+            "profile_id": "profile_u0_order2_line1",
+            "fact_keys": [
+              "order_id",
+              "line_id",
+              "issue",
+              "evidence_id",
+              "deadline"
+            ]
+          },
+          {
+            "profile_id": "profile_u0_order2_line2",
+            "fact_keys": [
+              "order_id",
+              "line_id",
+              "issue",
+              "evidence_id",
+              "deadline"
+            ]
+          }
+        ],
+        "preference_requirements": [
+          {
+            "profile_id": "profile_u0_order2_line0",
+            "preference": "resolution",
+            "accepted_values": [
+              "refund"
+            ]
+          },
+          {
+            "profile_id": "profile_u0_order2_line1",
+            "preference": "resolution",
+            "accepted_values": [
+              "refund"
+            ]
+          },
+          {
+            "profile_id": "profile_u0_order2_line2",
+            "preference": "resolution",
+            "accepted_values": [
+              "refund"
+            ]
+          }
+        ]
+      },
+      "offline_initial_checks": [
+        {
+          "profile_id": "profile_u0_order2_line0",
+          "initial_eligibility": "AFTERSALES_WINDOW_EXPIRED",
+          "clock": "2026-01-15T12:00:00+00:00",
+          "delivered_at": "2025-12-01T12:00:00+00:00",
+          "return_days": 30
+        },
+        {
+          "profile_id": "profile_u0_order2_line1",
+          "initial_eligibility": "AFTERSALES_WINDOW_EXPIRED",
+          "clock": "2026-01-15T12:00:00+00:00",
+          "delivered_at": "2025-12-01T12:00:00+00:00",
+          "return_days": 7
+        },
+        {
+          "profile_id": "profile_u0_order2_line2",
+          "initial_eligibility": "AFTERSALES_WINDOW_EXPIRED",
+          "clock": "2026-01-15T12:00:00+00:00",
+          "delivered_at": "2025-12-01T12:00:00+00:00",
+          "return_days": 14
+        }
+      ]
+    },
+    {
+      "call": "0007-designer.json",
+      "proposal": {
+        "profile_ids": [
+          "profile_u0_order2_line0"
+        ],
+        "customer_request": "I'm the buyer on order u0_order2 (Merchant 1). Line u0_order2_line0 arrived damaged and I have a photo. I want a refund of that line back to my original payment method. Please open the case, verify my evidence, and settle the refund. My deadline is 2026-01-16 and I can be available for pickup in the afternoon.",
+        "goals": [
+          {
+            "collection": "lines",
+            "entity": "u0_order2_line0",
+            "field": "status",
+            "accepted_values": [
+              "refunded"
+            ]
+          }
+        ],
+        "information_requirements": [
+          {
+            "profile_id": "profile_u0_order2_line0",
+            "fact_keys": [
+              "order_id",
+              "line_id",
+              "issue",
+              "evidence_id",
+              "deadline"
+            ]
+          }
+        ],
+        "preference_requirements": [
+          {
+            "profile_id": "profile_u0_order2_line0",
+            "preference": "resolution",
+            "accepted_values": [
+              "refund"
+            ]
+          }
+        ],
+        "external_schedule": [
+          "manager_review_u0_order2_line0"
+        ]
+      },
+      "offline_initial_checks": [
+        {
+          "profile_id": "profile_u0_order2_line0",
+          "initial_eligibility": "AFTERSALES_WINDOW_EXPIRED",
+          "clock": "2026-01-15T12:00:00+00:00",
+          "delivered_at": "2025-12-01T12:00:00+00:00",
+          "return_days": 30
+        }
+      ]
+    },
+    {
+      "call": "0009-designer.json",
+      "proposal": {
+        "profile_ids": [
+          "profile_u0_order2_line0"
+        ],
+        "customer_request": "I'm the buyer on order u0_order2 (Merchant 1). Line u0_order2_line0 arrived damaged (2 units at 6000 cents each = 12000 cents), and I have the photo photo_u0_order2_line0. I prefer a refund to my original payment channel. The order was delivered 2025-12-01, inside M1's 30-day return window, and m1_product2 is return_required=false. Since the 12000-cent refund exceeds Merchant 1's 5000-cent support limit, route it through manager review. The registered manager_review_u0_order2_line0 already resolved approved. Please open the case, verify my evidence, secure the manager approval, and offer me a committed refund quote for that line.",
+        "goals": [
+          {
+            "collection": "quotes",
+            "entity": "quote_u0_order2_line0",
+            "field": "option",
+            "accepted_values": [
+              "refund"
+            ]
+          },
+          {
+            "collection": "quotes",
+            "entity": "quote_u0_order2_line0",
+            "field": "status",
+            "accepted_values": [
+              "offered",
+              "committed"
+            ]
+          }
+        ],
+        "information_requirements": [
+          {
+            "fact_keys": [
+              "order_id",
+              "line_id",
+              "issue",
+              "evidence_id",
+              "deadline"
+            ],
+            "profile_id": "profile_u0_order2_line0"
+          }
+        ],
+        "preference_requirements": [
+          {
+            "accepted_values": [
+              "refund"
+            ],
+            "preference": "resolution",
+            "profile_id": "profile_u0_order2_line0"
+          }
+        ],
+        "external_schedule": [
+          "manager_review_u0_order2_line0"
+        ]
+      },
+      "offline_initial_checks": [
+        {
+          "profile_id": "profile_u0_order2_line0",
+          "initial_eligibility": "AFTERSALES_WINDOW_EXPIRED",
+          "clock": "2026-01-15T12:00:00+00:00",
+          "delivered_at": "2025-12-01T12:00:00+00:00",
+          "return_days": 30
+        }
+      ]
+    }
+  ]
+}

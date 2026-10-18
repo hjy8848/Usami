@@ -1,0 +1,32 @@
+{
+  "status": "BLOCKED",
+  "code_base": "472a6dd",
+  "model": "deepseek-v4.1-flash",
+  "endpoint": "https://inferaiapi.com/v1",
+  "probe_calls": 1,
+  "experiment_calls": 9,
+  "total_actual_calls_including_probe": 10,
+  "total_input_tokens_including_probe": 89370,
+  "total_output_tokens_including_probe": 6418,
+  "total_tokens_including_probe": 95788,
+  "usage_complete": true,
+  "submission_calls": 4,
+  "complete_proposals": 3,
+  "certified_tasks": 0,
+  "service_tasks_completed": 0,
+  "reflection_calls": 0,
+  "skill_updates": 0,
+  "failure": {
+    "message": "Designer submission budget exhausted: completion target is outside selected frozen Customer objects",
+    "type": "DesignerFailure"
+  },
+  "replay": {
+    "verified": true,
+    "failure_reproduced": true,
+    "model_calls": 9,
+    "actual_online_calls": 0
+  },
+  "tests": "35 passed in 103.06s",
+  "query_calls": 14,
+  "provider_option_caveat": "Wire request contains thinking.type=disabled, but calls 4 and 8 returned reasoning_content; call 8 reached output length without a tool submission. Provider enforcement is not established."
+}

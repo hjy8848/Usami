@@ -1,0 +1,15 @@
+{
+  "model": "deepseek-v4.1-flash",
+  "base_url": "https://inferaiapi.com/v1",
+  "credential_service": "inferaiapi.com/v1",
+  "credential_account": "openai-api-key",
+  "model_list_status": 200,
+  "model_list_checked_at": "2026-10-18T14:49:37.432149+00:00",
+  "requested_model_present": true,
+  "probe_max_calls": 1,
+  "loop_max_calls": 65,
+  "automatic_transport_retries": 0,
+  "seed": 1,
+  "run": "aftersales-coevo-inferai-v41-001",
+  "selection_protocol": "unchanged; static-only Smoke Skill selection; no performance claim"
+}

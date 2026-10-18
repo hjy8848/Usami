@@ -1,0 +1,9 @@
+{
+  "all_verified": true,
+  "files": {
+    "usami_benchmark/designer.py": true,
+    "usami_benchmark/designer_exploration.py": true,
+    "experiments/vast_coevo/examples/aftersales_coevo_live.py": true,
+    "experiments/vast_coevo/examples/aftersales_coevo_support.py": true
+  }
+}

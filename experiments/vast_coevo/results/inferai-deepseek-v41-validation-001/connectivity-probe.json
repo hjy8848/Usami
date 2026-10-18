@@ -1,0 +1,66 @@
+{
+  "settings": {
+    "model": "deepseek-v4.1-flash",
+    "base_url": "https://inferaiapi.com/v1",
+    "timeout_seconds": 180.0,
+    "options": {
+      "max_tokens": 2048,
+      "temperature": 0,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "trust_env": false
+  },
+  "request": {
+    "max_tokens": 2048,
+    "temperature": 0,
+    "thinking": {
+      "type": "disabled"
+    },
+    "model": "deepseek-v4.1-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Return only this JSON object, with no explanation: {\"ok\":true}"
+      }
+    ],
+    "tools": [],
+    "tool_choice": "none",
+    "stream": false,
+    "n": 1
+  },
+  "automatic_retries": 0,
+  "started_at": "2026-10-18T14:50:12.632785+00:00",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "content": "{\"ok\":true}",
+          "role": "assistant"
+        }
+      }
+    ],
+    "created": 1792335016,
+    "id": "290db276ee054b2bbdefd2edbf0e9e3b",
+    "model": "deepseek-v4.1-flash",
+    "object": "chat.completion",
+    "request_id": "290db276ee054b2bbdefd2edbf0e9e3b",
+    "service_tier": "default",
+    "usage": {
+      "completion_tokens": 5,
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "prompt_tokens": 32,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 37
+    }
+  },
+  "visible_json_valid": true,
+  "elapsed_seconds": 3.450115209
+}

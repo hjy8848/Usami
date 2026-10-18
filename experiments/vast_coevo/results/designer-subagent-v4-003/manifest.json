@@ -1,0 +1,61 @@
+{
+  "protocol": "offline-designer-api-context-v4-run-v1",
+  "run_id": "designer-subagent-v4-003",
+  "domain": "aftersales",
+  "seed": 2,
+  "designer_protocol": "frozen-world-designer-exploration-v4",
+  "provenance": "Offline Codex subagent; not a DeepSeek/API result",
+  "base_commit": "1432c9c9a3de567997e110dc03b627c4a9ff168b",
+  "world_hash": "f6c3ec9a4178972535bbb6f85d597a92d400bf5fad92cd48987b91311b79b482",
+  "registration_hash": "52e6a119df46d72cd305b67951fe793256efa4ce2538ef4a63d8e2556a4332a0",
+  "external_api_calls": 0,
+  "customer_executions": 0,
+  "service_executions": 0,
+  "reflection_calls": 0,
+  "queries": 15,
+  "proposal_attempts": 2,
+  "compiler_certified": true,
+  "native_replay_verified": true,
+  "artifacts": {
+    "independent-verification.json": {
+      "bytes": 1676,
+      "sha256": "8f73b53542d9d756d1b4b89f8f1f3f40f7b77c4bc6d2a6923054d98425198eb5"
+    },
+    "native-certified-task.json": {
+      "bytes": 867217,
+      "sha256": "33f9b6577aab2d0965d4bb1c152bf780945fa6f89f8ffdcb6b12c2d01624abcd"
+    },
+    "offline-run.json": {
+      "bytes": 77350,
+      "sha256": "295f61ea5100013b372b5822f0ed7e02058983b594e7cb832284c26fa7a52e90"
+    },
+    "report.md": {
+      "bytes": 3938,
+      "sha256": "af946578f2edc8093c7fd196341fb8aca20ca9e8254db55e8c19a1e9dc4a5f64"
+    },
+    "request-context.json": {
+      "bytes": 48567,
+      "sha256": "2e183ccafbb79cb740cdbbf25b3779a544e75aeae4ed596afb54a7b2e722c01a"
+    }
+  },
+  "implementation_files": {
+    "usami_benchmark/designer_exploration.py": {
+      "bytes": 53259,
+      "sha256": "4152f59419cd4e6973afb7a702685d51f1cfe07640375061c01573400fd3d4e2"
+    },
+    "tests/test_designer_exploration.py": {
+      "bytes": 24176,
+      "sha256": "08f1f95aaf695c0b2229d05f0e02f469a9bc2a305f30e06c846e8080d00ebf5d"
+    },
+    "experiments/vast_coevo/examples/verify_designer_subagent_run.py": {
+      "bytes": 5074,
+      "sha256": "e67b557a327e9c4ad3923e23ed519ad505c0b2d1a938f41345efbf9b1d76a7d8"
+    }
+  },
+  "validation": {
+    "command": ".venv/bin/pytest -q tests/test_designer_exploration.py tests/test_vnext_open_compositions.py",
+    "result": "45 passed in 135.23s",
+    "replay_command": ".venv/bin/python experiments/vast_coevo/examples/verify_designer_subagent_run.py experiments/vast_coevo/results/designer-subagent-v4-003",
+    "root_independent_task_replay": "passed"
+  }
+}

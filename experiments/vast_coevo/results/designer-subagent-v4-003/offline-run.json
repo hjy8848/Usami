@@ -1,0 +1,2579 @@
+{
+  "run_identity": "Codex offline subagent; no DeepSeek/API model call was made",
+  "input_file": "request-context.json",
+  "hash_verification": {
+    "checks": {
+      "world_hash_matches_request_and_registration": true,
+      "registration_hash_matches_request_and_catalogue": true,
+      "exploration_request_hash_matches": true,
+      "submission_request_hash_matches": true
+    },
+    "world_hash": "f6c3ec9a4178972535bbb6f85d597a92d400bf5fad92cd48987b91311b79b482",
+    "registration_hash": "52e6a119df46d72cd305b67951fe793256efa4ce2538ef4a63d8e2556a4332a0",
+    "exploration_request_hash": "1a1fb94bae3b91cdbd5aabbc3cbe29d6fabb58944e7f92146652cb91a703cb87",
+    "submission_request_hash": "771a1a6e095f351308692288d06f84cf9c19055b25bbca0e058a1f562510e73a",
+    "frozen_construction": "freeze(default_spec('aftersales', 2))"
+  },
+  "budgets": {
+    "max_queries": 20,
+    "max_proposals": 4,
+    "corrections_after_initial": 3,
+    "max_nodes": 4096,
+    "max_depth": 16,
+    "max_paths": 1,
+    "protocol": "frozen-world-designer-exploration-v4"
+  },
+  "queries": [
+    {
+      "index": 1,
+      "query": {
+        "action": "read_rules"
+      },
+      "result": {
+        "policy": {
+          "business_rules": [
+            "Authenticate the order buyer and merchant/order/line scope. Ask for the actual order, issue, evidence and relevant customer deadline before committing a remedy.",
+            "A case can be opened only for an eligible delivered line inside its product return window. Opening a case and offering or agreeing to a remedy all use the actual delivery date and the same window; manager approval does not extend it.",
+            "Product returnability, verified evidence, settlement state, merchant approval limit and replacement stock further constrain refund, exchange and reship.",
+            "Return-required refunds need actual receipt; pickup, current remedy choice and irreversible settlement require the applicable exact customer confirmation. Use the original payment channel and remaining paid value."
+          ],
+          "catalogue_hash": "7faf63ebb0aeabf1880e5cf49e9178a9cbeae0ee3dcdc1b7bfe874c5a4274693",
+          "domain": "aftersales",
+          "errors": {
+            "AFTERSALES_WINDOW_EXPIRED": "Create/agree remedies only inside the product return window following actual delivery.",
+            "ALREADY_RESOLVED": "A line can be settled only once; another order or stale agreement cannot be substituted.",
+            "APPROVAL_REQUIRED": "Refunds over the merchant support limit require a simulated manager approval; agents cannot assert approval.",
+            "CASE_SCOPE_MISMATCH": "Case scope mismatch. Consult the applicable current public contract and resource facts.",
+            "CUSTOMER_CONTEXT_REQUIRED": "Customer context required. Consult the applicable current public contract and resource facts.",
+            "DELIVERY_DEADLINE_UNMET": "Delivery deadline unmet. Consult the applicable current public contract and resource facts.",
+            "EVIDENCE_INVALID": "Evidence invalid. Consult the applicable current public contract and resource facts.",
+            "EVIDENCE_REQUIRED": "Damage, wrong-item and missing-parts remedies require independently verified evidence bound to the line and issue.",
+            "EVIDENCE_SCOPE_MISMATCH": "Evidence scope mismatch. Consult the applicable current public contract and resource facts.",
+            "EXPLICIT_CONSENT_REQUIRED": "Irreversible settlement needs current exact consent to the actual quote; revised preferences invalidate old quotes.",
+            "INVALID_WORLD": "Invalid world. Consult the applicable current public contract and resource facts.",
+            "LINE_SCOPE_MISMATCH": "Line scope mismatch. Consult the applicable current public contract and resource facts.",
+            "MERCHANT_NOT_FOUND": "Merchant not found. Consult the applicable current public contract and resource facts.",
+            "MERCHANT_SCOPE_MISMATCH": "Merchant scope mismatch. Consult the applicable current public contract and resource facts.",
+            "ORDER_ACCESS_DENIED": "Only the authenticated buyer may service their order; merchant scope is explicit.",
+            "ORDER_NOT_DELIVERED": "Order not delivered. Consult the applicable current public contract and resource facts.",
+            "ORDER_NOT_FOUND": "Order not found. Consult the applicable current public contract and resource facts.",
+            "ORIGINAL_CHANNEL_REQUIRED": "Refunds return to the original paid channel and never exceed eligible paid line value.",
+            "PICKUP_ALREADY_SCHEDULED": "Pickup already scheduled. Consult the applicable current public contract and resource facts.",
+            "PICKUP_CONFIRMATION_REQUIRED": "Pickup confirmation required. Consult the applicable current public contract and resource facts.",
+            "PREFERENCE_RESOLUTION_REQUIRED": "Preference resolution required. Consult the applicable current public contract and resource facts.",
+            "PRODUCT_NOT_RETURNABLE": "Product not returnable. Consult the applicable current public contract and resource facts.",
+            "QUOTE_EXPIRED": "Quote expired. Consult the applicable current public contract and resource facts.",
+            "QUOTE_SCOPE_MISMATCH": "Quote scope mismatch. Consult the applicable current public contract and resource facts.",
+            "REFUND_EXCEEDS_PAYMENT": "Refund exceeds payment. Consult the applicable current public contract and resource facts.",
+            "REFUND_NOT_AGREED": "Refund not agreed. Consult the applicable current public contract and resource facts.",
+            "REPLACEMENT_UNAVAILABLE": "Replacement stock is conserved; promised delivery must meet the stated deadline.",
+            "REQUIRED_INFORMATION_MISSING": "Select the order/line and state the issue before opening a case; disclose required evidence held by the customer.",
+            "RETURN_NOT_AGREED": "Return not agreed. Consult the applicable current public contract and resource facts.",
+            "RETURN_RECEIPT_REQUIRED": "A return-required refund settles only after independently attested physical receipt.",
+            "STALE_CUSTOMER_CHOICE": "Stale customer choice. Consult the applicable current public contract and resource facts.",
+            "UNKNOWN_ACTOR": "Unknown actor. Consult the applicable current public contract and resource facts."
+          },
+          "protocol": "eight-domain-public-rulebook-v1",
+          "rules_version": "aftersales-0.1.0",
+          "scope": "Static public policy and code vocabulary; not the expected answer for any particular world or task."
+        },
+        "native_field_enums": {
+          "orders": {
+            "status": [
+              "processing",
+              "shipped",
+              "delivered"
+            ]
+          },
+          "lines": {
+            "status": [
+              "unresolved",
+              "return_pending",
+              "refunded",
+              "exchanged",
+              "reshipped"
+            ]
+          },
+          "evidence": {
+            "issue": [
+              "damaged",
+              "wrong_item",
+              "missing_parts"
+            ]
+          },
+          "cases": {
+            "issue": [
+              "damaged",
+              "wrong_item",
+              "missing_parts"
+            ],
+            "status": [
+              "open",
+              "evidence_verified",
+              "return_pending",
+              "resolved"
+            ]
+          },
+          "quotes": {
+            "option": [
+              "refund",
+              "exchange",
+              "reship"
+            ],
+            "status": [
+              "offered",
+              "committed"
+            ]
+          },
+          "returns": {
+            "status": [
+              "scheduled",
+              "received"
+            ]
+          },
+          "replacements": {
+            "kind": [
+              "exchange",
+              "reship"
+            ]
+          },
+          "external_events": {
+            "kind": [
+              "manager_review",
+              "return_received"
+            ],
+            "outcome": [
+              "approved",
+              "denied",
+              "received",
+              "missing"
+            ]
+          }
+        },
+        "operation_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "title": "Name",
+              "type": "string"
+            },
+            "scope_id": {
+              "minLength": 1,
+              "title": "Scope Id",
+              "type": "string"
+            },
+            "resource_id": {
+              "minLength": 1,
+              "title": "Resource Id",
+              "type": "string"
+            },
+            "params": {
+              "additionalProperties": true,
+              "title": "Params",
+              "type": "object"
+            }
+          },
+          "required": [
+            "name",
+            "scope_id",
+            "resource_id"
+          ],
+          "title": "Operation",
+          "type": "object"
+        }
+      }
+    },
+    {
+      "index": 2,
+      "query": {
+        "action": "list_profiles",
+        "offset": 0,
+        "limit": 8
+      },
+      "result": {
+        "items": [
+          {
+            "profile_id": "profile_u0_order0_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order0_line1",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u0_order1_line0",
+            "identity": "u0"
+          },
+          {
+            "profile_id": "profile_u1_order0_line0",
+            "identity": "u1"
+          },
+          {
+            "profile_id": "profile_u1_order1_line0",
+            "identity": "u1"
+          },
+          {
+            "profile_id": "profile_u1_order1_line1",
+            "identity": "u1"
+          },
+          {
+            "profile_id": "profile_u1_order1_line2",
+            "identity": "u1"
+          },
+          {
+            "profile_id": "profile_u1_order2_line0",
+            "identity": "u1"
+          }
+        ],
+        "total": 20,
+        "offset": 0,
+        "limit": 8
+      }
+    },
+    {
+      "index": 3,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u0_order0_line0"
+      },
+      "result": {
+        "profile_id": "profile_u0_order0_line0",
+        "identity": "u0",
+        "facts": {
+          "order_id": "u0_order0",
+          "line_id": "u0_order0_line0",
+          "issue": "missing_parts",
+          "evidence_id": "photo_u0_order0_line0",
+          "deadline": "2026-01-18T12:00:00+00:00",
+          "pickup_slot": "morning"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m0",
+            "resource_id": "u0_order0",
+            "params": {
+              "line_id": "u0_order0_line0",
+              "issue": "missing_parts"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u0_order0_line0": {
+              "id": "u0_order0_line0",
+              "order_id": "u0_order0",
+              "product_id": "m0_product0",
+              "quantity": 2,
+              "unit_price_cents": 6000,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m0_product0": {
+              "id": "m0_product0",
+              "merchant_id": "m0",
+              "name": "Item 0",
+              "stock": 6,
+              "opening_stock": 6,
+              "returnable": true,
+              "return_days": 30,
+              "return_required": false,
+              "replacement_days": 1
+            }
+          },
+          "evidence": {
+            "photo_u0_order0_line0": {
+              "id": "photo_u0_order0_line0",
+              "order_id": "u0_order0",
+              "line_id": "u0_order0_line0",
+              "holder_id": "u0",
+              "issue": "missing_parts",
+              "simulated_valid": false
+            }
+          },
+          "orders": {
+            "u0_order0": {
+              "id": "u0_order0",
+              "merchant_id": "m0",
+              "customer_id": "u0",
+              "status": "delivered",
+              "delivered_at": "2026-01-14T12:00:00Z",
+              "payment_channel": "original_u0",
+              "paid_cents": 14000
+            }
+          },
+          "merchants": {
+            "m0": {
+              "id": "m0",
+              "name": "Merchant 0",
+              "refund_approval_limit_cents": 1500
+            }
+          },
+          "users": {
+            "u0": {
+              "id": "u0",
+              "name": "Buyer 0"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u0_order0_line0",
+            "kind": "manager_review",
+            "line_id": "u0_order0_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u0_order0_line0",
+            "kind": "return_received",
+            "line_id": "u0_order0_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "missing"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m0_product0",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_2e6fab2637e3a8f4",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_2e6fab2637e3a8f4",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u0_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u0_order0_line1"
+      },
+      "result": {
+        "profile_id": "profile_u0_order0_line1",
+        "identity": "u0",
+        "facts": {
+          "order_id": "u0_order0",
+          "line_id": "u0_order0_line1",
+          "issue": "wrong_item",
+          "evidence_id": "photo_u0_order0_line1",
+          "deadline": "2026-01-16T12:00:00+00:00",
+          "pickup_slot": "morning"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m0",
+            "resource_id": "u0_order0",
+            "params": {
+              "line_id": "u0_order0_line1",
+              "issue": "wrong_item"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u0_order0_line1": {
+              "id": "u0_order0_line1",
+              "order_id": "u0_order0",
+              "product_id": "m0_product1",
+              "quantity": 1,
+              "unit_price_cents": 2000,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m0_product1": {
+              "id": "m0_product1",
+              "merchant_id": "m0",
+              "name": "Item 1",
+              "stock": 0,
+              "opening_stock": 0,
+              "returnable": true,
+              "return_days": 14,
+              "return_required": false,
+              "replacement_days": 1
+            }
+          },
+          "evidence": {
+            "photo_u0_order0_line1": {
+              "id": "photo_u0_order0_line1",
+              "order_id": "u0_order0",
+              "line_id": "u0_order0_line1",
+              "holder_id": "u0",
+              "issue": "wrong_item",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u0_order0": {
+              "id": "u0_order0",
+              "merchant_id": "m0",
+              "customer_id": "u0",
+              "status": "delivered",
+              "delivered_at": "2026-01-14T12:00:00Z",
+              "payment_channel": "original_u0",
+              "paid_cents": 14000
+            }
+          },
+          "merchants": {
+            "m0": {
+              "id": "m0",
+              "name": "Merchant 0",
+              "refund_approval_limit_cents": 1500
+            }
+          },
+          "users": {
+            "u0": {
+              "id": "u0",
+              "name": "Buyer 0"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u0_order0_line1",
+            "kind": "manager_review",
+            "line_id": "u0_order0_line1",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u0_order0_line1",
+            "kind": "return_received",
+            "line_id": "u0_order0_line1",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "received"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u0_order0_line1",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m0_product1",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u0_order0_line1",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_0b317fb313452f88",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_0b317fb313452f88",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u0_order0_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u0_order0_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u0_order0_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "query": {
+        "action": "list_profiles",
+        "offset": 8,
+        "limit": 8
+      },
+      "result": {
+        "items": [
+          {
+            "profile_id": "profile_u1_order2_line1",
+            "identity": "u1"
+          },
+          {
+            "profile_id": "profile_u1_order3_line0",
+            "identity": "u1"
+          },
+          {
+            "profile_id": "profile_u2_order0_line0",
+            "identity": "u2"
+          },
+          {
+            "profile_id": "profile_u2_order1_line0",
+            "identity": "u2"
+          },
+          {
+            "profile_id": "profile_u3_order0_line0",
+            "identity": "u3"
+          },
+          {
+            "profile_id": "profile_u3_order0_line1",
+            "identity": "u3"
+          },
+          {
+            "profile_id": "profile_u3_order0_line2",
+            "identity": "u3"
+          },
+          {
+            "profile_id": "profile_u3_order1_line0",
+            "identity": "u3"
+          }
+        ],
+        "total": 20,
+        "offset": 8,
+        "limit": 8
+      }
+    },
+    {
+      "index": 6,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u1_order2_line1"
+      },
+      "result": {
+        "profile_id": "profile_u1_order2_line1",
+        "identity": "u1",
+        "facts": {
+          "order_id": "u1_order2",
+          "line_id": "u1_order2_line1",
+          "issue": "wrong_item",
+          "evidence_id": "photo_u1_order2_line1",
+          "deadline": "2026-01-18T12:00:00+00:00",
+          "pickup_slot": "afternoon"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u1_order2",
+            "params": {
+              "line_id": "u1_order2_line1",
+              "issue": "wrong_item"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u1_order2_line1": {
+              "id": "u1_order2_line1",
+              "order_id": "u1_order2",
+              "product_id": "m1_product4",
+              "quantity": 2,
+              "unit_price_cents": 6000,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m1_product4": {
+              "id": "m1_product4",
+              "merchant_id": "m1",
+              "name": "Item 4",
+              "stock": 4,
+              "opening_stock": 4,
+              "returnable": true,
+              "return_days": 7,
+              "return_required": true,
+              "replacement_days": 1
+            }
+          },
+          "evidence": {
+            "photo_u1_order2_line1": {
+              "id": "photo_u1_order2_line1",
+              "order_id": "u1_order2",
+              "line_id": "u1_order2_line1",
+              "holder_id": "u1",
+              "issue": "wrong_item",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u1_order2": {
+              "id": "u1_order2",
+              "merchant_id": "m1",
+              "customer_id": "u1",
+              "status": "delivered",
+              "delivered_at": "2025-12-15T12:00:00Z",
+              "payment_channel": "original_u1",
+              "paid_cents": 13600
+            }
+          },
+          "merchants": {
+            "m1": {
+              "id": "m1",
+              "name": "Merchant 1",
+              "refund_approval_limit_cents": 20000
+            }
+          },
+          "users": {
+            "u1": {
+              "id": "u1",
+              "name": "Buyer 1"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u1_order2_line1",
+            "kind": "manager_review",
+            "line_id": "u1_order2_line1",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u1_order2_line1",
+            "kind": "return_received",
+            "line_id": "u1_order2_line1",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "received"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u1_order2_line1",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m1_product4",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u1_order2_line1",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_4621b0d1b79a0cc9",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_4621b0d1b79a0cc9",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u1_order2_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u1_order2_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u1_order2_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u1_order3_line0"
+      },
+      "result": {
+        "profile_id": "profile_u1_order3_line0",
+        "identity": "u1",
+        "facts": {
+          "order_id": "u1_order3",
+          "line_id": "u1_order3_line0",
+          "issue": "wrong_item",
+          "evidence_id": "photo_u1_order3_line0",
+          "deadline": "2026-01-16T12:00:00+00:00",
+          "pickup_slot": "morning"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m0",
+            "resource_id": "u1_order3",
+            "params": {
+              "line_id": "u1_order3_line0",
+              "issue": "wrong_item"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u1_order3_line0": {
+              "id": "u1_order3_line0",
+              "order_id": "u1_order3",
+              "product_id": "m0_product0",
+              "quantity": 2,
+              "unit_price_cents": 6000,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m0_product0": {
+              "id": "m0_product0",
+              "merchant_id": "m0",
+              "name": "Item 0",
+              "stock": 6,
+              "opening_stock": 6,
+              "returnable": true,
+              "return_days": 30,
+              "return_required": false,
+              "replacement_days": 1
+            }
+          },
+          "evidence": {
+            "photo_u1_order3_line0": {
+              "id": "photo_u1_order3_line0",
+              "order_id": "u1_order3",
+              "line_id": "u1_order3_line0",
+              "holder_id": "u1",
+              "issue": "wrong_item",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u1_order3": {
+              "id": "u1_order3",
+              "merchant_id": "m0",
+              "customer_id": "u1",
+              "status": "processing",
+              "delivered_at": null,
+              "payment_channel": "original_u1",
+              "paid_cents": 12000
+            }
+          },
+          "merchants": {
+            "m0": {
+              "id": "m0",
+              "name": "Merchant 0",
+              "refund_approval_limit_cents": 1500
+            }
+          },
+          "users": {
+            "u1": {
+              "id": "u1",
+              "name": "Buyer 1"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u1_order3_line0",
+            "kind": "manager_review",
+            "line_id": "u1_order3_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "denied"
+          },
+          {
+            "id": "return_received_u1_order3_line0",
+            "kind": "return_received",
+            "line_id": "u1_order3_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "received"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u1_order3_line0",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m0_product0",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u1_order3_line0",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_45e75d572c05aab6",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_45e75d572c05aab6",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u1_order3_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u1_order3_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u1_order3_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u1_order0_line0"
+      },
+      "result": {
+        "profile_id": "profile_u1_order0_line0",
+        "identity": "u1",
+        "facts": {
+          "order_id": "u1_order0",
+          "line_id": "u1_order0_line0",
+          "issue": "damaged",
+          "evidence_id": "photo_u1_order0_line0",
+          "deadline": "2026-01-18T12:00:00+00:00",
+          "pickup_slot": "afternoon"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u1_order0",
+            "params": {
+              "line_id": "u1_order0_line0",
+              "issue": "damaged"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u1_order0_line0": {
+              "id": "u1_order0_line0",
+              "order_id": "u1_order0",
+              "product_id": "m1_product1",
+              "quantity": 2,
+              "unit_price_cents": 2000,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m1_product1": {
+              "id": "m1_product1",
+              "merchant_id": "m1",
+              "name": "Item 1",
+              "stock": 5,
+              "opening_stock": 5,
+              "returnable": true,
+              "return_days": 7,
+              "return_required": true,
+              "replacement_days": 1
+            }
+          },
+          "evidence": {
+            "photo_u1_order0_line0": {
+              "id": "photo_u1_order0_line0",
+              "order_id": "u1_order0",
+              "line_id": "u1_order0_line0",
+              "holder_id": "u1",
+              "issue": "damaged",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u1_order0": {
+              "id": "u1_order0",
+              "merchant_id": "m1",
+              "customer_id": "u1",
+              "status": "delivered",
+              "delivered_at": "2025-12-15T12:00:00Z",
+              "payment_channel": "original_u1",
+              "paid_cents": 4000
+            }
+          },
+          "merchants": {
+            "m1": {
+              "id": "m1",
+              "name": "Merchant 1",
+              "refund_approval_limit_cents": 20000
+            }
+          },
+          "users": {
+            "u1": {
+              "id": "u1",
+              "name": "Buyer 1"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u1_order0_line0",
+            "kind": "manager_review",
+            "line_id": "u1_order0_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u1_order0_line0",
+            "kind": "return_received",
+            "line_id": "u1_order0_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "missing"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u1_order0_line0",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m1_product1",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u1_order0_line0",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_fc4f950be06f5bdf",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_fc4f950be06f5bdf",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u1_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u1_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u1_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u1_order1_line0"
+      },
+      "result": {
+        "profile_id": "profile_u1_order1_line0",
+        "identity": "u1",
+        "facts": {
+          "order_id": "u1_order1",
+          "line_id": "u1_order1_line0",
+          "issue": "wrong_item",
+          "evidence_id": "photo_u1_order1_line0",
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "pickup_slot": "afternoon"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u1_order1",
+            "params": {
+              "line_id": "u1_order1_line0",
+              "issue": "wrong_item"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u1_order1_line0": {
+              "id": "u1_order1_line0",
+              "order_id": "u1_order1",
+              "product_id": "m1_product0",
+              "quantity": 2,
+              "unit_price_cents": 800,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m1_product0": {
+              "id": "m1_product0",
+              "merchant_id": "m1",
+              "name": "Item 0",
+              "stock": 6,
+              "opening_stock": 6,
+              "returnable": true,
+              "return_days": 7,
+              "return_required": false,
+              "replacement_days": 7
+            }
+          },
+          "evidence": {
+            "photo_u1_order1_line0": {
+              "id": "photo_u1_order1_line0",
+              "order_id": "u1_order1",
+              "line_id": "u1_order1_line0",
+              "holder_id": "u1",
+              "issue": "wrong_item",
+              "simulated_valid": false
+            }
+          },
+          "orders": {
+            "u1_order1": {
+              "id": "u1_order1",
+              "merchant_id": "m1",
+              "customer_id": "u1",
+              "status": "delivered",
+              "delivered_at": "2025-12-31T12:00:00Z",
+              "payment_channel": "original_u1",
+              "paid_cents": 4400
+            }
+          },
+          "merchants": {
+            "m1": {
+              "id": "m1",
+              "name": "Merchant 1",
+              "refund_approval_limit_cents": 20000
+            }
+          },
+          "users": {
+            "u1": {
+              "id": "u1",
+              "name": "Buyer 1"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u1_order1_line0",
+            "kind": "manager_review",
+            "line_id": "u1_order1_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "denied"
+          },
+          {
+            "id": "return_received_u1_order1_line0",
+            "kind": "return_received",
+            "line_id": "u1_order1_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "received"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u1_order1_line0",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m1_product0",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u1_order1_line0",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_36a42f43c4471848",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_36a42f43c4471848",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u1_order1_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u1_order1_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u1_order1_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u3_order0_line0"
+      },
+      "result": {
+        "profile_id": "profile_u3_order0_line0",
+        "identity": "u3",
+        "facts": {
+          "order_id": "u3_order0",
+          "line_id": "u3_order0_line0",
+          "issue": "damaged",
+          "evidence_id": "photo_u3_order0_line0",
+          "deadline": "2026-01-16T12:00:00+00:00",
+          "pickup_slot": "morning"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u3_order0",
+            "params": {
+              "line_id": "u3_order0_line0",
+              "issue": "damaged"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u3_order0_line0": {
+              "id": "u3_order0_line0",
+              "order_id": "u3_order0",
+              "product_id": "m1_product3",
+              "quantity": 1,
+              "unit_price_cents": 800,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m1_product3": {
+              "id": "m1_product3",
+              "merchant_id": "m1",
+              "name": "Item 3",
+              "stock": 1,
+              "opening_stock": 1,
+              "returnable": false,
+              "return_days": 30,
+              "return_required": true,
+              "replacement_days": 3
+            }
+          },
+          "evidence": {
+            "photo_u3_order0_line0": {
+              "id": "photo_u3_order0_line0",
+              "order_id": "u3_order0",
+              "line_id": "u3_order0_line0",
+              "holder_id": "u3",
+              "issue": "damaged",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u3_order0": {
+              "id": "u3_order0",
+              "merchant_id": "m1",
+              "customer_id": "u3",
+              "status": "processing",
+              "delivered_at": null,
+              "payment_channel": "original_u3",
+              "paid_cents": 6400
+            }
+          },
+          "merchants": {
+            "m1": {
+              "id": "m1",
+              "name": "Merchant 1",
+              "refund_approval_limit_cents": 20000
+            }
+          },
+          "users": {
+            "u3": {
+              "id": "u3",
+              "name": "Buyer 3"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u3_order0_line0",
+            "kind": "manager_review",
+            "line_id": "u3_order0_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u3_order0_line0",
+            "kind": "return_received",
+            "line_id": "u3_order0_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "missing"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u3_order0_line0",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m1_product3",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u3_order0_line0",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_bda7bb4e8bb77722",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_bda7bb4e8bb77722",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u3_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u3_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u3_order0_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 11,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u3_order0_line1"
+      },
+      "result": {
+        "profile_id": "profile_u3_order0_line1",
+        "identity": "u3",
+        "facts": {
+          "order_id": "u3_order0",
+          "line_id": "u3_order0_line1",
+          "issue": "wrong_item",
+          "evidence_id": "photo_u3_order0_line1",
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "pickup_slot": "afternoon"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u3_order0",
+            "params": {
+              "line_id": "u3_order0_line1",
+              "issue": "wrong_item"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u3_order0_line1": {
+              "id": "u3_order0_line1",
+              "order_id": "u3_order0",
+              "product_id": "m1_product2",
+              "quantity": 2,
+              "unit_price_cents": 800,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m1_product2": {
+              "id": "m1_product2",
+              "merchant_id": "m1",
+              "name": "Item 2",
+              "stock": 2,
+              "opening_stock": 2,
+              "returnable": true,
+              "return_days": 30,
+              "return_required": false,
+              "replacement_days": 7
+            }
+          },
+          "evidence": {
+            "photo_u3_order0_line1": {
+              "id": "photo_u3_order0_line1",
+              "order_id": "u3_order0",
+              "line_id": "u3_order0_line1",
+              "holder_id": "u3",
+              "issue": "wrong_item",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u3_order0": {
+              "id": "u3_order0",
+              "merchant_id": "m1",
+              "customer_id": "u3",
+              "status": "processing",
+              "delivered_at": null,
+              "payment_channel": "original_u3",
+              "paid_cents": 6400
+            }
+          },
+          "merchants": {
+            "m1": {
+              "id": "m1",
+              "name": "Merchant 1",
+              "refund_approval_limit_cents": 20000
+            }
+          },
+          "users": {
+            "u3": {
+              "id": "u3",
+              "name": "Buyer 3"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u3_order0_line1",
+            "kind": "manager_review",
+            "line_id": "u3_order0_line1",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u3_order0_line1",
+            "kind": "return_received",
+            "line_id": "u3_order0_line1",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "received"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u3_order0_line1",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m1_product2",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u3_order0_line1",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_cd05d895e106b261",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_cd05d895e106b261",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u3_order0_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u3_order0_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u3_order0_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 12,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u3_order1_line0"
+      },
+      "result": {
+        "profile_id": "profile_u3_order1_line0",
+        "identity": "u3",
+        "facts": {
+          "order_id": "u3_order1",
+          "line_id": "u3_order1_line0",
+          "issue": "missing_parts",
+          "evidence_id": "photo_u3_order1_line0",
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "pickup_slot": "afternoon"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u3_order1",
+            "params": {
+              "line_id": "u3_order1_line0",
+              "issue": "missing_parts"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u3_order1_line0": {
+              "id": "u3_order1_line0",
+              "order_id": "u3_order1",
+              "product_id": "m1_product3",
+              "quantity": 2,
+              "unit_price_cents": 2000,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m1_product3": {
+              "id": "m1_product3",
+              "merchant_id": "m1",
+              "name": "Item 3",
+              "stock": 1,
+              "opening_stock": 1,
+              "returnable": false,
+              "return_days": 30,
+              "return_required": true,
+              "replacement_days": 3
+            }
+          },
+          "evidence": {
+            "photo_u3_order1_line0": {
+              "id": "photo_u3_order1_line0",
+              "order_id": "u3_order1",
+              "line_id": "u3_order1_line0",
+              "holder_id": "u3",
+              "issue": "missing_parts",
+              "simulated_valid": false
+            }
+          },
+          "orders": {
+            "u3_order1": {
+              "id": "u3_order1",
+              "merchant_id": "m1",
+              "customer_id": "u3",
+              "status": "delivered",
+              "delivered_at": "2026-01-12T12:00:00Z",
+              "payment_channel": "original_u3",
+              "paid_cents": 8000
+            }
+          },
+          "merchants": {
+            "m1": {
+              "id": "m1",
+              "name": "Merchant 1",
+              "refund_approval_limit_cents": 20000
+            }
+          },
+          "users": {
+            "u3": {
+              "id": "u3",
+              "name": "Buyer 3"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u3_order1_line0",
+            "kind": "manager_review",
+            "line_id": "u3_order1_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u3_order1_line0",
+            "kind": "return_received",
+            "line_id": "u3_order1_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "received"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u3_order1_line0",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m1_product3",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u3_order1_line0",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_6e23eca9a4bbee16",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_6e23eca9a4bbee16",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u3_order1_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u3_order1_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u3_order1_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 13,
+      "query": {
+        "action": "list_profiles",
+        "offset": 16,
+        "limit": 8
+      },
+      "result": {
+        "items": [
+          {
+            "profile_id": "profile_u3_order1_line1",
+            "identity": "u3"
+          },
+          {
+            "profile_id": "profile_u3_order2_line0",
+            "identity": "u3"
+          },
+          {
+            "profile_id": "profile_u3_order2_line1",
+            "identity": "u3"
+          },
+          {
+            "profile_id": "profile_u3_order2_line2",
+            "identity": "u3"
+          }
+        ],
+        "total": 20,
+        "offset": 16,
+        "limit": 8
+      }
+    },
+    {
+      "index": 14,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u3_order2_line0"
+      },
+      "result": {
+        "profile_id": "profile_u3_order2_line0",
+        "identity": "u3",
+        "facts": {
+          "order_id": "u3_order2",
+          "line_id": "u3_order2_line0",
+          "issue": "wrong_item",
+          "evidence_id": "photo_u3_order2_line0",
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "pickup_slot": "afternoon"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u3_order2",
+            "params": {
+              "line_id": "u3_order2_line0",
+              "issue": "wrong_item"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u3_order2_line0": {
+              "id": "u3_order2_line0",
+              "order_id": "u3_order2",
+              "product_id": "m1_product3",
+              "quantity": 1,
+              "unit_price_cents": 6000,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m1_product3": {
+              "id": "m1_product3",
+              "merchant_id": "m1",
+              "name": "Item 3",
+              "stock": 1,
+              "opening_stock": 1,
+              "returnable": false,
+              "return_days": 30,
+              "return_required": true,
+              "replacement_days": 3
+            }
+          },
+          "evidence": {
+            "photo_u3_order2_line0": {
+              "id": "photo_u3_order2_line0",
+              "order_id": "u3_order2",
+              "line_id": "u3_order2_line0",
+              "holder_id": "u3",
+              "issue": "wrong_item",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u3_order2": {
+              "id": "u3_order2",
+              "merchant_id": "m1",
+              "customer_id": "u3",
+              "status": "processing",
+              "delivered_at": null,
+              "payment_channel": "original_u3",
+              "paid_cents": 9600
+            }
+          },
+          "merchants": {
+            "m1": {
+              "id": "m1",
+              "name": "Merchant 1",
+              "refund_approval_limit_cents": 20000
+            }
+          },
+          "users": {
+            "u3": {
+              "id": "u3",
+              "name": "Buyer 3"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u3_order2_line0",
+            "kind": "manager_review",
+            "line_id": "u3_order2_line0",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u3_order2_line0",
+            "kind": "return_received",
+            "line_id": "u3_order2_line0",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "missing"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u3_order2_line0",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m1_product3",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u3_order2_line0",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_3f3d0569033d370a",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_3f3d0569033d370a",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u3_order2_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u3_order2_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u3_order2_line0",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    },
+    {
+      "index": 15,
+      "query": {
+        "action": "read_profile",
+        "profile_id": "profile_u3_order1_line1"
+      },
+      "result": {
+        "profile_id": "profile_u3_order1_line1",
+        "identity": "u3",
+        "facts": {
+          "order_id": "u3_order1",
+          "line_id": "u3_order1_line1",
+          "issue": "damaged",
+          "evidence_id": "photo_u3_order1_line1",
+          "deadline": "2026-01-18T12:00:00+00:00",
+          "pickup_slot": "morning"
+        },
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "customer_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u3_order1",
+            "params": {
+              "line_id": "u3_order1_line1",
+              "issue": "damaged"
+            }
+          }
+        ],
+        "related_objects": {
+          "lines": {
+            "u3_order1_line1": {
+              "id": "u3_order1_line1",
+              "order_id": "u3_order1",
+              "product_id": "m1_product0",
+              "quantity": 2,
+              "unit_price_cents": 2000,
+              "status": "unresolved"
+            }
+          },
+          "products": {
+            "m1_product0": {
+              "id": "m1_product0",
+              "merchant_id": "m1",
+              "name": "Item 0",
+              "stock": 6,
+              "opening_stock": 6,
+              "returnable": true,
+              "return_days": 7,
+              "return_required": false,
+              "replacement_days": 7
+            }
+          },
+          "evidence": {
+            "photo_u3_order1_line1": {
+              "id": "photo_u3_order1_line1",
+              "order_id": "u3_order1",
+              "line_id": "u3_order1_line1",
+              "holder_id": "u3",
+              "issue": "damaged",
+              "simulated_valid": true
+            }
+          },
+          "orders": {
+            "u3_order1": {
+              "id": "u3_order1",
+              "merchant_id": "m1",
+              "customer_id": "u3",
+              "status": "delivered",
+              "delivered_at": "2026-01-12T12:00:00Z",
+              "payment_channel": "original_u3",
+              "paid_cents": 8000
+            }
+          },
+          "merchants": {
+            "m1": {
+              "id": "m1",
+              "name": "Merchant 1",
+              "refund_approval_limit_cents": 20000
+            }
+          },
+          "users": {
+            "u3": {
+              "id": "u3",
+              "name": "Buyer 3"
+            }
+          }
+        },
+        "registered_external_events": [
+          {
+            "id": "manager_review_u3_order1_line1",
+            "kind": "manager_review",
+            "line_id": "u3_order1_line1",
+            "at": "2026-01-15T13:00:00Z",
+            "outcome": "approved"
+          },
+          {
+            "id": "return_received_u3_order1_line1",
+            "kind": "return_received",
+            "line_id": "u3_order1_line1",
+            "at": "2026-01-17T12:00:00Z",
+            "outcome": "received"
+          }
+        ],
+        "native_frame_contract": [
+          {
+            "collection": "lines",
+            "selector_field": "id",
+            "selector_value": "u3_order1_line1",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "products",
+            "selector_field": "id",
+            "selector_value": "m1_product0",
+            "mutable_fields": [
+              "stock"
+            ],
+            "allow_create": false
+          },
+          {
+            "collection": "cases",
+            "selector_field": "line_id",
+            "selector_value": "u3_order1_line1",
+            "mutable_fields": [
+              "status",
+              "evidence_id",
+              "evidence_notice",
+              "review_requested",
+              "agreement_quote",
+              "agreement_revision"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "quotes",
+            "selector_field": "case_id",
+            "selector_value": "case_5d40c4ca8b65ec75",
+            "mutable_fields": [
+              "status"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "returns",
+            "selector_field": "case_id",
+            "selector_value": "case_5d40c4ca8b65ec75",
+            "mutable_fields": [
+              "status",
+              "receipt_notice"
+            ],
+            "allow_create": true
+          },
+          {
+            "collection": "refunds",
+            "selector_field": "line_id",
+            "selector_value": "u3_order1_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "replacements",
+            "selector_field": "line_id",
+            "selector_value": "u3_order1_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          },
+          {
+            "collection": "approvals",
+            "selector_field": "$key",
+            "selector_value": "u3_order1_line1",
+            "mutable_fields": [],
+            "allow_create": true
+          }
+        ]
+      }
+    }
+  ],
+  "proposals": [
+    {
+      "attempt": 1,
+      "proposal": {
+        "profile_ids": [
+          "profile_u3_order1_line0",
+          "profile_u3_order0_line0"
+        ],
+        "customer_request": "For my delivered order u3_order1, open a case for missing parts on line u3_order1_line0 and leave the case open. Also open a case for damaged goods on line u3_order0_line0 in order u3_order0.",
+        "created_goals": [
+          {
+            "profile_id": "profile_u3_order1_line0",
+            "collection": "cases",
+            "selectors": {
+              "line_id": "u3_order1_line0"
+            },
+            "field": "status",
+            "accepted_values": [
+              "open"
+            ]
+          }
+        ],
+        "refusal_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u3_order0",
+            "params": {
+              "line_id": "u3_order0_line0",
+              "issue": "damaged"
+            }
+          }
+        ]
+      },
+      "compiler_feedback": {
+        "success": false,
+        "error_detail": "bounded Reference search did not prove the open composition"
+      }
+    },
+    {
+      "attempt": 2,
+      "proposal": {
+        "profile_ids": [
+          "profile_u3_order1_line1",
+          "profile_u3_order0_line0"
+        ],
+        "customer_request": "For my delivered order u3_order1, open a case for damage on line u3_order1_line1 and leave the case open. Also open a case for damaged goods on line u3_order0_line0 in order u3_order0.",
+        "created_goals": [
+          {
+            "profile_id": "profile_u3_order1_line1",
+            "collection": "cases",
+            "selectors": {
+              "line_id": "u3_order1_line1"
+            },
+            "field": "status",
+            "accepted_values": [
+              "open"
+            ]
+          }
+        ],
+        "refusal_operations": [
+          {
+            "name": "open_case",
+            "scope_id": "m1",
+            "resource_id": "u3_order0",
+            "params": {
+              "line_id": "u3_order0_line0",
+              "issue": "damaged"
+            }
+          }
+        ]
+      },
+      "revision_reason": "After bounded search did not prove the first composition, selected the other observed line in the same delivered order, whose public state shows valid evidence and a returnable product.",
+      "compiler_feedback": {
+        "success": true
+      }
+    }
+  ],
+  "final_status": "compiled_certified",
+  "certified": true,
+  "external_api_calls": 0,
+  "customer_executions": 0,
+  "service_executions": 0,
+  "reflection_calls": 0,
+  "budget_usage": {
+    "queries_used": 15,
+    "proposals_used": 2
+  },
+  "task_assumption": "Create one open case for the delivered, in-window, returnable u3_order1_line1; correctly refuse open_case for the still-processing u3_order0_line0."
+}

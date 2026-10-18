@@ -1,0 +1,42 @@
+{
+  "protocol": "designer-subagent-independent-native-verification-v1",
+  "verified": true,
+  "provenance": "Root process rebuilt the frozen world and independently recompiled the saved offline proposal; this command makes no external model/API calls.",
+  "world_hash": "f6c3ec9a4178972535bbb6f85d597a92d400bf5fad92cd48987b91311b79b482",
+  "registration_hash": "52e6a119df46d72cd305b67951fe793256efa4ce2538ef4a63d8e2556a4332a0",
+  "exploration_request_hash": "1a1fb94bae3b91cdbd5aabbc3cbe29d6fabb58944e7f92146652cb91a703cb87",
+  "submission_request_hash": "771a1a6e095f351308692288d06f84cf9c19055b25bbca0e058a1f562510e73a",
+  "proposal_attempt": 2,
+  "proposal_profile_ids": [
+    "profile_u3_order1_line1",
+    "profile_u3_order0_line0"
+  ],
+  "profile_identities": {
+    "profile_u3_order1_line1": "u3",
+    "profile_u3_order0_line0": "u3"
+  },
+  "same_customer_identity": true,
+  "created_completion_subgoals": [
+    true
+  ],
+  "completion_subgoals": [],
+  "refusal_subgoals": [
+    true
+  ],
+  "oracle_status": "pass",
+  "task_success": true,
+  "replay_verified": true,
+  "actual_business_operations_in_witness": 1,
+  "actual_customer_turns": 4,
+  "record_hash": "f3aa188754f62cc44840c3e84aa11797b6508a28860fa38d04cee402225b4620",
+  "certificate_hash": "0994f5b7bf26bfb0eb8c97cd5116abefe1aafe97ee37290f6fc601ccd568e05f",
+  "search_summary": {
+    "nodes": 2,
+    "exhausted": true,
+    "max_nodes": 4096,
+    "max_depth": 16,
+    "preference_combinations": 1,
+    "preference_combinations_truncated": false
+  },
+  "note": "This certifies task reachability and objective scoring under the native evaluator; it does not execute Service or establish Service correctness."
+}

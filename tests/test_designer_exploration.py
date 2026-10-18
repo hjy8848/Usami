@@ -267,6 +267,7 @@ def test_at_most_three_corrections_and_preserved_failure(frozen, tmp_path):
             designer_budget=DesignerBudget(max_exploration_calls=0), journal_path=tmp_path / "journal.json")
     assert len(client.requests) == 4
     assert caught.value.journal["proposal_attempts"] == 4
+    assert caught.value.journal["failure_category"] == "business_precondition_unmet"
     assert json.loads((tmp_path / "journal.json").read_text())["status"] == "BLOCKED"
     assert verify_failed_journal(frozen, caught.value.journal)["verified"]
 
@@ -278,6 +279,7 @@ def test_exploration_budget_and_read_errors_are_visible(frozen):
     result = design_and_compile(frozen, client, ConstructionBudget(max_nodes=512, max_depth=16),
         protocol=PROTOCOL, designer_budget=DesignerBudget(max_exploration_calls=1))
     assert result.exchanges[0]["tool_results"][0]["status"] == "error"
+    assert result.exchanges[0]["tool_results"][0]["category"] == "object_missing"
     assert len(client.requests) == 2 and result.metrics["proposal_attempts"] == 1
 
 
@@ -287,6 +289,7 @@ def test_transport_failure_is_not_retried(frozen, tmp_path):
         design_and_compile(frozen, client, protocol=PROTOCOL, journal_path=tmp_path / "journal.json")
     assert len(client.requests) == 1
     assert caught.value.journal["budget"]["confirmation_guidance"] is True
+    assert caught.value.journal["failure_category"] == "transport_error"
     assert "confirmation_requirements is optional" in client.requests[0]["messages"][0]["content"]
     assert caught.value.journal["exchanges"][0]["transport_error"]["type"] == "RuntimeError"
     assert verify_failed_journal(frozen, caught.value.journal)["verified"]
@@ -299,8 +302,45 @@ def test_search_feedback_is_unproven_not_an_impossibility_claim(frozen):
         design_and_compile(frozen, client, ConstructionBudget(max_nodes=1, max_depth=1),
             protocol=PROTOCOL, designer_budget=DesignerBudget(max_exploration_calls=0))
     feedback = caught.value.journal["exchanges"][0]["feedback"]
-    assert feedback["category"] == "search_unproven"
+    assert feedback["category"] == "reference_unproven"
     assert "does not prove impossibility" in feedback["meaning"]
+    assert verify_failed_journal(frozen, caught.value.journal)["verified"]
+
+
+def test_v4_failure_categories_separate_proposal_layers():
+    from pydantic import ValidationError
+    from usami.service.models import ServiceError
+    from usami_benchmark.designer_exploration import _designer_failure_category
+
+    with pytest.raises(ValidationError) as schema_error:
+        DialogueDesignerProposal.model_validate({"profile_ids": []})
+    assert _designer_failure_category(schema_error.value, stage="submission") == "schema_invalid"
+    assert _designer_failure_category(ValueError("requested object does not exist in the frozen collection"),
+                                      stage="submission") == "object_missing"
+    assert _designer_failure_category(ValueError("refusal request lies outside selected frozen Customer authority"),
+                                      stage="submission") == "scope_invalid"
+    assert _designer_failure_category(ValueError("confirmation requirement is outside selected Customer authority"),
+                                      stage="submission") == "authorization_unmet"
+    assert _designer_failure_category(ValueError("composed task references an unregistered external event"),
+                                      stage="submission") == "external_event_missing"
+    assert _designer_failure_category(ValueError("no native refusal task for this scope/operation"),
+                                      stage="submission") == "business_precondition_unmet"
+    assert _designer_failure_category(ValueError("bounded Reference search did not prove the open composition"),
+                                      stage="submission") == "reference_unproven"
+    assert _designer_failure_category(ValueError("duplicate JSON key"), stage="submission") == "model_output_invalid"
+    assert _designer_failure_category(ServiceError("MODEL_OUTPUT_INVALID", "bad function call"),
+                                      stage="submission") == "model_output_invalid"
+
+
+def test_v3_failure_category_and_replay_keep_historical_semantics(frozen):
+    raw = proposal(frozen)
+    raw["goals"][0]["accepted_values"] = ["not-a-native-state"]
+    client = ScriptedClient(SPEC, [submit(raw, f"v3-bad-{i}") for i in range(4)])
+    with pytest.raises(DesignerFailure) as caught:
+        design_and_compile(frozen, client, protocol=PROTOCOL_V3,
+            designer_budget=DesignerBudget(max_exploration_calls=0))
+    assert caught.value.journal["exchanges"][0]["feedback"]["category"] == "invalid_proposal"
+    assert "failure_category" not in caught.value.journal
     assert verify_failed_journal(frozen, caught.value.journal)["verified"]
 
 

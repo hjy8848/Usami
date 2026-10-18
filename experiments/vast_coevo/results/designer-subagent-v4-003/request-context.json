@@ -1,0 +1,1132 @@
+{
+  "construction_budget": {
+    "max_depth": 16,
+    "max_nodes": 4096,
+    "max_paths": 1
+  },
+  "customer_executions": 0,
+  "designer_budget": {
+    "actionable_feedback": true,
+    "confirmation_guidance": true,
+    "include_profile_events": true,
+    "include_related_objects": true,
+    "initial_exploration_calls": 3,
+    "max_exploration_calls": 5,
+    "max_queries": 20,
+    "max_revisions": 3
+  },
+  "designer_protocol": "frozen-world-designer-exploration-v4",
+  "exploration_request": {
+    "messages": [
+      {
+        "content": "You are the autonomous Benchmark Task Designer in a read-only frozen business world. Use inspect_frozen_world to choose whom and what to investigate; you have a bounded exploration phase. Read the business rules and field vocabulary, inspect profiles and actual related objects. Select useful business challenges yourself, not a task supplied by the harness. Every submission MUST include at least one existing-object completion goal, one created-object completion goal, or one exact correct-refusal operation. Information and preference requirements alone are not task objectives. Existing-object goals target an existing selected-Customer object and a mutable field. A created-object goal names a selected profile, a native create-enabled collection, immutable selector fields/values grounded in that profile's observed facts or customer_operations, and a public mutable field's accepted final value. The initial world must have no object matching those selectors; Reference requires exactly one matching object after native execution. Do not guess or supply the generated object's ID. Never use event records, evidence, private fields, immutable facts, or a state that already holds as a completion goal; select external events separately in external_schedule. A refusal operation must be a complete canonical write that the Customer requests but native rules require Service to refuse. customer_operations grounds Customer authority but does not mean an operation should be refused. Check read_rules and observed state before classifying it. Never guess missing operation IDs or params. You may combine profiles only for the same authenticated identity. Do not invent facts, permissions, entities, events, proofs, or expected refusal codes. The compiler derives native frames; never write frames or selector fields. An external event occurs only if you select its registered ID in external_schedule. Call ready_to_submit when prepared. On rejection, correct your own proposal using the feedback; a bounded search failure is not proof of impossibility. Keep replies concise and use the tools.\nconfirmation_requirements is optional and normally omitted: it is an evaluator assertion, not Customer authorization. Include one only if you can copy the exact canonical write and all parameters from the selected profile's customer_operations; never guess case_id, quote_id, line_id, or parameters. Omitting it does not waive live Customer consent. Any supplied operation is still checked against native identity, object scope, and business rules.",
+        "role": "system"
+      },
+      {
+        "content": "{\"budget\": {\"actionable_feedback\": true, \"confirmation_guidance\": true, \"include_profile_events\": true, \"include_related_objects\": true, \"initial_exploration_calls\": 3, \"max_exploration_calls\": 5, \"max_queries\": 20, \"max_revisions\": 3}, \"catalogue\": {\"clock\": \"2026-01-15T12:00:00Z\", \"collections\": {\"approvals\": 0, \"cases\": 0, \"evidence\": 20, \"external_events\": 40, \"interaction\": 6, \"lines\": 20, \"merchants\": 2, \"orders\": 11, \"products\": 10, \"profiles\": 20, \"quotes\": 0, \"refunds\": 0, \"replacements\": 0, \"returns\": 0, \"users\": 4}, \"domain\": \"aftersales\", \"frozen_registration_hash\": \"52e6a119df46d72cd305b67951fe793256efa4ce2538ef4a63d8e2556a4332a0\", \"identities\": [{\"identity\": \"u0\", \"profile_count\": 3}, {\"identity\": \"u1\", \"profile_count\": 7}, {\"identity\": \"u2\", \"profile_count\": 2}, {\"identity\": \"u3\", \"profile_count\": 8}], \"protocol\": \"frozen-world-designer-exploration-v4\", \"rules_version\": \"aftersales-0.1.0\", \"world_hash\": \"f6c3ec9a4178972535bbb6f85d597a92d400bf5fad92cd48987b91311b79b482\"}, \"prior_evidence\": {}}",
+        "role": "user"
+      }
+    ],
+    "model": "deepseek-v4.1-flash",
+    "n": 1,
+    "stream": false,
+    "temperature": 0,
+    "tool_choice": "auto",
+    "tools": [
+      {
+        "function": {
+          "description": "Bounded read-only inspection; never writes or evaluates a future answer.",
+          "name": "inspect_frozen_world",
+          "parameters": {
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "enum": [
+                  "list_profiles",
+                  "read_profile",
+                  "read_objects",
+                  "read_rules"
+                ],
+                "title": "Action",
+                "type": "string"
+              },
+              "collection": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Collection"
+              },
+              "identity": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Identity"
+              },
+              "ids": {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 8,
+                "title": "Ids",
+                "type": "array"
+              },
+              "limit": {
+                "default": 4,
+                "maximum": 8,
+                "minimum": 1,
+                "title": "Limit",
+                "type": "integer"
+              },
+              "offset": {
+                "default": 0,
+                "minimum": 0,
+                "title": "Offset",
+                "type": "integer"
+              },
+              "profile_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Profile Id"
+              }
+            },
+            "required": [
+              "action"
+            ],
+            "title": "ReadQuery",
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Finish exploration and proceed to the forced submission phase.",
+          "name": "ready_to_submit",
+          "parameters": {
+            "additionalProperties": false,
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "exploration_request_hash": "1a1fb94bae3b91cdbd5aabbc3cbe29d6fabb58944e7f92146652cb91a703cb87",
+  "external_api_calls": 0,
+  "model_label": "deepseek-v4.1-flash",
+  "output_token_cap_keys_present": [],
+  "protocol": "offline-designer-api-context-v4",
+  "provenance": "Generated with current Usami v4 request builder; no external request. Request templates do not include later model-generated assistant tool-call messages; each read query/result is separately logged in offline-run.json.",
+  "reflection_calls": 0,
+  "registration_hash": "52e6a119df46d72cd305b67951fe793256efa4ce2538ef4a63d8e2556a4332a0",
+  "service_executions": 0,
+  "settings_visible_to_model": {
+    "model": "deepseek-v4.1-flash",
+    "n": 1,
+    "stream": false,
+    "temperature": 0,
+    "tool_choice_exploration": "auto",
+    "tool_choice_submission": "forced submit_frozen_world_task"
+  },
+  "submission_request_hash": "771a1a6e095f351308692288d06f84cf9c19055b25bbca0e058a1f562510e73a",
+  "submission_request_template": {
+    "messages": [
+      {
+        "content": "You are the autonomous Benchmark Task Designer in a read-only frozen business world. Use inspect_frozen_world to choose whom and what to investigate; you have a bounded exploration phase. Read the business rules and field vocabulary, inspect profiles and actual related objects. Select useful business challenges yourself, not a task supplied by the harness. Every submission MUST include at least one existing-object completion goal, one created-object completion goal, or one exact correct-refusal operation. Information and preference requirements alone are not task objectives. Existing-object goals target an existing selected-Customer object and a mutable field. A created-object goal names a selected profile, a native create-enabled collection, immutable selector fields/values grounded in that profile's observed facts or customer_operations, and a public mutable field's accepted final value. The initial world must have no object matching those selectors; Reference requires exactly one matching object after native execution. Do not guess or supply the generated object's ID. Never use event records, evidence, private fields, immutable facts, or a state that already holds as a completion goal; select external events separately in external_schedule. A refusal operation must be a complete canonical write that the Customer requests but native rules require Service to refuse. customer_operations grounds Customer authority but does not mean an operation should be refused. Check read_rules and observed state before classifying it. Never guess missing operation IDs or params. You may combine profiles only for the same authenticated identity. Do not invent facts, permissions, entities, events, proofs, or expected refusal codes. The compiler derives native frames; never write frames or selector fields. An external event occurs only if you select its registered ID in external_schedule. Call ready_to_submit when prepared. On rejection, correct your own proposal using the feedback; a bounded search failure is not proof of impossibility. Keep replies concise and use the tools.\nconfirmation_requirements is optional and normally omitted: it is an evaluator assertion, not Customer authorization. Include one only if you can copy the exact canonical write and all parameters from the selected profile's customer_operations; never guess case_id, quote_id, line_id, or parameters. Omitting it does not waive live Customer consent. Any supplied operation is still checked against native identity, object scope, and business rules.",
+        "role": "system"
+      },
+      {
+        "content": "{\"budget\": {\"actionable_feedback\": true, \"confirmation_guidance\": true, \"include_profile_events\": true, \"include_related_objects\": true, \"initial_exploration_calls\": 3, \"max_exploration_calls\": 5, \"max_queries\": 20, \"max_revisions\": 3}, \"catalogue\": {\"clock\": \"2026-01-15T12:00:00Z\", \"collections\": {\"approvals\": 0, \"cases\": 0, \"evidence\": 20, \"external_events\": 40, \"interaction\": 6, \"lines\": 20, \"merchants\": 2, \"orders\": 11, \"products\": 10, \"profiles\": 20, \"quotes\": 0, \"refunds\": 0, \"replacements\": 0, \"returns\": 0, \"users\": 4}, \"domain\": \"aftersales\", \"frozen_registration_hash\": \"52e6a119df46d72cd305b67951fe793256efa4ce2538ef4a63d8e2556a4332a0\", \"identities\": [{\"identity\": \"u0\", \"profile_count\": 3}, {\"identity\": \"u1\", \"profile_count\": 7}, {\"identity\": \"u2\", \"profile_count\": 2}, {\"identity\": \"u3\", \"profile_count\": 8}], \"protocol\": \"frozen-world-designer-exploration-v4\", \"rules_version\": \"aftersales-0.1.0\", \"world_hash\": \"f6c3ec9a4178972535bbb6f85d597a92d400bf5fad92cd48987b91311b79b482\"}, \"prior_evidence\": {}}",
+        "role": "user"
+      },
+      {
+        "content": "Exploration phase is finished. Submit your own business challenge now.",
+        "role": "user"
+      }
+    ],
+    "model": "deepseek-v4.1-flash",
+    "n": 1,
+    "stream": false,
+    "temperature": 0,
+    "tool_choice": {
+      "function": {
+        "name": "submit_frozen_world_task"
+      },
+      "type": "function"
+    },
+    "tools": [
+      {
+        "function": {
+          "description": "Submit business targets and objectives; native scope is compiler-owned.",
+          "name": "submit_frozen_world_task",
+          "parameters": {
+            "$defs": {
+              "CreatedObjectGoal": {
+                "additionalProperties": false,
+                "description": "Target exactly one new native object without providing its generated ID. Selectors must be grounded in the named Customer profile, absent from the initial world, and covered by a native create-enabled frame.",
+                "properties": {
+                  "accepted_values": {
+                    "description": "Desired final values from the native object vocabulary.",
+                    "items": {},
+                    "maxItems": 32,
+                    "minItems": 1,
+                    "title": "Accepted Values",
+                    "type": "array"
+                  },
+                  "collection": {
+                    "description": "Existing native object collection with a selected Customer create-enabled frame.",
+                    "enum": [
+                      "approvals",
+                      "cases",
+                      "quotes",
+                      "refunds",
+                      "replacements",
+                      "returns"
+                    ],
+                    "title": "Collection",
+                    "type": "string"
+                  },
+                  "field": {
+                    "description": "Public mutable native field whose value should hold on the uniquely created object.",
+                    "enum": [
+                      "agreement_quote",
+                      "agreement_revision",
+                      "evidence_id",
+                      "evidence_notice",
+                      "receipt_notice",
+                      "review_requested",
+                      "status"
+                    ],
+                    "title": "Field",
+                    "type": "string"
+                  },
+                  "profile_id": {
+                    "description": "Selected frozen Customer profile whose facts ground the object selectors.",
+                    "enum": [
+                      "profile_u0_order0_line0",
+                      "profile_u0_order0_line1",
+                      "profile_u0_order1_line0",
+                      "profile_u1_order0_line0",
+                      "profile_u1_order1_line0",
+                      "profile_u1_order1_line1",
+                      "profile_u1_order1_line2",
+                      "profile_u1_order2_line0",
+                      "profile_u1_order2_line1",
+                      "profile_u1_order3_line0",
+                      "profile_u2_order0_line0",
+                      "profile_u2_order1_line0",
+                      "profile_u3_order0_line0",
+                      "profile_u3_order0_line1",
+                      "profile_u3_order0_line2",
+                      "profile_u3_order1_line0",
+                      "profile_u3_order1_line1",
+                      "profile_u3_order2_line0",
+                      "profile_u3_order2_line1",
+                      "profile_u3_order2_line2"
+                    ],
+                    "title": "Profile Id",
+                    "type": "string"
+                  },
+                  "selectors": {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "description": "Immutable public field/value pairs from the selected Customer facts or customer_operations.",
+                    "maxProperties": 16,
+                    "minProperties": 1,
+                    "title": "Selectors",
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "profile_id",
+                  "collection",
+                  "selectors",
+                  "field",
+                  "accepted_values"
+                ],
+                "title": "CreatedObjectGoal",
+                "type": "object"
+              },
+              "Goal": {
+                "additionalProperties": false,
+                "description": "Desired final business state on an existing selected-Customer object. The target field must be mutable under the native Customer frame; event records, evidence and immutable facts are not completion goals.",
+                "properties": {
+                  "accepted_values": {
+                    "description": "Desired final values, different from the frozen initial value.",
+                    "items": {},
+                    "minItems": 1,
+                    "title": "Accepted Values",
+                    "type": "array"
+                  },
+                  "collection": {
+                    "description": "Native business-object collection covered by the selected Customer frame.",
+                    "title": "Collection",
+                    "type": "string"
+                  },
+                  "entity": {
+                    "description": "Existing object ID covered by the selected Customer frame.",
+                    "title": "Entity",
+                    "type": "string"
+                  },
+                  "field": {
+                    "description": "Mutable business-state field covered by the selected Customer frame.",
+                    "title": "Field",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "collection",
+                  "entity",
+                  "field",
+                  "accepted_values"
+                ],
+                "title": "Goal",
+                "type": "object"
+              },
+              "InformationRequirement": {
+                "additionalProperties": false,
+                "description": "Customer facts a composed challenge requires the Service to obtain.",
+                "properties": {
+                  "fact_keys": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 32,
+                    "minItems": 1,
+                    "title": "Fact Keys",
+                    "type": "array"
+                  },
+                  "profile_id": {
+                    "title": "Profile Id",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "profile_id",
+                  "fact_keys"
+                ],
+                "title": "InformationRequirement",
+                "type": "object"
+              },
+              "PreferenceRequirement": {
+                "additionalProperties": false,
+                "description": "Permitted task-specific choices drawn from one frozen profile.",
+                "properties": {
+                  "accepted_values": {
+                    "items": {},
+                    "maxItems": 32,
+                    "minItems": 1,
+                    "title": "Accepted Values",
+                    "type": "array"
+                  },
+                  "preference": {
+                    "maxLength": 96,
+                    "minLength": 1,
+                    "title": "Preference",
+                    "type": "string"
+                  },
+                  "profile_id": {
+                    "title": "Profile Id",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "profile_id",
+                  "preference",
+                  "accepted_values"
+                ],
+                "title": "PreferenceRequirement",
+                "type": "object"
+              }
+            },
+            "additionalProperties": false,
+            "anyOf": [
+              {
+                "properties": {
+                  "goals": {
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "goals"
+                ]
+              },
+              {
+                "properties": {
+                  "refusal_operations": {
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "refusal_operations"
+                ]
+              },
+              {
+                "properties": {
+                  "created_goals": {
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "created_goals"
+                ]
+              }
+            ],
+            "description": "v4 proposal: goals may target existing or newly-created objects.",
+            "properties": {
+              "confirmation_requirements": {
+                "description": "Optional evaluator assertion, not authorization; usually omit. Only include an exact canonical write copied from the selected Customer profile's customer_operations. Never guess operation parameters or invent case, quote, or resource IDs. Omitting this does not bypass live Customer consent. Supplied operations remain subject to native scope checks.",
+                "items": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "open_case"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "issue": {
+                              "enum": [
+                                "damaged",
+                                "wrong_item",
+                                "missing_parts"
+                              ],
+                              "title": "Issue",
+                              "type": "string"
+                            },
+                            "line_id": {
+                              "title": "Line Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "line_id",
+                            "issue"
+                          ],
+                          "title": "OpenCase",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "verify_evidence"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            },
+                            "evidence_id": {
+                              "title": "Evidence Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id",
+                            "evidence_id"
+                          ],
+                          "title": "Verify",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "request_manager_review"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id"
+                          ],
+                          "title": "CaseInput",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "quote_resolution"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            },
+                            "option": {
+                              "enum": [
+                                "refund",
+                                "exchange",
+                                "reship"
+                              ],
+                              "title": "Option",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id",
+                            "option"
+                          ],
+                          "title": "QuoteInput",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "commit_resolution"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "destination_channel": {
+                              "title": "Destination Channel",
+                              "type": "string"
+                            },
+                            "quote_id": {
+                              "title": "Quote Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "quote_id",
+                            "destination_channel"
+                          ],
+                          "title": "Commit",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "schedule_return"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            },
+                            "pickup_slot": {
+                              "minLength": 1,
+                              "title": "Pickup Slot",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id",
+                            "pickup_slot"
+                          ],
+                          "title": "Pickup",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "release_refund"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id"
+                          ],
+                          "title": "CaseInput",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                },
+                "maxItems": 16,
+                "title": "Confirmation Requirements",
+                "type": "array"
+              },
+              "created_goals": {
+                "description": "Goals for exactly one new object created through a selected Customer's native operation. Name the selected profile, native collection, grounded immutable selector fields and desired public field value; never provide a generated object ID.",
+                "items": {
+                  "$ref": "#/$defs/CreatedObjectGoal"
+                },
+                "maxItems": 32,
+                "title": "Created Goals",
+                "type": "array"
+              },
+              "customer_request": {
+                "maxLength": 6000,
+                "minLength": 1,
+                "title": "Customer Request",
+                "type": "string"
+              },
+              "external_schedule": {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "title": "External Schedule",
+                "type": "array"
+              },
+              "goals": {
+                "description": "Machine-checkable desired final states for existing, customer-scoped business objects and fields allowed by their native mutable frame. Do not target event records, evidence, immutable facts, or a state that already holds.",
+                "items": {
+                  "$ref": "#/$defs/Goal"
+                },
+                "maxItems": 32,
+                "title": "Goals",
+                "type": "array"
+              },
+              "information_requirements": {
+                "items": {
+                  "$ref": "#/$defs/InformationRequirement"
+                },
+                "maxItems": 64,
+                "title": "Information Requirements",
+                "type": "array"
+              },
+              "preference_requirements": {
+                "items": {
+                  "$ref": "#/$defs/PreferenceRequirement"
+                },
+                "maxItems": 64,
+                "title": "Preference Requirements",
+                "type": "array"
+              },
+              "profile_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 8,
+                "minItems": 1,
+                "title": "Profile Ids",
+                "type": "array"
+              },
+              "refusal_operations": {
+                "description": "Exact canonical business writes Service should correctly refuse. Include every native parameter; never guess IDs or fields. A Customer-authorized operation is not automatically a refusal.",
+                "items": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "open_case"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "issue": {
+                              "enum": [
+                                "damaged",
+                                "wrong_item",
+                                "missing_parts"
+                              ],
+                              "title": "Issue",
+                              "type": "string"
+                            },
+                            "line_id": {
+                              "title": "Line Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "line_id",
+                            "issue"
+                          ],
+                          "title": "OpenCase",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "verify_evidence"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            },
+                            "evidence_id": {
+                              "title": "Evidence Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id",
+                            "evidence_id"
+                          ],
+                          "title": "Verify",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "request_manager_review"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id"
+                          ],
+                          "title": "CaseInput",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "quote_resolution"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            },
+                            "option": {
+                              "enum": [
+                                "refund",
+                                "exchange",
+                                "reship"
+                              ],
+                              "title": "Option",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id",
+                            "option"
+                          ],
+                          "title": "QuoteInput",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "commit_resolution"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "destination_channel": {
+                              "title": "Destination Channel",
+                              "type": "string"
+                            },
+                            "quote_id": {
+                              "title": "Quote Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "quote_id",
+                            "destination_channel"
+                          ],
+                          "title": "Commit",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "schedule_return"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            },
+                            "pickup_slot": {
+                              "minLength": 1,
+                              "title": "Pickup Slot",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id",
+                            "pickup_slot"
+                          ],
+                          "title": "Pickup",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "enum": [
+                            "release_refund"
+                          ]
+                        },
+                        "params": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "case_id": {
+                              "title": "Case Id",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "case_id"
+                          ],
+                          "title": "CaseInput",
+                          "type": "object"
+                        },
+                        "resource_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "scope_id": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "scope_id",
+                        "resource_id",
+                        "params"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                },
+                "maxItems": 16,
+                "title": "Refusal Operations",
+                "type": "array"
+              }
+            },
+            "required": [
+              "profile_ids",
+              "customer_request"
+            ],
+            "title": "DialogueDesignerProposal",
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "world_hash": "f6c3ec9a4178972535bbb6f85d597a92d400bf5fad92cd48987b91311b79b482",
+  "world_spec": {
+    "domain": "aftersales",
+    "generation_mode": "unconditioned",
+    "generator_config": {},
+    "generator_version": "aftersales-generator-v1",
+    "partition": "train",
+    "rules_version": "aftersales-0.1.0",
+    "seed": 2
+  }
+}

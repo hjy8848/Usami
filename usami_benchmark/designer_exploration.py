@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 from typing import Literal, Optional
 
-from pydantic import Field, model_validator
+from pydantic import Field, ValidationError, model_validator
 
 from usami.service.models import ModelSettings, ServiceError, strict_json
 from usami.service.runner import completion_message
@@ -556,6 +556,85 @@ class DesignerFailure(ValueError):
         self.journal = journal
 
 
+_V4_FAILURE_MEANINGS = {
+    "schema_invalid": "The proposal does not match the declared task schema. Correct its fields and native parameter shape.",
+    "object_missing": "A referenced profile or object was not found in the frozen world. Query registered objects; do not invent identifiers.",
+    "scope_invalid": "The target or operation is outside the selected Customer identity, object scope, or native frame.",
+    "authorization_unmet": "A required Customer choice or confirmation is missing or does not match the selected profile's exact authority.",
+    "external_event_missing": "The proposal references an event that is not registered for the selected frozen objects. Query registered events; do not invent one.",
+    "business_precondition_unmet": "The proposal conflicts with a native business constraint. This rejects this proposal; it does not prove that no alternative task exists.",
+    "reference_unproven": "A bounded search failure does not prove impossibility. The independent Reference did not prove this proposal within the configured budget; revise the task or report it as unproven.",
+    "model_output_invalid": "The model response did not follow the required assistant/function-calling protocol. Submit one complete, valid tool call.",
+    "transport_error": "The model provider request failed. No automatic retry was performed.",
+    "verifier_error": "The native verifier encountered an internal consistency error. The run is stopped; do not revise the task to conceal it.",
+}
+
+
+def _designer_failure_category(exc, *, stage):
+    """Classify v4 failures without turning bounded proof failure into impossibility.
+
+    v2/v3 journals retain their historical two-category vocabulary in ``design``;
+    this richer diagnostic is deliberately scoped to the current protocol.
+    """
+    message = str(exc).lower()
+    if isinstance(exc, ValidationError):
+        return "schema_invalid"
+    if isinstance(exc, (ServiceError, json.JSONDecodeError)) or any(token in message for token in (
+        "json", "function-call", "function call", "tool call", "assistant message",
+        "submit_frozen_world_task call", "completion protocol", "duplicate key",
+        "non-finite json",
+    )):
+        return "model_output_invalid"
+    if any(token in message for token in (
+        "unregistered external event", "unregistered external schedule",
+        "external event is not registered", "external schedule entry",
+    )):
+        return "external_event_missing"
+    if any(token in message for token in (
+        "profile_id does not exist", "requested object does not exist",
+        "does not exist in the frozen world", "not an existing frozen business object",
+        "not an existing object in the selected", "registered frozen collection",
+    )):
+        return "object_missing"
+    if any(token in message for token in (
+        "no native refusal task", "outside frozen customer choices",
+        "unregistered terminal outcome", "return window",
+    )):
+        return "business_precondition_unmet"
+    if any(token in message for token in (
+        "confirmation", "consent", "authorization", "customer choice",
+        "preference requirement is outside", "not in the frozen customer choices",
+    )):
+        return "authorization_unmet"
+    if any(token in message for token in (
+        "outside selected customer", "outside selected frozen customer", "outside the selected customer",
+        "outside the selected frozen customer", "outside customer authority",
+        "same authenticated identity", "identity differs", "scope", "native frame",
+        "out-of-scope", "outside the task",
+    )):
+        return "scope_invalid"
+    if any(token in message for token in (
+        "did not prove", "search exhausted", "reference search", "bounded native search",
+        "bounded native dialogue search", "bounded reference search",
+    )):
+        return "reference_unproven"
+    if any(token in message for token in (
+        "engine disagrees", "certificate integrity", "oracle/replay", "task certificate does not reproduce",
+        "task construction/certificate replay differs",
+    )):
+        return "verifier_error"
+    if any(token in message for token in (
+        "business", "policy", "native refusal", "terminal outcome", "return window",
+        "outside frozen customer choices", "not established", "not covered",
+    )):
+        return "business_precondition_unmet"
+    # Query-stage errors are failures to express a registered read, not an
+    # invalid business proposal. Treat them as model output/schema errors.
+    if stage == "exploration":
+        return "model_output_invalid"
+    return "business_precondition_unmet"
+
+
 def design(frozen, client, construction_budget=None, prompt_context=None, *, budget=None, journal_path=None,
            protocol=PROTOCOL):
     frozen = verified_world(frozen)
@@ -581,8 +660,10 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
         if journal_path is not None:
             atomic_json(Path(journal_path), journal, immutable=False)
 
-    def fail(message):
+    def fail(message, *, category=None):
         journal.update(status="BLOCKED", failure=message)
+        if protocol == PROTOCOL and category is not None:
+            journal["failure_category"] = category
         save()
         raise DesignerFailure(message, copy.deepcopy(journal))
 
@@ -618,7 +699,8 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
             response = client.complete(request)
         except Exception as exc:
             row["transport_error"] = {"type": type(exc).__name__, "message": str(exc)}
-            fail("Designer transport failed; no retry performed: " + str(exc))
+            fail("Designer transport failed; no retry performed: " + str(exc),
+                 category="transport_error" if protocol == PROTOCOL else None)
         row["response"] = copy.deepcopy(response)
         save()
         parsed = None
@@ -658,6 +740,8 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
                             raise ValueError("only registered read-only exploration tools are allowed")
                     except (ValueError, TypeError, KeyError) as exc:
                         result = {"status": "error", "detail": str(exc)}
+                        if protocol == PROTOCOL:
+                            result["category"] = _designer_failure_category(exc, stage="exploration")
                     row["tool_results"].append(result)
                     messages.append({"role": "tool", "tool_call_id": call["id"],
                                      "content": json.dumps(result, ensure_ascii=False, sort_keys=True)})
@@ -669,9 +753,16 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
                 save()
                 continue
         except (ValueError, TypeError, KeyError, ServiceError) as exc:
-            feedback = {"status": "rejected", "detail": str(exc),
-                        "category": "search_unproven" if "did not prove" in str(exc) else "invalid_proposal",
-                        "meaning": "A bounded search failure does not prove impossibility. No task or world has been repaired for you."}
+            if protocol == PROTOCOL:
+                category = _designer_failure_category(exc, stage=stage)
+                feedback = {"status": "rejected", "detail": str(exc), "category": category,
+                            "meaning": _V4_FAILURE_MEANINGS[category]}
+            else:
+                category = "search_unproven" if "did not prove" in str(exc) else "invalid_proposal"
+                feedback = {"status": "rejected", "detail": str(exc), "category": category,
+                            "meaning": "A bounded search failure does not prove impossibility. No task or world has been repaired for you."}
+            if category == "verifier_error":
+                fail("Designer verifier consistency failure: " + str(exc), category=category)
             if budget.actionable_feedback:
                 submitted = [exchange for exchange in journal["exchanges"] if exchange["stage"] == "submission"]
                 def arguments(exchange):
@@ -694,7 +785,8 @@ def design(frozen, client, construction_budget=None, prompt_context=None, *, bud
             messages.append({"role": "user", "content": json.dumps(feedback, ensure_ascii=False, sort_keys=True)})
             save()
             if stage == "submission" and journal["proposal_attempts"] >= 1 + budget.max_revisions:
-                fail("Designer submission budget exhausted: " + str(exc))
+                fail("Designer submission budget exhausted: " + str(exc),
+                     category=category if protocol == PROTOCOL else None)
             stage = ("exploration" if exploration_calls < budget.max_exploration_calls
                      and journal["queries"] < budget.max_queries else "submission")
             continue

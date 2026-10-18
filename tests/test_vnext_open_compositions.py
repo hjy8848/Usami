@@ -7,7 +7,10 @@ from usami_benchmark.worlds import freeze
 from usami_benchmark.tasks import (
     ConstructionBudget, OpenDialogueComposition, TaskSelection, compile_task, verify_task,
 )
-from usami_benchmark.designer import designer_view, design_and_compile, verify_designer_execution
+from usami_benchmark.designer import (
+    _designer_tools, _selection_from_response, designer_view, design_and_compile,
+    verify_designer_execution,
+)
 from usami_benchmark.contracts import DOMAINS
 from usami_dialogue.tasks import Goal, PreferenceRequirement, InformationRequirement
 from usami_harness.models import digest
@@ -105,7 +108,9 @@ def test_designer_skill_and_verified_history_are_in_the_replayed_request():
     frozen=freeze(default_spec('aftersales',0))
     selection=multi_order_selection(frozen)
     skill='<VAST_SKILLS><VAST_SKILL id="designer.test" version="2">keep order facts separate</VAST_SKILL></VAST_SKILLS>'
-    selection_response=answer(calls=[call('designer-task','submit_frozen_world_task',selection.model_dump(mode='json'))])
+    proposal={key:value for key,value in selection.model_dump(mode='json').items()
+              if key in {'kind','family','profile_id','composition'}}
+    selection_response=answer(calls=[call('designer-task','submit_frozen_world_task',proposal)])
     client=ScriptedClient(SPEC,[selection_response])
     context={'skill_snapshot_hash':'a'*64,'skill_rendered':skill,'evidence_ids':['task-1'],
         'hypothesis':'Test whether a second existing order can be composed safely.',
@@ -118,3 +123,25 @@ def test_designer_skill_and_verified_history_are_in_the_replayed_request():
     assert 'task-1' in evidence and 'false_rejection' in evidence and context['hypothesis'] in evidence
     assert len(execution.task.selection.composition.profile_ids)==2
     assert verify_designer_execution(execution)['verified']
+
+
+def test_dialogue_designer_tool_schema_only_exposes_composition_fields():
+    frozen=freeze(default_spec('aftersales',0))
+    schema=_designer_tools(frozen)[0]['function']['parameters']
+    assert set(schema['properties'])=={'kind','family','profile_id','composition'}
+    assert set(schema['required'])=={'kind','family','profile_id','composition'}
+    assert schema['properties']['kind']['const']=='dialogue'
+    assert schema['properties']['family']['const']=='open_composition_v1'
+    world=aftersales.World.model_validate(frozen.world)
+    assert schema['properties']['profile_id']['enum']==sorted(world.profiles)
+
+
+def test_dialogue_designer_parser_rejects_tool_only_fields():
+    frozen=freeze(default_spec('aftersales',0))
+    selection=multi_order_selection(frozen)
+    proposal={key:value for key,value in selection.model_dump(mode='json').items()
+              if key in {'kind','family','profile_id','composition'}}
+    proposal['message']='This top-level field conflicts with an open composition.'
+    response=answer(calls=[call('designer-task','submit_frozen_world_task',proposal)])
+    with pytest.raises(ValueError):
+        _selection_from_response(response,frozen)

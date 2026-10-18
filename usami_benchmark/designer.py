@@ -15,10 +15,11 @@ from usami.service.models import ModelSettings, strict_json
 from usami.service.runner import completion_message
 
 from .public_policy import catalogue
-from .tasks import (CertifiedTask, ConstructionBudget, TaskSelection,
+from .tasks import (CertifiedTask, ConstructionBudget, OpenDialogueComposition, TaskSelection,
                     compile_task, verify_task)
 from .tool_tasks import binding, visible_ids
 from .splits import verified_world
+from .contracts import TRACKS
 
 
 DESIGNER_POLICY=(
@@ -28,7 +29,9 @@ DESIGNER_POLICY=(
     'goals, exact business operations that should be refused, declared state frames, information needs, permitted '
     'Customer choices and confirmations. The world is read-only. Never invent or edit entities, operations, rules, '
     'permissions, evidence, external events or expected outcomes. Do not provide Reference answers or refusal codes. '
-    'For dialogue domains, submit family open_composition_v1 and a versioned composition object. For tool domains, '
+    'For dialogue domains, submit only kind, family, profile_id, and composition; put the Customer request inside '
+    'composition.customer_request, never in a top-level message or identity field. Use family open_composition_v1. '
+    'For tool domains, '
     'provide exact customer-visible operations and a JointGoal. Prefer distinct but coherent business objectives; '
     'do not repeat the same operation merely to inflate task size. The native compiler will reject unsupported proposals.'
 )
@@ -46,6 +49,14 @@ class DesignerExecution(Model):
     cost:dict=Field(default_factory=dict)
     execution_hash:str=''
     def computed_hash(self):return digest(self.model_dump(mode='json',exclude={'execution_hash'}))
+
+
+class DialogueDesignerProposal(Model):
+    """Dialogue-track proposal shape excludes tool-only and compiler-owned fields."""
+    kind:Literal['dialogue']
+    family:Literal['open_composition_v1']
+    profile_id:str=Field(min_length=1)
+    composition:OpenDialogueComposition
 
 
 def _dialogue_contract(frozen,world):
@@ -96,10 +107,16 @@ def designer_view(frozen):
     return body
 
 
-def _designer_tools():
+def _designer_tools(frozen):
+    if TRACKS[frozen.spec.domain]=='B':
+        schema=DialogueDesignerProposal.model_json_schema()
+        world=importlib.import_module('usami_'+frozen.spec.domain+'.adapter').World.model_validate(frozen.world)
+        schema['properties']['profile_id']['enum']=sorted(world.profiles)
+    else:
+        schema=TaskSelection.model_json_schema()
     return [{'type':'function','function':{'name':'submit_frozen_world_task',
         'description':'Submit one task selection grounded in the supplied frozen world.',
-        'parameters':TaskSelection.model_json_schema()}}]
+        'parameters':schema}}]
 
 
 def _designer_messages(frozen,prompt_context=None):
@@ -116,11 +133,15 @@ def _designer_messages(frozen,prompt_context=None):
     return messages
 
 
-def _selection_from_response(response):
+def _selection_from_response(response,frozen=None):
     message,actions=completion_message(response,set())
     if len(actions)!=1 or actions[0]['function']['name']!='submit_frozen_world_task':
         raise ValueError('Designer must return exactly one submit_frozen_world_task call')
-    return TaskSelection.model_validate(strict_json(actions[0]['function']['arguments']))
+    raw=strict_json(actions[0]['function']['arguments'])
+    if frozen is not None and TRACKS[frozen.spec.domain]=='B':
+        proposal=DialogueDesignerProposal.model_validate(raw)
+        return TaskSelection.model_validate(proposal.model_dump(mode='json'))
+    return TaskSelection.model_validate(raw)
 
 
 def design_and_compile(frozen,client,construction_budget=None,prompt_context=None):
@@ -132,9 +153,9 @@ def design_and_compile(frozen,client,construction_budget=None,prompt_context=Non
     frozen=verified_world(frozen)
     settings=client.settings.model_copy(deep=True)
     prompt_context=dict(prompt_context or {})
-    request=settings.request(_designer_messages(frozen,prompt_context),_designer_tools())
+    request=settings.request(_designer_messages(frozen,prompt_context),_designer_tools(frozen))
     response=client.complete(request)
-    selection=_selection_from_response(response)
+    selection=_selection_from_response(response,frozen)
     task=compile_task(frozen,selection,construction_budget or ConstructionBudget())
     usage=response.get('usage',{}) if isinstance(response,dict) else {}
     cost={'calls':1,'input_tokens':usage.get('prompt_tokens'),'output_tokens':usage.get('completion_tokens'),
@@ -149,9 +170,10 @@ def verify_designer_execution(record):
     if row.execution_hash!=row.computed_hash():raise ValueError('Designer execution integrity differs')
     if row.frozen_hash!=row.task.frozen.registration_hash or row.selection!=row.task.selection:
         raise ValueError('Designer proposal differs from the compiled frozen task')
-    expected_request=row.model.request(_designer_messages(row.task.frozen,row.prompt_context),_designer_tools())
+    expected_request=row.model.request(_designer_messages(row.task.frozen,row.prompt_context),
+                                       _designer_tools(row.task.frozen))
     if row.request!=expected_request:raise ValueError('recorded Designer request differs from the frozen-world task prompt')
-    if _selection_from_response(row.response)!=row.selection:
+    if _selection_from_response(row.response,row.task.frozen)!=row.selection:
         raise ValueError('compiled task selection differs from the raw Designer model response')
     if verify_task(row.task) is not True:raise ValueError('native task proof failed to replay')
     return {'verified':True,'model_calls':1,'task_hash':row.task.task_hash,'task_replay':True}

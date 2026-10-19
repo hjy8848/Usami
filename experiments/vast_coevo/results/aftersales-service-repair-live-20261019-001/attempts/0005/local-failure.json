@@ -1,0 +1,1 @@
+{"automatic_retry":false,"code":"LOCAL_CONFIG_SERIALIZATION","message":"Nested TaskRunConfig in retest/config.json was not JSON serializable. Failure occurred before Customer or Service model execution.","provider_requests_this_attempt":0,"retest_started":false,"type":"TypeError"}

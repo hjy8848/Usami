@@ -1,0 +1,1 @@
+{"api_calls_sent":0,"attempt":5,"automatic_retry":false,"candidate_patch":"../0003-codex-reflection-substitute-002/patch.json","candidate_snapshot":"reflection/candidate-snapshot.json","error":"local serialization before model execution","retest_started":false,"status":"RETEST_BLOCKED_LOCAL_SERIALIZATION"}

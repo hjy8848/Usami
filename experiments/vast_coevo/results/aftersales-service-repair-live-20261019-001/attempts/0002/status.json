@@ -1,0 +1,1 @@
+{"api_calls_sent":1,"attempt":2,"proxy":{"available":true,"host":"loopback","port":65533,"reason":"TCP listener reachable","scheme":"http","source":"user_reported_local_port_probe"},"reflection_call_id":"g1.service.reflection","reflection_error":"reflection_client_error","reflection_tokens":{},"status":"REFLECTION_FAILED"}

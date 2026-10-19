@@ -1,0 +1,1 @@
+{"original_record":"attempts/0001/model-calls/0001-service_reflection.json","original_sent_flag":true,"protocol":"model-call-send-status-correction-v1","provider_request_count":0,"provider_requests_sent":false,"reason":"The local CallLedger raised AttributeError while resolving inner.complete before OpenAICompatibleClient.complete was invoked."}

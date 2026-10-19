@@ -1,0 +1,1 @@
+{"corrected_status":"BLOCKED_PROVIDER_TIMEOUT","network_outcome":"network-outcome.json","original_status":"REFLECTION_FAILED","protocol":"attempt-status-correction-v1","reason":"A provider request was sent and timed out without response; no retry was performed."}

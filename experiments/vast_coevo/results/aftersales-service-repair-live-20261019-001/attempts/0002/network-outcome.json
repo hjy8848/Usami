@@ -1,0 +1,1 @@
+{"automatic_retry":false,"call_id":"g1.service.reflection","downstream_retest_started":false,"protocol":"provider-outcome-correction-v1","provider_charge":"unknown","provider_error_code":"PROVIDER_TIMEOUT","provider_request_sent":true,"provider_response_received":false,"provider_timeout_seconds":120,"token_usage":"unknown"}

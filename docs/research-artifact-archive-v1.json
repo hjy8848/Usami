@@ -1,0 +1,3992 @@
+{
+  "format_version": 1,
+  "created_at": "2026-10-19T08:39:21+00:00",
+  "baseline_commit": "4e6de2196f94c6c70100ac28bffbc442c4bcaacc",
+  "archive_ref": "archive/pre-dedupe-2026-10-19",
+  "baseline_tree": {
+    "tracked_files": 2166,
+    "bytes": 563947165
+  },
+  "duplicate_groups": [
+    {
+      "sha256": "76e29d606d2f792e1c0366f76050cd03ca943d49db32bf3629e501480bdd7d6a",
+      "size_bytes": 16770,
+      "canonical": "benchmarks/cloudops-v0.1/customer-comparison-before-transport-fix/discovery-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/cloudops-v0.1/customer-comparison-before-transport-fix/discovery-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/cloudops-v0.1/customer-comparison-before-transport-fix/discovery/profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "12877c350e2c79f9d2054f1eb083689f16a3fade"
+    },
+    {
+      "sha256": "3c57746db839be9980a3be3ab4103e94758da875e876e9f6e74f3bb61ac176eb",
+      "size_bytes": 12596,
+      "canonical": "benchmarks/cloudops-v0.1/customer-comparison-before-transport-fix/original-source/customer.py.txt",
+      "copies": [
+        {
+          "path": "benchmarks/cloudops-v0.1/customer-comparison-before-transport-fix/original-source/customer.py.txt",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-schema/original-source/customer.py.txt",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "dbe51be4776a210635b2748bd837030492b0a118"
+    },
+    {
+      "sha256": "32a46fb9ff9f7df416f5a588118c192abe83dec58fd5f874b7aa1e30016dde51",
+      "size_bytes": 16774,
+      "canonical": "benchmarks/cloudops-v0.1/pilot-initial/discovery-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-initial/discovery-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-initial/discovery/profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "5d06f12e9e89c748a58d679326a5f26fc5b17f8f"
+    },
+    {
+      "sha256": "15821942312286fe648c98dbe3140cd3917e5490846ceaf01b90c21c405faa4c",
+      "size_bytes": 44668,
+      "canonical": "benchmarks/cloudops-v0.1/pilot-initial/service-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-initial/service-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-initial/service/profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "b87d54d2f1c749ce80457884cadbbccb1e94b274"
+    },
+    {
+      "sha256": "08e333ea41a0bd52711e027fb8fe0f76be014efdfabef46ce1d43951be45995e",
+      "size_bytes": 7278,
+      "canonical": "benchmarks/cloudops-v0.1/pilot-report.json",
+      "copies": [
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-report.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot/pilot-report.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "8aa32c8812aed488f60db3076c573079719a735d"
+    },
+    {
+      "sha256": "7feb908841521e920b6c831f40054a2359525b2a0c940754fa7fabe34d2d7c1e",
+      "size_bytes": 16774,
+      "canonical": "benchmarks/cloudops-v0.1/pilot-schema/discovery-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-schema/discovery-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-schema/discovery/profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "9f8e37dd39416ea9ec49e1005421cc4523ea614b"
+    },
+    {
+      "sha256": "609328259b5a62e0b94087cf39597a2834369f0804077f4c83da7c35c7f60578",
+      "size_bytes": 44668,
+      "canonical": "benchmarks/cloudops-v0.1/pilot-schema/service-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-schema/service-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot-schema/service/profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "dbdbe5eb413e302f9bff8d40879871064001dc93"
+    },
+    {
+      "sha256": "c37acb5a1878a6f898dc1d121d42903dc09000f9274df7e5e562250981dfcf99",
+      "size_bytes": 16770,
+      "canonical": "benchmarks/cloudops-v0.1/pilot/discovery-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot/discovery-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot/discovery/profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "949b04710d9118f190b2d133a587f72f99ba6eac"
+    },
+    {
+      "sha256": "b9fab422070c939797ca7f53c7d254259a9a430584447bbf0553ba722cde3c3d",
+      "size_bytes": 44668,
+      "canonical": "benchmarks/cloudops-v0.1/pilot/service-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot/service-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/cloudops-v0.1/pilot/service/profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "83e1f8a3534e1b84256e490e7aaa97430d8f1b06"
+    },
+    {
+      "sha256": "8f44f014ac699f6bca90f4fa23fd1f1bcb7a91807d2c17bcea6e32227747c75a",
+      "size_bytes": 192,
+      "canonical": "benchmarks/four-domain-verification/fulfillment-archived-replay.txt",
+      "copies": [
+        {
+          "path": "benchmarks/four-domain-verification/fulfillment-archived-replay.txt",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/four-domain-verification/stayops-archived-replay.txt",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "c9be4ddaf53e993b4b2715a593b4d03a9728ccbc"
+    },
+    {
+      "sha256": "26e9ca46ef87e0dfc7dd4fc74e8dab002c9beb1c74d701b3f23566586e09b047",
+      "size_bytes": 23761,
+      "canonical": "benchmarks/fulfillment-v0.1/pilot-v1/discovery-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/fulfillment-v0.1/pilot-v1/discovery-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/fulfillment-v0.1/pilot-v1/discovery/profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "12e1f05f074b577e5953323610d14e1ee83bbfdc"
+    },
+    {
+      "sha256": "f28b392be0dc086a599e1dc26ab88c9af9707b0b9ceca41196ea3fa74acbe482",
+      "size_bytes": 69,
+      "canonical": "benchmarks/fulfillment-v0.1/pilot-v1/runtime-environment.json",
+      "copies": [
+        {
+          "path": "benchmarks/fulfillment-v0.1/pilot-v1/runtime-environment.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/stayops-v0.1/pilot-v1/runtime-environment.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "9fc46d27d27b0c8e1842f138b5ea0272e550a9ba"
+    },
+    {
+      "sha256": "5abb6a56a9e7c17fc3d045f6b8e9f90481fb8e80394b8e2e183258d738098856",
+      "size_bytes": 191822,
+      "canonical": "benchmarks/fulfillment-v0.1/pilot-v1/service-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/fulfillment-v0.1/pilot-v1/service-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/fulfillment-v0.1/pilot-v1/service/profile.json",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "896acf07650533735bd5f9d9449f04a19f7e8113"
+    },
+    {
+      "sha256": "ef26eb7d27d4feceb64dbc647026978c4a229bc4e5d442d874343eb90de0341b",
+      "size_bytes": 159890,
+      "canonical": "benchmarks/fulfillment-v0.1/pilot/service-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/fulfillment-v0.1/pilot/service-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/fulfillment-v0.1/pilot/service/profile.json",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "64cec8ac74468c55cb22b97e90b0c7ef56bd75ef"
+    },
+    {
+      "sha256": "73a7cb8907d2095527cadeac8bbcd33cb030a845b932a1f3b8951e4146eee909",
+      "size_bytes": 45762,
+      "canonical": "benchmarks/stayops-v0.1/pilot-v1/discovery-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/stayops-v0.1/pilot-v1/discovery-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/stayops-v0.1/pilot-v1/discovery/profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "8fc39110c7117b34a641c2ae897a7a17a0fcbb2d"
+    },
+    {
+      "sha256": "adbe07dd2e08f4858583abd76f21178ac947cc954c1345f5c5a89924c4b8f414",
+      "size_bytes": 291389,
+      "canonical": "benchmarks/stayops-v0.1/pilot-v1/service-profile.json",
+      "copies": [
+        {
+          "path": "benchmarks/stayops-v0.1/pilot-v1/service-profile.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/stayops-v0.1/pilot-v1/service/profile.json",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_release_or_profile",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "00e27eb04e67f6d8a0cb4388595bd3c368b3ca48"
+    },
+    {
+      "sha256": "31db5361bba2cea747f883cd720a44aea9a0b4c53a6ada1b68a96492a82c57c5",
+      "size_bytes": 24947,
+      "canonical": "benchmarks/vnext-0.1/audits/dialogue-state-v2-001/source-pins.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/dialogue-state-v2-001/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/education-native-001/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/fixtures/education-agent-001/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "92645003daf9802111189da829c7e32ccc56edbf"
+    },
+    {
+      "sha256": "f8b8b1d3658cbc31c4a1d05a3fb3057e048882c3108028b644e1fbdc1a8e0e96",
+      "size_bytes": 546864,
+      "canonical": "benchmarks/vnext-0.1/audits/dialogue-state-v2-001/source-snapshot.zip",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/dialogue-state-v2-001/source-snapshot.zip",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/education-native-001/source-snapshot.zip",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/fixtures/education-agent-001/source-snapshot.zip",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "839d059363d62efde3fb4501864f959ea73df7de"
+    },
+    {
+      "sha256": "8532b8a927a6f5eba889a9890bcadc8aab6a482df455932f5dc28f09d8a7f78d",
+      "size_bytes": 25141,
+      "canonical": "benchmarks/vnext-0.1/audits/eight-domain-world-splits-001/source-pins.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/eight-domain-world-splits-001/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/dependency-six-kinds-001/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "8afafadbba5d08b268287015490a8ad9fb241978"
+    },
+    {
+      "sha256": "9df4c5993e7f693af16847e1bcc5802c34164a9280aa740558e5d5c5e7feecdf",
+      "size_bytes": 552785,
+      "canonical": "benchmarks/vnext-0.1/audits/eight-domain-world-splits-001/source-snapshot.zip",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/eight-domain-world-splits-001/source-snapshot.zip",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/dependency-six-kinds-001/source-snapshot.zip",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "172c3bfa54f02b104ecfe0a82a3bd7f0cc47c49d"
+    },
+    {
+      "sha256": "58d6d166c017e2ca9dcf0415b271cd5afa77b45029e9bc6673a45cfa490e7c67",
+      "size_bytes": 23978,
+      "canonical": "benchmarks/vnext-0.1/audits/property-native-001/source-pins.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/property-native-001/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-001/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/fixtures/property-agent-001/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "17449202d074b3491399ef27251340d9e2c031bd"
+    },
+    {
+      "sha256": "e709f8dd21ce3ecefe26903f66e418b2f1f59f89307605c8f773b86a79a7c305",
+      "size_bytes": 521603,
+      "canonical": "benchmarks/vnext-0.1/audits/property-native-001/source-snapshot.zip",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/property-native-001/source-snapshot.zip",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-001/source-snapshot.zip",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/fixtures/property-agent-001/source-snapshot.zip",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "b967c1c98531235afd33a8cd15a9a244fa39fa6f"
+    },
+    {
+      "sha256": "058801cddddc0c499f56364304947099a1e2fa78261ea788cb41971c176bc613",
+      "size_bytes": 26042,
+      "canonical": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/audit/source-pins.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/audit/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/tasks/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "9d2c89638e83bb42bf77f65953d8324b89847518"
+    },
+    {
+      "sha256": "02ba6ce70aa49ede237b058fb18816804f82b242031d9c289a3c4390bf600ab5",
+      "size_bytes": 589060,
+      "canonical": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/audit/source-snapshot.zip",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/audit/source-snapshot.zip",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/source-snapshot.zip",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/tasks/source-snapshot.zip",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "3b08f4533d426f3474284b47c8adda7468d60a83"
+    },
+    {
+      "sha256": "8af3b2d3a518d6266872ed9052377cd8e024802a885b4606ecbd9bfa4fe8a4ec",
+      "size_bytes": 5189,
+      "canonical": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/builder.py",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/tasks-eight-domain-001/builder.py",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/examples/task_coverage_checkpoint.py",
+          "representation": "regular_file",
+          "retention_class": "repository_artifact",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "0d604fe02f8831ea8fe024359e0ef658efa8c4bb"
+    },
+    {
+      "sha256": "50145bed139daaab56a845e37a5809da17a0658d3f0567246dc3eb1daf569c22",
+      "size_bytes": 45485,
+      "canonical": "benchmarks/vnext-0.1/audits/worlds-phase1-corrected/saas-world-audit.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/worlds-phase1-corrected/saas-world-audit.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/audits/worlds-phase1-final/saas-world-audit.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "212227f9d2dde40f1cb5ba26fc70b348649775da"
+    },
+    {
+      "sha256": "908053a01269acf96dbf33e21c5c41a93c1d6b10677bf2e454a02b6cf7d9d39d",
+      "size_bytes": 112,
+      "canonical": "benchmarks/vnext-0.1/audits/worlds-phase1-corrected/saas-worlds-integrity.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/worlds-phase1-corrected/saas-worlds-integrity.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/audits/worlds-phase1-final/saas-worlds-integrity.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "9bd9b204c349acf9c1eb0d08a577e6f820c0032b"
+    },
+    {
+      "sha256": "f80cf87752edb4eb0c6412f8ddc9e1650283537573df1a4d61831accedf74cae",
+      "size_bytes": 67450,
+      "canonical": "benchmarks/vnext-0.1/audits/worlds-phase1-corrected/saas-worlds.json.gz",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/worlds-phase1-corrected/saas-worlds.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/audits/worlds-phase1-final/saas-worlds.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "8ef925623b037e8974cd7b07547e8c88af8a3694"
+    },
+    {
+      "sha256": "8b0e59ba2cba67fe51530409529e541617d55337f0eb4dafde31f8045924ed9a",
+      "size_bytes": 604,
+      "canonical": "benchmarks/vnext-0.1/audits/worlds-phase1-corrected/summary.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/audits/worlds-phase1-corrected/summary.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/audits/worlds-phase1-final/summary.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_audit_evidence",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "900d192069d576f42ca3f097d2995caa9d1fbf20"
+    },
+    {
+      "sha256": "a5cac8e626378bf5bf46663a9bc2b983b93eb562a4a4f125a10b8c95d80bf5f8",
+      "size_bytes": 132339,
+      "canonical": "benchmarks/vnext-0.1/examples/airline-native-001/case-0.json.gz",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/examples/airline-native-001/case-0.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/airline-native-002/case-0.json.gz",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "2e123fd8d2128287dbcfb623c8344920684c6783"
+    },
+    {
+      "sha256": "0e956234bbe7b9aa8d0417aed1c2ac1fa807451c4d8697144b59e915f8d0b2e5",
+      "size_bytes": 139828,
+      "canonical": "benchmarks/vnext-0.1/examples/airline-native-001/case-1.json.gz",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/examples/airline-native-001/case-1.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/airline-native-002/case-1.json.gz",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "c9368c259c91f1087f1a4de7968e6e434eebb624"
+    },
+    {
+      "sha256": "74e75cd7b8a99a89a93b5531820bbb19afa910a1dd2f43f17934033a816f3890",
+      "size_bytes": 126828,
+      "canonical": "benchmarks/vnext-0.1/examples/airline-native-001/case-2.json.gz",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/examples/airline-native-001/case-2.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/airline-native-002/case-2.json.gz",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "54c8a2c2a0e144fb4d5da1c6d3da63dcd53e0101"
+    },
+    {
+      "sha256": "10121693d3ceabde509f6dab0e62cb3dcc94743546d71a4320d20253f784b049",
+      "size_bytes": 543012,
+      "canonical": "benchmarks/vnext-0.1/examples/property-native-001/case-0.json.gz",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-001/case-0.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-002/case-0.json.gz",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "e48d8db1a005a4b7b3fab6b692475c93ede090fa"
+    },
+    {
+      "sha256": "05a440cfaabe73ac1a89c43a32b62cc9ede80d4633a3dc13b4105ee9adcd9286",
+      "size_bytes": 373328,
+      "canonical": "benchmarks/vnext-0.1/examples/property-native-001/case-1.json.gz",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-001/case-1.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-002/case-1.json.gz",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "2cfd106864caf2f5805e3e0af39b6d37eba59d14"
+    },
+    {
+      "sha256": "83f73335388fbd309423fe1c5548fcd80a717afc1bd5158f5a34463784339b6c",
+      "size_bytes": 463492,
+      "canonical": "benchmarks/vnext-0.1/examples/property-native-001/case-2.json.gz",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-001/case-2.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-002/case-2.json.gz",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "e11a754642f75ce78a8d9d6d40fa5ad811b86958"
+    },
+    {
+      "sha256": "8b3ea6ea54577913165854f7df26b7b764425f8b7db23a870f5227b675a0b048",
+      "size_bytes": 15002,
+      "canonical": "benchmarks/vnext-0.1/examples/property-native-001/case-3.json.gz",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-001/case-3.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-002/case-3.json.gz",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "2282f54012b6abf538e86db0c9db21f666154598"
+    },
+    {
+      "sha256": "ae2b5fe577488f26fe85f60196d35f4d521908cdfc496e98fae78e3e94fb2ab3",
+      "size_bytes": 23978,
+      "canonical": "benchmarks/vnext-0.1/examples/property-native-002/source-pins.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-002/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/fixtures/property-agent-002/source-pins.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "83748e18e03ded32bed23e9ddbf76d6e4a1ed4f2"
+    },
+    {
+      "sha256": "40822224397459cf40cb3766b9d07e6ff9ef1e1469e20ab2c977336c267b36d4",
+      "size_bytes": 521814,
+      "canonical": "benchmarks/vnext-0.1/examples/property-native-002/source-snapshot.zip",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/examples/property-native-002/source-snapshot.zip",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/fixtures/property-agent-002/source-snapshot.zip",
+          "representation": "relative_symlink",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "a32ffae1f103c7993bba8d1795cc7db124c85d24"
+    },
+    {
+      "sha256": "8b74b9e8ea55c05a2bf346d7f3b2086f26a95ff7ab7ec636bcfc900b580a45e1",
+      "size_bytes": 651,
+      "canonical": "benchmarks/vnext-0.1/verification/fixtures/property-agent-001/verification.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/verification/fixtures/property-agent-001/verification.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/logs/property-fixture-001-memory-only.log",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "49037d187b78e2d364244094991a91b19a0105d3"
+    },
+    {
+      "sha256": "7f515e024053a084cc94fc29d3cffd404caa552b2fc67993ea9f0fcbd11fa95a",
+      "size_bytes": 743,
+      "canonical": "benchmarks/vnext-0.1/verification/fixtures/property-agent-002/verification.json",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/verification/fixtures/property-agent-002/verification.json",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/logs/property-fixture-002-disk-verified.log",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "3b745b84e824e37e8db4670c3f188e79efe83377"
+    },
+    {
+      "sha256": "0b2db09f115e3d8d6995445f6dc78186bfa36cf0ab9f8645dabbcef3411be673",
+      "size_bytes": 777,
+      "canonical": "benchmarks/vnext-0.1/verification/logs/corrected-world-audit-exit-0.log",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/verification/logs/corrected-world-audit-exit-0.log",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/logs/final-world-audit-exit-0.log",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "15b35b3e7ca638c8f249c18315eb027bfe215d09"
+    },
+    {
+      "sha256": "c348a35e802bb2bb775ddf3ae6ed11ae62a767b204cfa8e0feb9fab7fa451b5e",
+      "size_bytes": 960,
+      "canonical": "benchmarks/vnext-0.1/verification/logs/property-native-example-001-verify.log",
+      "copies": [
+        {
+          "path": "benchmarks/vnext-0.1/verification/logs/property-native-example-001-verify.log",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "benchmarks/vnext-0.1/verification/logs/property-native-example-002-verify.log",
+          "representation": "regular_file",
+          "retention_class": "benchmark_fixture_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "655aafad4f1646f9f8156163cc5b0fd743616117"
+    },
+    {
+      "sha256": "c1ba3cc643d8f61f12f67da63bba72d3bb3db476c9efa32fe13a60e6df9a73ec",
+      "size_bytes": 9332,
+      "canonical": "experiments/vast_coevo/examples/aftersales_coevo_support.py",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/examples/aftersales_coevo_support.py",
+          "representation": "regular_file",
+          "retention_class": "repository_artifact",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/source/experiments/vast_coevo/examples/aftersales_coevo_support.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/source/experiments/vast_coevo/examples/aftersales_coevo_support.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/source/experiments/vast_coevo/examples/aftersales_coevo_support.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/source/experiments/vast_coevo/examples/aftersales_coevo_support.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/source/experiments/vast_coevo/examples/aftersales_coevo_support.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/source/experiments/vast_coevo/examples/aftersales_coevo_support.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-009/source/experiments/vast_coevo/examples/aftersales_coevo_support.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-010/source/experiments/vast_coevo/examples/aftersales_coevo_support.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "c6bee0f3ffe0d0e2104fb59469d4020b7b7c8d2e"
+    },
+    {
+      "sha256": "584c038b442c7eda16dbbf39178c9ad40d9760f9fda5dd7561d5928bc53d0d90",
+      "size_bytes": 1315,
+      "canonical": "experiments/vast_coevo/examples/customer-library.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/examples/customer-library.json",
+          "representation": "regular_file",
+          "retention_class": "repository_artifact",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/customer-paired-001/libraries/C0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/libraries/C0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/libraries/C0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/libraries/C0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/libraries/C_A_final.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/libraries/C0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/service-repair-001/libraries/C0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "ead8e26d94bd380df85e74eeaaca202cceeffb90"
+    },
+    {
+      "sha256": "93674ce99c8faa945924f7a1df878a584d4e1870901661a0e55c0c73f2fb262e",
+      "size_bytes": 176,
+      "canonical": "experiments/vast_coevo/examples/examiner-customer-library.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/examples/examiner-customer-library.json",
+          "representation": "regular_file",
+          "retention_class": "repository_artifact",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-007/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-008/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-009/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-010/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/libraries/customer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/libraries/customer/fixed.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "874c41058bb51170e9dceb25d3d55cfb2b1ee6ae"
+    },
+    {
+      "sha256": "3ea4136b3f1dffc22e3fae7991b9e1df0d0d9329f9aad875e6742e03fe35765d",
+      "size_bytes": 175,
+      "canonical": "experiments/vast_coevo/examples/examiner-service-library.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/examples/examiner-service-library.json",
+          "representation": "regular_file",
+          "retention_class": "repository_artifact",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/libraries/service/parent.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "9901f42cbe721ba0bd062660441ef247e685acb0"
+    },
+    {
+      "sha256": "c910dc84d9b0d62f9a9f93d6f2252966f6c6640d194c5b6a2b2409c7472666ca",
+      "size_bytes": 1482,
+      "canonical": "experiments/vast_coevo/examples/service-library.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/examples/service-library.json",
+          "representation": "regular_file",
+          "retention_class": "repository_artifact",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/customer-paired-001/libraries/S0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/libraries/S0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/libraries/S0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/libraries/S0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/libraries/S_A_final.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/libraries/S_B_final.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/libraries/S0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/service-repair-001/libraries/S0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "8a32709505e2550d998aa76d4564dab511e500a6"
+    },
+    {
+      "sha256": "87dbb88e16e6bb2a0b1e774d68a28eb46d3598126097c2d8ff5d8f11fc43bf7a",
+      "size_bytes": 1831,
+      "canonical": "experiments/vast_coevo/examples/verify_designer_event_links_live.py",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/examples/verify_designer_event_links_live.py",
+          "representation": "regular_file",
+          "retention_class": "repository_artifact",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-validation-001/source/experiments/vast_coevo/examples/verify_designer_event_links_live.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "4e303c14c63b6d1fc55ca3b13d3b7391feed19b7"
+    },
+    {
+      "sha256": "7a9377eb6ad4ba7488f0e40ebf6eb960196856a3f6beb03a85ff42a81903bb88",
+      "size_bytes": 884,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/designer/initial.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-007/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-007/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-008/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-008/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-009/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-009/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-010/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-010/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/designer-snapshot.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/designer-snapshot.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/designer-snapshot.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "e7147bed94190ebdbf65abdc14a8739631fef14e"
+    },
+    {
+      "sha256": "e58223e95a6ec8b657ec7ea14f1b20c8acbc555864795a08d29ba9aac74bccfe",
+      "size_bytes": 686,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/designer/skills/designer/aftersales.discovery/1.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-007/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-008/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-009/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-010/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/libraries/designer/skills/designer/aftersales.discovery/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "a29a84fcb3d64f903e16ffd3c3394a7e1973e974"
+    },
+    {
+      "sha256": "8ceb7875d04fec75cc691ec169a4b649ff8a97a2b5eda9daaf12c1c33fbe9871",
+      "size_bytes": 1151,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/service/initial.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-007/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-007/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-008/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-008/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-009/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-009/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-010/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-010/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "7256db40b3b2c9bd7713fc5be7499158990205a7"
+    },
+    {
+      "sha256": "97e7a1be476b7d4678682ebcc60721bdb016540be99d3da8757dce384714edb5",
+      "size_bytes": 955,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/service/skills/service/aftersales.service-decision/1.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-007/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-008/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-009/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-010/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/libraries/service/skills/service/aftersales.service-decision/1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "3e0272b323286d2a33e3edb9a4351aa424e38c84"
+    },
+    {
+      "sha256": "6953446fa89bd0e70b4d668dfc4cb4a1cc7dd32000cc2df924a803c359a0b1ed",
+      "size_bytes": 11528,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/source/usami_benchmark/designer.py",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/source/usami_benchmark/designer.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/source/usami_benchmark/designer.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/source/usami_benchmark/designer.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/source/usami_benchmark/designer.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/source/usami_benchmark/designer.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "23129c7f7afb81825405dcd3b2aa06b35db122ce"
+    },
+    {
+      "sha256": "197dfec87cb723b6a73896d09e9d6821a7b06dfdd079b4e0d93a66261f3728f6",
+      "size_bytes": 21858,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/source/usami_benchmark/designer_exploration.py",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/source/usami_benchmark/designer_exploration.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/source/usami_benchmark/designer_exploration.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "b16adeeab5822203fe3e3e207e0f8f4d4e113704"
+    },
+    {
+      "sha256": "df0764cb54c14cb1414d1f78f65dd51e51ccc54ef24ca28e514c398c94821373",
+      "size_bytes": 47448,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/world/frozen_world.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-001/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-007/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-008/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-009/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-live-20261018-attempt-010/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/world/frozen_world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-subagent-v3-003/world.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "6df0af1dfe4aa1f71247c15a29759e5164aa10e3"
+    },
+    {
+      "sha256": "3b960a40ac9c98ba3b2ab0ef4600b6c8c33954f38179782b84e2466633923af9",
+      "size_bytes": 137,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/failure.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/failure.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/failure.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/failure.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/failure.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "cb64c94f14cf1fd08eb04c5e48bde0744778c591"
+    },
+    {
+      "sha256": "6672db5a7dc5a74eef5692ea61d3af92ca97b76780f927eff34687287d585126",
+      "size_bytes": 101,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/verification/designer-failure-replay.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-002/verification/designer-failure-replay.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-003/verification/designer-failure-replay.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-004/verification/designer-failure-replay.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/verification/designer-failure-replay.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "3b684aeb8a77b332170322bd4e2a08e4a1bc9de1"
+    },
+    {
+      "sha256": "86d499a7eedfe06b3ffae6ad46d75102a739c006138ed28fecb25ee82d0df737",
+      "size_bytes": 35394,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/source/experiments/vast_coevo/examples/aftersales_coevo_live.py",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/source/experiments/vast_coevo/examples/aftersales_coevo_live.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/source/experiments/vast_coevo/examples/aftersales_coevo_live.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "8cb3ef9d5237b762cffca88daacbd3e7ed34fece"
+    },
+    {
+      "sha256": "dc22bdb84ffe875d49b0ce573509e3e3abb856090cb79469bef0261e5ae55214",
+      "size_bytes": 26331,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/source/usami_benchmark/designer_exploration.py",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-exploration-v2-005/source/usami_benchmark/designer_exploration.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/source/usami_benchmark/designer_exploration.py",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "95097a7c2f40d71f5a1978fa6484318d835c991e"
+    },
+    {
+      "sha256": "0f738ca24958179c16d31a77b6547027c22162546b3bec66e90f9e9b29546fbf",
+      "size_bytes": 100,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/verification/designer-failure-replay.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-inferai-v41-001/verification/designer-failure-replay.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/live-replay.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "b2e1aacaaa7eb87ac87bc366524b08b170b349c8"
+    },
+    {
+      "sha256": "08c889fa5fea7a30283da43312374b20d8653d7baaac7dc553ef29103ce30443",
+      "size_bytes": 879,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/libraries/designer/initial.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/libraries/designer/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/libraries/designer/snapshots/8ce0c3ee810be028f97b528a3756d80707e05adf5fb51b373ff15f3fc7106f10.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "7cced3cd9c2ee7ab1700f54d4277be04d56c28ea"
+    },
+    {
+      "sha256": "2c0bd45ee1ad82610c1ff0658504d59ef203e55dc0a7cfa63404a75d06568bda",
+      "size_bytes": 1146,
+      "canonical": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/libraries/service/initial.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/libraries/service/initial.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-coevo-smoke-008/libraries/service/snapshots/f28c618649ab2d74c8374aaf998acf82c48663c948c7f9ec0fb9760e62da3e29.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "182348d5bfb7e530aa81938157f7f5d75a82abda"
+    },
+    {
+      "sha256": "2128b841e475c2c4a9a600f6c4f4c94f336c1b9b6d7b5d43ec4d9de34a05fb96",
+      "size_bytes": 1348871,
+      "canonical": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0001/reflection/input.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0001/reflection/input.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0002/reflection/input.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0005/reflection/input.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0006/reflection/input.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "eb89c0457c2e46fb6d9077014c08829502f4ff18"
+    },
+    {
+      "sha256": "0a28a1d296f859aa6681e24e8257d506ca0641dba571d3e11cdf4b0a4e161434",
+      "size_bytes": 3030,
+      "canonical": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0003-codex-reflection-substitute-002/candidate-snapshot.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0003-codex-reflection-substitute-002/candidate-snapshot.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0005/reflection/candidate-snapshot.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0006/reflection/candidate-snapshot.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/libraries/service/snapshots/0a22df6944e48eecd15ee42e5fc55536e264fbcb0dadd9e5c812841542a63d35.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "9099c70bdff6d555f606ae5af625ae7411c65c53"
+    },
+    {
+      "sha256": "3b1ba642382b9ceef5a90a1cc12bc6a47bb2d8b98ab32a19b2274b34bb503dfb",
+      "size_bytes": 3662,
+      "canonical": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0003-codex-reflection-substitute-002/patch.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0003-codex-reflection-substitute-002/patch.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0005/reflection/patch.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0006/reflection/patch.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "4045a8dc71d0f4eded953c0f09074f47d1cefe1e"
+    },
+    {
+      "sha256": "ee35a28b2867061383996c44a461af21ac44a6d5927f9b62f035d9e0f6e3b53d",
+      "size_bytes": 193,
+      "canonical": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0003-codex-reflection-substitute-002/static-validation.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0003-codex-reflection-substitute-002/static-validation.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0005/reflection/static-gate.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0006/reflection/static-gate.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "85f18b3f82993be56407dbf5f63fce011f00f050"
+    },
+    {
+      "sha256": "3efeb0333125c1af6ea6ed99bd3ec9be14fed8fed7a80f7fb5bccc975b071ee4",
+      "size_bytes": 680,
+      "canonical": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0005/reflection/substitute-provenance.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0005/reflection/substitute-provenance.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/aftersales-service-repair-live-20261019-001/attempts/0006/reflection/substitute-provenance.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "af3db0c0c98eac2f5e1d90b5e6ee31538c587520"
+    },
+    {
+      "sha256": "9586993c165f58c737a32b81124ea6b532b6b450c7369c607b7952c5583eed98",
+      "size_bytes": 389361,
+      "canonical": "experiments/vast_coevo/results/customer-goal-history-001/new-input.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/customer-goal-history-001/new-input.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/customer-schema-history-001/new-input.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "5560a61991d9e2abff0449fc2f7139494a66d643"
+    },
+    {
+      "sha256": "1db4dc31e2e3ec9aa59db860cbb10d1217f03610a058beb13c9e84d298919864",
+      "size_bytes": 707768,
+      "canonical": "experiments/vast_coevo/results/customer-goal-history-001/old-evolution.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/customer-goal-history-001/old-evolution.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/customer-schema-history-001/old-evolution.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "97075ca0476cb5a08618381f630c88d3e5f85040"
+    },
+    {
+      "sha256": "ab87852d23a0c9856e6fc7c965ee6cf9bb75b5dac027a350836fe2f2a5215c3e",
+      "size_bytes": 3926,
+      "canonical": "experiments/vast_coevo/results/customer-paired-001/libraries/C1.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/customer-paired-001/libraries/C1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/service-repair-001/libraries/C1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "66d1b14a25d7de8cdb1f14ded4175b75c68de280"
+    },
+    {
+      "sha256": "224b3304c8d29184475b9918022afd78f5692a028cd6e258680d64106146ff59",
+      "size_bytes": 351,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-missing/proposal.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-missing/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/approval-missing/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/approval-missing/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/approval-missing/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "a490c59d7c8cd44dd20e9ef7f759319a519774fd"
+    },
+    {
+      "sha256": "10f9cebba68eee9d89369b12179fafc956011b63c55d7ba4cc050b51bddda119",
+      "size_bytes": 134,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-missing/result.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-missing/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/return-missing/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/approval-missing/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/return-missing/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/approval-missing/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/return-missing/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/approval-missing/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/return-missing/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "6b90b186867307af9463117ce9747801da17cd2f"
+    },
+    {
+      "sha256": "19ed648f2193b58c750a2223f671f0202403e6e7e1df967fe0310ab026b93de7",
+      "size_bytes": 2918248,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-present/certificate.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-present/certificate.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/approval-present/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/approval-present/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/approval-present/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "a6153e8a210660594e467de8f4ba06dcc840024a"
+    },
+    {
+      "sha256": "ae04a4892a00e8e0977c26da3c88d34d15c259a69381c10df7feda850b9b2147",
+      "size_bytes": 383,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-present/proposal.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-present/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/approval-present/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/approval-present/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/approval-present/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "ce470d1769e20daac644eefa3ee636b0d0cc43aa"
+    },
+    {
+      "sha256": "906e851a215458c1131a9d045b207a7058e3201d45dfa3510b820439d087061d",
+      "size_bytes": 193,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-present/result.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/approval-present/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/approval-present/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/approval-present/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/approval-present/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "34105050d30f8044ec59d89dedbb7703a563338c"
+    },
+    {
+      "sha256": "5364f753e14c8d9b9df5a74886917946968e861c5ec894857b44c3677aa8c0d7",
+      "size_bytes": 2375651,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-five-step/certificate.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-five-step/certificate.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/original-five-step/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/original-five-step/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/original-five-step/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "4456442d893064f29f0905b80e4f7ce0b546a282"
+    },
+    {
+      "sha256": "1f802049e9fb87bda1f0bdb3614449893f457f75737739f5d16d31fa32c9359f",
+      "size_bytes": 437,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-five-step/proposal.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-five-step/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/original-five-step/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/original-five-step/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/original-five-step/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "6356f839993e056ca759760d97930b5e87158467"
+    },
+    {
+      "sha256": "2b4ada48a02026ff19a86a33b86794b3354542d28b4b4adba724f0f54d1141c1",
+      "size_bytes": 161,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-five-step/result.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-five-step/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/original-five-step/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/original-five-step/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/original-five-step/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "2499f1d962528aa502ad476573ded483f8967d3f"
+    },
+    {
+      "sha256": "488f9939069ffd06f028ea4c34d92d929809dc35f59cd43dc502d6662e911cd8",
+      "size_bytes": 2375519,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-without-unnecessary-events/certificate.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-without-unnecessary-events/certificate.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/original-without-unnecessary-events/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/original-without-unnecessary-events/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/original-without-unnecessary-events/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "0f46d9200e5e1aa4d3dfccf2d00efd6f67c632e2"
+    },
+    {
+      "sha256": "e030567df10a67cbc7d911b2739530ac6657739fce7674de1fa07a3ad359073d",
+      "size_bytes": 371,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-without-unnecessary-events/proposal.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-without-unnecessary-events/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/original-without-unnecessary-events/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/original-without-unnecessary-events/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/original-without-unnecessary-events/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "0606ee9f615834b8e53f84beaf614667a40721f0"
+    },
+    {
+      "sha256": "e8934a039a65a73cca18baf1c63068e94f264d22a0986edfe8da07475e4dcadf",
+      "size_bytes": 161,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-without-unnecessary-events/result.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/original-without-unnecessary-events/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/original-without-unnecessary-events/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/original-without-unnecessary-events/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/original-without-unnecessary-events/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "21af3caa26bfe0b4ed4aed45cbb03b85f7ad5317"
+    },
+    {
+      "sha256": "dde9ec1a24c1ed05476f610b513c06b42ef026b6f92ac738847cf062be516d56",
+      "size_bytes": 351,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/return-missing/proposal.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/return-missing/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/return-missing/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/return-missing/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/return-missing/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "ac3e0a9f237ff88348412d0d08502fb4db9d46df"
+    },
+    {
+      "sha256": "fccde462cde0371193e9c5307486f8067cbbead42dfc90d58fda7c5827cdbbd0",
+      "size_bytes": 3814681,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/return-present/certificate.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/return-present/certificate.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/return-present/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/return-present/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/return-present/certificate.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "902b873a234fd99d6420d1c9d22a10f6da1c0b5d"
+    },
+    {
+      "sha256": "538bb55bdcb4eda18df1d99842f9c07f3c47dbec0d4eb37c48ef997884f91795",
+      "size_bytes": 384,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/return-present/proposal.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/return-present/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/return-present/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/return-present/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/return-present/proposal.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "70f3f32eaa39930ed8bd0449c0d58f6ee703e96c"
+    },
+    {
+      "sha256": "a48260bbd5c6e82893abffdc0011871cdc0409afd2bde76548ee9c60b64beab8",
+      "size_bytes": 194,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/return-present/result.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/controls/return-present/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/controls/return-present/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/controls/return-present/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/controls/return-present/result.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "a06a4ea16e32d6e325f79f530c1e5e9f020a03cd"
+    },
+    {
+      "sha256": "4f980a387aff656f8a0a84ad8124c511682c7ff5aad9ac7d874ed36f541b4cf3",
+      "size_bytes": 3754,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/live-prompt-context.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/live-prompt-context.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/live-prompt-context.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/live-prompt-context.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "f3dc3a488cf7da476da0232686004cba06ac777e"
+    },
+    {
+      "sha256": "f7b07aa059091c41ec2802f6095e4846d4a5dd51452df68cb90c0d7439de036b",
+      "size_bytes": 2478,
+      "canonical": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/query-before-after.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-confirmation-optional-live-001/query-before-after.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-001/query-before-after.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-live-002/query-before-after.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-event-links-offline-001/query-before-after.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "f60cc6a4e34fdff4cf13e6b75f0471fef361ec4b"
+    },
+    {
+      "sha256": "2cd48b0a5e907d0a04dfb3c1b8a51b2cb3fa8e02e128b3353984711be95edca4",
+      "size_bytes": 9622,
+      "canonical": "experiments/vast_coevo/results/designer-contractv2-deepseek-live-20261019-001/abstract-challenges.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-contractv2-deepseek-live-20261019-001/abstract-challenges.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-contractv2-deepseek-live-20261019-001/candidate-attempt-history.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "00001073807b45bb2580f24de1c0456ce2e9907d"
+    },
+    {
+      "sha256": "4f2e86dfcbd31f142c246cf4d44f25fa9bdc595574e5fb70a09eb13e87635993",
+      "size_bytes": 29386,
+      "canonical": "experiments/vast_coevo/results/designer-subagent-v3-002/designer-context.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/designer-subagent-v3-002/designer-context.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/designer-subagent-v3-003/designer-context.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "ed8d9340ed335f468fa5c24c23db6f77d06dd116"
+    },
+    {
+      "sha256": "e63797b5199c59cf65994ca2a4116bcaaee082004931f3f2817d09f03b0c89c8",
+      "size_bytes": 13074,
+      "canonical": "experiments/vast_coevo/results/frozen-world-audit-001/world-pool.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/frozen-world-audit-001/world-pool.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/frozen-world-audit-002/world-pool.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "0758a82f4df5a96cda62bd4a1d860e0736d7537e"
+    },
+    {
+      "sha256": "72b146506be3065f8eb83a6823671ee81aa2f7cff1985cf2db49ce9c19f2fa63",
+      "size_bytes": 62,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/.gitignore",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/.gitignore",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/.gitignore",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/.gitignore",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/.gitignore",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "01f987d31e47993365c89292ba06dc91c041032c"
+    },
+    {
+      "sha256": "df30ec8422ccbeda405575be8215ce98bd1b42c29beed3d7b94c3a5e9ee7805b",
+      "size_bytes": 4127,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-0.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "7ed2735b15d535b53c9b6083bb066c499764829e"
+    },
+    {
+      "sha256": "5a80fe023d5214313f518ca099f492df00639467e32b4fcfa7a6dfc4221bce96",
+      "size_bytes": 4171,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-1.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "719e82d7ffc1b1081be6d803246d6a2bae40a356"
+    },
+    {
+      "sha256": "506137e47e788bac1389283e272c12b80628340e40559ab33b0e94c3732196d2",
+      "size_bytes": 4186,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-10.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-10.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-10.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-10.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-10.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "235ef32b47a446f08137c4af1b671c48eea568c5"
+    },
+    {
+      "sha256": "6bef1f7669b8feb99c22a528fb7a1f252554240f961ed665d822d6bd03ad3c78",
+      "size_bytes": 4292,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-11.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-11.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-11.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-11.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-11.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "2651aeeaa92f5d9d383dd200fd05f5f1bdc273b2"
+    },
+    {
+      "sha256": "69e6abcf237685dc6043d06c2ea3dd53448ea2eb447acbbe66f9d27c359a9150",
+      "size_bytes": 3683,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-2.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-2.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-2.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-2.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-2.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "2703b1d6b415e04272e8e4609e54bafc167f4bd5"
+    },
+    {
+      "sha256": "6880c779c206e66bd2ab22642c40adfa9b852a15217b0b77fe6abab3860e87e7",
+      "size_bytes": 4492,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-3.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-3.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-3.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-3.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-3.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "fcc7044245f93c071ac7871ae4d63ed3df965b36"
+    },
+    {
+      "sha256": "fcd764aeeeae488efdbe8d764f8c90d4bbc2a5541e87718384bd536e9c153c2d",
+      "size_bytes": 3876,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-4.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-4.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-4.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-4.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-4.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "a79e7a88d9e4a1673f317acbc07f0ca65d396373"
+    },
+    {
+      "sha256": "5e03320ce6028455f1f816addfdc3e9118bfc9d58b05bbb1a288b08f99c9c508",
+      "size_bytes": 4085,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-5.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-5.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-5.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-5.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-5.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "f0ea28012d28e1500401c02fe1e2669d448d0851"
+    },
+    {
+      "sha256": "f08098830bcd7278a1f89814895c17b3c8b50eb4622066353df357a64965a0c9",
+      "size_bytes": 4110,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-6.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-6.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-6.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-6.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-6.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "749d0a563613ce311cc38fc8d3d38786bd70a2c8"
+    },
+    {
+      "sha256": "7fc5fcf8331ca2742ae3faf88b6c40761a35130a0b56ec6fa2a5b4a246f3a12c",
+      "size_bytes": 3564,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-7.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-7.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-7.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-7.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-7.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "1360e07b832ab01ff21344c06c67cf6991278249"
+    },
+    {
+      "sha256": "a5aaa5c9a8903390492af7c029b8c802cf6f843b45c77dcf8438f9efecdd07ae",
+      "size_bytes": 3946,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-8.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-8.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-8.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-8.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-8.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "c5b5622ee7296000442e7150f3413f1f9d7c5b65"
+    },
+    {
+      "sha256": "54959434334fae06c961a3bfa4a28f4827d4228e682e3820625a9074df508f94",
+      "size_bytes": 4466,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-9.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/heldout-9.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/heldout-9.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/heldout-9.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/heldout-9.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "e31621f5a2e34ad9fb29b9374606e323656691bd"
+    },
+    {
+      "sha256": "bd8c250931099cce896338e280c8363af1a71836dcacbd668236a634514013d9",
+      "size_bytes": 4667,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/repeat-0-0.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/repeat-0-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/repeat-0-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/repeat-0-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/repeat-0-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "bf52664be45d59dbf6d71b5841ca0ef3e47384f2"
+    },
+    {
+      "sha256": "a945127daa108568d5ebc14562c47533d7ea3f98e08c35d91c3bf85afbda245e",
+      "size_bytes": 3838,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/repeat-0-1.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/repeat-0-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/repeat-0-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/repeat-0-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/repeat-0-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "8d695423775eef46a797e74c8bac1f263c58dd0c"
+    },
+    {
+      "sha256": "d4e87b4a400093db0816106216d6fe223c41fd2ae45eae50a89de1140c54231c",
+      "size_bytes": 4787,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/smoke-0.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/smoke-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/smoke-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/smoke-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/smoke-0.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "fea8b895584f74ded44aa88a15d7875b125e8e5c"
+    },
+    {
+      "sha256": "dd7516849d0fa04f2f061254400bdc4ff712bfd2dbe4e817161db2218614f36d",
+      "size_bytes": 4869,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-001/worlds/smoke-1.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-001/worlds/smoke-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/worlds/smoke-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/worlds/smoke-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/worlds/smoke-1.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "a59b07068bcbd2c07c087055c04aafc6b57ca1a1"
+    },
+    {
+      "sha256": "7f2c55d5860c04bac9e21eb1388d2a95fe5987f272efc448ff363363e96ed58c",
+      "size_bytes": 1331,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/EXPERIMENT_PROTOCOL.md",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/EXPERIMENT_PROTOCOL.md",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/PARENT_EXPERIMENT_PROTOCOL.md",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "d4b4f3bb8dd667d533ef0397335f1f5f54844e93"
+    },
+    {
+      "sha256": "0112a5d151e5e4f300d7f208cdddc491ce6230770a4c39fd7363ad731ec4725c",
+      "size_bytes": 136505,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/MANIFEST.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/MANIFEST.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/PARENT_MANIFEST.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "450db1aa1c5b8fbde7836ff32da35ab93c184850"
+    },
+    {
+      "sha256": "10d14b38b5fcf21131059d9a4449a38dda587e8b60246b04f9577dd2ffd2af8b",
+      "size_bytes": 12162340,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_EVIDENCE.tar.gz",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_EVIDENCE.tar.gz",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/raw-evidence.tar.gz",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "a643abd8badc73eed38402d227f46f2036714b35"
+    },
+    {
+      "sha256": "6e17600db66497b42185e1a5e2741339f1073cc46dc7a2a3e78c663d62855da8",
+      "size_bytes": 3091,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_EXPERIMENT_PROTOCOL.md",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_EXPERIMENT_PROTOCOL.md",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/EXPERIMENT_PROTOCOL.md",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "56a55ea4add60587fb2344853f9fbe80278660b7"
+    },
+    {
+      "sha256": "70bb13987869e025c9fd5789cadd74906c90c7ef669e68f7de268c43bbe4e8b3",
+      "size_bytes": 135343,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_MANIFEST.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_MANIFEST.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/MANIFEST.json",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "89350b93a1bc5d05bb4cb84120e7aba7857250ba"
+    },
+    {
+      "sha256": "c2cd80247892560a4aa92ebd5ce31ec5dbfb021c37f387578be216c1b558730a",
+      "size_bytes": 247,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_REPLAY_AUDIT.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_REPLAY_AUDIT.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/REPLAY_AUDIT.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "4c521b39a0f12fa65fa6222dd9a1fd297cf072d9"
+    },
+    {
+      "sha256": "da8a43093424e057207077581d1c03e672e405af85c8524bd0e63ba55687cca0",
+      "size_bytes": 804,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_STATUS.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/PARENT_STATUS.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/STATUS.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "cea08291c4b92d2ab804b013cfa023c6957baf3c"
+    },
+    {
+      "sha256": "8430f6264ba97330ecc6eb3540c7fb689d189c3baf8caf50da999c10091e4b7e",
+      "size_bytes": 247,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/REPLAY_AUDIT.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/REPLAY_AUDIT.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/PARENT_REPLAY_AUDIT.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "1201553a61b11155fb50cffee87d0d2ea22de6c1"
+    },
+    {
+      "sha256": "5b07c4c1569c9102f800c081f1cc55ceb2cf86b3a5cd3233af83466389299b6b",
+      "size_bytes": 7408,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/SMOKE_SUMMARY.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/SMOKE_SUMMARY.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/SMOKE_SUMMARY.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-small-001/SMOKE_SUMMARY.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "192b95819ae298e378bf4b52fa4d3892c5dec10d"
+    },
+    {
+      "sha256": "b4a1c007a352ff515f905d37e080e675cb432f10e92b07f79a6774b74938591d",
+      "size_bytes": 800,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/STATUS.json",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/STATUS.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/PARENT_STATUS.json",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "fd75cb584ca4e90f9e80bd4543d7df4e583d6ae8"
+    },
+    {
+      "sha256": "e23c4baeaf0e6aecce8a13afafc0692fbd11fd0c214beacab02f3da954f9d405",
+      "size_bytes": 25683361,
+      "canonical": "experiments/vast_coevo/results/multigen-heldout-recovery-001/raw-evidence.tar.gz",
+      "copies": [
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-001/raw-evidence.tar.gz",
+          "representation": "regular_file",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "experiments/vast_coevo/results/multigen-heldout-recovery-002/PARENT_EVIDENCE.tar.gz",
+          "representation": "relative_symlink",
+          "retention_class": "experiment_evidence_or_replay",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "6cb9751f026c55ec35162165d4efe27aa2f98dfe"
+    },
+    {
+      "sha256": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+      "size_bytes": 79,
+      "canonical": "integrations/usami/__main__.py",
+      "copies": [
+        {
+          "path": "integrations/usami/__main__.py",
+          "representation": "regular_file",
+          "retention_class": "repository_artifact",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        },
+        {
+          "path": "vast_coevo/__main__.py",
+          "representation": "regular_file",
+          "retention_class": "repository_artifact",
+          "original_path_preserved": true,
+          "original_bytes_preserved": true
+        }
+      ],
+      "git_blob_oid": "bfdcd0c1158dff4fcc25157b317419f0a89dd33f"
+    }
+  ],
+  "deduplication": {
+    "selection_rule": "Only non-canonical duplicates of exact-hash groups, at least 100,000 bytes, with .json, .gz, or .zip extensions. Source code, Markdown, text, logs, and smaller files stay regular copies.",
+    "duplicate_groups_selected": 25,
+    "symlinked_duplicate_paths": 38,
+    "gross_duplicate_payload_bytes": 84525169,
+    "net_payload_bytes_saved": 84522950,
+    "symlink_representation": "Relative symlinks pointing to a canonical regular file within this repository.",
+    "git_history_rewritten": false
+  },
+  "restore_one_path": "git restore --source=archive/pre-dedupe-2026-10-19 --worktree -- <path>",
+  "archive_url": "https://github.com/hjy8848/Usami/archive/refs/heads/pre-dedupe-2026-10-19.zip"
+}

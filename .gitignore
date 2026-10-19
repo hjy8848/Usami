@@ -13,3 +13,12 @@ test-results/
 .suite.lock
 *.tsbuildinfo
 artifacts/vast-coevo*/
+# Raw model payloads and replay bundles are opt-in; keep concise summaries and
+# manifests trackable while preventing accidental `git add .` of bulky outputs.
+experiments/**/results/**/*.jsonl
+experiments/**/results/**/raw-evidence*.tar.gz
+experiments/**/results/**/PARENT_EVIDENCE.tar.gz
+experiments/**/results/**/raw-requests/**
+experiments/**/results/**/raw-responses/**
+experiments/**/results/**/token-logs/**
+benchmarks/**/verification/logs/*.log

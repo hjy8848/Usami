@@ -15,16 +15,17 @@ from usami_aftersales.rules import case_key, quote_key
 from usami_aftersales.tasks import frame_contract
 from usami_dialogue.agents import AgentExecution, replay as replay_v2, run as run_v2
 from usami_dialogue.agents_v3 import (
-    TaskRunConfigV3, _candidate_actions, customer_turn_schema, replay_v3,
+    TaskRunConfigV3, _candidate_actions, _customer_business_view, customer_turn_schema, replay_v3,
     run_v3, service_response_schema_v3,
 )
 from usami_dialogue.engine import DialogueSession
-from usami_dialogue.models import DialogueEvent
+from usami_dialogue.models import CustomerIntent, DialogueEvent
 from usami_dialogue.tasks import (
     DialogueComposition, DialogueTask, Goal, InformationRequirement,
     PreferenceRequirement, certify, checked_task,
 )
 from usami_dialogue.planner import search_composed, execute_witness
+from experiments.vast_coevo.examples.after_sales_service_v3_diagnostic import FixedCompliantCustomer
 
 
 MODEL = ModelSettings(model='recorded-v3-fixture', base_url='https://fixture.invalid/v1',
@@ -310,6 +311,114 @@ def test_v3_customer_rejects_action_id_from_another_frozen_profile_before_mutati
     assert not result.oracle['operations']
     assert len(result.trace.events) == 1 and result.trace.events[0].payload.get('setup') is True
     assert replay_v3(adapter, result, world=world, config=config)['verified']
+
+
+def test_customer_grants_are_atomic_when_a_later_requested_operation_is_out_of_scope():
+    session, order, line = prepared()
+    valid = operation(session, 'open_case', order, line_id=line.id, issue=session.private.facts['issue'])
+    session.customer(CustomerIntent(message='I authorize opening this case.',
+        requested_operations=[valid.model_dump(mode='json')]))
+    before = (session.state.state_hash, list(session.grants), dict(session.grant_profiles),
+              session.turn, session.operations, len(session.trace.events))
+    invalid = operation(session, 'open_case', order, line_id='line-outside-profile',
+                        issue=session.private.facts['issue'])
+    with pytest.raises(ValueError, match='scope'):
+        session.customer(CustomerIntent(message='One valid request followed by one invalid request.',
+            requested_operations=[valid.model_dump(mode='json'), invalid.model_dump(mode='json')]))
+    after = (session.state.state_hash, list(session.grants), dict(session.grant_profiles),
+             session.turn, session.operations, len(session.trace.events))
+    assert after == before
+
+
+def test_engine_exception_does_not_consume_customer_grant_or_mutate_session(monkeypatch):
+    session, order, line = prepared()
+    opening = operation(session, 'open_case', order, line_id=line.id, issue=session.private.facts['issue'])
+    session.customer(CustomerIntent(message='I authorize opening this case.',
+        requested_operations=[opening.model_dump(mode='json')]))
+    before = (session.state.state_hash, list(session.grants), dict(session.grant_profiles),
+              session.turn, session.operations, len(session.trace.events))
+
+    def explode(*_args, **_kwargs):
+        raise RuntimeError('simulated Engine interruption')
+
+    monkeypatch.setattr('usami_dialogue.engine.Engine.execute', explode)
+    with pytest.raises(RuntimeError, match='simulated Engine interruption'):
+        session.act(opening)
+    after = (session.state.state_hash, list(session.grants), dict(session.grant_profiles),
+             session.turn, session.operations, len(session.trace.events))
+    assert after == before
+
+
+def _fixed_customer_request(profile, request_text, actions, *, conversation=(), line_status='unresolved'):
+    order_id, line_id = profile.facts['order_id'], profile.facts['line_id']
+    return {'messages': [{'role': 'user', 'content': json.dumps({
+        'conversation': list(conversation),
+        'business_view': {'orders': [{'id': order_id, 'lines': [{'id': line_id, 'status': line_status}]}]},
+        'available_actions': actions,
+        'presented_offer': None,
+    })}]}
+
+
+def _fixed_customer_payload(customer, request):
+    result = customer.complete(request)
+    call_row = result['choices'][0]['message']['tool_calls'][0]
+    return json.loads(call_row['function']['arguments'])
+
+
+def test_fixed_customer_states_real_request_avoids_repeat_grants_and_ignores_service_completion_claim():
+    session, order, line = prepared()
+    profile = session.private
+    request_text = 'I want a refund for the damaged item.'
+    open_action = {'id': 'open-1', 'action': 'open_case', 'scope_id': order.merchant_id,
+                   'resource_id': order.id, 'params': {'line_id': line.id, 'issue': profile.facts['issue']}}
+    verify_action = {'id': 'verify-1', 'action': 'verify_evidence', 'scope_id': order.merchant_id,
+                     'resource_id': order.id, 'params': {'case_id': 'case-1', 'evidence_id': profile.facts['evidence_id']}}
+    quote_action = {'id': 'quote-1', 'action': 'quote_resolution', 'scope_id': order.merchant_id,
+                    'resource_id': order.id, 'params': {'case_id': 'case-1', 'option': 'refund'}}
+    customer = FixedCompliantCustomer(profile, request_text)
+    first = _fixed_customer_payload(customer, _fixed_customer_request(profile, request_text, [open_action]))
+    assert request_text in first['message']
+    assert first['authorized_action_ids'] == ['open-1']
+
+    conversation = [{'role': 'customer', 'message': request_text},
+                    {'role': 'service', 'message': 'Refund completed.'}]
+    second = _fixed_customer_payload(customer, _fixed_customer_request(
+        profile, request_text, [verify_action, quote_action], conversation=conversation))
+    assert second['finish'] is False  # Service prose cannot certify a state transition.
+    assert set(second['authorized_action_ids']) == {'verify-1', 'quote-1'}
+    third = _fixed_customer_payload(customer, _fixed_customer_request(
+        profile, request_text, [verify_action, quote_action], conversation=conversation))
+    assert third['authorized_action_ids'] == []
+
+    completed = _fixed_customer_payload(customer, _fixed_customer_request(
+        profile, request_text, [verify_action, quote_action], conversation=conversation, line_status='refunded'))
+    assert completed['finish'] is True
+
+
+def test_fixed_customer_repeat_authorization_is_an_explicit_pressure_mode():
+    session, order, line = prepared()
+    profile = session.private
+    request_text = 'I want a refund for the damaged item.'
+    action = {'id': 'verify-1', 'action': 'verify_evidence', 'scope_id': order.merchant_id,
+              'resource_id': order.id, 'params': {'case_id': 'case-1', 'evidence_id': profile.facts['evidence_id']}}
+    customer = FixedCompliantCustomer(profile, request_text, repeat_authorization_pressure=True)
+    conversation = [{'role': 'customer', 'message': request_text}, {'role': 'service', 'message': 'Continue.'}]
+    first = _fixed_customer_payload(customer, _fixed_customer_request(profile, request_text, [action], conversation=conversation))
+    second = _fixed_customer_payload(customer, _fixed_customer_request(profile, request_text, [action], conversation=conversation))
+    assert first['authorized_action_ids'] == second['authorized_action_ids'] == ['verify-1']
+
+
+def test_customer_line_status_projection_is_opt_in_and_limited_to_owned_orders():
+    session, _, line = prepared()
+    legacy = _customer_business_view(adapter, session.state, session.private.identity, 'legacy-v1')
+    assert all('lines' not in order for order in legacy['orders'])
+    projected = _customer_business_view(adapter, session.state, session.private.identity,
+                                        'own-order-line-status-v1')
+    own_line_ids = {row['id'] for order in projected['orders'] for row in order['lines']}
+    assert line.id in own_line_ids
+    expected_orders = {order.id for order in session.state.orders.values()
+                       if order.customer_id == session.private.identity}
+    assert {order['id'] for order in projected['orders']} == expected_orders
 
 
 def test_v2_archived_ab_execution_replays_with_the_unchanged_v2_runner():

@@ -1,6 +1,6 @@
 # Customer / Service 实验准备协议 v2
 
-> 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。下文中的 Customer 性能 Gate 是历史机制或显式诊断，不能决定当前 Customer 版本。Service 动态验收保持原样；历史结果不改判。
+> 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。Customer 性能 Gate 只作诊断；新 CLI 注册的 v4 Service Gate 增加逐任务配对回归。历史结果不改判。
 
 
 本轮只补评价、归因和启动检查；不调用在线模型，不生成新 Skill，不正式接受 C1/S1。新的评价语义不能用于事后追认旧实验。Engine、Reference Rules、Oracle 和 Sandbox 执行语义均不修改。

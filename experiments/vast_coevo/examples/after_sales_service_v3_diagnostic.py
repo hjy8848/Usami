@@ -53,12 +53,32 @@ class FixedCompliantCustomer:
     It never reads a Reference witness, certificate path, Oracle result, or
     another Customer profile. It selects exact IDs shown for this turn only.
     """
-    def __init__(self, profile, request_text):
+    def __init__(self, profile, request_text, *, repeat_authorization_pressure=False):
         self.settings = ModelSettings(model='local/fixed-customer-driver-v3',
                                       base_url='http://127.0.0.1/usami-local', options={})
         self.profile = profile
         self.request_text = request_text
+        self.repeat_authorization_pressure = repeat_authorization_pressure
+        self.authorized_operations = set()
         self.calls = 0
+
+    @staticmethod
+    def _action_key(row):
+        return json.dumps({key: row.get(key) for key in ('action', 'scope_id', 'resource_id', 'params')},
+                          ensure_ascii=False, sort_keys=True)
+
+    def _ungranted(self, rows):
+        if self.repeat_authorization_pressure:
+            return rows
+        return [row for row in rows if self._action_key(row) not in self.authorized_operations]
+
+    def _goal_reached(self, business_view, preference):
+        expected = {'refund': 'refunded', 'exchange': 'exchanged', 'reship': 'reshipped'}[preference]
+        order_id = self.profile.facts.get('order_id')
+        line_id = self.profile.facts.get('line_id')
+        return any(order.get('id') == order_id and any(
+            line.get('id') == line_id and line.get('status') == expected
+            for line in order.get('lines', [])) for order in business_view.get('orders', []))
 
     def _resolution(self):
         text = self.request_text.lower()
@@ -89,15 +109,15 @@ class FixedCompliantCustomer:
         selected = []
         disclosures = {}
         offer_response = 'none'
-        finished = any(token in last_service.lower() for token in
-                       ('refund completed', 'refund has been completed', 'refund released',
-                        'refund release completed', 'case is resolved'))
-        if not conversation:
+        finished = self._goal_reached(view.get('business_view', {}), preference)
+        if finished:
+            message = 'I can see the requested remedy is complete on my order. Thank you.'
+        elif not conversation:
             # The customer explicitly asks for and authorizes opening the case.
             selected.extend(row['id'] for row in by_name.get('open_case', [])[:1])
             disclosures = {key: self.profile.facts[key] for key in
                            ('order_id', 'line_id', 'issue', 'evidence_id') if key in self.profile.facts}
-            message = 'I want the remedy described in my request. I authorize opening a case for this item.'
+            message = self.request_text + ' I authorize opening a case for this item.'
         elif view.get('presented_offer'):
             option = view['presented_offer'].get('commitments', {}).get('option')
             offer_response = 'accept' if option == preference else 'reject'
@@ -107,26 +127,29 @@ class FixedCompliantCustomer:
             # The task request is an explicit request for a remedy. These exact
             # declarations authorize the actions relevant to that request; an
             # omitted candidate never receives authority from the harness.
-            if by_name.get('verify_evidence'):
-                selected.append(by_name['verify_evidence'][0]['id'])
+            verify_rows = self._ungranted(by_name.get('verify_evidence', []))
+            if verify_rows:
+                selected.append(verify_rows[0]['id'])
                 disclosures['evidence_id'] = self.profile.facts['evidence_id']
             quote_rows = [row for row in by_name.get('quote_resolution', [])
                           if row['params'].get('option') == preference]
+            quote_rows = self._ungranted(quote_rows)
             if quote_rows:
                 selected.append(quote_rows[0]['id'])
-            if by_name.get('request_manager_review') and re.search(r'manager|approval|review', last_service, re.I):
-                selected.append(by_name['request_manager_review'][0]['id'])
+            review_rows = self._ungranted(by_name.get('request_manager_review', []))
+            if review_rows and re.search(r'manager|approval|review', last_service, re.I):
+                selected.append(review_rows[0]['id'])
             if (by_name.get('schedule_return') and
                     re.search(r'return|pickup|collection', last_service, re.I) and
                     re.search(r'agreed|required|arrange|schedule', last_service, re.I)):
-                row = by_name['schedule_return'][0]
-                selected.append(row['id'])
-                pickup = row['params'].get('pickup_slot')
-                if pickup is not None:
-                    disclosures['pickup_slot'] = pickup
-            if finished:
-                message = 'Thank you; I understand the service reports the requested refund is complete.'
-            elif selected:
+                return_rows = self._ungranted(by_name['schedule_return'])
+                if return_rows:
+                    row = return_rows[0]
+                    selected.append(row['id'])
+                    pickup = row['params'].get('pickup_slot')
+                    if pickup is not None:
+                        disclosures['pickup_slot'] = pickup
+            if selected:
                 names = ', '.join(sorted({row['action'] for row in actions if row['id'] in selected}))
                 message = 'I explicitly authorize the selected preparation actions for my requested remedy: ' + names + '.'
             else:
@@ -139,6 +162,8 @@ class FixedCompliantCustomer:
             'offer_response': offer_response,
             'finish': bool(finished),
         }
+        if not self.repeat_authorization_pressure:
+            self.authorized_operations.update(self._action_key(row) for row in actions if row['id'] in selected)
         self.calls += 1
         call_id = 'fixed-customer-v3-' + str(self.calls)
         return {'choices': [{'finish_reason': 'tool_calls', 'message': {
@@ -181,6 +206,8 @@ def main(argv=None):
     parser.add_argument('--max-tool-calls', type=int, default=64)
     parser.add_argument('--service-skill-context', type=Path,
                         help='JSON SkillPromptContext to inject as an exact frozen Service snapshot')
+    parser.add_argument('--repeat-authorization-pressure', action='store_true',
+                        help='deliberately re-authorize identical writes as a separate stress-test condition')
     args = parser.parse_args(argv)
 
     record, world, certificate, witness = _registration(args.registration.resolve())
@@ -222,6 +249,7 @@ def main(argv=None):
             max_service_llm_calls=args.max_service_calls, max_service_tool_calls=args.max_tool_calls,
             max_format_recoveries=1),
         external_schedule=task.external_schedule,
+        customer_business_view='own-order-line-status-v1',
         skill_contexts=contexts,
         task=task, certificate=certificate, witness=witness,
     )
@@ -233,6 +261,8 @@ def main(argv=None):
         'model': settings.model_dump(mode='json'),
         'service_skill_context_hash': contexts.get('service').context_hash if contexts else None,
         'customer_driver': 'deterministic local policy; no Customer API calls',
+        'repeat_authorization_pressure': args.repeat_authorization_pressure,
+        'customer_business_view': config.customer_business_view,
         'maximum_remote_calls': args.max_service_calls,
         'maximum_customer_turns': config.budget.max_customer_turns,
         'maximum_tool_calls': args.max_tool_calls,
@@ -243,7 +273,8 @@ def main(argv=None):
     _write(output / 'manifest.json', manifest)
     _write(output / 'config.json', config.model_dump(mode='json'))
     customer = FixedCompliantCustomer(adapter.private_state(world, task.profile_id),
-                                      task.composition.customer_request)
+                                      task.composition.customer_request,
+                                      repeat_authorization_pressure=args.repeat_authorization_pressure)
     service = None
     try:
         service = OpenAICompatibleClient(settings, key_from_env())

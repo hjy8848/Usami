@@ -8,7 +8,7 @@ import pytest
 from vast_coevo.evidence.archive import EvidenceArchive
 from vast_coevo.evaluation.cross import evaluate_cross
 from vast_coevo.evolution.controller import CoEvolutionController
-from vast_coevo.evolution.models import RunConfig, ValidationCase
+from vast_coevo.evolution.models import GatePolicy, RunConfig, ValidationCase
 from vast_coevo.schema import digest
 from vast_coevo.skills.library import LibraryStore
 from vast_coevo.storage.runs import RunStore, GenerationRecord
@@ -44,6 +44,22 @@ def test_single_generation_is_one_interaction_then_both_learn_and_gate(tmp_path)
     # Every actual generation interaction/preflight was consumed; candidate Gate results are validation only.
     learned={row['episode_id'] for client in (c,s) for row in json.loads(client.calls[0]['messages'][1]['content'])['evidence']}
     assert archive.load(current).episode_id in learned
+
+
+def test_schema_v4_runs_recursive_training_with_frozen_paired_gate_protocol(tmp_path):
+    controller, legacy, adapter, *_rest = setup_run(tmp_path, generations=1, service_modes=("noop",))
+    config = legacy.model_copy(update={
+        "schema_version": 4,
+        "customer_selection": "customer-static-only-v1",
+        "training_protocol": "recursive-training-v1",
+        "policy": GatePolicy(service_task_regression_protocol="paired-task-v1"),
+    })
+    report = controller.run(config)
+    assert report.status == "completed", report.error
+    assert report.generations[0].schema_version == 2
+    assert not report.generations[0].crossings
+    assert not report.generations[0].selected_customer_evidence
+    assert all(".cross." not in row for row in adapter.calls)
 
 
 def test_actual_cloudops_oracle_failure_reaches_both_reflections(tmp_path):

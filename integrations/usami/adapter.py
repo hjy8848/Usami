@@ -148,8 +148,8 @@ class UsamiAdapter:
         domains = {c.config.domain for c in run.exploration_cases if self.examiner_enabled(c.config)}
         if not domains:
             return ()
-        if run.schema_version != 3 or any(self.examiner_enabled(c.config) for c in run.validation_cases):
-            raise ValueError("examiner needs recursive v3 and frozen, non-authoring Service validation worlds")
+        if run.schema_version not in (3, 4) or any(self.examiner_enabled(c.config) for c in run.validation_cases):
+            raise ValueError("examiner needs recursive training and frozen, non-authoring Service validation worlds")
         seeds = ()
         if not previous:
             cases = tuple(c for c in run.service_task_cases if c.config.domain in domains)

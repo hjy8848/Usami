@@ -2,6 +2,12 @@
 
 RunConfig schema_version=3，training_protocol=recursive-training-v1；Customer 仍为 customer-static-only-v1。没有新增 Agent、修改 Reflection/Skill Schema 或业务规则。本次仅工程实现与离线测试，没有新在线训练或正式 Held-out。
 
+## RunConfig v4：增加 Service 逐任务回归协议（2026-10-19）
+
+训练顺序仍是 v3 的单链递归流程；新 CLI 训练注册使用 schema_version=4，并冻结 `GatePolicy.service_task_regression_protocol=paired-task-v1`。Service 候选除保留已知错误、业务违规、授权异常、合法任务和正确拒绝等原检查外，还要逐个对照相同的开发任务：如果父版在某个 `legal_completion` 或 `correct_refusal` case 成功，候选在该 case 失败，就拒绝候选。总成功数相互抵消不能再掩盖这类退化。
+
+历史 RunConfig v1–v3 默认并继续使用 `aggregate-v1`，其配置序列化、哈希、Gate 语义和实验结果不被改写。RunConfig v4 只版本化 Gate 判定方式；不修改业务规则、Oracle、Reflection 或任务顺序，也不构成 Skill 已改善的实验结论。
+
 ## 修改前的真实顺序（历史 v2）
 
 ```mermaid
@@ -85,6 +91,6 @@ A 固定 Customer/B 更新 Customer 使用相同 v3 循环、世界分布、Agen
 
 ## 历史兼容
 
-RunConfig v1/v2、GenerationRecord v1 的已有字段与内容 hash 保持可读；旧数据不新增 training_protocol、不改写结果。Core 保留显式 v2 兼容分支用于旧语义；新默认/计划/实验注册使用 v3，不会默认运行比较步骤。生产 CLI 拒绝用新训练入口静默续跑旧协议，需使用原归档源码，或明确建立新 v3 运行。
+RunConfig v1–v3、GenerationRecord v1/v2 的已有字段与内容 hash 保持可读；旧数据不新增 training_protocol、不改写结果。Core 保留显式兼容分支用于旧语义；新 CLI 注册使用 v4，并冻结逐任务 Gate 协议。生产 CLI 读取已有 v3 配置时继续使用其 aggregate-v1 语义，不会替换配置或结果。
 
 旧原生精确 Replay 有源码 pins，必须使用各自 source-snapshot；本次 Core 变化不能用当前源码冒充旧版本。Skill/Oracle/世界数据没有迁移。旧 Manifest 和 Held-out 保持原样，禁止用已查看结果重新选择 Skill。

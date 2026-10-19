@@ -136,8 +136,8 @@ class CoEvolutionController:
         from .evolvers import Evolver
 
         config = RunConfig.model_validate(config.model_dump(mode="json"))
-        if config.schema_version not in (2, 3):
-            raise ValueError("historical run v1 requires its original code; create a new v3 recursive run")
+        if config.schema_version not in (2, 3, 4):
+            raise ValueError("historical run v1 requires its original code; create a new recursive run")
         config_hash = digest(config)
         # Configuration mismatch refuses reuse before overwriting a previous report.
         self.run_store.initialize(config)
@@ -156,7 +156,7 @@ class CoEvolutionController:
                 if len(history) > config.generations:
                     raise ValueError("stored generations exceed frozen run configuration")
                 for item in history:
-                    if item.schema_version != (2 if config.schema_version == 3 else 1):
+                    if item.schema_version != (2 if config.schema_version in (3, 4) else 1):
                         raise ValueError("generation checkpoint belongs to another training protocol")
                     if (item.parent_customer_hash, item.parent_service_hash) != (customer.snapshot_hash, service.snapshot_hash):
                         raise ValueError("generation history parent snapshot mismatch")
@@ -228,7 +228,7 @@ class CoEvolutionController:
                     if (c_record.parent_customer_hash, c_record.parent_service_hash) != (customer.snapshot_hash, service.snapshot_hash):
                         raise ValueError("Customer evolution parent version mismatch")
                     customer = self.library_store.load(c_record.selected_snapshot_hash)
-                    selected = () if config.schema_version == 3 else tuple(journal.run_episode(case.config, customer, service,
+                    selected = () if config.schema_version in (3, 4) else tuple(journal.run_episode(case.config, customer, service,
                                      prefix + ".selected_customer." + case.id) for case in config.exploration_cases)
                     self._check_main_evidence(selected)
                     s_record = self.run_store.load_evolution(config.run_id, generation, "service")
@@ -245,7 +245,7 @@ class CoEvolutionController:
                         raise ValueError("Service evolution parent version mismatch")
                     service = self.library_store.load(s_record.selected_snapshot_hash)
                     crossings = []
-                    legacy_pairings = () if config.schema_version == 3 else (
+                    legacy_pairings = () if config.schema_version in (3, 4) else (
                             ("parent_parent", parent_customer, parent_service),
                             ("selected_parent", customer, parent_service),
                             ("parent_selected", parent_customer, service),
@@ -258,7 +258,7 @@ class CoEvolutionController:
                             crossings.append(CrossExecution(pairing=pairing, case_id=case.id,
                                              customer_hash=c_version.snapshot_hash, service_hash=s_version.snapshot_hash,
                                              evidence_hash=evidence.evidence_hash))
-                    checkpoint = GenerationRecord(schema_version=2 if config.schema_version == 3 else 1, generation=generation,
+                    checkpoint = GenerationRecord(schema_version=2 if config.schema_version in (3, 4) else 1, generation=generation,
                                  parent_customer_hash=parent_customer.snapshot_hash, parent_service_hash=parent_service.snapshot_hash,
                                  selected_customer_hash=customer.snapshot_hash, selected_service_hash=service.snapshot_hash,
                                  customer_evolution_ref=c_ref, service_evolution_ref=s_ref,

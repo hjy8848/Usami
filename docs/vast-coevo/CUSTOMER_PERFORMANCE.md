@@ -1,6 +1,6 @@
 # Customer C0 → C1 真实配对验证
 
-> 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。下文中的 Customer 性能 Gate 是历史机制或显式诊断，不能决定当前 Customer 版本。Service 动态验收保持原样；历史结果不改判。
+> 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。Customer 性能 Gate 只作诊断；新 CLI 注册的 v4 Service Gate 增加逐任务配对回归。历史结果不改判。
 
 
 比较原始 customer.state_dependency v1 与 customer-schema-history-001 单次真实输出的 v2。C1 由已检查 SkillPatch 调用 apply_patch 建立临时 Snapshot，不发布正式选中策略。S0 复用 service-library.json，整个实验没有反思、训练或 Service 更新。

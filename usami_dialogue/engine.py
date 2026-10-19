@@ -65,13 +65,16 @@ class DialogueSession:
         context=customer_event(before.interaction,private,normalized,turn_id=turn,world_hash=before.state_hash,offer=offer,consent_check=self.adapter.consent_allowed)
         requested=list(intent.requested_operations)
         if intent.confirm_operation is not None:requested.append(intent.confirm_operation)
-        grants=[];seen=set();self.grant_profiles={}
+        grants=[];seen=set();grant_profiles={}
         for raw in requested:
             op=self.adapter.Operation.model_validate(raw)
             if not self.adapter.intent_allowed(before,private,op.model_dump(mode='json')):raise ValueError('intention exceeds frozen Customer action/object scope')
             if digest(op) not in seen:
-                grants.append(op.model_dump(mode='json'));seen.add(digest(op));self.grant_profiles[digest(op)]=profile_id
+                grants.append(op.model_dump(mode='json'));seen.add(digest(op));grant_profiles[digest(op)]=profile_id
+        # Publish the new authorization set only after every requested grant
+        # has passed identity and object-scope validation.
         self._state.interaction=context;self.grants=grants;self.turn+=1;self.presented_offer=None
+        self.grant_profiles=grant_profiles
         self.active_profile_id=profile_id
         payload={'intent':intent.model_dump(mode='json'),'turn_id':turn,'grants':grants}
         if self.scoped_profile_ids:payload['profile_id']=profile_id
@@ -81,11 +84,18 @@ class DialogueSession:
         if self.operations>=self.trace.max_operations:raise ValueError('dialogue business operation budget exhausted')
         op=self.adapter.Operation.model_validate(operation.model_dump(mode='json') if hasattr(operation,'model_dump') else operation)
         canonical=op.model_dump(mode='json');authorized=op.is_query;profile_id=self.active_profile_id
-        if not op.is_query and canonical in self.grants:
-            self.grants.remove(canonical);authorized=True;profile_id=self.grant_profiles.pop(digest(op),self.active_profile_id)
+        consumes_grant=not op.is_query and canonical in self.grants
+        if consumes_grant:
+            authorized=True;profile_id=self.grant_profiles.get(digest(op),self.active_profile_id)
         before=self.state;request=Request(id='action_'+str(self.operations),identity=self.private.identity,operation=canonical,granted=authorized)
         engine=Engine(self.adapter,before,1);engine.register(request);event=engine.execute(self.private.identity,op,request.id,mode)
-        native=engine.finish();self._state=engine.state;self.operations+=1
+        native=engine.finish()
+        # Completed Engine attempts consume the single-use grant even when the
+        # Reference rejects the business action. Exceptions leave all session
+        # state untouched so no authority disappears without a trace.
+        if consumes_grant:
+            self.grants.remove(canonical);self.grant_profiles.pop(digest(op),None)
+        self._state=engine.state;self.operations+=1
         payload={'trace':native.model_dump(mode='json'),'requests':{request.id:request.model_dump(mode='json')},'turn_id':'turn_'+str(self.turn)}
         if self.scoped_profile_ids:payload['profile_id']=profile_id
         self._append('business',payload,before.state_hash)

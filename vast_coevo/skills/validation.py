@@ -49,7 +49,10 @@ _UNSAFE_PATTERNS = (
     r"(?:自行|自己)(?:授权|授予权限)",
 )
 _NEGATION = re.compile(r"\b(?:do\s+not|don't|never|must\s+not|cannot|can\s+not|should\s+not|avoid|refuse\s+to|prohibit)\b|不得|禁止|不要|不能|不应|避免", re.I)
-_CLAUSES = re.compile(r"[\n.!?;。！？；]|\b(?:but|however|then|and)\b|但是|然而|然后", re.I)
+# Commas are clause boundaries for this deliberately conservative safety
+# heuristic: negation in "Do not request X, bypass authorization" must not
+# scope over the second, unsafe instruction.
+_CLAUSES = re.compile(r"[\n,.!?;:，。！？；：]|\b(?:but|however|then|and)\b|但是|然而|然后", re.I)
 
 
 def _unsafe_instruction(text: str) -> bool:

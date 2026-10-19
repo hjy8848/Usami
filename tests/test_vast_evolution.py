@@ -213,7 +213,7 @@ def test_classification_metrics_keep_business_authorization_refusal_and_unscored
     row = adapter.emit(case.config, customer, service, "all-classifications", CLASSIFICATIONS)
     result = metrics((row,))
     assert result.business_violations == result.invalid_attempts == result.authorization_anomalies == result.false_rejections == 1
-    assert result.valid_actions == 4
+    assert result.valid_actions == 1
     assert result.execution_errors == result.legal_task_successes == result.correct_refusals == 0
     assert len(result.fingerprints) == 1
     archive.save(row)
@@ -278,6 +278,51 @@ def test_service_gate_requires_both_legal_and_refusal_tasks(tmp_path):
     assert not result.passed
     assert "legal_task_preservation_not_demonstrated" in result.reasons
     assert "correct_refusal_preservation_not_demonstrated" in result.reasons
+
+
+def test_service_gate_rejects_per_task_regression_when_aggregate_is_unchanged(tmp_path):
+    adapter, archive, _, customer, service, case, _ = setup(tmp_path)
+    candidate = apply_patch(service, proposal(service, skill=service_skill()), "paired-task-reflection")
+    legal_a = ValidationCase(id="legal-a", config=case.config, task_ref="legal-a", purpose="legal_completion")
+    legal_b = ValidationCase(id="legal-b", config=case.config, task_ref="legal-b", purpose="legal_completion")
+
+    def swapped_task(config_value, task_ref, c, s, episode_id):
+        # Baseline succeeds on A; candidate trades that success for B. Aggregate
+        # scores match, so only the frozen paired-task protocol catches the loss.
+        candidate_arm = s.snapshot_hash == candidate.snapshot_hash
+        succeeded = (task_ref == "legal-a" and not candidate_arm) or (task_ref == "legal-b" and candidate_arm)
+        classes = ("legal_execution",) if succeeded else ("false_rejection",)
+        return adapter.emit(config_value, c, s, episode_id, classes, track="service_task",
+                            task_ref=task_ref, legal_success=succeeded)
+
+    adapter.run_service_task = swapped_task
+    policy = GatePolicy(require_refusal_tasks=False, service_task_regression_protocol="paired-task-v1")
+    result = DynamicGate(adapter, archive, policy).service(
+        customer, service, candidate, (), (legal_a, legal_b), (), "paired-regression")
+    assert result.baseline.legal_task_successes == result.candidate.legal_task_successes == 1
+    assert not result.passed
+    assert "legal_task_success_decreased_for_task:legal-a" in result.reasons
+
+
+def test_schema_v4_requires_explicit_paired_protocol_while_v3_stays_hash_stable(tmp_path):
+    from test_vast_controller import setup_run
+    from vast_coevo.evolution.models import RunConfig
+
+    _, legacy, *_ = setup_run(tmp_path, generations=1)
+    assert legacy.schema_version == 3
+    assert legacy.policy.service_task_regression_protocol == "aggregate-v1"
+    serialized = legacy.model_dump(mode="json")
+    assert "service_task_regression_protocol" not in serialized["policy"]
+    assert digest(RunConfig.model_validate(serialized)) == digest(serialized)
+
+    raw = dict(serialized)
+    raw["schema_version"] = 4
+    with pytest.raises(ValidationError, match="schema v4"):
+        RunConfig.model_validate(raw)
+    raw["policy"]["service_task_regression_protocol"] = "paired-task-v1"
+    current = RunConfig.model_validate(raw)
+    assert current.schema_version == 4
+    assert current.policy.service_task_regression_protocol == "paired-task-v1"
 
 
 @pytest.mark.parametrize("action", ["ADD", "UPDATE", "REMOVE", "NOOP"])

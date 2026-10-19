@@ -1,8 +1,8 @@
 # VAST-CoEvo Schema 与声明式 Skill
 
-当前默认训练为 [RunConfig v3 单链递归协议](RECURSIVE_TRAINING.md)：移除训练中的 selected 比较探索和四组 cross；交叉评估为独立只读入口。历史协议/实验保留原解释，Skill/Reflection/Service Gate 不变。
+训练顺序沿用 [RunConfig v3 单链递归协议](RECURSIVE_TRAINING.md)。当前 CLI 新建训练配置使用 RunConfig v4，在原 Service Gate 检查上增加逐任务配对回归；schema v1–v3 与历史结果继续按原聚合语义解释。
 
-> 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。下文中的 Customer 性能 Gate 是历史机制或显式诊断，不能决定当前 Customer 版本。Service 动态验收保持原样；历史结果不改判。
+> 当前选择机制已更新为 [Customer Static-Only Selection](CUSTOMER_STATIC_ONLY.md)。Customer 性能 Gate 只作诊断；新 CLI 注册的 v4 Service Gate 增加逐任务配对回归。历史结果不改判。
 
 
 [路线图](ROADMAP.md) · [方法](METHOD.md) · [架构](ARCHITECTURE.md) · [实现与验收](IMPLEMENTATION.md)
@@ -85,7 +85,7 @@ Customer 反思可增加绑定原证据的 `interaction_views`，Record 保存 `
 | ModelCall / InjectionRecord | 原始 `base_request` 与实际 `request`、响应/错误/请求响应 hash；Snapshot/context hash、命中 ID/Version、实际渲染指导 |
 | EvolutionRecord | Generation、父双角色版本、Reflection 输入/完整请求与响应或错误、唯一 Patch、候选版本、静态/动态结果、接受/拒绝原因、实际选中版本、证据引用与成本 |
 | ValidationReport | 固定配置签名、父版/候选指标、通过或拒绝、预设门槛与理由、回归 Episode 引用 |
-| RunConfig | `run_id/generations`、探索/开发验证/正常任务 Cases、冻结反思模型、全局 LLM/工具上限、GatePolicy、双角色初始 Snapshot |
+| RunConfig | `run_id/generations`、探索/开发验证/正常任务 Cases、冻结反思模型、全局 LLM/工具上限、GatePolicy（v4 固定逐任务配对回归）、双角色初始 Snapshot |
 | OperationStart / OperationCompletion | 稳定 `operation_id/kind/input_hash`、预算预留、实际调用、EpisodeEvidence 或原始 JSON 响应/错误、内容 hash；JSON null 由 `response_recorded` 区分未收到响应 |
 | GenerationRecord | Generation、双角色父版和选中版、EvolutionRecord 引用、当前/更新后探索 Evidence、四组 CrossExecution、内容 hash |
 | RunReport | `status` 为 completed/budget_exhausted/interrupted/failed；实际完成 Generations、选中双角色版本、累计 Consumption、未完成操作与错误、报告 hash |
@@ -114,4 +114,4 @@ Usami 完整原始 Trace 存为明确附属证据，不用任意私有字典代�
 
 Episode track 明确区分 `discovery`、`service_task` 和 `failure_regression`。原始业务/模型轨迹通过 `ArtifactRef(path, sha256)` 引用；原请求与实际 wire request 分别保存，错误响应也保存原 JSON。ReflectionInput 硬拒绝 held-out Evidence；EvolutionRecord 将原始反思、静态/动态门槛、候选与选中快照以及消费关联。完整可用入口见 [实验说明](../../experiments/vast_coevo/README.md)。
 
-RunConfig v3 固定 `training_protocol=recursive-training-v1`、Customer 静态选择；GenerationRecord v2 只记录共享 `current_evidence`，`selected_customer_evidence` 与 `crossings` 必须为空。v1/v2 配置及 v1 代际记录继续可读，旧序列化不新增协议字段，hash 不变。此训练版本与只读探针/SkillPatch 的版本独立。
+RunConfig v3 固定 `training_protocol=recursive-training-v1`、Customer 静态选择；GenerationRecord v2 只记录共享 `current_evidence`，`selected_customer_evidence` 与 `crossings` 必须为空。RunConfig v4 保持该训练顺序，并要求 `GatePolicy.service_task_regression_protocol=paired-task-v1`：候选不能在父版成功的同一合法完成或正确拒绝任务上退化。v1–v3 仍使用 `aggregate-v1`，旧序列化与哈希不变。此训练版本与只读探针/SkillPatch 的版本独立。

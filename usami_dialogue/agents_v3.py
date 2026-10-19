@@ -50,6 +50,10 @@ class TaskRunConfigV3(Model):
     external_schedule: list[str] = Field(default_factory=list)
     skill_contexts: dict[str, SkillPromptContext] = Field(default_factory=dict,
                                                            exclude_if=lambda value: not value)
+    # Opt-in public status projection for deterministic Customer drivers. The
+    # legacy prompt remains byte-for-byte stable for archived v3 replays.
+    customer_business_view: Literal['legacy-v1', 'own-order-line-status-v1'] = Field(
+        default='legacy-v1', exclude_if=lambda value: value == 'legacy-v1')
     task: DialogueTask
     certificate: TaskCertificate
     witness: ExecutionTrace
@@ -245,6 +249,15 @@ def _action_view(rows):
     return [{'id': action_id, 'action': operation['name'], 'scope_id': operation['scope_id'],
              'resource_id': operation['resource_id'], 'params': operation['params']}
             for action_id, operation in rows]
+
+
+def _customer_business_view(adapter, world, identity, version):
+    view = adapter.observation(world, identity)
+    if version == 'own-order-line-status-v1' and adapter.name == 'aftersales':
+        for order in view.get('orders', []):
+            order['lines'] = [line.model_dump(mode='json') for line in sorted(world.lines.values(), key=lambda row: row.id)
+                              if line.order_id == order['id']]
+    return view
 
 
 def _current_offer_operation(adapter, session, task):
@@ -454,7 +467,8 @@ def run_v3(adapter, world, config, customer_client, service_client):
         candidates = _candidate_actions(adapter, session, config.task)
         customer_observation = {
             'conversation': conversation,
-            'business_view': adapter.observation(session.state, session.private.identity),
+            'business_view': _customer_business_view(adapter, session.state, session.private.identity,
+                                                       config.customer_business_view),
             'available_actions': _action_view(candidates),
             'presented_offer': session.presented_offer,
         }

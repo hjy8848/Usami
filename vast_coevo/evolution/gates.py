@@ -16,7 +16,9 @@ def metrics(evidence):
     evidence = tuple(evidence)
     events = [event for row in evidence for event in row.events]
     return ValidationMetrics(
-        valid_actions=sum(event.authorized is True and event.classification not in {"authorization_only", "unscored"} for event in events),
+        # Authorization is not business validity: a granted action can still
+        # violate a Reference rule. Count only Oracle-classified legal actions.
+        valid_actions=sum(event.classification == "legal_execution" for event in events),
         invalid_attempts=sum(event.classification == "rejected_invalid_attempt" for event in events),
         business_violations=sum(event.classification == "successful_business_violation" for event in events),
         authorization_anomalies=sum(event.authorized is False or event.classification == "authorization_only" for event in events),
@@ -146,9 +148,15 @@ class DynamicGate:
             for label, snapshot, destination in (("baseline", parent, baseline), ("candidate", candidate, proposed)):
                 row = self.adapter.run_failure_case(source, customer, snapshot, prefix + "." + label + ".failure." + str(number))
                 destination.append(self._save(row, source.config, customer, snapshot))
+        paired_tasks = []
+        task_case_ids = {case.id for case in task_cases}
         for case in tuple(discovery_cases) + tuple(task_cases):
-            baseline.append(self._case(case, customer, parent, prefix + ".baseline." + case.id))
-            proposed.append(self._case(case, customer, candidate, prefix + ".candidate." + case.id))
+            baseline_row = self._case(case, customer, parent, prefix + ".baseline." + case.id)
+            candidate_row = self._case(case, customer, candidate, prefix + ".candidate." + case.id)
+            baseline.append(baseline_row)
+            proposed.append(candidate_row)
+            if case.id in task_case_ids:
+                paired_tasks.append((case, baseline_row, candidate_row))
         old, new = metrics(baseline), metrics(proposed)
         old_set, new_set = set(old.fingerprints), set(new.fingerprints)
         reasons = []
@@ -170,6 +178,14 @@ class DynamicGate:
             reasons.append("legal_task_success_decreased")
         if new.correct_refusals < old.correct_refusals:
             reasons.append("correct_refusal_decreased")
+        if self.policy.service_task_regression_protocol == "paired-task-v1":
+            for case, baseline_row, candidate_row in paired_tasks:
+                if (case.purpose == "legal_completion" and baseline_row.legal_task_success is True
+                        and candidate_row.legal_task_success is not True):
+                    reasons.append("legal_task_success_decreased_for_task:" + case.id)
+                if (case.purpose == "correct_refusal" and baseline_row.correct_refusal is True
+                        and candidate_row.correct_refusal is not True):
+                    reasons.append("correct_refusal_decreased_for_task:" + case.id)
         legal_cases = [case for case in task_cases if case.purpose == "legal_completion"]
         refusal_cases = [case for case in task_cases if case.purpose == "correct_refusal"]
         if self.policy.require_legal_tasks and (not legal_cases or new.legal_task_successes == 0):

@@ -141,7 +141,8 @@ def run_config(plan, adapter, customer, service, specs, run_id, generations=None
                       if profile.domain == "cloudops" and (profile.split == "heldout" or profile.config_id in plan.exploration))
         policy = policy.model_copy(update={"customer_excluded_world_hashes": tuple(sorted(excluded)),
                                            "customer_excluded_business_shapes": tuple(sorted(shapes))})
-    return RunConfig(schema_version=3, run_id=run_id, generations=generations or plan.generations,
+    policy = policy.model_copy(update={"service_task_regression_protocol": "paired-task-v1"})
+    return RunConfig(schema_version=4, run_id=run_id, generations=generations or plan.generations,
                      exploration_cases=tuple(case(key) for key in plan.exploration),
                      validation_cases=tuple(case(key) for key in plan.validation), service_task_cases=tuple(task_cases),
                      customer_reflector_model=specs["customer_reflector"], service_reflector_model=specs["service_reflector"],
@@ -262,8 +263,8 @@ def main(argv=None):
                 saved = root / 'runs' / args.id / 'config.json'
                 if saved.exists():
                     existing = runs.load_config(args.id)
-                    if existing.schema_version != 3:
-                        raise ValueError('historical training protocol requires its archived code; use a new v3 run ID')
+                    if existing.schema_version not in (3, 4):
+                        raise ValueError('historical training protocol requires its archived code; use a new recursive run ID')
                     if preflight.customer_selection != existing.customer_selection:
                         raise ValueError('resume Customer selection differs from frozen run')
                 elif preflight.training_protocol != 'recursive-training-v1':

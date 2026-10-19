@@ -36,6 +36,10 @@ class GatePolicy(FrozenModel):
     require_known_failure_reproduction: bool = True
     require_legal_tasks: bool = True
     require_refusal_tasks: bool = True
+    # Paired checks are explicitly versioned so frozen historical configs keep
+    # their original aggregate-only interpretation.
+    service_task_regression_protocol: Literal["aggregate-v1", "paired-task-v1"] = Field(
+        default="aggregate-v1", exclude_if=lambda value: value == "aggregate-v1")
 
 
 class ValidationMetrics(FrozenModel):
@@ -128,8 +132,8 @@ class EvolutionRecord(FrozenModel):
 
 
 class RunConfig(FrozenModel):
-    # v1/v2 remain readable and hash stable. v3 is the single recursive chain.
-    schema_version: Literal[1, 2, 3] = 3
+    # v1-v3 keep their recorded gate semantics. v4 adds paired Service checks.
+    schema_version: Literal[1, 2, 3, 4] = 3
     customer_selection: Optional[Literal["customer-static-only-v1"]] = Field(
         default=None, exclude_if=lambda value: value is None)
     training_protocol: Optional[Literal["recursive-training-v1"]] = Field(
@@ -150,14 +154,18 @@ class RunConfig(FrozenModel):
 
     @model_validator(mode="after")
     def fixed_models(self):
-        if self.schema_version in (2, 3):
+        if self.schema_version in (2, 3, 4):
             object.__setattr__(self, "customer_selection", "customer-static-only-v1")
         elif self.customer_selection is not None:
             raise ValueError("historical run v1 cannot declare static-only Customer selection")
-        if self.schema_version == 3:
+        if self.schema_version in (3, 4):
             object.__setattr__(self, "training_protocol", "recursive-training-v1")
         elif self.training_protocol is not None:
             raise ValueError("historical runs cannot declare the new recursive protocol")
+        if self.schema_version == 4 and self.policy.service_task_regression_protocol != "paired-task-v1":
+            raise ValueError("run schema v4 requires paired per-task Service regression checks")
+        if self.schema_version < 4 and self.policy.service_task_regression_protocol != "aggregate-v1":
+            raise ValueError("paired per-task Service regression checks require run schema v4")
         if self.schema_version == 1 and not self.customer_updates:
             raise ValueError("fixed Customer ablation requires run v2")
         from ..models import ModelSpec

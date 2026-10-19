@@ -1,0 +1,16 @@
+{
+  "a_b_configs_equal_except_skill_context": true,
+  "exact_rendered_skill_in_first_service_request": true,
+  "replay": {
+    "business_events": 22,
+    "model_calls": 30,
+    "protocol": "business-dialogue-task-agents-v3",
+    "task_success": false,
+    "verified": true
+  },
+  "service_model_calls": 20,
+  "skill_content_hash": "af918d45f3946fb60cd80327511114dc21f0685c7f80403f95cd4cb609a6c19d",
+  "skill_context_hash": "0c4e58a5f81d1b4e655f2a6384c03e388cb4c35a22daf1c6b6460f06af9effec",
+  "skill_snapshot_hash": "0a22df6944e48eecd15ee42e5fc55536e264fbcb0dadd9e5c812841542a63d35",
+  "verified": true
+}

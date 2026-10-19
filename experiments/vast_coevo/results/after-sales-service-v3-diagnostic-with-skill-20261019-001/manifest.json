@@ -1,0 +1,40 @@
+{
+  "automatic_provider_retries": 0,
+  "customer_driver": "deterministic local policy; no Customer API calls",
+  "execution_hash": "8493514171931e6e1533b72c49da46337adeabb588acc8fe67f216b56c09ba1e",
+  "external_schedule": [
+    "manager_review_u2_order0_line1",
+    "return_received_u2_order0_line1"
+  ],
+  "maximum_customer_turns": 12,
+  "maximum_remote_calls": 20,
+  "maximum_tool_calls": 64,
+  "mode": "sandbox",
+  "model": {
+    "base_url": "http://10.130.138.46:8010/v1",
+    "model": "dashscope/qwen3.7-plus",
+    "options": {
+      "temperature": 0
+    },
+    "timeout_seconds": 90.0,
+    "trust_env": false
+  },
+  "profile_id": "profile_u2_order0_line1",
+  "protocol": "business-dialogue-task-agents-v3",
+  "registration_hash": "ae35fa970a2239d8d76fe6c25365ea37c32a7c6522a93e2f1e54db4a4abf5530",
+  "registration_path": "/private/tmp/Usami-v3-push.mCCTmb/experiments/vast_coevo/results/aftersales-service-skill-ab-lite-schema-20261019-001/registered-task.json",
+  "search_summary": {
+    "exhausted": false,
+    "max_depth": 16,
+    "max_nodes": 4096,
+    "nodes": 12,
+    "preference_combinations": 1,
+    "preference_combinations_truncated": false
+  },
+  "service_skill_context_hash": "0c4e58a5f81d1b4e655f2a6384c03e388cb4c35a22daf1c6b6460f06af9effec",
+  "source_record_hash": "cf3d8ddd04eaffab073736e9d0c459b118b4d56207639994172e5ba4d10c1ae5",
+  "status": "REPLAYED",
+  "task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+  "verified_before_execution": true,
+  "world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392"
+}

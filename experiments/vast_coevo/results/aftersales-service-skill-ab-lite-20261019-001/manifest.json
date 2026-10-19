@@ -1,0 +1,182 @@
+{
+  "budget": {
+    "max_customer_llm_calls": 12,
+    "max_customer_turns": 12,
+    "max_format_recoveries": 1,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 64
+  },
+  "created_at": "2026-10-19T09:54:27.058505+00:00",
+  "customer_model_and_customer_policy": "same in both runs; no Customer Skill injected",
+  "dynamic_gate": "not run; diagnostics only",
+  "failure": null,
+  "frozen_task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+  "frozen_world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392",
+  "model": {
+    "base_url": "http://10.130.138.46:8010/v1",
+    "model": "dashscope/qwen3.7-plus",
+    "options": {
+      "temperature": 0
+    },
+    "timeout_seconds": 90.0,
+    "trust_env": false
+  },
+  "only_intended_difference": "Service SkillPromptContext omitted vs exact candidate snapshot rendered into Service system message",
+  "partition": "train; targeted regression using a previously observed failure case, not held-out evidence",
+  "protocol": "aftersales-service-skill-ab-lite-v1",
+  "retry_policy": "no automatic provider retry; each condition run once",
+  "runs": [
+    {
+      "authorization_only_errors": 0,
+      "condition": "without-skill",
+      "cost": {
+        "by_role": {
+          "customer": {
+            "calls": 1,
+            "input_tokens": 2555,
+            "output_tokens": 728,
+            "total_tokens": 3283,
+            "usage_complete": true
+          },
+          "service": {
+            "calls": 6,
+            "input_tokens": 27562,
+            "output_tokens": 2892,
+            "total_tokens": 30454,
+            "usage_complete": true
+          }
+        },
+        "customer_calls": 1,
+        "format_recoveries": {
+          "customer": 0,
+          "service": 2
+        },
+        "input_tokens": 30117,
+        "output_tokens": 3620,
+        "service_calls": 6,
+        "tool_calls": 4,
+        "total_tokens": 33737,
+        "usage_complete": true
+      },
+      "elapsed_seconds": 67.25,
+      "false_rejections": 0,
+      "final_goal_reached": false,
+      "legal_operations": 3,
+      "operations": [
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_2",
+          "operation": "get_order",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_3",
+          "operation": "get_order",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_4",
+          "operation": "get_order",
+          "reference_codes": [],
+          "success": true
+        }
+      ],
+      "oracle_status": "pass",
+      "replay": {
+        "business_events": 3,
+        "model_calls": 7,
+        "verified": true
+      },
+      "skill_injection_verified": true,
+      "status": "service_protocol_error",
+      "successful_business_violations": 0,
+      "task_success": false
+    },
+    {
+      "authorization_only_errors": 0,
+      "condition": "with-skill",
+      "cost": {
+        "by_role": {
+          "customer": {
+            "calls": 1,
+            "input_tokens": 2555,
+            "output_tokens": 868,
+            "total_tokens": 3423,
+            "usage_complete": true
+          },
+          "service": {
+            "calls": 5,
+            "input_tokens": 27723,
+            "output_tokens": 2029,
+            "total_tokens": 29752,
+            "usage_complete": true
+          }
+        },
+        "customer_calls": 1,
+        "format_recoveries": {
+          "customer": 0,
+          "service": 2
+        },
+        "input_tokens": 30278,
+        "output_tokens": 2897,
+        "service_calls": 5,
+        "tool_calls": 5,
+        "total_tokens": 33175,
+        "usage_complete": true
+      },
+      "elapsed_seconds": 54.809,
+      "false_rejections": 0,
+      "final_goal_reached": false,
+      "legal_operations": 4,
+      "operations": [
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_2",
+          "operation": "get_order",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_3",
+          "operation": "open_case",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_4",
+          "operation": "get_case",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_5",
+          "operation": "get_options",
+          "reference_codes": [],
+          "success": true
+        }
+      ],
+      "oracle_status": "pass",
+      "replay": {
+        "business_events": 4,
+        "model_calls": 6,
+        "verified": true
+      },
+      "skill_injection_verified": true,
+      "status": "service_protocol_error",
+      "successful_business_violations": 0,
+      "task_success": false
+    }
+  ],
+  "service_snapshot_with_skill": "0a22df6944e48eecd15ee42e5fc55536e264fbcb0dadd9e5c812841542a63d35",
+  "service_snapshot_without_skill": "be7e66f910c2d0ec5143c7abfea8491fd9a1eb9cbc70a766c992436bebefb728",
+  "skill_content_hash": "af918d45f3946fb60cd80327511114dc21f0685c7f80403f95cd4cb609a6c19d",
+  "skill_id": "aftersales.current_quote_consent",
+  "status": "COMPLETED"
+}

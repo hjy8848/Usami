@@ -1,0 +1,34 @@
+{
+  "budget": {
+    "max_customer_llm_calls": 12,
+    "max_customer_turns": 12,
+    "max_format_recoveries": 1,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 64
+  },
+  "candidate_prompt_context_hash": "0c4e58a5f81d1b4e655f2a6384c03e388cb4c35a22daf1c6b6460f06af9effec",
+  "candidate_prompt_matches_archive": true,
+  "candidate_skill_content_hashes": {
+    "aftersales.current_quote_consent": "af918d45f3946fb60cd80327511114dc21f0685c7f80403f95cd4cb609a6c19d"
+  },
+  "candidate_skill_ids": [
+    "aftersales.current_quote_consent"
+  ],
+  "candidate_snapshot_hash": "0a22df6944e48eecd15ee42e5fc55536e264fbcb0dadd9e5c812841542a63d35",
+  "candidate_snapshot_verified": true,
+  "dynamic_gate": "not run; this is a paired diagnostic regression smoke only",
+  "model": {
+    "base_url": "http://10.130.138.46:8010/v1",
+    "model": "dashscope/qwen3.7-plus",
+    "options": {
+      "temperature": 0
+    },
+    "timeout_seconds": 90.0,
+    "trust_env": false
+  },
+  "retry_policy": "no automatic provider retry",
+  "source_certificate_verified": true,
+  "source_task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+  "source_task_verified": true,
+  "source_world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392"
+}

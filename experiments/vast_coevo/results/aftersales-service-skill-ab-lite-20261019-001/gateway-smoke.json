@@ -1,0 +1,10 @@
+{
+  "protocol": "litellm-model-smoke-test",
+  "model": "dashscope/qwen3.7-plus",
+  "http_status": 200,
+  "seconds": 4.38,
+  "content": "OK",
+  "finish_reason": "stop",
+  "request_max_tokens": 32,
+  "usage_returned": false
+}

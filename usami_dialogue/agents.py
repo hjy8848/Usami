@@ -123,6 +123,11 @@ def offered_operation_schema(adapter):
 
 def service_response_schema(adapter):
     names=getattr(adapter,'OFFERABLE_OPERATIONS',None)
+    if names is None:
+        # Preserve archived tool schemas byte-for-byte for domains that have
+        # not declared their quote-bearing operation set.
+        return {'type':'function','function':{'name':'respond_to_customer','description':'Reply, ask or present real quote-backed terms.',
+            'parameters':{'type':'object','properties':{'message':{'type':'string','minLength':1},'offered_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refused_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refusal_code':{'anyOf':[{'type':'string'},{'type':'null'}]}},'required':['message','offered_operation'],'additionalProperties':False}}}
     if getattr(adapter,'name',None)=='aftersales':
         offer_description='Use null when no current quote is being presented. For after-sales, only commit_resolution or release_refund backed by a real current quote is valid.'
     else:

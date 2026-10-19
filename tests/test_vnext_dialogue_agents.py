@@ -1,6 +1,7 @@
 """Two real agent code paths using recorded function responses, no paid model."""
 import copy,json
 import pytest
+from types import SimpleNamespace
 from jsonschema import Draft202012Validator
 from test_vast_usami import ScriptedClient,answer,call,SPEC
 from test_vnext_aftersales import prepared,operation
@@ -38,6 +39,17 @@ def test_aftersales_response_schema_only_accepts_quote_backed_operations_or_null
     assert not validator.is_valid({'message':'Unexpected parameter.','offered_operation':{
         'name':'release_refund','scope_id':order.merchant_id,'resource_id':order.id,
         'params':{'case_id':'case-example','approved':True}}})
+
+
+def test_domains_without_offer_operation_registry_keep_the_archived_response_schema():
+    assert service_response_schema(SimpleNamespace(name='legacy-domain'))=={
+        'type':'function','function':{'name':'respond_to_customer','description':'Reply, ask or present real quote-backed terms.',
+            'parameters':{'type':'object','properties':{
+                'message':{'type':'string','minLength':1},
+                'offered_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},
+                'refused_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},
+                'refusal_code':{'anyOf':[{'type':'string'},{'type':'null'}]},
+            },'required':['message','offered_operation'],'additionalProperties':False}}}
 
 
 def test_invalid_empty_offer_is_rejected_without_action_and_recovered_as_protocol_error():

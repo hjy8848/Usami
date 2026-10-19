@@ -1,0 +1,33 @@
+{
+  "domain": "aftersales",
+  "identity": "u2",
+  "initial_preferences": {},
+  "known_info": {
+    "deadline": "2026-01-18T12:00:00+00:00",
+    "evidence_id": "photo_u2_order0_line1",
+    "issue": "damaged",
+    "line_id": "u2_order0_line1",
+    "order_id": "u2_order0",
+    "pickup_slot": "morning"
+  },
+  "preference_space": {
+    "resolution": [
+      "refund"
+    ]
+  },
+  "profile_hash": "bbd1913af4dbeb24904426a41f79e37a92f3e05a0c6ae54c9c7235f226238a9c",
+  "profile_id": "profile_u2_order0_line1",
+  "protocol": "aftersales-user-scenario-v1",
+  "reason_for_call": "Hi, the parcel I got from you arrived today and the item inside is damaged — the casing is cracked and it won't power on. I'd really like my money back on the same card I paid with. I can send you photos of the damage straight away, and I'm fine with sending the item back if you need it. My order number is on my account, and I've got the packing slip for the exact item. Can you get this sorted for me?",
+  "scenario_hash": "8ebcc5666e3729e6c89143b689363191d9dfc7cfb8a9aae8d90189b1408904e5",
+  "scenario_id": "aftersales_34108c671bd19f74fd33680f",
+  "task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+  "unknown_info": [
+    "internal_policy",
+    "approval_outcome",
+    "reference_answer",
+    "oracle_result"
+  ],
+  "version": 1,
+  "world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392"
+}

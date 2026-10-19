@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import copy
 import json
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import Field
 
@@ -22,6 +22,9 @@ from .agents import SkillPromptContext
 from .engine import DialogueSession, ExecutionTrace
 from .oracle import evaluate
 from .tasks import DialogueTask, TaskCertificate, checked_task, score, verify_certificate
+from .user_scenario import UserScenario, validate_scenario
+from .customer_simulator import (authorization_choices, presented_terms, scenario_prompt,
+                                 validate_scenario_turn)
 
 
 class CustomerTurnV3(Model):
@@ -54,6 +57,9 @@ class TaskRunConfigV3(Model):
     # legacy prompt remains byte-for-byte stable for archived v3 replays.
     customer_business_view: Literal['legacy-v1', 'own-order-line-status-v1'] = Field(
         default='legacy-v1', exclude_if=lambda value: value == 'legacy-v1')
+    customer_mode: Literal['legacy-v3', 'deterministic', 'scenario-llm'] = Field(
+        default='legacy-v3', exclude_if=lambda value: value == 'legacy-v3')
+    user_scenario: Optional[UserScenario] = Field(default=None, exclude_if=lambda value: value is None)
     task: DialogueTask
     certificate: TaskCertificate
     witness: ExecutionTrace
@@ -331,8 +337,10 @@ def _resolve_offer_ref(adapter, session, task, raw):
     return canonical
 
 
-def _resolve_customer_turn(adapter, task, session, raw, candidates):
+def _resolve_customer_turn(adapter, task, session, raw, candidates, *, scenario=None):
     output = CustomerTurnV3.model_validate(raw)
+    if scenario is not None:
+        validate_scenario_turn(scenario, output)
     ids = output.authorized_action_ids
     if len(ids) != len(set(ids)):
         raise ValueError('authorized_action_ids contains duplicates')
@@ -391,6 +399,15 @@ def _validate_registration(adapter, world, config):
         raise ValueError('unregistered external event')
     for context in config.skill_contexts.values():
         SkillPromptContext.checked(context)
+    if config.customer_mode == 'legacy-v3':
+        if config.user_scenario is not None:
+            raise ValueError('a UserScenario requires an explicit Customer mode')
+    else:
+        if config.user_scenario is None or config.customer_business_view != 'own-order-line-status-v1':
+            raise ValueError('explicit Customer modes require a frozen scenario and visible line status')
+        validate_scenario(adapter, world, task, config.user_scenario)
+        if 'customer' in config.skill_contexts:
+            raise ValueError('scenario Customer is fixed; Customer Skill overrides are not supported')
 
 
 def run_v3(adapter, world, config, customer_client, service_client):
@@ -405,9 +422,14 @@ def run_v3(adapter, world, config, customer_client, service_client):
     service_model = service_client.settings.model_copy(deep=True)
     customer_tools = [customer_turn_schema()]
     service_tools = schemas(adapter, config.tools) + [service_response_schema_v3()]
-    customer_system = CUSTOMER_POLICY_V3 + ' Frozen customer profile: ' + json.dumps(
-        session.private.model_dump(mode='json'), sort_keys=True, separators=(',', ':'), ensure_ascii=False)
-    customer_system += ' Frozen task request: ' + config.task.composition.customer_request
+    if config.user_scenario is not None:
+        customer_system = scenario_prompt(config.user_scenario)
+        if hasattr(customer_client, 'scenario') and customer_client.scenario != config.user_scenario:
+            raise ValueError('Customer client and registered scenario differ')
+    else:
+        customer_system = CUSTOMER_POLICY_V3 + ' Frozen customer profile: ' + json.dumps(
+            session.private.model_dump(mode='json'), sort_keys=True, separators=(',', ':'), ensure_ascii=False)
+        customer_system += ' Frozen task request: ' + config.task.composition.customer_request
     if 'customer' in config.skill_contexts:
         context = SkillPromptContext.checked(config.skill_contexts['customer'])
         customer_system += '\n\nApplied declarative Customer Skills from snapshot ' + context.snapshot_hash + ':\n' + context.rendered
@@ -465,12 +487,18 @@ def run_v3(adapter, world, config, customer_client, service_client):
             status = 'customer_llm_budget_exhausted'
             break
         candidates = _candidate_actions(adapter, session, config.task)
+        if config.customer_mode == 'scenario-llm':
+            candidates = [(action_id, operation) for action_id, operation in candidates
+                          if operation['name'] not in {'commit_resolution', 'release_refund'}]
+        actions_view = (authorization_choices(session.state, candidates) if config.customer_mode == 'scenario-llm'
+                        else _action_view(candidates))
         customer_observation = {
             'conversation': conversation,
             'business_view': _customer_business_view(adapter, session.state, session.private.identity,
                                                        config.customer_business_view),
-            'available_actions': _action_view(candidates),
-            'presented_offer': session.presented_offer,
+            'available_actions': actions_view,
+            'presented_offer': (presented_terms(session.state, session.presented_offer)
+                                if config.customer_mode == 'scenario-llm' else session.presented_offer),
         }
         customer_messages.append({'role': 'user', 'content': json.dumps(
             customer_observation, ensure_ascii=False, sort_keys=True)})
@@ -487,7 +515,8 @@ def run_v3(adapter, world, config, customer_client, service_client):
                         proposals[0]['function']['name'] != 'submit_customer_turn_v3'):
                     raise ValueError('one submit_customer_turn_v3 call is required')
                 parsed = strict_json(proposals[0]['function']['arguments'])
-                customer_output = _resolve_customer_turn(adapter, config.task, session, parsed, candidates)
+                customer_output = _resolve_customer_turn(adapter, config.task, session, parsed, candidates,
+                                                          scenario=config.user_scenario)
                 customer_messages.append(message)
                 customer_messages.append({'role': 'tool', 'tool_call_id': proposals[0]['id'],
                     'content': json.dumps({'accepted': True, 'turn': session.turn,
@@ -549,7 +578,8 @@ def run_v3(adapter, world, config, customer_client, service_client):
                     'content': json.dumps({'delivered': True, 'presented_offer': session.presented_offer},
                                           sort_keys=True, ensure_ascii=False)})
                 conversation.append({'role': 'service', 'message': args['message'],
-                                     'presented_offer': session.presented_offer})
+                    'presented_offer': (presented_terms(session.state, session.presented_offer)
+                                        if config.customer_mode == 'scenario-llm' else session.presented_offer)})
                 replied = True
                 break
             if not actions:

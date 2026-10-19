@@ -2,6 +2,8 @@
 
 研究定义与验收见 [Roadmap](../../docs/vast-coevo/ROADMAP.md)、[方法](../../docs/vast-coevo/METHOD.md)、[架构](../../docs/vast-coevo/ARCHITECTURE.md)、[Schema](../../docs/vast-coevo/SCHEMAS.md) 和 [实现报告](../../docs/vast-coevo/IMPLEMENTATION.md)。以下命令从 Usami 仓库根目录执行。
 
+After-sales 的 [Scenario Customer 入口](../../docs/vast-coevo/SCENARIO_CUSTOMER.md) 支持确定性/真实 LLM 顾客、受控 Service fixture、双方真实 API 与独立 Fidelity；默认只做离线登记检查。该入口不运行 Reflection 或改变 Skill 选代。
+
 ## 安装与模型配置
 
 Core 可以单独安装，依赖只有 Pydantic，不要求安装 Usami：

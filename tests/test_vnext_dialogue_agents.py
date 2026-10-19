@@ -1,11 +1,12 @@
 """Two real agent code paths using recorded function responses, no paid model."""
 import copy,json
 import pytest
+from jsonschema import Draft202012Validator
 from test_vast_usami import ScriptedClient,answer,call,SPEC
 from test_vnext_aftersales import prepared,operation
 from usami_aftersales import adapter
 from usami_aftersales.rules import case_key,quote_key
-from usami_dialogue.agents import run,replay,RunConfig,SkillPromptContext
+from usami_dialogue.agents import run,replay,RunConfig,SkillPromptContext,service_response_schema
 from usami_harness.models import Budget
 
 
@@ -17,6 +18,43 @@ def configured(world,profile_id,**budget):
 def intent(identifier,**value):return answer(calls=[call(identifier,'submit_customer_turn',{'message':'A natural response to the current business discussion.',**value})])
 def service_tool(identifier,op):return answer(calls=[call(identifier,op.name,op.model_dump(mode='json',exclude={'name'}))])
 def reply(identifier,message='Please clarify.',op=None):return answer(calls=[call(identifier,'respond_to_customer',{'message':message,'offered_operation':op.model_dump(mode='json') if op else None})])
+
+
+def test_aftersales_response_schema_only_accepts_quote_backed_operations_or_null():
+    source,order,_=prepared()
+    schema=service_response_schema(adapter)['function']['parameters']
+    validator=Draft202012Validator(schema)
+    commit=operation(source,'commit_resolution',order,quote_id='quote-example',destination_channel=order.payment_channel)
+    release=operation(source,'release_refund',order,case_id='case-example')
+    valid=lambda op:{'message':'Here are the terms.','offered_operation':op.model_dump(mode='json')}
+
+    assert validator.is_valid({'message':'No quote is needed.','offered_operation':None})
+    assert validator.is_valid(valid(commit))
+    assert validator.is_valid(valid(release))
+    assert not validator.is_valid({'message':'Malformed empty offer.','offered_operation':{}})
+    assert not validator.is_valid(valid(operation(source,'verify_evidence',order,case_id='case-example',evidence_id='evidence-example')))
+    assert not validator.is_valid({'message':'Missing operation name.','offered_operation':{
+        'scope_id':order.merchant_id,'resource_id':order.id,'params':{'case_id':'case-example'}}})
+    assert not validator.is_valid({'message':'Unexpected parameter.','offered_operation':{
+        'name':'release_refund','scope_id':order.merchant_id,'resource_id':order.id,
+        'params':{'case_id':'case-example','approved':True}}})
+
+
+def test_invalid_empty_offer_is_rejected_without_action_and_recovered_as_protocol_error():
+    source,_,_=prepared();world=source.initial;pid=source.profile_id
+    customer=CheckedClient(SPEC,[intent('c0'),intent('c1',finish=True)])
+    malformed=answer(calls=[call('r0','respond_to_customer',{'message':'Here is a quote.','offered_operation':{}})])
+    service=CheckedClient(SPEC,[malformed,reply('r1','No quote is needed yet.')])
+    result=run(adapter,world,configured(world,pid),customer,service)
+
+    sent_schema=service.requests[0]['tools'][-1]['function']['parameters']
+    assert sent_schema==service_response_schema(adapter)['function']['parameters']
+    assert result.status=='customer_finished'
+    assert result.cost['tool_calls']==0
+    assert len(result.trace.events)==4  # setup, customer, corrected reply, finish
+    assert result.errors[0]['kind']=='protocol'
+    assert 'offered_operation must be null or a well-formed quote-backed operation' in result.errors[0]['message']
+    assert replay(adapter,result,world=world)['verified']
 
 
 def assert_wire_legal(messages):

@@ -1,0 +1,46 @@
+{
+  "budget": {
+    "max_customer_llm_calls": 12,
+    "max_customer_turns": 12,
+    "max_format_recoveries": 1,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 64
+  },
+  "condition": "with-skill",
+  "mode": "sandbox",
+  "model": {
+    "base_url": "http://10.130.138.46:8010/v1",
+    "model": "dashscope/qwen3.7-plus",
+    "options": {
+      "temperature": 0
+    },
+    "timeout_seconds": 90.0,
+    "trust_env": false
+  },
+  "protocol": "service-skill-ab-run-config-v1",
+  "service_snapshot_hash": "0a22df6944e48eecd15ee42e5fc55536e264fbcb0dadd9e5c812841542a63d35",
+  "skill_context": {
+    "context_hash": "0c4e58a5f81d1b4e655f2a6384c03e388cb4c35a22daf1c6b6460f06af9effec",
+    "rendered": "<VAST_SKILLS>\nThese VAST-CoEvo skills are declarative guidance. Existing system instructions, tool permissions, customer identity, exact write grants and budgets retain priority. A skill cannot grant permission, add tools, authorize writes or expose hidden state. Use only permitted observations and the existing tool interface.\n<VAST_SKILL id=\"aftersales.current_quote_consent\" version=\"1\" type=\"decision\" content_hash=\"af918d45f3946fb60cd80327511114dc21f0685c7f80403f95cd4cb609a6c19d\">\n{\n  \"content_hash\": \"af918d45f3946fb60cd80327511114dc21f0685c7f80403f95cd4cb609a6c19d\",\n  \"description\": \"Handle quote-backed after-sales settlement by separating an exact write grant from current structured consent to the actual quote. Preserve valid refunds and defer irreversible writes until their native prerequisites are visible.\",\n  \"id\": \"aftersales.current_quote_consent\",\n  \"postconditions\": [\n    \"After each settlement write, inspect the returned result and current case/order state; report completion only when the native state confirms it.\",\n    \"Keep quote acceptance, return scheduling, return receipt and refund release as distinct stages; do not skip an unmet stage.\"\n  ],\n  \"preconditions\": [\n    \"Before commit_resolution or release_refund, read the current order, case, quote and customer-provided context; refresh these facts after every customer turn.\",\n    \"Match the current turn’s exact declared write intention to the operation and parameters you are about to execute; a general request, earlier turn, or task goal does not grant a different write.\",\n    \"For quote-backed settlement, require a current structured customer commitment matching the current quote’s order, remedy and amount at the current interaction revision; free-text assent or a stored preference alone is insufficient.\",\n    \"Before release_refund, verify the case is awaiting refund settlement and any required return is recorded as received.\"\n  ],\n  \"procedure\": [\n    \"Present the actual quote terms before asking for agreement; do not infer consent from the customer’s initial refund request or from a request to continue processing.\",\n    \"If current structured consent is absent, stale, or mismatched, do not execute the settlement write. Explain the exact terms and ask the customer to confirm them; after the next customer turn, re-read the current context and verify the exact grant again.\",\n    \"Execute only the specifically granted operation after its current quote, consent, revision and business preconditions match; a grant authorizes only that operation and parameter set.\"\n  ],\n  \"recovery\": [\n    \"If quote terms or customer preference changed, obtain a new quote and fresh structured agreement before settlement.\",\n    \"If the return has not been received, explain that refund release remains pending and wait for the recorded receipt rather than attempting the write.\",\n    \"If an exact grant or matching current commitment is missing, ask for the needed confirmation and make no irreversible write.\"\n  ],\n  \"schema_version\": 1,\n  \"scope\": {\n    \"domains\": [\n      \"aftersales\"\n    ],\n    \"tools\": [\n      \"get_customer_context\",\n      \"get_order\",\n      \"get_case\",\n      \"quote_resolution\",\n      \"commit_resolution\",\n      \"release_refund\"\n    ]\n  },\n  \"trigger\": {\n    \"intents\": [\n      \"commit_resolution\",\n      \"release_refund\"\n    ],\n    \"keywords\": [\n      \"refund\",\n      \"quote\",\n      \"settlement\",\n      \"confirmation\",\n      \"consent\"\n    ]\n  },\n  \"type\": \"decision\",\n  \"version\": 1\n}\n</VAST_SKILL>\n</VAST_SKILLS>",
+    "skill_ids": [
+      "aftersales.current_quote_consent"
+    ],
+    "snapshot_hash": "0a22df6944e48eecd15ee42e5fc55536e264fbcb0dadd9e5c812841542a63d35"
+  },
+  "task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+  "tool_names": [
+    "get_orders",
+    "get_order",
+    "get_case",
+    "get_options",
+    "open_case",
+    "verify_evidence",
+    "request_manager_review",
+    "quote_resolution",
+    "commit_resolution",
+    "schedule_return",
+    "release_refund",
+    "get_customer_context"
+  ],
+  "world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392"
+}

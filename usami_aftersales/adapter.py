@@ -8,5 +8,6 @@ from .external import expected as external_reference,apply as external_apply
 
 name='aftersales'
 version=VERSION
+OFFERABLE_OPERATIONS=('commit_resolution','release_refund')
 DESCRIPTIONS={n:n.replace('_',' ')+'. Operations use authenticated buyer and explicit merchant/order scope.' for n in TOOLS}
 from .tasks import validate_task,customer_task_brief,task_intent_allowed

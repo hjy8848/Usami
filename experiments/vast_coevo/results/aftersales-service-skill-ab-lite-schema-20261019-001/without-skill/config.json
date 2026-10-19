@@ -1,0 +1,39 @@
+{
+  "budget": {
+    "max_customer_llm_calls": 12,
+    "max_customer_turns": 12,
+    "max_format_recoveries": 1,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 64
+  },
+  "condition": "without-skill",
+  "mode": "sandbox",
+  "model": {
+    "base_url": "http://10.130.138.46:8010/v1",
+    "model": "dashscope/qwen3.7-plus",
+    "options": {
+      "temperature": 0
+    },
+    "timeout_seconds": 90.0,
+    "trust_env": false
+  },
+  "protocol": "service-skill-ab-run-config-v1",
+  "service_snapshot_hash": "be7e66f910c2d0ec5143c7abfea8491fd9a1eb9cbc70a766c992436bebefb728",
+  "skill_context": null,
+  "task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+  "tool_names": [
+    "get_orders",
+    "get_order",
+    "get_case",
+    "get_options",
+    "open_case",
+    "verify_evidence",
+    "request_manager_review",
+    "quote_resolution",
+    "commit_resolution",
+    "schedule_return",
+    "release_refund",
+    "get_customer_context"
+  ],
+  "world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392"
+}

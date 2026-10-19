@@ -3,7 +3,7 @@ import copy,json
 from typing import Literal,Union
 from pydantic import Field,model_validator
 from usami_harness.models import Model,Budget,digest
-from usami_harness.tools import schemas,parse
+from usami_harness.tools import inline_schema,schemas,parse
 from usami.service.models import LLMRecord,ModelSettings,strict_json,ServiceError
 from usami.service.runner import completion_message
 from .models import CustomerIntent
@@ -95,6 +95,60 @@ SERVICE_POLICY=(
 )
 
 
+def offered_operation_schema(adapter):
+    """Build the response contract from this domain's quote-bearing operations.
+
+    Domains without an explicit list retain the historical nullable arbitrary
+    operation schema. Domains that declare OFFERABLE_OPERATIONS get a closed,
+    discriminated union so an empty object or a non-offer action cannot be
+    mistaken for a customer-facing quote.
+    """
+    names=getattr(adapter,'OFFERABLE_OPERATIONS',None)
+    if names is None:
+        return {'anyOf':[{'type':'object'},{'type':'null'}]}
+    alternatives=[]
+    for name in names:
+        if name not in adapter.PARAMETERS:
+            raise ValueError('offerable operation is absent from the domain schema: '+str(name))
+        alternatives.append({'type':'object','properties':{
+            'name':{'const':name},
+            'scope_id':{'type':'string','minLength':1},
+            'resource_id':{'type':'string','minLength':1},
+            'params':inline_schema(adapter.PARAMETERS[name]),
+        },'required':['name','scope_id','resource_id','params'],'additionalProperties':False})
+    if not alternatives:
+        return {'type':'null'}
+    return {'anyOf':alternatives+[{'type':'null'}]}
+
+
+def service_response_schema(adapter):
+    names=getattr(adapter,'OFFERABLE_OPERATIONS',None)
+    if getattr(adapter,'name',None)=='aftersales':
+        offer_description='Use null when no current quote is being presented. For after-sales, only commit_resolution or release_refund backed by a real current quote is valid.'
+    else:
+        offer_description='Use null when no current quote is being presented. Otherwise provide the exact quote-backed operation supported by this domain.'
+    return {'type':'function','function':{
+        'name':'respond_to_customer',
+        'description':'Reply, ask, or present terms. Use null when there is no current quote; otherwise pass the exact quote-backed operation.',
+        'parameters':{'type':'object','properties':{
+            'message':{'type':'string','minLength':1},
+            'offered_operation':{**offered_operation_schema(adapter),'description':offer_description},
+            'refused_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},
+            'refusal_code':{'anyOf':[{'type':'string'},{'type':'null'}]},
+        },'required':['message','offered_operation'],'additionalProperties':False}}}
+
+
+def checked_offered_operation(adapter,value):
+    if value is None:return None
+    try:operation=adapter.Operation.model_validate(value)
+    except (ValueError,TypeError,KeyError):
+        raise ValueError('offered_operation must be null or a well-formed quote-backed operation') from None
+    allowed=getattr(adapter,'OFFERABLE_OPERATIONS',None)
+    if allowed is not None and operation.name not in allowed:
+        raise ValueError('offered_operation must be null or one of the domain quote-backed offer operations')
+    return operation.model_dump(mode='json')
+
+
 def run(adapter,world,config,customer_client,service_client):
     raw=config.model_dump(mode='json') if isinstance(config,RunConfig) else config
     config=(TaskRunConfig if raw.get('protocol')=='business-dialogue-task-agents-v2' else RunConfig).model_validate(raw)
@@ -118,8 +172,7 @@ def run(adapter,world,config,customer_client,service_client):
     session=DialogueSession(adapter,world,config.profile_id,max_operations=config.budget.max_service_tool_calls,profile_ids=scoped_ids)
     cmodel=customer_client.settings.model_copy(deep=True);smodel=service_client.settings.model_copy(deep=True)
     ctools=[{'type':'function','function':{'name':'submit_customer_turn','description':'One natural Customer response grounded in frozen facts.', 'parameters':CustomerIntent.model_json_schema()}}]
-    stool=schemas(adapter,config.tools)+[{'type':'function','function':{'name':'respond_to_customer','description':'Reply, ask or present real quote-backed terms.',
-        'parameters':{'type':'object','properties':{'message':{'type':'string','minLength':1},'offered_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refused_operation':{'anyOf':[{'type':'object'},{'type':'null'}]},'refusal_code':{'anyOf':[{'type':'string'},{'type':'null'}]}},'required':['message','offered_operation'],'additionalProperties':False}}}]
+    stool=schemas(adapter,config.tools)+[service_response_schema(adapter)]
     smessages=[{'role':'system','content':SERVICE_POLICY+' Identity: '+session.private.identity+'. Public policy: '+json.dumps(adapter.POLICY,sort_keys=True)+'. Budget: '+config.budget.model_dump_json()}]
     if 'service' in config.skill_contexts:
         skill_context=SkillPromptContext.checked(config.skill_contexts['service'])
@@ -197,7 +250,8 @@ def run(adapter,world,config,customer_client,service_client):
                     if len(actions)!=1:raise ValueError('reply/offer cannot be mixed with business tools')
                     args=strict_json(response_calls[0]['function']['arguments'])
                     if not isinstance(args,dict) or not {'message','offered_operation'}<=set(args) or set(args)-{'message','offered_operation','refused_operation','refusal_code'}:raise ValueError('reply requires message and offered_operation')
-                    session.reply(args['message'],args['offered_operation'],refused_operation=args.get('refused_operation'),refusal_code=args.get('refusal_code'))
+                    offered=checked_offered_operation(adapter,args['offered_operation'])
+                    session.reply(args['message'],offered,refused_operation=args.get('refused_operation'),refusal_code=args.get('refusal_code'))
                 except (ValueError,TypeError,KeyError,ServiceError) as exc:
                     if not protocol_error('service',record,exc,smessages):status='service_protocol_error';stopped=True;break
                     continue

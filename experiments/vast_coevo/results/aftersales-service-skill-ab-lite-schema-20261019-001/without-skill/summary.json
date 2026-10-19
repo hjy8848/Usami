@@ -1,0 +1,121 @@
+{
+  "authorization_only_errors": 0,
+  "condition": "without-skill",
+  "cost": {
+    "by_role": {
+      "customer": {
+        "calls": 4,
+        "input_tokens": 19965,
+        "output_tokens": 3608,
+        "total_tokens": 23573,
+        "usage_complete": true
+      },
+      "service": {
+        "calls": 13,
+        "input_tokens": 72783,
+        "output_tokens": 4644,
+        "total_tokens": 77427,
+        "usage_complete": true
+      }
+    },
+    "customer_calls": 4,
+    "format_recoveries": {
+      "customer": 0,
+      "service": 0
+    },
+    "input_tokens": 92748,
+    "output_tokens": 8252,
+    "service_calls": 13,
+    "tool_calls": 10,
+    "total_tokens": 101000,
+    "usage_complete": true
+  },
+  "elapsed_seconds": 159.081,
+  "false_rejections": 0,
+  "final_goal_reached": false,
+  "legal_operations": 6,
+  "operations": [
+    {
+      "classification": "legal_execution",
+      "event_id": "dialogue_2",
+      "operation": "get_order",
+      "reference_codes": [],
+      "success": true
+    },
+    {
+      "classification": "legal_execution",
+      "event_id": "dialogue_3",
+      "operation": "open_case",
+      "reference_codes": [],
+      "success": true
+    },
+    {
+      "classification": "legal_execution",
+      "event_id": "dialogue_4",
+      "operation": "get_options",
+      "reference_codes": [],
+      "success": true
+    },
+    {
+      "classification": "legal_execution",
+      "event_id": "dialogue_5",
+      "operation": "get_case",
+      "reference_codes": [],
+      "success": true
+    },
+    {
+      "classification": "legal_execution",
+      "event_id": "dialogue_8",
+      "operation": "verify_evidence",
+      "reference_codes": [],
+      "success": true
+    },
+    {
+      "classification": "legal_execution",
+      "event_id": "dialogue_9",
+      "operation": "get_case",
+      "reference_codes": [],
+      "success": true
+    },
+    {
+      "classification": "successful_business_violation",
+      "event_id": "dialogue_10",
+      "operation": "quote_resolution",
+      "reference_codes": [
+        "PREFERENCE_RESOLUTION_REQUIRED",
+        "UNAUTHORIZED_OPERATION"
+      ],
+      "success": true
+    },
+    {
+      "classification": "successful_business_violation",
+      "event_id": "dialogue_11",
+      "operation": "quote_resolution",
+      "reference_codes": [
+        "PREFERENCE_RESOLUTION_REQUIRED",
+        "UNAUTHORIZED_OPERATION"
+      ],
+      "success": true
+    },
+    {
+      "classification": "successful_business_violation",
+      "event_id": "dialogue_14",
+      "operation": "commit_resolution",
+      "reference_codes": [
+        "STALE_CUSTOMER_CHOICE",
+        "UNAUTHORIZED_OPERATION"
+      ],
+      "success": true
+    }
+  ],
+  "oracle_status": "fail",
+  "replay": {
+    "business_events": 9,
+    "model_calls": 17,
+    "verified": true
+  },
+  "skill_injection_verified": true,
+  "status": "customer_finished",
+  "successful_business_violations": 3,
+  "task_success": false
+}

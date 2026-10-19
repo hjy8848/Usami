@@ -1,0 +1,12 @@
+{
+  "customer_request": "Hi, the parcel I got from you arrived today and the item inside is damaged — the casing is cracked and it won't power on. I'd really like my money back on the same card I paid with. I can send you photos of the damage straight away, and I'm fine with sending the item back if you need it. My order number is on my account, and I've got the packing slip for the exact item. Can you get this sorted for me?",
+  "domain": "aftersales",
+  "known_source_service_error_count": 2,
+  "profile_id": "profile_u2_order0_line1",
+  "seed": 0,
+  "source_execution_hash": "e6635bb0fc898c43cdc810e51ffd1d3827972a9fb5e34825067433bc030b3df5",
+  "source_oracle_status": "fail",
+  "source_replay_verified": true,
+  "source_task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+  "world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392"
+}

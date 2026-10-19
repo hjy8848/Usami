@@ -1,0 +1,285 @@
+{
+  "budget": {
+    "max_customer_llm_calls": 12,
+    "max_customer_turns": 12,
+    "max_format_recoveries": 1,
+    "max_service_llm_calls": 24,
+    "max_service_tool_calls": 64
+  },
+  "created_at": "2026-10-19T11:04:39.955850+00:00",
+  "customer_model_and_customer_policy": "same in both runs; no Customer Skill injected",
+  "dynamic_gate": "not run; diagnostics only",
+  "failure": null,
+  "frozen_task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+  "frozen_world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392",
+  "model": {
+    "base_url": "http://10.130.138.46:8010/v1",
+    "model": "dashscope/qwen3.7-plus",
+    "options": {
+      "temperature": 0
+    },
+    "timeout_seconds": 90.0,
+    "trust_env": false
+  },
+  "only_intended_difference": "Service SkillPromptContext omitted vs exact candidate snapshot rendered into Service system message",
+  "pair_summary": {
+    "input_tokens": 179253,
+    "interpretation": "INCONCLUSIVE: the corrected response schema was present in all Service requests, but neither run submitted a non-null offered_operation; the intended quote/consent behavior was not exercised.",
+    "output_tokens": 14732,
+    "total_model_calls": 32,
+    "total_tokens": 193985
+  },
+  "partition": "train; targeted regression using a previously observed failure case, not held-out evidence",
+  "protocol": "aftersales-service-skill-ab-lite-schema-v2",
+  "protocol_change": "Both arms use the corrected exact quote-backed offered_operation schema; no other prompt, task, model, tool, world, or budget changes.",
+  "response_schema_hash": "d6c70b9dad82d638939d5663b2e12363db6b0496782004b8deea7a4b49626cdb",
+  "retry_policy": "no automatic provider retry; each condition run once",
+  "runs": [
+    {
+      "authorization_only_errors": 0,
+      "condition": "without-skill",
+      "cost": {
+        "by_role": {
+          "customer": {
+            "calls": 4,
+            "input_tokens": 19965,
+            "output_tokens": 3608,
+            "total_tokens": 23573,
+            "usage_complete": true
+          },
+          "service": {
+            "calls": 13,
+            "input_tokens": 72783,
+            "output_tokens": 4644,
+            "total_tokens": 77427,
+            "usage_complete": true
+          }
+        },
+        "customer_calls": 4,
+        "format_recoveries": {
+          "customer": 0,
+          "service": 0
+        },
+        "input_tokens": 92748,
+        "output_tokens": 8252,
+        "service_calls": 13,
+        "tool_calls": 10,
+        "total_tokens": 101000,
+        "usage_complete": true
+      },
+      "elapsed_seconds": 159.081,
+      "false_rejections": 0,
+      "final_goal_reached": false,
+      "legal_operations": 6,
+      "operations": [
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_2",
+          "operation": "get_order",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_3",
+          "operation": "open_case",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_4",
+          "operation": "get_options",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_5",
+          "operation": "get_case",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_8",
+          "operation": "verify_evidence",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_9",
+          "operation": "get_case",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "successful_business_violation",
+          "event_id": "dialogue_10",
+          "operation": "quote_resolution",
+          "reference_codes": [
+            "PREFERENCE_RESOLUTION_REQUIRED",
+            "UNAUTHORIZED_OPERATION"
+          ],
+          "success": true
+        },
+        {
+          "classification": "successful_business_violation",
+          "event_id": "dialogue_11",
+          "operation": "quote_resolution",
+          "reference_codes": [
+            "PREFERENCE_RESOLUTION_REQUIRED",
+            "UNAUTHORIZED_OPERATION"
+          ],
+          "success": true
+        },
+        {
+          "classification": "successful_business_violation",
+          "event_id": "dialogue_14",
+          "operation": "commit_resolution",
+          "reference_codes": [
+            "STALE_CUSTOMER_CHOICE",
+            "UNAUTHORIZED_OPERATION"
+          ],
+          "success": true
+        }
+      ],
+      "oracle_status": "fail",
+      "replay": {
+        "business_events": 9,
+        "model_calls": 17,
+        "verified": true
+      },
+      "skill_injection_verified": true,
+      "status": "customer_finished",
+      "successful_business_violations": 3,
+      "task_success": false
+    },
+    {
+      "authorization_only_errors": 0,
+      "condition": "with-skill",
+      "cost": {
+        "by_role": {
+          "customer": {
+            "calls": 4,
+            "input_tokens": 18118,
+            "output_tokens": 3553,
+            "total_tokens": 21671,
+            "usage_complete": true
+          },
+          "service": {
+            "calls": 11,
+            "input_tokens": 68387,
+            "output_tokens": 2927,
+            "total_tokens": 71314,
+            "usage_complete": true
+          }
+        },
+        "customer_calls": 4,
+        "format_recoveries": {
+          "customer": 2,
+          "service": 0
+        },
+        "input_tokens": 86505,
+        "output_tokens": 6480,
+        "service_calls": 11,
+        "tool_calls": 9,
+        "total_tokens": 92985,
+        "usage_complete": true
+      },
+      "elapsed_seconds": 127.789,
+      "false_rejections": 0,
+      "final_goal_reached": false,
+      "legal_operations": 7,
+      "operations": [
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_2",
+          "operation": "get_order",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_3",
+          "operation": "open_case",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_4",
+          "operation": "get_options",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_5",
+          "operation": "get_case",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_8",
+          "operation": "verify_evidence",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_9",
+          "operation": "request_manager_review",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "legal_execution",
+          "event_id": "dialogue_11",
+          "operation": "get_case",
+          "reference_codes": [],
+          "success": true
+        },
+        {
+          "classification": "successful_business_violation",
+          "event_id": "dialogue_12",
+          "operation": "quote_resolution",
+          "reference_codes": [
+            "PREFERENCE_RESOLUTION_REQUIRED",
+            "UNAUTHORIZED_OPERATION"
+          ],
+          "success": true
+        }
+      ],
+      "oracle_status": "fail",
+      "replay": {
+        "business_events": 8,
+        "model_calls": 15,
+        "verified": true
+      },
+      "skill_injection_verified": true,
+      "status": "customer_protocol_error",
+      "successful_business_violations": 1,
+      "task_success": false
+    }
+  ],
+  "schema_audit": {
+    "with-skill": {
+      "non_null_offers": 0,
+      "schema_in_all_service_requests": true,
+      "service_calls": 11
+    },
+    "without-skill": {
+      "non_null_offers": 0,
+      "schema_in_all_service_requests": true,
+      "service_calls": 13
+    }
+  },
+  "service_snapshot_with_skill": "0a22df6944e48eecd15ee42e5fc55536e264fbcb0dadd9e5c812841542a63d35",
+  "service_snapshot_without_skill": "be7e66f910c2d0ec5143c7abfea8491fd9a1eb9cbc70a766c992436bebefb728",
+  "skill_content_hash": "af918d45f3946fb60cd80327511114dc21f0685c7f80403f95cd4cb609a6c19d",
+  "skill_id": "aftersales.current_quote_consent",
+  "status": "COMPLETED"
+}

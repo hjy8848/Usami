@@ -154,7 +154,17 @@ def checked_offered_operation(adapter,value):
     return operation.model_dump(mode='json')
 
 
-def run(adapter,world,config,customer_client,service_client):
+def _service_system_content(adapter,session,config,public_policy):
+    """Render the exact v2 system message, including a registered policy version."""
+    content=(SERVICE_POLICY+' Identity: '+session.private.identity+'. Public policy: '+
+        json.dumps(public_policy,sort_keys=True)+'. Budget: '+config.budget.model_dump_json())
+    if 'service' in config.skill_contexts:
+        skill_context=SkillPromptContext.checked(config.skill_contexts['service'])
+        content+='\n\nApplied declarative Service Skills from snapshot '+skill_context.snapshot_hash+':\n'+skill_context.rendered
+    return content
+
+
+def run(adapter,world,config,customer_client,service_client,*,_public_policy_override=None):
     raw=config.model_dump(mode='json') if isinstance(config,RunConfig) else config
     config=(TaskRunConfig if raw.get('protocol')=='business-dialogue-task-agents-v2' else RunConfig).model_validate(raw)
     brief=None
@@ -178,10 +188,12 @@ def run(adapter,world,config,customer_client,service_client):
     cmodel=customer_client.settings.model_copy(deep=True);smodel=service_client.settings.model_copy(deep=True)
     ctools=[{'type':'function','function':{'name':'submit_customer_turn','description':'One natural Customer response grounded in frozen facts.', 'parameters':CustomerIntent.model_json_schema()}}]
     stool=schemas(adapter,config.tools)+[service_response_schema(adapter)]
-    smessages=[{'role':'system','content':SERVICE_POLICY+' Identity: '+session.private.identity+'. Public policy: '+json.dumps(adapter.POLICY,sort_keys=True)+'. Budget: '+config.budget.model_dump_json()}]
-    if 'service' in config.skill_contexts:
-        skill_context=SkillPromptContext.checked(config.skill_contexts['service'])
-        smessages[0]['content']+='\n\nApplied declarative Service Skills from snapshot '+skill_context.snapshot_hash+':\n'+skill_context.rendered
+    public_policy=adapter.POLICY if _public_policy_override is None else _public_policy_override
+    if _public_policy_override is not None:
+        from usami_benchmark.public_policy import catalogue
+        registered=[adapter.POLICY,catalogue(adapter.name,world.version)]
+        if public_policy not in registered:raise ValueError('v2 Replay public policy is not a registered historical renderer')
+    smessages=[{'role':'system','content':_service_system_content(adapter,session,config,public_policy)}]
     if session.scoped_profile_ids:
         private_profiles=[{'profile_id':pid,'profile':private.model_dump(mode='json')} for pid,private in session.profiles.items()]
         private_context=json.dumps(private_profiles,sort_keys=True,separators=(',',':'),ensure_ascii=False)
@@ -314,8 +326,27 @@ def replay(adapter,execution,*,world=None,config=None):
     if world is not None and world!=initial:raise ValueError('registered world differs')
     if config is not None and config!=row.config:raise ValueError('registered config differs')
     replay_trace(adapter,row.trace,initial_world=initial,private=row.trace.private)
+    public_policy_override=None
+    service_calls=[call for call in row.calls if call.role=='service']
+    if service_calls:
+        # V2 journals predate the current policy renderer. Select only a
+        # deterministic, source-registered renderer by comparing the complete
+        # recorded first system message; never replay an arbitrary journal prompt.
+        scope_ids=row.config.task.composition.profile_ids if isinstance(row.config,TaskRunConfig) and row.config.task.composition is not None else None
+        session=DialogueSession(adapter,initial,row.config.profile_id,
+            max_operations=row.config.budget.max_service_tool_calls,profile_ids=scope_ids)
+        recorded_system=service_calls[0].record.request.get('messages',[{}])[0].get('content')
+        current= _service_system_content(adapter,session,row.config,adapter.POLICY)
+        if recorded_system==current:
+            public_policy_override=adapter.POLICY
+        else:
+            from usami_benchmark.public_policy import catalogue
+            legacy=catalogue(adapter.name,initial.version)
+            if recorded_system!=_service_system_content(adapter,session,row.config,legacy):
+                raise ValueError('historical v2 Service policy context is not a registered renderer')
+            public_policy_override=legacy
     c=RecordedCompletionClient(row.customer_model,[r.record for r in row.calls if r.role=='customer'])
     s=RecordedCompletionClient(row.service_model,[r.record for r in row.calls if r.role=='service'])
-    rebuilt=run(adapter,initial,row.config,c,s)
+    rebuilt=run(adapter,initial,row.config,c,s,_public_policy_override=public_policy_override)
     if rebuilt!=row or c.index!=len(c.records) or s.index!=len(s.records):raise ValueError('actual model request/response, disclosure, tools or budget replay differs')
     return {'verified':True,'model_calls':len(row.calls),'business_events':len(row.oracle['operations'])}

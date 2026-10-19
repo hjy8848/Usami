@@ -56,3 +56,13 @@ revised the proposal, which the native compiler, Reference, Oracle, and Replay
 accepted. The auditable proposal and certificate are in
 `experiments/vast_coevo/results/designer-subagent-v4-001/`. This is offline
 protocol debugging evidence, not a live LiteLLM result.
+
+## Independent batch protocol
+
+`world-grounded-batch-designer-v1` is an additional task-generation protocol,
+not a replacement for v4. It sends an ID-free domain catalogue once, receives a
+batch of abstract challenges, deterministically binds them to a private index
+of registered frozen worlds, then invokes the same native compiler and
+Reference/Engine/Oracle/Replay path. Its current Grounder supports After-sales
+only. See [World-Grounded Single-Shot Batch Designer](WORLD_GROUNDED_BATCH_DESIGNER.md)
+for the index, single-shot run, Replay, and A/B/C comparison commands.

@@ -20,6 +20,10 @@ v0.1 实现业务环境和评测基础设施，并提供可选的本地 **World 
 
 阅读 [研究 Roadmap](docs/vast-coevo/ROADMAP.md)、[方法与验收门槛](docs/vast-coevo/METHOD.md)、[架构边界](docs/vast-coevo/ARCHITECTURE.md)、[Schema](docs/vast-coevo/SCHEMAS.md) 和 [运行与验证记录](docs/vast-coevo/IMPLEMENTATION.md)。
 
+### World-Grounded Batch Designer v1
+
+After-sales 另有独立的单次批量出题协议：模型只提交 ID-free 挑战假设，确定性 Grounder 在登记的冻结世界中绑定实体，再由既有 Reference、Engine、Oracle 和 Replay 认证；它不运行 Service，也不替代 Designer v4。索引、真实模型运行、回放和 A/B/C 任务生成对照命令见 [协议说明](docs/benchmark-vnext/WORLD_GROUNDED_BATCH_DESIGNER.md)。
+
 ```bash
 # 现有 Usami 仍可单独运行；独立 Core 的安装仅依赖 Pydantic
 python -m pip install ./vast_coevo

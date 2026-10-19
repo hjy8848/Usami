@@ -43,9 +43,13 @@ when the cleanup branch is merged.
 
 ## Scope and limits
 
-The current checked-out tree saves 84,522,950 net payload bytes across 38 duplicate paths; 84,525,169 bytes of repeated payload were replaced with 2,219 bytes of symlink text. It keeps all 2,166 tracked paths and does not delete experiment runs, manifests,
-certificates, or replay inputs. The Git history is unchanged; this cleanup does
-not rewrite commits or shrink old Git objects. Historical repository storage
+Across 38 duplicate paths, deduplication replaces 84,525,169 repeated payload
+bytes with 2,219 bytes of symlink text, saving 84,522,950 bytes. Including the
+new archive records and verifier, the committed tree shrinks from 563,947,165
+bytes across 2,166 files to 479,613,379 bytes across 2,170 files: a net
+reduction of 84,333,786 bytes. No experiment runs, manifests, certificates, or
+replay inputs were deleted. Git history is unchanged; this cleanup does not
+rewrite commits or shrink old Git objects. Historical repository storage
 requires a separate, explicitly reviewed operation.
 
 The reduced tree uses standard relative Git symlinks. GitHub's repository

@@ -1,0 +1,19 @@
+{
+  "protocol": "offline-designer-api-context-v4-attempt-v1",
+  "run_id": "designer-subagent-v4-004",
+  "status": "BLOCKED_BEFORE_SUBAGENT_EXECUTION",
+  "reason": "The child Codex agent turn returned a usage-limit error before performing any Designer exploration. This is an infrastructure/account limit, not a rejected or invalid proposal.",
+  "agent_tool_status": "errored",
+  "external_api_calls": 0,
+  "read_queries": 0,
+  "proposal_attempts": 0,
+  "customer_executions": 0,
+  "service_executions": 0,
+  "reflection_calls": 0,
+  "world_hash": "2023b295d244bf2fd0944ed9b5440eb05aeb150621be8002e5d48781da19f70a",
+  "registration_hash": "015181adc76d52f26bb40a32af67eac8c2cf55bad66f6f945ad641cae527f9f0",
+  "exploration_request_hash": "43a3b45b77947caceb90d1050ea9651ef64d59c44f83707684c8bbb48d2a5eaa",
+  "submission_request_hash": "560a2474f0c63bd8b2a1a2c86c2d2dc8d9edf6430a7d02216c1c31aa69305d9b",
+  "request_context_only": true,
+  "no_offline_run_created": true
+}

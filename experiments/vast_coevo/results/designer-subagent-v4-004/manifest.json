@@ -1,0 +1,27 @@
+{
+  "protocol": "offline-designer-api-context-v4-run-v1",
+  "run_id": "designer-subagent-v4-004",
+  "domain": "aftersales",
+  "seed": 3,
+  "designer_protocol": "frozen-world-designer-exploration-v4",
+  "provenance": "Prepared exact offline request context; child Codex agent failed before exploration due to usage limit; no external API call.",
+  "world_hash": "2023b295d244bf2fd0944ed9b5440eb05aeb150621be8002e5d48781da19f70a",
+  "registration_hash": "015181adc76d52f26bb40a32af67eac8c2cf55bad66f6f945ad641cae527f9f0",
+  "external_api_calls": 0,
+  "customer_executions": 0,
+  "service_executions": 0,
+  "reflection_calls": 0,
+  "queries": 0,
+  "proposal_attempts": 0,
+  "status": "BLOCKED_BEFORE_SUBAGENT_EXECUTION",
+  "artifacts": {
+    "attempt-status.json": {
+      "bytes": 968,
+      "sha256": "3d05c6499c90f69e9f914f8b35b1179496d4e13015a9f201c3ee84cedad72f7e"
+    },
+    "request-context.json": {
+      "bytes": 48770,
+      "sha256": "8fbd38e7c5b473d9f38f847fc7ee733f79570de132bc7b6ae0264277a0b3c6dc"
+    }
+  }
+}

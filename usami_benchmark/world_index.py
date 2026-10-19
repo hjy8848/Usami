@@ -16,11 +16,11 @@ from usami_benchmark.public_policy import catalogue as native_catalogue
 from usami_benchmark.splits import verified_world
 from usami_benchmark.worlds import FrozenWorld, WorldPool
 
-from .abstract_challenges import FIELD_ALLOWLIST, PREDICATE_TYPES
+from .abstract_challenges import challenge_grammar
 
 
 INDEX_PROTOCOL = "world-grounding-index-v1"
-CATALOGUE_PROTOCOL = "world-grounded-domain-catalogue-v1"
+CATALOGUE_PROTOCOL = "world-grounded-domain-catalogue-v2"
 
 
 class IndexedWorld(Model):
@@ -166,6 +166,8 @@ def public_domain_catalogue(index: PrivateWorldIndex, domain: str, *, partitions
     index = index.checked()
     if domain not in DOMAINS:
         raise ValueError("unregistered domain")
+    if domain != "aftersales":
+        raise ValueError("no symbolic Designer grammar/Grounder is registered for this domain")
     if not partitions or set(partitions) - {"train", "validation"}:
         raise ValueError("Designer catalogue access is restricted to explicit train/validation partitions")
     selected = [w for w in index.worlds if w.domain == domain and w.partition in partitions]
@@ -180,13 +182,9 @@ def public_domain_catalogue(index: PrivateWorldIndex, domain: str, *, partitions
     counts = {name: {"min": min(w.entity_counts.get(name, 0) for w in selected),
                      "max": max(w.entity_counts.get(name, 0) for w in selected)} for name in entity_names}
     body = {
+        **challenge_grammar(),
         "protocol": CATALOGUE_PROTOCOL, "domain": domain, "rules_version": rules_version,
         "generator_version": generator_version, "native_policy": base,
-        "entity_types": {k: sorted(v) for k, v in FIELD_ALLOWLIST.get(domain, {}).items()},
-        "relationships": sorted({e["relation"] for w in selected for e in w.relationship_edges}),
-        "constraint_grammar": {"field_operators": ["eq", "neq", "in", "lt", "lte", "gt", "gte"],
-            "registered_predicates": {k: sorted(v) for k, v in PREDICATE_TYPES.items()}},
-        "objective_types": ["existing_object_completion", "created_object_completion", "correct_refusal", "mixed", "multi_object"],
         "world_pool_coverage": {"authorized_partitions": list(partitions), "world_count": len(selected),
             "distinct_structures": len({w.structure_signature for w in selected}),
             "distinct_permission_structures": len({w.permission_signature for w in selected}),

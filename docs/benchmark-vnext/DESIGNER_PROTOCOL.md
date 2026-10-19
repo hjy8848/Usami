@@ -66,3 +66,8 @@ of registered frozen worlds, then invokes the same native compiler and
 Reference/Engine/Oracle/Replay path. Its current Grounder supports After-sales
 only. See [World-Grounded Single-Shot Batch Designer](WORLD_GROUNDED_BATCH_DESIGNER.md)
 for the index, single-shot run, Replay, and A/B/C comparison commands.
+
+New batch runs use `world-grounded-contract-v2`, with a schema-derived catalogue
+and exact, typed submission vocabulary. Historical batch-v1 archives reproduce
+on commit `cbb5da4`. See the [offline contract audit](WORLD_GROUNDED_BATCH_AUDIT.md)
+for fixes, regression coverage and the boundary before another live model run.

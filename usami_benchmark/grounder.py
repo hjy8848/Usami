@@ -6,8 +6,7 @@ still only an input proposal: native compilation and Replay certify it later.
 """
 from __future__ import annotations
 
-import itertools
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Literal, Optional
 
 from pydantic import Field
@@ -19,7 +18,8 @@ from usami_aftersales import adapter as aftersales
 from usami_aftersales import rules as aftersales_rules
 from usami_aftersales import tasks as aftersales_tasks
 
-from .abstract_challenges import AbstractChallenge, validate_challenge
+from .abstract_challenges import (AbstractChallenge, ENTITY_COLLECTIONS, REFERENCE_FIELDS,
+    _aware_time, field_contract, validate_challenge)
 from .world_index import IndexedWorld, PrivateWorldIndex
 
 
@@ -64,8 +64,7 @@ class GroundingResult(Model):
 
 def _rows(frozen, entity_type):
     world = frozen.world
-    collection = {"profile": "profiles", "customer": "users", "order": "orders", "line": "lines",
-                  "product": "products", "evidence": "evidence", "external_event": "external_events"}[entity_type]
+    collection = ENTITY_COLLECTIONS[entity_type]
     return [{"_key": key, **value} for key, value in sorted(world.get(collection, {}).items())]
 
 
@@ -77,43 +76,13 @@ def _field(entity_type, row, name):
     return row.get(name)
 
 
-def _enum_values(entity_type, field):
-    return {
-        ("order", "status"): {"processing", "shipped", "delivered"},
-        ("line", "status"): {"unresolved", "return_pending", "refunded", "exchanged", "reshipped"},
-        ("evidence", "issue"): {"damaged", "wrong_item", "missing_parts"},
-        ("external_event", "kind"): {"manager_review", "return_received"},
-        ("external_event", "outcome"): {"approved", "denied", "received", "missing"},
-        ("profile", "issue"): {"damaged", "wrong_item", "missing_parts"},
-    }.get((entity_type, field))
-
-
-def _check_value_type(entity_type, field, value, op):
-    allowed = _enum_values(entity_type, field)
-    values = value if op == "in" else [value]
-    if allowed is not None and any(not isinstance(v, str) or v not in allowed for v in values):
-        raise ValueError("field comparison contains an unregistered enum value")
-    expected = {
-        ("order", "paid_cents"): int, ("line", "quantity"): int, ("line", "unit_price_cents"): int,
-        ("product", "stock"): int, ("product", "return_days"): int, ("product", "replacement_days"): int,
-        ("product", "returnable"): bool, ("product", "return_required"): bool,
-        ("evidence", "simulated_valid"): bool,
-    }.get((entity_type, field))
-    if expected is not None and any(type(v) is not expected for v in values):
-        raise ValueError("field comparison value has the wrong primitive type")
-    if (entity_type, field) == ("external_event", "at"):
-        try:
-            for v in values:
-                datetime.fromisoformat(v.replace("Z", "+00:00"))
-        except (AttributeError, ValueError):
-            raise ValueError("external event time must be an ISO-8601 string") from None
-
-
 def _compare(actual, op, expected):
     if op == "eq": return type(actual) is type(expected) and actual == expected
     if op == "neq": return type(actual) is not type(expected) or actual != expected
     if op == "in": return any(type(actual) is type(item) and actual == item for item in expected)
     if op in {"lt", "lte", "gt", "gte"}:
+        if actual is None:
+            return False
         if type(actual) is not type(expected):
             raise ValueError("ordered comparison requires the same primitive type")
         return {"lt": actual < expected, "lte": actual <= expected,
@@ -166,21 +135,8 @@ def _relation(frozen, aliases, values, relation):
         if relation.type == "event_for_line":
             event, line = (left, right) if ltype == "external_event" else (right, left)
             return event.get("line_id") == line["_key"]
-        field = {
-            ("line", "order"): "order_id", ("line", "product"): "product_id",
-            ("evidence", "line"): "line_id", ("external_event", "line"): "line_id",
-            ("profile", "line"): "facts.line_id", ("profile", "order"): "facts.order_id",
-            ("profile", "evidence"): "facts.evidence_id", ("order", "customer"): "customer_id",
-        }.get((ltype, rtype))
+        field = REFERENCE_FIELDS.get((ltype, rtype))
         source, target = left, right
-        if field is None:
-            field = {
-                ("order", "line"): "order_id", ("product", "line"): "product_id",
-                ("line", "evidence"): "line_id", ("line", "external_event"): "line_id",
-                ("line", "profile"): "facts.line_id", ("order", "profile"): "facts.order_id",
-                ("evidence", "profile"): "facts.evidence_id", ("customer", "order"): "customer_id",
-            }.get((ltype, rtype))
-            source, target = right, left
         if field is None: return False
         value = source
         for part in field.split("."):
@@ -197,15 +153,32 @@ def _matches_constraints(frozen, challenge, aliases, assigned):
         if constraint.predicate:
             if _predicate(frozen, kind, row, constraint.predicate) is not constraint.value: return False
         else:
-            try: _check_value_type(kind, constraint.field, constraint.value, constraint.op)
-            except ValueError: raise
-            if not _compare(_field(kind, row, constraint.field), constraint.op, constraint.value): return False
+            actual, expected = _field(kind, row, constraint.field), constraint.value
+            spec = field_contract(kind, constraint.field)["value_schema"]
+            if any(v.get("format") == "date-time" for v in spec.get("anyOf", [spec])):
+                actual = _aware_time(actual) if actual is not None else None
+                expected = [_aware_time(v) if v is not None else None for v in expected] if constraint.op == "in" else (_aware_time(expected) if expected is not None else None)
+            if not _compare(actual, constraint.op, expected): return False
     for relation in challenge.relationship_constraints:
         if relation.left in assigned and relation.right in assigned:
             if not _relation(frozen, aliases, assigned, relation): return False
     profiles = [row for alias, row in assigned.items() if aliases[alias] == "profile"]
     if len({p["identity"] for p in profiles}) > 1:
         return False
+    if profiles:
+        identity = profiles[0]["identity"]
+        world = frozen.world
+        for alias, item in assigned.items():
+            kind = aliases[alias]
+            if kind == "customer" and item["_key"] != identity: return False
+            if kind == "order" and item["customer_id"] != identity: return False
+            if kind in {"line", "evidence", "external_event"}:
+                line = item if kind == "line" else world["lines"][item["line_id"]]
+                if world["orders"][line["order_id"]]["customer_id"] != identity: return False
+                if kind == "evidence" and item["holder_id"] != identity: return False
+            if kind == "product" and len(assigned) == len(aliases):
+                if not any(aliases[a] == "line" and v["product_id"] == item["_key"] for a, v in assigned.items()):
+                    return False
     return True
 
 
@@ -213,7 +186,7 @@ def _source_facts(challenge, assigned):
     rows = []
     for alias in sorted(assigned):
         kind, row = next(v.type for v in challenge.entity_variables if v.alias == alias), assigned[alias]
-        rows.append({"alias": alias, "entity_type": kind, "key": row["_key"], "source": f"world.{kind}s/{row['_key']}"})
+        rows.append({"alias": alias, "entity_type": kind, "key": row["_key"], "source": f"world.{ENTITY_COLLECTIONS[kind]}/{row['_key']}"})
     return rows
 
 
@@ -227,7 +200,9 @@ def _proposal(frozen, challenge, aliases, assigned):
 
     def profile_for_line(line_alias):
         line = assigned[line_alias]
-        matches = [pid for pid, profile in profile_vars.items() if profile.get("facts", {}).get("line_id") == line["_key"]]
+        declared = {r.left if aliases[r.left] == "profile" else r.right for r in challenge.relationship_constraints
+                    if r.type == "profile_for_line" and line_alias in {r.left, r.right}}
+        matches = [pid for pid, profile in profile_vars.items() if pid in declared and profile.get("facts", {}).get("line_id") == line["_key"]]
         if not matches:
             raise ValueError("each objective line must have an explicitly grounded Customer profile")
         return sorted(matches)[0], profile_vars[sorted(matches)[0]]
@@ -278,9 +253,6 @@ def _proposal(frozen, challenge, aliases, assigned):
         if not req.required and matching:
             raise ValueError("forbidden registered external event exists for grounded line")
         event_ids.extend(matching)
-    for alias, row in assigned.items():
-        if aliases[alias] == "external_event" and row["_key"] not in event_ids:
-            event_ids.append(row["_key"])
 
     if not used_profiles:
         raise ValueError("challenge objectives do not select a Customer scope")
@@ -363,14 +335,13 @@ def ground_challenge(challenge: AbstractChallenge | dict, index: PrivateWorldInd
                 if len(matches) >= budget.max_matches:
                     truncated = True; return
                 if pos == len(order):
-                    explored += 1
                     try:
                         if not _matches_constraints(frozen, challenge, aliases, assigned): return
                         selection = _proposal(frozen, challenge, aliases, assigned)
                     except ValueError:
                         return
                     binding = {alias: assigned[alias]["_key"] for alias in sorted(assigned)}
-                    binding_hash = digest(binding)
+                    binding_hash = digest({"registration_hash": frozen.registration_hash, "binding": binding})
                     matches.append(GroundedMatch(frozen_registration_hash=frozen.registration_hash,
                         frozen_world_hash=frozen.world_hash, binding=binding, binding_hash=binding_hash,
                         fact_sources=_source_facts(challenge, assigned), identity=frozen.world["profiles"][selection.profile_id]["identity"],
@@ -378,9 +349,9 @@ def ground_challenge(challenge: AbstractChallenge | dict, index: PrivateWorldInd
                     return
                 alias = order[pos]
                 for candidate in candidate_rows[alias]:
-                    explored += 1
-                    if explored > budget.max_bindings:
+                    if explored >= budget.max_bindings:
                         truncated = True; return
+                    explored += 1
                     assigned[alias] = candidate
                     try:
                         feasible = _matches_constraints(frozen, challenge, aliases, assigned)
@@ -389,7 +360,7 @@ def ground_challenge(challenge: AbstractChallenge | dict, index: PrivateWorldInd
                         raise
                     if feasible: search(pos + 1)
                     del assigned[alias]
-                    if truncated and (explored > budget.max_bindings or len(matches) >= budget.max_matches): return
+                    if truncated and (explored >= budget.max_bindings or len(matches) >= budget.max_matches): return
             search(0)
             if truncated: break
     except ValueError as exc:

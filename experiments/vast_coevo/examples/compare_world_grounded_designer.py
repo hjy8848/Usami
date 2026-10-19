@@ -18,7 +18,7 @@ if str(REPOSITORY_ROOT) not in sys.path:
 from usami.service.client import ModelSettings
 from usami.service.models import ServiceError, strict_json
 from usami_benchmark.designer_batch import (
-    BatchDesignerConfig, run_batch, run_rule_baseline, save_run,
+    BatchDesignerConfig, run_batch, run_rule_baseline, save_run, _usage as response_usage, _usage_complete,
 )
 from usami_benchmark.designer_exploration import (
     DesignerBudget, DesignerFailure, design, verify_execution, verify_failed_journal,
@@ -43,16 +43,9 @@ class ResponseFileClient:
 
 
 def _usage(responses):
-    rows = []
-    for response in responses:
-        usage = response.get("usage", {}) if isinstance(response, dict) else {}
-        if not isinstance(usage, dict):
-            usage = {}
-        rows.append({"input_tokens": usage.get("prompt_tokens", usage.get("input_tokens")),
-                     "output_tokens": usage.get("completion_tokens", usage.get("output_tokens")),
-                     "total_tokens": usage.get("total_tokens")})
+    rows = [response_usage(response) for response in responses]
     return {key: sum(row[key] or 0 for row in rows) for key in ("input_tokens", "output_tokens", "total_tokens")} | {
-        "usage_complete": bool(rows) and all(type(row[k]) is int for row in rows for k in row)}
+        "usage_complete": _usage_complete(rows)}
 
 
 def _response_file(path):
@@ -77,6 +70,8 @@ def run_comparison(index, output_dir, *, batch_count=5, online=False,
         raise ValueError("offline comparison requires response files for both v4 and Batch")
     if not online and not v4_response:
         raise ValueError("provide --online or both --v4-response and --batch-response")
+    if index.worlds[0].partition not in {"train", "validation"} or index.worlds[0].domain != "aftersales":
+        raise ValueError("comparison requires an After-sales train/validation world")
 
     root = Path(output_dir)
     root.mkdir(parents=True, exist_ok=False)
@@ -217,7 +212,7 @@ def main(argv=None):
     report = run_comparison(index, args.output_dir, batch_count=args.batch_count, online=args.online,
         v4_response=args.v4_response, batch_response=args.batch_response)
     print(json.dumps(report, ensure_ascii=False, sort_keys=True))
-    return 0 if report["B_world_grounded_batch"]["status"] in {"COMPLETED", "COMPLETED_OFFLINE"} else 2
+    return 0 if report["B_world_grounded_batch"].get("metrics", {}).get("certified_challenges", 0) else 2
 
 
 if __name__ == "__main__":

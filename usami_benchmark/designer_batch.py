@@ -8,12 +8,15 @@ No model response is treated as a proof.
 from __future__ import annotations
 
 import json
+import hashlib
+import re
 import time
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, Literal, Optional
 
 from pydantic import Field
+from pydantic import ValidationError
 
 from usami.service.models import ModelSettings, ServiceError, strict_json
 from usami.service.runner import completion_message
@@ -21,10 +24,10 @@ from usami_harness.models import Model, digest
 from vast_coevo.schema import atomic_json
 
 from .abstract_challenges import (AbstractChallenge, BATCH_REVISION_PROTOCOL, ChallengeBatch,
-    PROTOCOL, challenge_fingerprints, validate_challenge)
+    CONTRACT_VERSION, PROTOCOL, challenge_fingerprints, submission_schema, validate_challenge)
 from .grounder import GroundingBudget, GroundingResult, ground_challenge
 from .tasks import CertifiedTask, ConstructionBudget, compile_task, verify_task
-from .world_index import PrivateWorldIndex, public_domain_catalogue
+from .world_index import PrivateWorldIndex, public_domain_catalogue, load_world_index
 
 
 TOOL_NAME = "submit_challenge_batch"
@@ -47,7 +50,7 @@ class CertifiedAttempt(Model):
     match_hash: str
     world_registration_hash: str
     world_hash: str
-    status: Literal["CERTIFIED", "GROUNDED_BUT_REFERENCE_UNPROVEN", "COMPILER_REJECTED", "REPLAY_REJECTED"]
+    status: Literal["CERTIFIED", "GROUNDED_BUT_REFERENCE_UNPROVEN", "COMPILER_REJECTED", "REPLAY_REJECTED", "INTERNAL_ERROR"]
     reason: str = ""
     task_hash: Optional[str] = None
     certificate_hashes: list[str] = Field(default_factory=list)
@@ -73,6 +76,7 @@ class CandidateAttempt(Model):
 
 
 class BatchRun(Model):
+    contract_version: str = "world-grounded-contract-v1"
     protocol: str
     status: str
     domain: str
@@ -95,13 +99,16 @@ class BatchRun(Model):
     run_hash: str = ""
 
     def computed_hash(self):
-        return digest(self.model_dump(mode="json", exclude={"run_hash"}))
+        excluded = {"run_hash"}
+        if self.contract_version == "world-grounded-contract-v1":
+            excluded.add("contract_version")
+        return digest(self.model_dump(mode="json", exclude=excluded))
 
 
-def _tool_schema():
+def _tool_schema(count=5):
     return [{"type": "function", "function": {"name": TOOL_NAME,
         "description": "Submit the requested batch of ID-free abstract business challenges.",
-        "parameters": ChallengeBatch.model_json_schema()}}]
+        "parameters": submission_schema(count)}}]
 
 
 def _messages(catalogue: dict, count: int, *, feedback: Optional[dict] = None, candidates: Optional[list[dict]] = None):
@@ -110,20 +117,22 @@ def _messages(catalogue: dict, count: int, *, feedback: Optional[dict] = None, c
         "challenge_requirements": ["each challenge has at least one objective", "use aliases and typed constraints only",
             "prefer distinct rule combinations and goal structures across the batch", "do not output world/entity IDs",
             "use required_customer_information/preferences only when they are part of the intended test"],
+        "required_candidate_fields": ChallengeBatch.model_json_schema()["$defs"]["AbstractChallenge"]["required"],
+        "wire_format": "Use entity_variables as [{alias,type}], entity_constraints as [{alias,field,op,value}] or [{alias,predicate,value}], relationship_constraints as [{type,left,right}], and objectives as [{kind,target,...}]. Do not substitute aliases, constraints, objective type or free-form description fields. A target is a line alias, connected to a profile alias via profile_for_line. Combine several atomic objectives for a multi-object challenge.",
     }
     messages = [{"role": "system", "content": POLICY},
         {"role": "user", "content": "Public domain catalogue and authorized world-pool aggregate summary (no per-world objects or outcomes):\n" +
             json.dumps(catalogue, ensure_ascii=False, sort_keys=True, separators=(",", ":")) +
             "\n\nProduce the batch using the supplied function schema.\n" + json.dumps(task, sort_keys=True)}]
     if feedback is not None:
-        revision = {"instruction": "One revision is permitted. Keep every candidate not explicitly listed in controlled feedback semantically unchanged, especially certified candidates. Modify only listed failed candidates; do not infer a Reference answer. Return a complete batch with stable challenge_id values.",
+        revision = {"instruction": "One revision is permitted. Keep every candidate not explicitly listed in controlled feedback semantically unchanged, especially certified candidates. Modify only listed failed candidates; do not infer a Reference answer. Return a complete batch with stable challenge_id values. If an initial candidate omitted or malformed its ID, use its assigned challenge_id from the feedback.",
         "prior_candidates": candidates or [], "controlled_feedback": feedback}
         messages.append({"role": "user", "content": "Single bounded revision request:\n" + json.dumps(revision, ensure_ascii=False, sort_keys=True, separators=(",", ":"))})
     return messages
 
 
 def _request(client, catalogue, count, *, feedback=None, candidates=None):
-    request = client.settings.request(_messages(catalogue, count, feedback=feedback, candidates=candidates), _tool_schema())
+    request = client.settings.request(_messages(catalogue, count, feedback=feedback, candidates=candidates), _tool_schema(count))
     # Match the current v4 Designer request policy: no harness-side output cap.
     # Providers may impose their own context or generation limits; those are
     # surfaced as truncated/failed responses and are never retried implicitly.
@@ -140,7 +149,7 @@ def _response_rows(response):
         _, actions = completion_message(response, set())
     except ServiceError as exc:
         choices = response.get("choices", []) if isinstance(response, dict) else []
-        finish = choices[0].get("finish_reason") if choices and isinstance(choices[0], dict) else None
+        finish = choices[0].get("finish_reason") if isinstance(choices, list) and choices and isinstance(choices[0], dict) else None
         kind = "TRUNCATED" if finish == "length" else "FORMAT_INVALID"
         return None, {"kind": kind, "code": exc.code, "message": str(exc)}
     if len(actions) != 1 or actions[0]["function"]["name"] != TOOL_NAME:
@@ -170,10 +179,11 @@ def _controlled_failure(candidate: CandidateAttempt) -> dict:
 
 
 def _process_candidate(raw: Any, index: PrivateWorldIndex, config: BatchDesignerConfig, revision: int) -> CandidateAttempt:
-    fallback_id = raw.get("challenge_id", f"invalid-{revision}-{digest(raw)[:12]}") if isinstance(raw, dict) else f"invalid-{revision}-{digest(raw)[:12]}"
+    proposed_id = raw.get("challenge_id") if isinstance(raw, dict) else None
+    fallback_id = proposed_id if isinstance(proposed_id, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", proposed_id) else f"invalid-{revision}-{digest(raw)[:12]}"
     try:
         challenge = AbstractChallenge.model_validate(raw)
-    except Exception as exc:
+    except ValidationError as exc:
         return CandidateAttempt(challenge_id=str(fallback_id)[:64], raw=raw, abstract_status="SCHEMA_INVALID",
             reason=str(exc), final_status="SCHEMA_INVALID", revision=revision)
     try:
@@ -188,7 +198,13 @@ def _process_candidate(raw: Any, index: PrivateWorldIndex, config: BatchDesigner
         semantic_fingerprint=fingerprints["semantic"], revision=revision)
     grounding_budget = config.grounding.model_copy(update={"partition": config.partition})
     grounding_started = time.perf_counter()
-    grounding = ground_challenge(challenge, index, grounding_budget)
+    try:
+        grounding = ground_challenge(challenge, index, grounding_budget)
+    except Exception as exc:
+        result.grounding_ms = (time.perf_counter() - grounding_started) * 1000
+        result.final_status = "INTERNAL_ERROR"
+        result.reason = "Grounder raised " + type(exc).__name__
+        return result
     result.grounding_ms = (time.perf_counter() - grounding_started) * 1000
     result.grounding = grounding
     if grounding.status != "GROUNDED":
@@ -200,13 +216,20 @@ def _process_candidate(raw: Any, index: PrivateWorldIndex, config: BatchDesigner
         reference_started = time.perf_counter()
         try:
             task = compile_task(frozen, match.selection, config.construction)
-            verify_task(task)
         except Exception as exc:
             message = str(exc)
-            bounded = any(term in message.lower() for term in ("search", "prove", "witness", "reachability", "unproven"))
+            bounded = message.lower().startswith("bounded ") and "did not prove" in message.lower()
             attempts.append(CertifiedAttempt(match_hash=match.binding_hash,
                 world_registration_hash=match.frozen_registration_hash, world_hash=match.frozen_world_hash,
-                status="GROUNDED_BUT_REFERENCE_UNPROVEN" if bounded else "COMPILER_REJECTED", reason=message[:1200]))
+                status="GROUNDED_BUT_REFERENCE_UNPROVEN" if bounded else ("COMPILER_REJECTED" if isinstance(exc, ValueError) else "INTERNAL_ERROR"), reason=message[:1200]))
+            result.reference_ms += (time.perf_counter() - reference_started) * 1000
+            continue
+        try:
+            verify_task(task)
+        except Exception as exc:
+            attempts.append(CertifiedAttempt(match_hash=match.binding_hash,
+                world_registration_hash=match.frozen_registration_hash, world_hash=match.frozen_world_hash,
+                status="REPLAY_REJECTED", reason=str(exc)[:1200]))
             result.reference_ms += (time.perf_counter() - reference_started) * 1000
             continue
         attempts.append(CertifiedAttempt(match_hash=match.binding_hash,
@@ -215,13 +238,16 @@ def _process_candidate(raw: Any, index: PrivateWorldIndex, config: BatchDesigner
             task=task))
         result.reference_ms += (time.perf_counter() - reference_started) * 1000
     result.certified_attempts = attempts
-    if any(a.status == "CERTIFIED" for a in attempts):
+    if any(a.status in {"INTERNAL_ERROR", "REPLAY_REJECTED"} for a in attempts):
+        result.final_status = "INTERNAL_ERROR" if any(a.status == "INTERNAL_ERROR" for a in attempts) else "REPLAY_REJECTED"
+        result.reason = "; ".join(a.reason for a in attempts if a.reason)[:1200]
+    elif any(a.status == "CERTIFIED" for a in attempts):
         result.final_status = "CERTIFIED"
     elif attempts and all(a.status == "GROUNDED_BUT_REFERENCE_UNPROVEN" for a in attempts):
         result.final_status = "GROUNDED_BUT_REFERENCE_UNPROVEN"
         result.reason = "all deterministic grounded matches remained unproven by the bounded native Reference"
     else:
-        result.final_status = "COMPILER_REJECTED"
+        result.final_status = next((s for s in ("INTERNAL_ERROR", "REPLAY_REJECTED") if any(a.status == s for a in attempts)), "COMPILER_REJECTED")
         result.reason = "; ".join(a.reason for a in attempts if a.reason)[:1200]
     return result
 
@@ -229,16 +255,26 @@ def _process_candidate(raw: Any, index: PrivateWorldIndex, config: BatchDesigner
 def _process_rows(raw_rows: list[Any], index: PrivateWorldIndex, config: BatchDesignerConfig, revision: int,
                   model_request_hash: Optional[str] = None):
     """Deterministically materialize one provider batch, including malformed slots."""
-    ids = [raw.get("challenge_id") for raw in raw_rows if isinstance(raw, dict)]
+    ids = [raw.get("challenge_id") for raw in raw_rows if isinstance(raw, dict) and isinstance(raw.get("challenge_id"), str)]
     duplicate_ids = {item for item in ids if ids.count(item) > 1}
     processed = []
-    for raw in raw_rows[:config.num_challenges]:
-        attempt = _process_candidate(raw, index, config, revision)
+    count_error = len(raw_rows) != config.num_challenges
+    for raw in raw_rows:
+        duplicate = isinstance(raw, dict) and isinstance(raw.get("challenge_id"), str) and raw["challenge_id"] in duplicate_ids
+        if count_error or duplicate:
+            original_id = raw.get("challenge_id") if isinstance(raw, dict) else None
+            stable_id = original_id if not duplicate and isinstance(original_id, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", original_id) else f"invalid-{revision}-{len(processed)+1}"
+            attempt = CandidateAttempt(challenge_id=stable_id, raw=raw,
+                abstract_status="SCHEMA_INVALID", final_status="SCHEMA_INVALID", revision=revision,
+                reason="batch candidate count differs from requested count" if count_error else "duplicate challenge_id in the submitted batch")
+        else:
+            attempt = _process_candidate(raw, index, config, revision)
+        if attempt.abstract_status == "SCHEMA_INVALID":
+            own_id = raw.get("challenge_id") if isinstance(raw, dict) and isinstance(raw.get("challenge_id"), str) and not duplicate else None
+            unavailable_ids = {c.challenge_id for c in processed} | (set(ids) - {own_id})
+            while attempt.challenge_id in unavailable_ids:
+                attempt.challenge_id += "-invalid"
         attempt.model_request_hash = model_request_hash
-        if attempt.challenge_id in duplicate_ids:
-            attempt.abstract_status = "SCHEMA_INVALID"
-            attempt.final_status = "SCHEMA_INVALID"
-            attempt.reason = "duplicate challenge_id in the submitted batch"
         processed.append(attempt)
     if len(processed) < config.num_challenges:
         for n in range(len(processed), config.num_challenges):
@@ -246,6 +282,19 @@ def _process_rows(raw_rows: list[Any], index: PrivateWorldIndex, config: BatchDe
                 abstract_status="SCHEMA_INVALID", reason="batch omitted a requested candidate",
                 final_status="SCHEMA_INVALID", revision=revision, model_request_hash=model_request_hash))
     return processed
+
+
+def _usage(response):
+    raw = response.get("usage", {}) if isinstance(response, dict) else {}
+    raw = raw if isinstance(raw, dict) else {}
+    result = {"input_tokens": raw.get("prompt_tokens", raw.get("input_tokens")),
+              "output_tokens": raw.get("completion_tokens", raw.get("output_tokens")), "total_tokens": raw.get("total_tokens")}
+    return {key: value if type(value) is int and value >= 0 else None for key, value in result.items()}
+
+
+def _usage_complete(rows):
+    return bool(rows) and all(all(type(v) is int for v in row.values())
+        and row["total_tokens"] == row["input_tokens"] + row["output_tokens"] for row in rows)
 
 
 def _summary(candidates, requests, responses, errors):
@@ -257,14 +306,7 @@ def _summary(candidates, requests, responses, errors):
     semantics = {c.semantic_fingerprint for c in valid if c.semantic_fingerprint}
     certified_structures = {c.structural_fingerprint for c in certified if c.structural_fingerprint}
     certified_semantics = {c.semantic_fingerprint for c in certified if c.semantic_fingerprint}
-    usage = []
-    for response in responses:
-        u = response.get("usage", {}) if isinstance(response, dict) else {}
-        if not isinstance(u, dict):
-            u = {}
-        usage.append({"input_tokens": u.get("prompt_tokens", u.get("input_tokens")),
-                      "output_tokens": u.get("completion_tokens", u.get("output_tokens")),
-                      "total_tokens": u.get("total_tokens")})
+    usage = [_usage(response) for response in responses]
     return {"raw_generated_challenges": "NOT_MEASURED",
         "candidate_attempts": len(attempts), "valid_abstract_challenges": len(valid),
         "groundable_challenges": len(grounded), "certified_challenges": len(certified),
@@ -274,6 +316,8 @@ def _summary(candidates, requests, responses, errors):
         "grounding_failures": sum(c.final_status in {"NO_MATCH", "INVALID_CONSTRAINT", "OUT_OF_SCOPE", "BUDGET_EXHAUSTED"} for c in attempts),
         "reference_unproven": sum(c.final_status == "GROUNDED_BUT_REFERENCE_UNPROVEN" for c in attempts),
         "schema_errors": sum(c.abstract_status == "SCHEMA_INVALID" for c in attempts),
+        "internal_errors": sum(c.final_status == "INTERNAL_ERROR" for c in attempts),
+        "replay_errors": sum(c.final_status == "REPLAY_REJECTED" for c in attempts),
         "transport_errors": sum(e.get("stage") == "transport" for e in errors),
         "response_errors": sum(e.get("stage") == "response" for e in errors),
         "preflight_errors": sum(e.get("stage") == "preflight" for e in errors),
@@ -318,6 +362,12 @@ def run_batch(index: PrivateWorldIndex, client, config: BatchDesignerConfig | di
         except ServiceError as exc:
             errors.append({"stage": "transport", "revision": revision, "code": exc.code, "message": str(exc), "response": exc.response})
             break
+        except Exception as exc:
+            # A client implementation error is not a malformed model proposal.
+            # Never archive an unknown exception's potentially credential-bearing text.
+            errors.append({"stage": "transport", "revision": revision, "code": "CLIENT_INTERNAL_ERROR",
+                           "message": "completion client raised " + type(exc).__name__})
+            break
         raw_rows, parse_error = _response_rows(response)
         if parse_error:
             errors.append({"stage": "response", "revision": revision, **parse_error})
@@ -333,10 +383,11 @@ def run_batch(index: PrivateWorldIndex, client, config: BatchDesignerConfig | di
             for attempt in processed:
                 candidates[attempt.challenge_id] = attempt
         else:
+            fresh_batch = not candidates
             for attempt in processed:
                 prior = candidates.get(attempt.challenge_id)
                 if prior is None:
-                    if not candidates:
+                    if fresh_batch:
                         # A whole malformed initial envelope has no stable
                         # candidate IDs to revise. Permit one fresh valid batch,
                         # while retaining the failed response and its feedback.
@@ -354,19 +405,39 @@ def run_batch(index: PrivateWorldIndex, client, config: BatchDesignerConfig | di
                 # Only failed candidates may be replaced, and their full first
                 # attempt stays in the immutable responses/cost journal.
                 candidates[attempt.challenge_id] = attempt
-    run_status = "COMPLETED" if responses else "BLOCKED_EXTERNAL_MODEL"
-    run = BatchRun(protocol=config.protocol, status=run_status,
+        if any(c.final_status in {"INTERNAL_ERROR", "REPLAY_REJECTED"} for c in processed):
+            break
+    run_status = _run_status(responses, errors)
+    run = BatchRun(contract_version=CONTRACT_VERSION, protocol=config.protocol, status=run_status,
         domain="aftersales", partition=config.partition, index_hash=index.index_hash,
         pool_commitment=catalogue["pool_commitment"], catalogue=catalogue,
         catalogue_hash=catalogue["catalogue_hash"], model=model, config=config, requests=requests, responses=responses,
         request_revisions=request_revisions, response_revisions=response_revisions,
         transport_errors=errors, candidates=list(candidates.values()), candidate_history=candidate_history)
+    _set_accounting(run)
+    run.run_hash = run.computed_hash()
+    return run
+
+
+def _set_accounting(run):
+    requests, responses, errors, candidate_history = run.requests, run.responses, run.transport_errors, run.candidate_history
+    baseline = run.protocol == "rule-combination-sampling-baseline-v1"
     run.metrics = _summary(run.candidates, requests, responses, errors)
     run.metrics["generated_candidate_attempts"] = len(candidate_history)
     run.metrics["valid_abstract_attempts"] = sum(c.abstract_status == "VALID" for c in candidate_history)
     run.metrics["schema_invalid_attempts"] = sum(c.abstract_status == "SCHEMA_INVALID" for c in candidate_history)
-    run.metrics["raw_generated_challenges"] = sum(
-        len(rows) for rows, err in (_response_rows(r) for r in responses) if rows is not None)
+    raw_count = 0
+    for response in responses:
+        rows, error = _response_rows(response)
+        if rows is not None:
+            raw_count += len(rows)
+        elif isinstance((error or {}).get("raw"), dict) and isinstance(error["raw"].get("challenges"), list):
+            raw_count += len(error["raw"]["challenges"])
+    run.metrics["raw_generated_challenges"] = raw_count if not baseline else len(candidate_history)
+    if baseline:
+        run.metrics["generator"] = "deterministic grammar-combination sampler; not an official IntellAgent reproduction"
+    count = run.metrics["certified_challenges"]
+    run.metrics["certification_status"] = "ALL_CERTIFIED" if count == run.config.num_challenges else ("PARTIALLY_CERTIFIED" if count else "NO_CERTIFIED_CHALLENGES")
     preflight_failures = sum(e.get("stage") == "preflight" for e in errors)
     run.metrics["request_attempts"] = len(requests)
     run.metrics["completed_responses"] = len(responses)
@@ -377,14 +448,18 @@ def run_batch(index: PrivateWorldIndex, client, config: BatchDesignerConfig | di
         "input_tokens": sum((x["input_tokens"] or 0) for x in run.metrics["llm_usage_by_call"]),
         "output_tokens": sum((x["output_tokens"] or 0) for x in run.metrics["llm_usage_by_call"]),
         "total_tokens": sum((x["total_tokens"] or 0) for x in run.metrics["llm_usage_by_call"]),
-        "usage_complete": bool(responses) and all(all(isinstance(x[k], int) for k in ("input_tokens", "output_tokens", "total_tokens")) for x in run.metrics["llm_usage_by_call"]),
+        "usage_complete": baseline or _usage_complete(run.metrics["llm_usage_by_call"]),
         "grounding_world_checks": sum(c.grounding.worlds_considered for c in run.candidate_history if c.grounding),
         "reference_compile_attempts": sum(len(c.certified_attempts) for c in run.candidate_history),
         "grounding_local_ms": round(sum(c.grounding_ms for c in run.candidate_history), 3),
         "reference_local_ms": round(sum(c.reference_ms for c in run.candidate_history), 3),
         "grounding_reference_api_calls": 0}
-    run.run_hash = run.computed_hash()
-    return run
+
+
+def _run_status(responses, errors):
+    if any(e.get("code") == "CLIENT_INTERNAL_ERROR" for e in errors):
+        return "INTERNAL_ERROR"
+    return "COMPLETED" if responses else "BLOCKED_EXTERNAL_MODEL"
 
 
 def _pool_manifest(index: PrivateWorldIndex) -> dict:
@@ -400,12 +475,12 @@ def save_run(run: BatchRun, index: PrivateWorldIndex, output_dir: str | Path) ->
     """Write a new audit directory without replacing prior runs."""
     root = Path(output_dir)
     root.mkdir(parents=True, exist_ok=False)
-    atomic_json(root / "manifest.json", {"protocol": run.protocol, "status": run.status,
+    manifest = {"protocol": run.protocol, "contract_version": run.contract_version, "status": run.status,
         "run_hash": run.run_hash, "index_hash": run.index_hash, "catalogue_hash": run.catalogue_hash,
         "model": run.model.model_dump(mode="json"), "request_attempts": len(run.requests),
         "provider_call_attempts": run.cost.get("designer_api_calls", 0),
         "completed_responses": len(run.responses),
-        "created_at_policy": "not recorded; output content is deterministic except for model response"}, immutable=True)
+        "created_at_policy": "not recorded; output content is deterministic except for model response"}
     atomic_json(root / "world-pool-manifest.json", _pool_manifest(index), immutable=True)
     # This file is evaluation-side/private: it contains entity IDs and facts and
     # must not be placed in an independently held-out prompt or service context.
@@ -426,23 +501,60 @@ def save_run(run: BatchRun, index: PrivateWorldIndex, output_dir: str | Path) ->
             if attempt.task is not None:
                 atomic_json(cert_dir / f"{candidate.challenge_id}-match-{n}.json", attempt.task.model_dump(mode="json"), immutable=True)
                 cert_count += 1
-    replay = replay_run(run, index)
+    atomic_json(root / "batch-run.json", run.model_dump(mode="json"), immutable=True)
+    try:
+        replay = replay_run(run, index)
+    except Exception as exc:
+        atomic_json(root / "replay-verification.json", {"verified": False, "error": str(exc)}, immutable=True)
+        raise
     atomic_json(root / "replay-verification.json", replay, immutable=True)
     atomic_json(root / "metrics.json", {**run.metrics, "cost": run.cost, "certificates_saved": cert_count,
         "replay_verified": replay["verified"]}, immutable=True)
-    atomic_json(root / "batch-run.json", run.model_dump(mode="json"), immutable=True)
     lines = ["# World-Grounded Batch Designer run", "", f"- Protocol: `{run.protocol}`",
         f"- Status: `{run.status}`", f"- Candidates: {run.metrics.get('raw_generated_challenges', 0)} raw; {run.metrics.get('certified_challenges', 0)} certified",
+        f"- Certification: `{run.metrics.get('certification_status')}` (COMPLETED describes the call, not task validity)",
         f"- Designer calls: {run.cost.get('designer_api_calls', 0)}", f"- Tokens: {run.cost.get('total_tokens', 0)} (usage complete: {run.cost.get('usage_complete')})",
         f"- Local Reference compile attempts: {run.cost.get('reference_compile_attempts', 0)}",
         f"- Replay: `{replay['verified']}`", "", "This is task-generation evidence only. It contains no Service execution or performance result."]
     (root / "report.md").write_text("\n".join(lines) + "\n")
+    manifest["artifacts"] = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(root.rglob("*")) if path.is_file()}
+    atomic_json(root / "manifest.json", manifest, immutable=True)
     return root
+
+
+def replay_directory(root: str | Path, index_path=None):
+    """Verify exported files too, not only the authoritative batch-run JSON."""
+    root = Path(root)
+    manifest = strict_json((root / "manifest.json").read_text())
+    if manifest.get("contract_version") != CONTRACT_VERSION:
+        raise ValueError("historical v1 archive requires original source commit cbb5da4; it is not reinterpreted as contract v2")
+    artifacts = manifest.get("artifacts", {})
+    actual = {str(p.relative_to(root)) for p in root.rglob("*") if p.is_file() and p != root / "manifest.json"}
+    if not artifacts or set(artifacts) != actual:
+        raise ValueError("archive artifact file set differs from manifest")
+    for name, expected in artifacts.items():
+        path = Path(name)
+        if path.is_absolute() or ".." in path.parts or (root / path).is_symlink():
+            raise ValueError("archive artifact path is unsafe")
+        if hashlib.sha256((root / path).read_bytes()).hexdigest() != expected:
+            raise ValueError("archive artifact hash differs: " + name)
+    index = load_world_index(index_path or root / "grounding-index.json")
+    row = BatchRun.model_validate(strict_json((root / "batch-run.json").read_text()))
+    if (any(manifest.get(k) != getattr(row, k) for k in ("protocol", "contract_version", "status", "run_hash", "index_hash", "catalogue_hash"))
+            or manifest.get("model") != row.model.model_dump(mode="json")
+            or manifest.get("request_attempts") != len(row.requests)
+            or manifest.get("completed_responses") != len(row.responses)
+            or manifest.get("provider_call_attempts") != row.cost.get("designer_api_calls")):
+        raise ValueError("archive manifest differs from batch record")
+    return replay_run(row, index)
 
 
 def replay_run(run: BatchRun | dict, index: PrivateWorldIndex) -> dict:
     """Rebind every candidate and recompile every archived native certificate."""
     row = run if isinstance(run, BatchRun) else BatchRun.model_validate(run)
+    if row.contract_version != CONTRACT_VERSION:
+        raise ValueError("historical v1 archive requires original source commit cbb5da4; it is not reinterpreted as contract v2")
     index.checked()
     if row.run_hash != row.computed_hash() or row.index_hash != index.index_hash:
         raise ValueError("batch run/index integrity differs")
@@ -451,6 +563,10 @@ def replay_run(run: BatchRun | dict, index: PrivateWorldIndex) -> dict:
         raise ValueError("public catalogue Replay differs")
     verified_tasks = 0
     rule_baseline = row.protocol == "rule-combination-sampling-baseline-v1"
+    if (row.domain != "aftersales" or row.partition != row.config.partition
+            or row.pool_commitment != catalogue["pool_commitment"]
+            or (not rule_baseline and row.protocol != row.config.protocol)):
+        raise ValueError("run scope or protocol differs from frozen configuration")
     if rule_baseline and (row.requests or row.responses or row.request_revisions or row.response_revisions):
         raise ValueError("offline rule baseline must not contain model requests or responses")
     if len(row.requests) != len(row.request_revisions) or len(row.responses) != len(row.response_revisions):
@@ -459,6 +575,10 @@ def replay_run(run: BatchRun | dict, index: PrivateWorldIndex) -> dict:
         raise ValueError("batch API-call budget or revision order differs")
     if any(rev not in range(row.config.max_api_calls) for rev in row.request_revisions + row.response_revisions):
         raise ValueError("batch journal contains an unregistered revision")
+    if row.request_revisions != list(range(len(row.requests))) or row.response_revisions != sorted(set(row.response_revisions)):
+        raise ValueError("model revision journals must be unique and sequential")
+    if any(e.get("stage") not in {"transport", "preflight", "response", "revision"} or e.get("revision") not in row.request_revisions for e in row.transport_errors):
+        raise ValueError("unregistered error stage or revision")
     rebuilt_history = []
     if rule_baseline:
         count = row.metrics.get("raw_generated_challenges")
@@ -527,10 +647,11 @@ def replay_run(run: BatchRun | dict, index: PrivateWorldIndex) -> dict:
         expected_revision_errors = []
         if any(revision == 1 for revision in row.response_revisions):
             selected_before_revision = {c.challenge_id: c for c in rebuilt_history if c.revision == 0}
+            fresh_batch = not selected_before_revision
             for candidate in (c for c in rebuilt_history if c.revision == 1):
                 prior = selected_before_revision.get(candidate.challenge_id)
                 if prior is None:
-                    if not selected_before_revision:
+                    if fresh_batch:
                         selected_before_revision[candidate.challenge_id] = candidate
                         continue
                     expected_revision_errors.append({"stage": "revision", "revision": 1,
@@ -554,34 +675,6 @@ def replay_run(run: BatchRun | dict, index: PrivateWorldIndex) -> dict:
         raise ValueError("recorded candidate outcomes differ from deterministic grounding, native proof and replay")
     if len(row.responses) > len(row.requests) or any(r not in row.request_revisions for r in row.response_revisions):
         raise ValueError("response journal is detached from a model request")
-    # Count/token evidence is rebuilt from response usage fields.
-    recorded_usage = row.metrics.get("llm_usage_by_call", [])
-    if len(recorded_usage) != len(row.responses):
-        raise ValueError("token-usage rows do not align with recorded model responses")
-    for response, usage in zip(row.responses, recorded_usage):
-        raw_usage = response.get("usage", {}) if isinstance(response, dict) else {}
-        if not isinstance(raw_usage, dict):
-            raw_usage = {}
-        actual = {"input_tokens": raw_usage.get("prompt_tokens", raw_usage.get("input_tokens")),
-                  "output_tokens": raw_usage.get("completion_tokens", raw_usage.get("output_tokens")),
-                  "total_tokens": raw_usage.get("total_tokens")}
-        if actual != usage:
-            raise ValueError("recorded model usage differs from raw response")
-    preflight_count = sum(e.get("stage") == "preflight" for e in row.transport_errors)
-    provider_attempts = len(row.requests) - preflight_count
-    expected_tokens = {key: sum((usage[key] or 0) for usage in recorded_usage)
-        for key in ("input_tokens", "output_tokens", "total_tokens")}
-    if (row.metrics.get("total_llm_calls", 0) != provider_attempts
-            or row.metrics.get("provider_call_attempts", 0) != provider_attempts
-            or row.metrics.get("completed_responses", len(row.responses)) != len(row.responses)
-            or row.cost.get("designer_api_calls", 0) != provider_attempts
-            or any(row.cost.get(key, 0) != value for key, value in expected_tokens.items())):
-        raise ValueError("recorded call or token costs differ from request/response evidence")
-    expected_usage_complete = (True if rule_baseline else bool(row.responses) and all(
-        all(type(usage[key]) is int for key in ("input_tokens", "output_tokens", "total_tokens"))
-        for usage in recorded_usage))
-    if row.cost.get("usage_complete") is not expected_usage_complete:
-        raise ValueError("token usage completeness flag differs from raw response evidence")
     rebuilt_selected = {}
     for candidate in rebuilt_history:
         if candidate.revision == 0:
@@ -600,13 +693,22 @@ def replay_run(run: BatchRun | dict, index: PrivateWorldIndex) -> dict:
     if recorded_selected != recomputed_selected:
         raise ValueError("selected candidate set differs from the recorded revision policy")
 
+    expected = row.model_copy(deep=True)
+    expected.candidates = list(rebuilt_selected.values())
+    expected.candidate_history = rebuilt_history
+    _set_accounting(expected)
+    for label in ("metrics", "cost"):
+        def without_timings(value):
+            return {k: v for k, v in value.items() if not k.endswith("_ms")}
+        if without_timings(getattr(row, label)) != without_timings(getattr(expected, label)):
+            raise ValueError("recorded " + label + " differ from request/response and candidate evidence")
+    expected_status = "COMPLETED_OFFLINE" if rule_baseline else _run_status(row.responses, row.transport_errors)
+    if row.status != expected_status:
+        raise ValueError("run status differs from recorded call evidence")
+
     for candidate in row.candidates:
-        if candidate.challenge is None:
+        if candidate.challenge is None or candidate.grounding is None:
             continue
-        expected_grounding = ground_challenge(candidate.challenge, index,
-            row.config.grounding.model_copy(update={"partition": row.config.partition}))
-        if candidate.grounding and expected_grounding != candidate.grounding:
-            raise ValueError("candidate grounding source hashes differ")
         for attempt in candidate.certified_attempts:
             if attempt.task is None:
                 continue
@@ -682,20 +784,12 @@ def run_rule_baseline(index: PrivateWorldIndex, count: int = 5, *, partition: st
     catalogue = public_domain_catalogue(index, "aftersales", partitions=(partition,))
     candidates = [_process_candidate(raw, index, config, 0) for raw in _rule_challenges(count)]
     model = ModelSettings(model="rule-combination-sampling-v1", base_url="http://127.0.0.1/v1", options={})
-    run = BatchRun(protocol="rule-combination-sampling-baseline-v1", status="COMPLETED_OFFLINE",
+    run = BatchRun(contract_version=CONTRACT_VERSION, protocol="rule-combination-sampling-baseline-v1", status="COMPLETED_OFFLINE",
         domain="aftersales", partition=partition, index_hash=index.index_hash,
         pool_commitment=catalogue["pool_commitment"], catalogue=catalogue,
         catalogue_hash=catalogue["catalogue_hash"], model=model, config=config,
         candidates=candidates, candidate_history=candidates)
-    run.metrics = _summary(candidates, [], [], [])
-    run.metrics["total_llm_calls"] = 0
-    run.metrics["raw_generated_challenges"] = count
-    run.metrics["generator"] = "deterministic grammar-combination sampler; not an official IntellAgent reproduction"
-    run.cost = {"designer_api_calls": 0, "input_tokens": 0, "output_tokens": 0, "total_tokens": 0,
-        "usage_complete": True, "grounding_local_ms": round(sum(c.grounding_ms for c in candidates), 3),
-        "reference_local_ms": round(sum(c.reference_ms for c in candidates), 3),
-        "reference_compile_attempts": sum(len(c.certified_attempts) for c in candidates),
-        "grounding_reference_api_calls": 0}
+    _set_accounting(run)
     run.run_hash = run.computed_hash()
     return run
 
@@ -766,10 +860,7 @@ def main(argv=None):
         save_run(row, index, args.output_dir)
         print(json.dumps({"status": row.status, "metrics": row.metrics, "cost": row.cost}, sort_keys=True)); return 0
     if args.command == "replay":
-        root = Path(args.run_dir)
-        index = load_world_index(args.index or root / "grounding-index.json")
-        row = BatchRun.model_validate(_read_json(root / "batch-run.json"))
-        print(json.dumps(replay_run(row, index), sort_keys=True)); return 0
+        print(json.dumps(replay_directory(args.run_dir, args.index), sort_keys=True)); return 0
 
     index = load_world_index(args.index)
     config = BatchDesignerConfig(protocol=args.protocol, num_challenges=args.num_challenges, partition=args.partition,
@@ -799,17 +890,22 @@ def main(argv=None):
             client = OpenAICompatibleClient.from_env()
         except Exception as exc:
             failure_message = str(exc)
-            from usami.service.models import ModelSettings
             class UnavailableClient:
                 settings = ModelSettings(model="unavailable", base_url="http://127.0.0.1/v1", options={})
                 available = False
                 unavailable_reason = failure_message
                 def complete(self, request): raise AssertionError("unavailable client must not dispatch a request")
             client = UnavailableClient()
-    row = run_batch(index, client, config)
-    save_run(row, index, args.output_dir)
+    if Path(args.output_dir).exists():
+        parser.error("output directory already exists; no model call was made")
+    try:
+        row = run_batch(index, client, config)
+        save_run(row, index, args.output_dir)
+    finally:
+        if hasattr(client, "close"):
+            client.close()
     print(json.dumps({"status": row.status, "metrics": row.metrics, "cost": row.cost, "output": args.output_dir}, sort_keys=True))
-    return 0 if row.status == "COMPLETED" else 2
+    return 0 if row.metrics["certified_challenges"] else 2
 
 
 if __name__ == "__main__":

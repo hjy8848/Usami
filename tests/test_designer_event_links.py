@@ -85,6 +85,20 @@ def test_pre_fix_journal_keeps_its_original_query_semantics(frozen):
     assert verify_failed_journal(frozen, journal)["verified"]
 
 
+def test_legacy_rulebook_text_is_frozen_without_changing_current_rules(frozen):
+    from usami_benchmark.designer_exploration import LEGACY_PROTOCOL, PROTOCOL_V3, PROTOCOL
+    from usami_benchmark.public_policy import catalogue
+    from usami_harness.models import digest
+    original = frozen.model_dump(mode="json")
+    legacy = inspect_world(frozen, {"action": "read_rules"}, protocol=LEGACY_PROTOCOL)["policy"]
+    assert len(legacy["business_rules"]) == 3
+    assert legacy["catalogue_hash"] == digest({k: v for k, v in legacy.items() if k != "catalogue_hash"})
+    current = catalogue(frozen.spec.domain, frozen.spec.rules_version)
+    for protocol in (PROTOCOL_V3, PROTOCOL):
+        assert inspect_world(frozen, {"action": "read_rules"}, protocol=protocol)["policy"] == current
+    assert frozen.model_dump(mode="json") == original
+
+
 def test_new_event_query_is_recorded_and_exactly_replayed(frozen):
     from test_vast_usami import ScriptedClient, SPEC, answer, call
     from usami_benchmark.designer import design_and_compile, verify_designer_execution

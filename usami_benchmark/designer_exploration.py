@@ -182,7 +182,17 @@ def inspect_world(frozen, raw, *, include_related_objects=False, include_profile
     query = ReadQuery.model_validate(raw)
     adapter, world = _adapter_world(frozen)
     if query.action == "read_rules":
-        return {"policy": catalogue(frozen.spec.domain, frozen.spec.rules_version),
+        policy = catalogue(frozen.spec.domain, frozen.spec.rules_version)
+        if protocol == LEGACY_PROTOCOL and frozen.spec.domain == "aftersales":
+            # v2 journals predate the case-window wording clarification. Freeze
+            # the model-visible prose, not the native eligibility decisions.
+            policy["business_rules"] = [
+                "Authenticate the order buyer and merchant/order/line scope. Ask for the actual order, issue, evidence and relevant customer deadline before committing a remedy.",
+                "Delivery, product returnability, native return window, verified evidence, settlement state, merchant approval limit and replacement stock constrain refund, exchange and reship.",
+                "Return-required refunds need actual receipt; pickup, current remedy choice and irreversible settlement require the applicable exact customer confirmation. Use the original payment channel and remaining paid value.",
+            ]
+            policy["catalogue_hash"] = digest({k: v for k, v in policy.items() if k != "catalogue_hash"})
+        return {"policy": policy,
                 "native_field_enums": field_enums(adapter),
                 "operation_schema": adapter.Operation.model_json_schema()}
     if query.action == "list_profiles":

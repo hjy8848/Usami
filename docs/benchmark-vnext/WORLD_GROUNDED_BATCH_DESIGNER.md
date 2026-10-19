@@ -5,6 +5,19 @@ change the v4 request, Replay, task, or certificate formats. The new protocol is
 `world-grounded-batch-designer-v1` and currently has a native Grounder only for
 After-sales.
 
+The current request/compiler contract is `world-grounded-contract-v2` and its
+public catalogue is `world-grounded-domain-catalogue-v2`. The outer single-shot
+and one-revision protocol names stay explicit. Catalogue vocabulary, native
+field value types/enums, relation typing and the submission schema share the
+same grammar definitions. Private-index edge labels are not public language
+operators. `mixed` and `multi_object` describe compositions of atomic objectives
+in an array; they are not accepted objective `kind` values.
+
+Historical contract-v1 archives, including the original InferAI attempt, remain
+unchanged. Reproduce them on source commit `cbb5da4`; current Replay refuses to
+silently score those archives under contract-v2 semantics. Existing v4 Designer
+requests and Replay are unchanged. The frozen-world index format is unchanged.
+
 The Designer receives a compact, ID-free domain catalogue and proposes one
 batch of abstract challenges. A deterministic local Grounder matches symbolic
 constraints to independently regenerated frozen worlds. Every grounded
@@ -13,6 +26,15 @@ the native Reference, Engine, Oracle, certificate, and `verify_task()` Replay.
 The model proposes what to test; it does not select concrete IDs, native
 frames, answers, or witnesses. Grounding success and native certification are
 reported separately. No Service execution happens in this pipeline.
+
+The tool schema is inlined (no local `$defs`/`$ref` dependency), fixes the exact
+requested batch size, and expresses field/predicate forms and atomic objective
+forms. Forced `tool_choice` selects a function name; it does not establish that
+an OpenAI-compatible provider enforces its arguments. Local validation remains
+mandatory. Unknown enum values, wrong primitive types, unsupported operators,
+missing fields and invalid relationship pairs are recorded as failures, never
+silently translated into a different task. Time comparisons use timezone-aware
+instants and explicitly handle absent delivery timestamps.
 
 The private index is for evaluator-side matching only. Never attach
 `grounding-index.json` to a Designer, Customer, or Service prompt. Catalogue
@@ -73,6 +95,20 @@ protocol, reparses every raw response, reruns constraints and native proofs,
 checks request/candidate/cost journals, and verifies each stored certificate.
 Malformed and failed responses are retained; output directories are immutable.
 
+Archive Replay also checks every exported file against the manifest, including
+requests, raw responses, certificates and reports. It recomputes non-timing
+metrics and costs from raw responses and deterministic candidate history.
+Hashes detect inconsistency; they do not authenticate a manifest controlled by
+an adversary. Existing output directories are rejected before a model call.
+Compiler-internal errors and failed certificate Replay are distinguished from
+invalid proposals and do not trigger another model call.
+
+`COMPLETED` describes completion of the request, not success at constructing a
+task. `certification_status` is `ALL_CERTIFIED`, `PARTIALLY_CERTIFIED` or
+`NO_CERTIFIED_CHALLENGES`. The run/comparison CLI returns nonzero when no task is
+certified. Invalid counts and duplicate IDs cannot produce certified tasks;
+all raw entries remain in the record, including overfull batches.
+
 ## A/B/C proposal comparison
 
 `experiments/vast_coevo/examples/compare_world_grounded_designer.py` compares:
@@ -113,6 +149,17 @@ refusal, mixed/multi-object goals, typed field constraints, fixed predicates,
 same-identity constraints, and registered events. Other domains and native
 operations return an explicit unsupported/scope result rather than a guessed
 translation. Structural and semantic fingerprints omit concrete entity IDs.
+Coverage fingerprints preserve objective/entity associations and relationship
+direction, while ignoring alias spelling. They are coverage signatures, not
+proofs of semantic equivalence.
+
+Every objective line explicitly selects one Customer profile. Bound Customer,
+order, line, evidence and event objects stay in that authenticated identity's
+scope. Products must be referenced by bound lines. Information and preferences
+refer to objective profiles. Inspecting an external-event alias does not
+schedule an event: scheduling is requested only by explicit
+`external_event_constraints` with `required=true`. `required=false` asserts
+absence of that registered event, rather than removing a present event.
 
 The deterministic rule baseline is an internal grammar-combination baseline,
 not an official reproduction of another system. No performance advantage is

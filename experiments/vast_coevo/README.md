@@ -180,3 +180,7 @@ PYTHONDONTWRITEBYTECODE=1 .venv/bin/python experiments/vast_coevo/examples/repla
 ```
 
 [原始压缩包](results/live-pilot-bundle.tar.gz) 包含完整实际请求/响应、轨迹、Oracle、Patch/错误、Library、配置、调用日志及当时源码。回放在固定源码的独立子进程执行，拒绝实际模型调用，并保留每个原始 JSON 和 hash。包里的 Skill 和模型返回只作为数据读取。
+
+### After-sales Skill 效果诊断
+
+After-sales 真实 Designer–Service 入口将 Engine 模式写入 Manifest，默认维持 `reference`；需要观察成功违规时必须显式选择 `--mode sandbox`。训练后的 S0/S1 同题对照使用独立只读入口，要求 1–5 个 validation 分区认证任务及已知训练世界排除清单，固定两侧 Customer/Service 配置并重复运行，不执行 Reflection、不发布 Snapshot。它会同时排除精确世界 Hash 与匿名结构重复，避免将不同 partition 标签误认为数据独立。业务目标、正常对话结束、预算合规及 Oracle 结果分别记录；详情见 [After-sales 配对评估说明](examples/AFTERSALES_PAIRED_EVALUATION.md)。

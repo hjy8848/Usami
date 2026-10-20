@@ -44,7 +44,7 @@ from experiments.vast_coevo.examples.aftersales_coevo_support import (
 )
 
 
-PROTOCOL = "aftersales-real-model-coevolution-v2"
+PROTOCOL = "aftersales-real-model-coevolution-v3"
 MAX_SERVICE_TASKS = 3
 DEFAULT_MAX_MODEL_CALLS = 65  # 3*(5 exploration + 4 submissions + 4 Customer + 8 Service) + 2 reflections
 
@@ -198,6 +198,8 @@ def _summary(row: dict) -> dict:
         "task_hash": row["task_record"].task_hash,
         "selection": row["task_record"].selection.model_dump(mode="json"),
         "trace_hash": trace.trace_hash,
+        "execution_mode": execution.config.mode,
+        "termination_status": execution.status,
         "task_success": bool(row["score"].get("success")),
         "final_goal_reached": row["final_goal_reached"],
         "process_errors": row["process_errors"],
@@ -208,7 +210,11 @@ def _summary(row: dict) -> dict:
     }
 
 
-def _make_task_config(frozen: FrozenWorld, task_record, service_snapshot: LibrarySnapshot, *, turns: int):
+def _make_task_config(frozen: FrozenWorld, task_record, service_snapshot: LibrarySnapshot, *,
+                      turns: int, mode: str = "reference", service_calls: int = 8,
+                      service_tool_calls: int = 12):
+    if mode not in {"reference", "sandbox"}:
+        raise ValueError("After-sales execution mode must be reference or sandbox")
     witness = task_record.dialogue_witnesses[0]
     task = witness.certificate.task
     world = aftersales.World.model_validate(frozen.world)
@@ -224,21 +230,77 @@ def _make_task_config(frozen: FrozenWorld, task_record, service_snapshot: Librar
     context = SkillPromptContext(snapshot_hash=service_snapshot.snapshot_hash,
         skill_ids=[hit.id for hit in retrieval.hits], rendered=rendered)
     return TaskRunConfig(
-        profile_id=task.profile_id, initial_world_hash=frozen.world_hash, mode="reference",
+        profile_id=task.profile_id, initial_world_hash=frozen.world_hash, mode=mode,
         tools=list(aftersales.TOOLS),
         budget=Budget(max_customer_turns=turns, max_customer_llm_calls=turns,
-            max_service_llm_calls=8, max_service_tool_calls=12, max_format_recoveries=0),
+            max_service_llm_calls=service_calls, max_service_tool_calls=service_tool_calls,
+            max_format_recoveries=0),
         external_schedule=task.external_schedule, task=task,
         certificate=witness.certificate, witness=witness.trace,
         skill_contexts={"service": context},
     )
 
 
+def _strict_task_score(native_score: dict, execution, task) -> dict:
+    """Match the benchmark runner's completion and budget success semantics.
+
+    Native ``score`` validates the business trace, Oracle, goals and replay. A
+    task is only successful if the dialogue also terminates normally within its
+    frozen call/tool budgets. Refusal goals are not credited if the Service
+    actually attempted that forbidden operation in a business event.
+    """
+    config = execution.config
+    cost = execution.cost
+    budget = config.budget
+    within = all(
+        type(cost.get(actual)) is int and cost[actual] <= getattr(budget, limit)
+        for actual, limit in (
+            ("customer_calls", "max_customer_llm_calls"),
+            ("service_calls", "max_service_llm_calls"),
+            ("tool_calls", "max_service_tool_calls"),
+        )
+    )
+    normal_completion = execution.status == "customer_finished"
+    invalid_requests = []
+    oracle_rows = execution.oracle.get("operations", [])
+    for event in execution.trace.events:
+        if event.kind != "business":
+            continue
+        oracle_row = next((row for row in oracle_rows
+                           if row.get("dialogue_event_id") == event.id), None)
+        if oracle_row and oracle_row.get("reference_allowed") is False:
+            invalid_requests.extend(
+                native_event.payload["operation"]
+                for native_event in event.payload["trace"].get("events", [])
+                if native_event.get("kind") == "operation"
+            )
+    native_refusals = list(native_score.get("refusal_subgoals", []))
+    task_refusals = list(task.refusals)
+    refusal_subgoals = [
+        valid and goal.operation not in invalid_requests
+        for valid, goal in zip(native_refusals, task_refusals)
+    ]
+    refusal_evidence_complete = len(native_refusals) == len(task_refusals)
+    return {
+        **native_score,
+        "native_success": bool(native_score.get("success")),
+        "native_status": execution.status,
+        "normal_completion": normal_completion,
+        "budget_compliance": within,
+        "native_refusal_subgoals": native_refusals,
+        "refusal_subgoals": refusal_subgoals,
+        "success": bool(native_score.get("success") and normal_completion and within
+                         and refusal_evidence_complete and all(refusal_subgoals)),
+    }
+
+
 def _execute_task(root: Path, number: int, frozen: FrozenWorld, task_record,
                   service_snapshot: LibrarySnapshot, customers, services,
-                  *, turns: int):
+                  *, turns: int, mode: str = "reference", service_calls: int = 8,
+                  service_tool_calls: int = 12):
     world = aftersales.World.model_validate(frozen.world)
-    config = _make_task_config(frozen, task_record, service_snapshot, turns=turns)
+    config = _make_task_config(frozen, task_record, service_snapshot, turns=turns,
+        mode=mode, service_calls=service_calls, service_tool_calls=service_tool_calls)
     _save(root, f"tasks/task-{number}/status.json", {
         "status": "RUNNING", "task_hash": task_record.task_hash,
         "initial_world_hash": frozen.world_hash,
@@ -252,10 +314,14 @@ def _execute_task(root: Path, number: int, frozen: FrozenWorld, task_record,
     try:
         replay = replay_execution(aftersales, execution, world=world, config=config)
         task = task_record.dialogue_witnesses[0].certificate.task
-        actual_score = score(aftersales, world, task, execution.trace)
+        native_score = score(aftersales, world, task, execution.trace)
+        actual_score = _strict_task_score(native_score, execution, task)
         final_world = aftersales.World.model_validate(execution.trace.final_world)
         goals = task.goals
-        final_goal_reached = bool(goals) and all(goal.satisfied(final_world) for goal in goals)
+        created_goals = task.created_goals
+        goal_results = [goal.satisfied(final_world) for goal in goals]
+        created_goal_results = [goal.satisfied(world, final_world) for goal in created_goals]
+        final_goal_reached = bool(goals or created_goals) and all(goal_results + created_goal_results)
         process_errors = [row for row in execution.oracle.get("service_decisions", [])
             if row.get("classification") in {"false_rejection", "incorrect_refusal_reason"}]
         process_errors += [row for row in execution.oracle.get("operations", [])
@@ -269,7 +335,8 @@ def _execute_task(root: Path, number: int, frozen: FrozenWorld, task_record,
         process_errors = []
         evaluation_error = replay["reason"]
     _save(root, f"tasks/task-{number}/score.json", {
-        "protocol": "aftersales-live-task-outcome-v1", "task_success": bool(actual_score["success"]),
+        "protocol": "aftersales-live-task-outcome-v2", "mode": config.mode,
+        "task_success": bool(actual_score["success"]),
         "final_goal_reached": final_goal_reached, "process_errors": process_errors,
         "strict_score": actual_score, "oracle": execution.oracle, "replay": replay,
         "evaluation_error": evaluation_error,
@@ -363,7 +430,7 @@ def _designer_metrics(root, task_rows):
 
 def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MODEL_CALLS,
              turns: int = 4, construction_nodes: int = 4096, construction_depth: int = 16,
-             designer_protocol: str = DESIGNER_PROTOCOL_V4):
+             designer_protocol: str = DESIGNER_PROTOCOL_V4, mode: str = "reference"):
     root = Path(output_dir).resolve()
     if root.exists():
         raise FileExistsError("Live runs are append-only; select a new output directory")
@@ -371,6 +438,8 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
         raise ValueError("max model calls must be between 1 and 100")
     if not 1 <= turns <= 8:
         raise ValueError("customer turns must be between 1 and 8")
+    if mode not in {"reference", "sandbox"}:
+        raise ValueError("After-sales execution mode must be reference or sandbox")
     settings = {role: _role_settings(role) for role in ("designer", "customer", "service", "reflector")}
     # Credential lookup validates a configured API key/Keychain reference before
     # creating a run registration or sending world data anywhere.
@@ -393,6 +462,11 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
     manifest = {
         "protocol": PROTOCOL, "status": "RUNNING", "seed": seed,
         "service_tasks_max": MAX_SERVICE_TASKS, "service_tasks_completed": 0,
+        "execution_mode": mode,
+        "execution_mode_semantics": {
+            "reference": "Engine blocks disallowed writes; evaluates intended normal service behavior.",
+            "sandbox": "Engine permits simulated writes; independent Oracle records successful business violations.",
+        }[mode],
         "max_total_model_calls": max_calls, "per_task_budget": {
             "customer_turns": turns, "customer_model_calls": turns,
             "service_model_calls": 8, "service_tool_calls": 12, "format_recoveries": 0},
@@ -435,7 +509,7 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
                 "prompt_context": designer_result.prompt_context,
             })
             row = _execute_task(root, number, frozen, designer_result.task, s_selected,
-                                clients["customer"], clients["service"], turns=turns)
+                                clients["customer"], clients["service"], turns=turns, mode=mode)
             task_rows.append(row)
             manifest["service_tasks_completed"] = len(task_rows)
             manifest["task_outcomes"] = [_summary(value) for value in task_rows]
@@ -503,7 +577,7 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
             "prompt_context": designer_result.prompt_context,
         })
         row = _execute_task(root, 3, frozen, designer_result.task, s_selected,
-                            clients["customer"], clients["service"], turns=turns)
+                            clients["customer"], clients["service"], turns=turns, mode=mode)
         task_rows.append(row)
         manifest["service_tasks_completed"] = len(task_rows)
         manifest["task_outcomes"] = [_summary(value) for value in task_rows]
@@ -581,12 +655,15 @@ def main(argv=None):
     parser.add_argument("--construction-nodes", type=int, default=4096)
     parser.add_argument("--construction-depth", type=int, default=16)
     parser.add_argument("--designer-protocol", choices=[DESIGNER_PROTOCOL_V4, "frozen-world-task-designer-v1"], default=DESIGNER_PROTOCOL_V4)
+    parser.add_argument("--mode", choices=["reference", "sandbox"], default="reference",
+        help="freeze Engine semantics in the run manifest; reference blocks disallowed writes, sandbox exposes mutations for Oracle audit")
     args = parser.parse_args(argv)
     output = args.output or Path("experiments/vast_coevo/results") / (
         "aftersales-coevo-live-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"))
     result = run_live(output, seed=args.seed, max_calls=args.max_model_calls,
         turns=args.customer_turns, construction_nodes=args.construction_nodes,
-        construction_depth=args.construction_depth, designer_protocol=args.designer_protocol)
+        construction_depth=args.construction_depth, designer_protocol=args.designer_protocol,
+        mode=args.mode)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result.get("status") == "EXECUTED" else 2
 

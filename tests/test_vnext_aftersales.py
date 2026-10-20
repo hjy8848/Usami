@@ -89,6 +89,34 @@ def test_premature_settlement_is_actual_sandbox_violation_not_a_query_failure():
     assert replay(adapter,trace)['verified']
 
 
+def test_reference_and_sandbox_expose_the_same_unconsented_settlement_rule_differently():
+    outcomes = {}
+    for mode in ('reference', 'sandbox'):
+        s, order, line = prepared()
+        _, quote = quoted(s, order, line)
+        op = operation(s, 'commit_resolution', order, quote_id=quote['id'],
+                       destination_channel=order.payment_channel)
+        # The Service presents the quote, but the Customer only declares the
+        # requested operation; it does not confirm this irreversible action.
+        s.reply('Here are the quoted refund terms.', op.model_dump(mode='json'))
+        customer(s, op)
+        result = s.act(op, mode)
+        trace = s.finish()
+        report = evaluate(adapter, trace)
+        outcomes[mode] = (result, trace, report, line.id)
+        assert report['operations'][-1]['reference_error_code'] == 'EXPLICIT_CONSENT_REQUIRED'
+        assert replay(adapter, trace)['verified']
+
+    reference_result, reference_trace, reference, line_id = outcomes['reference']
+    sandbox_result, sandbox_trace, sandbox, _ = outcomes['sandbox']
+    assert reference_result['success'] is False
+    assert reference_trace.final_world['lines'][line_id]['status'] == 'unresolved'
+    assert reference['operations'][-1]['classification'] == 'rejected_invalid_attempt'
+    assert sandbox_result['success'] is True
+    assert sandbox_trace.final_world['lines'][line_id]['status'] == 'refunded'
+    assert sandbox['operations'][-1]['classification'] == 'successful_business_violation'
+
+
 def test_preference_change_invalidates_old_offer_without_forcing_a_turn_count():
     s,order,line=prepared();cid,q=quoted(s,order,line)
     op=operation(s,'commit_resolution',order,quote_id=q['id'],destination_channel=order.payment_channel)

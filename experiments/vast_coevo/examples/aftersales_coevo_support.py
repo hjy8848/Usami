@@ -122,7 +122,7 @@ def event_and_decision_evidence(root, task_row, customer_snapshot, service_snaps
     episode_config = EpisodeConfig(
         id=task_id, config_id=config_id, domain="aftersales", partition="development",
         initial_world_hash=task_row["task_record"].frozen.world_hash,
-        identity=trace.private.identity, mode="reference",
+        identity=trace.private.identity, mode=execution.config.mode,
         customer_model=customer_model or model_spec(execution.customer_model),
         service_model=service_model or model_spec(execution.service_model),
         budget=EvidenceBudget(**execution.config.budget.model_dump()), tools=tuple(execution.config.tools))

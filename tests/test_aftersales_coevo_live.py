@@ -81,7 +81,8 @@ def test_live_execution_returns_saved_replayable_artifacts(tmp_path):
     _, service, _ = initial_skill_libraries()
     customer = _task_customer_client(1, adapter.World.model_validate(frozen.world), "refund")
     result = _execute_task(tmp_path, 1, frozen, task, service, customer,
-                           ServiceScriptClient(task_number=1), turns=4)
+                           ServiceScriptClient(task_number=1), turns=5,
+                           service_calls=9, service_tool_calls=16)
 
     assert result["evaluation_error"] is None
     assert result["agent_replay"]["verified"] is True
@@ -91,3 +92,63 @@ def test_live_execution_returns_saved_replayable_artifacts(tmp_path):
     assert status["status"] == "COMPLETED"
     # The existing Designer Reflector resolves citations against feedback['id'].
     assert _summary(result)["id"] == "task-1"
+    assert result["score"]["native_success"] is True
+    assert result["final_goal_reached"] is True
+    assert result["score"]["normal_completion"] is True
+    assert result["score"]["budget_compliance"] is True
+    assert result["score"]["success"] is True
+    assert json.loads((tmp_path / "tasks/task-1/score.json").read_text())["mode"] == "reference"
+
+
+def test_goal_reached_but_abnormal_dialogue_termination_is_not_task_success(tmp_path):
+    from experiments.vast_coevo.examples.aftersales_coevo_live import (
+        _execute_task, _initial_world, _strict_task_score,
+    )
+    from experiments.vast_coevo.examples.aftersales_coevo_smoke import (
+        _single_task, _task_customer_client, ServiceScriptClient,
+    )
+    from usami_aftersales import adapter
+    from usami_dialogue.tasks import score as native_score
+
+    frozen = _initial_world(1)
+    task_record = _single_task(frozen)
+    _, service, _ = initial_skill_libraries()
+    customer = _task_customer_client(1, adapter.World.model_validate(frozen.world), "refund")
+    result = _execute_task(tmp_path, 1, frozen, task_record, service, customer,
+                           ServiceScriptClient(task_number=1), turns=5,
+                           service_calls=9, service_tool_calls=16)
+    execution = result["execution"].model_copy(update={"status": "customer_provider_error"})
+    business_score = native_score(adapter, adapter.World.model_validate(frozen.world),
+        task_record.task, execution.trace)
+
+    strict = _strict_task_score(business_score, execution, task_record.task)
+    assert business_score["success"] is True
+    assert result["final_goal_reached"] is True
+    assert strict["native_success"] is True
+    assert strict["normal_completion"] is False
+    assert strict["success"] is False
+
+    over_budget_cost = dict(execution.cost)
+    over_budget_cost["service_calls"] = execution.config.budget.max_service_llm_calls + 1
+    over_budget = result["execution"].model_copy(update={"cost": over_budget_cost})
+    over_budget_score = _strict_task_score(business_score, over_budget, task_record.task)
+    assert over_budget_score["normal_completion"] is True
+    assert over_budget_score["budget_compliance"] is False
+    assert over_budget_score["success"] is False
+
+
+def test_task_config_freezes_selected_engine_mode():
+    from experiments.vast_coevo.examples.aftersales_coevo_live import (
+        _initial_world, _make_task_config,
+    )
+    from experiments.vast_coevo.examples.aftersales_coevo_smoke import _single_task
+
+    frozen = _initial_world(1)
+    _, service, _ = initial_skill_libraries()
+    record = _single_task(frozen)
+    reference = _make_task_config(frozen, record, service, turns=4, mode="reference")
+    sandbox = _make_task_config(frozen, record, service, turns=4, mode="sandbox")
+    assert reference.mode == "reference"
+    assert sandbox.mode == "sandbox"
+    assert reference.task == sandbox.task
+    assert reference.budget == sandbox.budget

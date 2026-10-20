@@ -124,29 +124,52 @@ def _final_goal_reached(task, initial, final) -> bool:
     return bool(task.goals or task.created_goals) and all(goals + created)
 
 
-def _injection_evidence(execution: AgentExecutionV3) -> dict:
+def _injection_evidence(execution: AgentExecutionV3, available_skill_ids: list[str] | None = None) -> dict:
     context = execution.config.skill_contexts.get("service")
-    checked = []
+    checked_context = []
+    checked_skill = []
+    selected_skill_ids = list(context.skill_ids) if context else []
+    available_skill_ids = sorted(set(available_skill_ids if available_skill_ids is not None else selected_skill_ids))
+    candidate_ids_per_request = []
     for call in execution.calls:
         if call.role != "service":
             continue
         messages = call.record.request.get("messages", [])
         system = messages[0].get("content", "") if messages else ""
-        checked.append(bool(context and context.snapshot_hash in system and
-                            (not context.rendered or context.rendered in system)))
+        checked_context.append(bool(context and context.snapshot_hash in system))
+        checked_skill.append(bool(context and selected_skill_ids and context.rendered and
+            context.rendered in system and all(f'<VAST_SKILL id="{skill_id}"' in system
+                                               for skill_id in selected_skill_ids)))
+        candidate_ids_per_request.append([skill_id for skill_id in available_skill_ids
+            if f'<VAST_SKILL id="{skill_id}"' in system])
+    if not available_skill_ids:
+        injection_status = "no_skill_expected"
+    elif not selected_skill_ids:
+        injection_status = "not_retrieved"
+    elif checked_skill and all(checked_skill):
+        injection_status = "verified"
+    else:
+        injection_status = "missing"
     return {
         "snapshot_hash": context.snapshot_hash if context else None,
         "context_hash": context.context_hash if context else None,
-        "skill_ids": list(context.skill_ids) if context else [],
+        "available_skill_ids": available_skill_ids,
+        "selected_skill_ids": selected_skill_ids,
         "rendered_skill": context.rendered if context else "",
-        "service_model_calls": len(checked),
-        "actual_requests_contained_context": checked,
-        "all_service_requests_contained_context": bool(checked) and all(checked),
+        "service_model_calls": len(checked_context),
+        "actual_requests_contained_context": checked_context,
+        "all_service_requests_contained_context": bool(checked_context) and all(checked_context),
+        "actual_requests_contained_skill": checked_skill,
+        "candidate_skill_ids_present_per_request": candidate_ids_per_request,
+        "candidate_skill_injected": any(candidate_ids_per_request),
+        "all_service_requests_contained_skill": (bool(checked_skill) and all(checked_skill)
+            if selected_skill_ids else None),
+        "skill_injection_status": injection_status,
     }
 
 
 def _summary(execution: AgentExecutionV3, strict: dict, replay: dict,
-             fidelity: dict, final_goal: bool) -> dict:
+             fidelity: dict, final_goal: bool, available_skill_ids: list[str] | None = None) -> dict:
     operations = execution.oracle.get("operations", [])
     decisions = execution.oracle.get("service_decisions", [])
     return {
@@ -166,7 +189,7 @@ def _summary(execution: AgentExecutionV3, strict: dict, replay: dict,
         "cost": copy.deepcopy(execution.cost),
         "replay": copy.deepcopy(replay),
         "customer_fidelity_status": fidelity.get("customer_fidelity_status"),
-        "service_skill_injection": _injection_evidence(execution),
+        "service_skill_injection": _injection_evidence(execution, available_skill_ids),
         "trace_hash": execution.trace.trace_hash,
         "execution_hash": execution.execution_hash,
     }
@@ -205,7 +228,8 @@ def _run_episode(root: Path, task_record, snapshot, *, mode: str,
         task = task_record.dialogue_witnesses[0].certificate.task
         final_world = aftersales.World.model_validate(execution.trace.final_world)
         final_goal = _final_goal_reached(task, world, final_world)
-        summary = _summary(execution, strict, replay, fidelity, final_goal)
+        summary = _summary(execution, strict, replay, fidelity, final_goal,
+                           [skill.id for skill in snapshot.skills])
         atomic_json(root / "strict-score.json", strict, immutable=True)
         atomic_json(root / "oracle.json", execution.oracle, immutable=True)
         atomic_json(root / "replay.json", replay, immutable=True)

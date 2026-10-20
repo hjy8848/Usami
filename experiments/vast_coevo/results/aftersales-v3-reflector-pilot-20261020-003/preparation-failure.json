@@ -1,0 +1,33 @@
+{
+  "protocol": "aftersales-v3-verified-error-service-reflection-v2-auto-tool-choice",
+  "attempt_id": "prepare-003",
+  "status": "FAILED_BEFORE_PREREGISTRATION",
+  "error_type": "ValueError",
+  "error": "Set USAMI_LLM_MODEL and USAMI_LLM_BASE_URL",
+  "model_requests_sent": 0,
+  "partially_written_artifacts_preserved": true,
+  "artifact_sha256_before_failure_record": {
+    "evidence/archive/2d5c202174241aee9edf4e9bfb7e0952769fb00ed4850ff7abea5dc45646bbc1.json": "1eeab003fbc5d63cfcd404ff386aecde135467c99c0aa439f6c52c10c2a451c8",
+    "evidence/episode.json": "1eeab003fbc5d63cfcd404ff386aecde135467c99c0aa439f6c52c10c2a451c8",
+    "evidence/interaction-view.json": "abc2e42ffa675262bfa517e4958b84837c709444b02f8a7f8daa596ef3a16067",
+    "excluded-training-worlds/consumed-source-dc986db5e8f6fa31737f24a2b50c6d72dee8f820fa63284ab85cb6e83ede6f6c.json": "04e5328e47265bf5d43d007252ec4b76215547a659c9b053f7a243f7e636a9b6",
+    "excluded-training-worlds/known-01-c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6.json": "df0764cb54c14cb1414d1f78f65dd51e51ccc54ef24ca28e514c398c94821373",
+    "excluded-training-worlds/known-02-e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392.json": "fd2b6e4e49d22d4d4f2903708b014a1a89e672fd57adec65325edf2256bfc5e4",
+    "excluded-training-worlds/known-03-f6c3ec9a4178972535bbb6f85d597a92d400bf5fad92cd48987b91311b79b482.json": "440b7bd0da1a040be91cdd0b89dba0a34bdc9a50e5b6fc9c6ace34141390e492",
+    "excluded-training-worlds/known-04-fb006e9fc5a9c07323c2bdcee60cbe83b8d34322cab295572fb8fa2eed63a548.json": "b5597925485bd9f799f67159d76db4dbdc5007a842d44054859778c9bc947792",
+    "reflection/input.json": "4c9fc4191ab2ef6a346da0891ae4a9f84dc04cbca525b3f3fb922948b64c4624",
+    "snapshots/S0.json": "3ea4136b3f1dffc22e3fae7991b9e1df0d0d9329f9aad875e6742e03fe35765d",
+    "snapshots/customer-fixed.json": "93674ce99c8faa945924f7a1df878a584d4e1870901661a0e55c0c73f2fb262e",
+    "source/execution.json": "b43c6679c08c589bd19ac2513e371397f2e3051dee3b55ad8cd7a1f5591abe85",
+    "source/pilot-manifest.json": "74fe32d4a088ba66155deab5c4cba26431f1b9b6db8acaa37a76c9e6ba9e272b",
+    "source/pilot-task.json": "1930d948fcde8f1b7007930335a3d41c5d748bdbef0fc4f86ad023607177a8b4",
+    "source/pilot-world.json": "04e5328e47265bf5d43d007252ec4b76215547a659c9b053f7a243f7e636a9b6",
+    "source/trace.json": "36b56d426af1182a7c67cdc52163c2fc05f6e5988113c43cb79bb98e3c7399a3",
+    "tasks/task-01.json": "18a7149a1dc358de5df5815c01286125b5969aa401a05344c887e2a8ed4a7478",
+    "tasks/task-02.json": "542afe75cf700888e4512786e65daa10855139f7cd4a9e8c536ba70936790d34",
+    "tasks/task-03.json": "c86920380b899b71c8d1fd65dd5114088c08311d9fa86240225e50866e42be13",
+    "worlds/41ba5e2c987163f4c7e3975af15944e665072d0a3e266281c83332df5b335433.json": "f7db744046374ca1e3fa05cb9b1f7f77e7b3742fd421059d49adab0baf91f770",
+    "worlds/55d5bf40646915c23569a1d8511ce2e51d54de4f94edce7a91e0c9986b505341.json": "8789891f31e858b73367548d541d08d5b7e3cf711d2968fd70f8d8a21d4f389d",
+    "worlds/7dc54a47840a34e2bedfa8345d67c515b1bedb0f21666af792f878c1ee43d184.json": "ae92edc1f261cd0ca861a1300cd1b54ffaaa2e411f51f9f27d480c128c31451e"
+  }
+}

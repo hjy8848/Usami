@@ -1,0 +1,1 @@
+{"input_hash":"4772b05a37b06fbdd525c8e71585e8ff3cf04095345405ea0df69c2121e9cd1b","model":{"base_url":"http://10.130.138.46:8010/v1","model":"dashscope/qwen3.7-plus","options":{"temperature":0},"schema_version":1,"timeout_seconds":180.0,"trust_env":false},"retry_policy":"none","status":"IN_FLIGHT","tool_choice":"auto"}

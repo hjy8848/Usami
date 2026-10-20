@@ -42,19 +42,21 @@ from experiments.vast_coevo.examples.aftersales_coevo_live import (
     BudgetedClient, CallLedger, _model_spec_for, _role_settings,
 )
 from experiments.vast_coevo.examples.aftersales_service_skill_ab_v3 import (
-    _make_config, run_paired_evaluation_v3,
+    _injection_evidence, _make_config, run_paired_evaluation_v3,
 )
 
 
-PROTOCOL = "aftersales-v3-verified-error-service-reflection-v1"
+PROTOCOL = "aftersales-v3-verified-error-service-reflection-v3-trigger-aware"
 SOURCE_RUN = Path("experiments/vast_coevo/results/aftersales-v3-first-pair-live-20261020-001")
-DEFAULT_OUTPUT = Path("experiments/vast_coevo/results/aftersales-v3-reflector-pilot-20261020-002")
+PRIOR_REFLECTION_RUN = Path("experiments/vast_coevo/results/aftersales-v3-reflector-pilot-20261020-002")
+PRIOR_DIAGNOSTIC_RUN = Path("experiments/vast_coevo/results/aftersales-v3-reflector-pilot-20261020-004")
+DEFAULT_OUTPUT = Path("experiments/vast_coevo/results/aftersales-v3-reflector-pilot-20261020-006")
 REPO_ROOT = Path(__file__).resolve().parents[3]
 PREVIOUS_EXCLUSIONS = SOURCE_RUN / "excluded-training-worlds"
 TASK_PLAN = (
-    {"seed": 20261040, "profile_id": "profile_u1_order2_line1", "resolution": "refund", "mixed": False},
-    {"seed": 20261041, "profile_id": "profile_u2_order0_line2", "resolution": "exchange", "mixed": False},
-    {"seed": 20261042, "profile_id": "profile_u0_order1_line0", "resolution": "refund", "mixed": True},
+    {"seed": 20261046, "profile_id": "profile_u0_order1_line0", "resolution": "refund", "mixed": False},
+    {"seed": 20261047, "profile_id": "profile_u0_order0_line0", "resolution": "exchange", "mixed": False},
+    {"seed": 20261048, "profile_id": "profile_u0_order1_line0", "resolution": "refund", "mixed": True},
 )
 REPEATS = 2
 CUSTOMER_TURNS = 12
@@ -420,6 +422,13 @@ def prepare(root: Path) -> dict:
     for path in sorted(PREVIOUS_EXCLUSIONS.glob("*.json")):
         frozen = FrozenWorld.model_validate(_read(path)).checked()
         previous_exclusions.append(frozen)
+    seen_exclusions = {row.world_hash for row in previous_exclusions}
+    for path in sorted((PRIOR_DIAGNOSTIC_RUN / "tasks").glob("*.json")):
+        prior_task = CertifiedTask.model_validate(_read(path))
+        frozen = FrozenWorld.model_validate(prior_task.frozen.model_dump(mode="json")).checked()
+        if frozen.world_hash not in seen_exclusions:
+            previous_exclusions.append(frozen)
+            seen_exclusions.add(frozen.world_hash)
     all_exclusions = list(previous_exclusions) + [source_task.frozen]
     if len({row.world_hash for row in all_exclusions}) != len(all_exclusions):
         raise ValueError("source world duplicates a pre-existing training exclusion")
@@ -438,6 +447,29 @@ def prepare(root: Path) -> dict:
     settings = _role_settings("service")
     preregistration = {
         "protocol": PROTOCOL, "status": "PRE_REGISTERED",
+        "protocol_change": {
+            "prior_http_error_attempt": str(PRIOR_REFLECTION_RUN),
+            "prior_http_error_status": "REFLECTION_FAILED_HTTP_400",
+            "prior_http_error_actual_calls": 1,
+            "prior_http_error_body_retained": False,
+            "prior_diagnostic_run": str(PRIOR_DIAGNOSTIC_RUN),
+            "prior_diagnostic_status": "EXECUTED_BUT_CANDIDATE_SKILL_NOT_RETRIEVED",
+            "prior_diagnostic_actual_episodes": 12,
+            "prior_diagnostic_replays_verified": True,
+            "prior_diagnostic_candidate_skill_injected": False,
+            "provider_protocol_fix_already_in_place": "tool_choice=auto remains unchanged from protocol v2",
+            "reflection_prompt_change": "explain deterministic SkillRetriever matching; select triggers from user-visible initial text",
+            "new_validation_task_seeds": [row["seed"] for row in TASK_PLAN],
+            "previous_diagnostic_worlds_excluded": True,
+            "official_reference": "https://help.aliyun.com/zh/model-studio/qwen-function-calling",
+            "this_is_a_new_preregistered_attempt_not_an_automatic_retry": True,
+            "preserved_setup_failure": {
+                "run": "experiments/vast_coevo/results/aftersales-v3-reflector-pilot-20261020-003",
+                "status": "FAILED_BEFORE_PREREGISTRATION",
+                "model_requests_sent": 0,
+                "reason": "service model environment variables were absent from the prepare process",
+            },
+        },
         "source": {"run": str(SOURCE_RUN), "arm": "S0", "episode_id": evidence.episode_id,
             "world_hash": source_task.frozen.world_hash, "structure_signature": source_task.frozen.structure_signature,
             "task_hash": source_task.task_hash, "trace_hash": execution.trace.trace_hash,
@@ -445,6 +477,7 @@ def prepare(root: Path) -> dict:
             "original_partition": "validation", "now_consumed_as_training": True,
             "source_replay_verified": True},
         "reflection": {"role": "service", "calls_max": 1, "automatic_retries": 0,
+            "tool_choice": "auto",
             "model": _model_spec_for(settings).model_dump(mode="json"),
             "input_hash": digest(reflection_input.model_dump(mode="json")),
             "evidence_ids": [evidence.episode_id], "dynamic_gate": "not run; candidate remains diagnostic"},
@@ -496,10 +529,13 @@ def reflect(root: Path) -> dict:
     ledger = CallLedger(reflection_dir, limit=1)
     wrapped = BudgetedClient("service_reflection", client, settings, ledger)
     value = ReflectionInput.model_validate(_read(root / "reflection/input.json"))
+    tool_choice = prereg["reflection"].get("tool_choice")
+    if tool_choice != "auto":
+        raise ValueError("this Qwen thinking-mode pilot requires preregistered tool_choice=auto")
     _write(reflection_dir, "started.json", {"status": "IN_FLIGHT", "input_hash": digest(value.model_dump(mode="json")),
-        "model": expected, "retry_policy": "none"})
+        "model": expected, "tool_choice": tool_choice, "retry_policy": "none"})
     try:
-        record = ServiceReflector(wrapped, _model_spec_for(settings)).reflect(value)
+        record = ServiceReflector(wrapped, _model_spec_for(settings), tool_choice=tool_choice).reflect(value)
         _write(reflection_dir, "record.json", record)
         usage = {}
         if record.call and isinstance(record.call.response, dict):
@@ -537,6 +573,24 @@ def reflect(root: Path) -> dict:
         client.close()
 
 
+def _retrieval_preflight(task_paths: list[Path], candidate: LibrarySnapshot) -> dict:
+    target_ids = {skill.id for skill in candidate.skills}
+    task_rows = []
+    for path in sorted(task_paths):
+        task_record = CertifiedTask.model_validate(_read(path))
+        config, _ = _make_config(task_record, candidate, mode="sandbox", turns=CUSTOMER_TURNS,
+            service_calls=SERVICE_CALLS, service_tool_calls=SERVICE_TOOL_CALLS,
+            customer_mode="deterministic")
+        context = config.skill_contexts.get("service")
+        selected = list(context.skill_ids) if context else []
+        task_rows.append({"task_hash": task_record.task_hash, "world_hash": task_record.frozen.world_hash,
+            "skill_ids_selected": selected, "target_skill_ids_selected": sorted(target_ids & set(selected)),
+            "rendered_chars": len(context.rendered) if context else 0})
+    return {"status": "PASS" if any(row["target_skill_ids_selected"] for row in task_rows)
+        else "FAIL_NO_CANDIDATE_SKILL_RETRIEVED", "candidate_snapshot_hash": candidate.snapshot_hash,
+        "candidate_skill_ids": sorted(target_ids), "tasks": task_rows, "paid_evaluation_started": False}
+
+
 def evaluate(root: Path) -> dict:
     root = Path(root).resolve()
     status = _read(root / "reflection/status.json")
@@ -548,6 +602,15 @@ def evaluate(root: Path) -> dict:
     settings = _role_settings("service")
     if _model_spec_for(settings).model_dump(mode="json") != _read(root / "preregistration.json")["evaluation"]["service_model"]:
         raise ValueError("evaluation model configuration differs from preregistration")
+    candidate = LibrarySnapshot.model_validate(_read(root / "snapshots/S1-reflector-candidate.json"))
+    retrieval_preflight = _retrieval_preflight(sorted((root / "tasks").glob("*.json")), candidate)
+    _write(root, "retrieval-preflight.json", retrieval_preflight)
+    if retrieval_preflight["status"] != "PASS":
+        result = {"status": "NOT_RUN_SKILL_NOT_RETRIEVED", "model_calls": 0,
+            "reason": "The candidate Skill does not activate on any preregistered public task context.",
+            "retrieval_preflight": retrieval_preflight}
+        _write(root, "evaluation-status.json", result)
+        return result
     result = run_paired_evaluation_v3(
         evaluation_dir,
         task_paths=sorted((root / "tasks").glob("*.json")),
@@ -569,18 +632,27 @@ def audit(root: Path) -> dict:
     eval_root = root / "evaluation"
     manifest = _read(eval_root / "manifest.json")
     rows = []
-    total_calls = total_input = total_output = 0
+    total_calls = total_input = total_output = total_authorization_only = 0
     for episode_dir in sorted((eval_root / "episodes").glob("task-*-repeat-*/*")):
         if not episode_dir.is_dir():
             continue
         execution = AgentExecutionV3.model_validate(_read(episode_dir / "execution.json"))
         config = TaskRunConfigV3.model_validate(_read(episode_dir / "config.json"))
         world = aftersales.World.model_validate(execution.trace.initial_world)
+        arm_snapshot = LibrarySnapshot.model_validate(_read(eval_root / "snapshots" / f"{episode_dir.name}.json"))
         replay = replay_v3(aftersales, execution, world=world, config=config)
         stored = _read(episode_dir / "replay.json")
         if not replay.get("verified") or replay != stored:
             raise ValueError(f"independent Replay mismatch in {episode_dir}")
         summary = _read(episode_dir / "summary.json")
+        injection = _injection_evidence(execution, [skill.id for skill in arm_snapshot.skills])
+        operation_rows = execution.oracle.get("operations", [])
+        violation_codes = sorted({code for operation in operation_rows
+            if operation.get("classification") == "successful_business_violation"
+            for code in operation.get("violations", [])})
+        authorization_only = sum(operation.get("classification") == "authorization_only"
+            for operation in operation_rows)
+        total_authorization_only += authorization_only
         cost = summary.get("cost", {})
         calls = cost.get("service_calls", 0)
         input_tokens = cost.get("input_tokens", 0)
@@ -590,8 +662,16 @@ def audit(root: Path) -> dict:
         total_output += output_tokens
         rows.append({"episode": str(episode_dir.relative_to(root)), "replay_verified": True,
             "snapshot_hash": summary.get("service_skill_injection", {}).get("snapshot_hash"),
+            "available_skill_ids": injection["available_skill_ids"],
+            "selected_skill_ids": injection["selected_skill_ids"],
+            "candidate_skill_injected": injection["candidate_skill_injected"],
+            "skill_injection_status": injection["skill_injection_status"],
+            "all_service_requests_contained_skill": injection["all_service_requests_contained_skill"],
+            "execution_status": execution.status,
             "success": summary.get("task_success"), "final_goal_reached": summary.get("final_goal_reached"),
             "successful_business_violations": summary.get("successful_business_violations"),
+            "authorization_only": authorization_only,
+            "business_violation_codes": violation_codes,
             "false_rejections": summary.get("false_rejections"), "service_calls": calls,
             "input_tokens": input_tokens, "output_tokens": output_tokens,
             "trace_hash": execution.trace.trace_hash, "execution_hash": execution.execution_hash})
@@ -600,21 +680,30 @@ def audit(root: Path) -> dict:
         raise ValueError(f"expected {expected} evaluation episodes, found {len(rows)}")
     s0 = [row for row in rows if "/S0" in row["episode"]]
     s1 = [row for row in rows if "/S1" in row["episode"]]
-    audit_result = {"protocol": "independent-v3-reflector-evaluation-replay-v1",
+    def group_summary(group_rows):
+        return {"episodes": len(group_rows),
+            "strict_successes": sum(bool(x["success"]) for x in group_rows),
+            "final_goals": sum(bool(x["final_goal_reached"]) for x in group_rows),
+            "violations": sum(x["successful_business_violations"] for x in group_rows),
+            "authorization_only": sum(x["authorization_only"] for x in group_rows),
+            "false_rejections": sum(x["false_rejections"] for x in group_rows),
+            "protocol_error_episodes": sum(x["execution_status"] == "service_protocol_error" for x in group_rows),
+            "budget_exhausted_episodes": sum("budget_exhausted" in x["execution_status"] for x in group_rows),
+            "distinct_business_violation_codes": sorted({code for x in group_rows
+                for code in x["business_violation_codes"]}),
+            "candidate_skill_injected_episodes": sum(bool(x["candidate_skill_injected"]) for x in group_rows)}
+
+    audit_result = {"protocol": "independent-v3-reflector-evaluation-replay-v2",
         "episodes": len(rows), "all_replay_verified": True,
+        "s1_candidate_skill_injected_episodes": sum(bool(row["candidate_skill_injected"]) for row in s1),
+        "authorization_only_events": total_authorization_only,
         "runner_status": manifest.get("status"), "model_calls": total_calls,
         "input_tokens": total_input, "output_tokens": total_output,
         "total_tokens": total_input + total_output,
-        "S0": {"episodes": len(s0), "strict_successes": sum(bool(x["success"]) for x in s0),
-               "final_goals": sum(bool(x["final_goal_reached"]) for x in s0),
-               "violations": sum(x["successful_business_violations"] for x in s0),
-               "false_rejections": sum(x["false_rejections"] for x in s0)},
-        "S1": {"episodes": len(s1), "strict_successes": sum(bool(x["success"]) for x in s1),
-               "final_goals": sum(bool(x["final_goal_reached"]) for x in s1),
-               "violations": sum(x["successful_business_violations"] for x in s1),
-               "false_rejections": sum(x["false_rejections"] for x in s1)},
+        "S0": group_summary(s0),
+        "S1": group_summary(s1),
         "rows": rows}
-    _write(root, "postrun-replay-audit.json", audit_result)
+    _write(root, "postrun-replay-audit-v2.json", audit_result)
     return audit_result
 
 

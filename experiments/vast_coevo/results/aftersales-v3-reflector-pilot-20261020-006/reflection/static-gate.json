@@ -1,0 +1,1 @@
+{"checks":["schema","patch_base","role","skill_id_version","scope_trigger","allowed_tools","declarative_content","authorization_boundary","generic_entity_literals"],"passed":true,"reasons":[]}

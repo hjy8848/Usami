@@ -68,6 +68,8 @@ def key_from_env(env: Optional[Mapping[str, str]] = None):
 
 
 class OpenAICompatibleClient:
+    MAX_ERROR_BODY_CHARS = 4096
+
     def __init__(self, settings: ModelSettings, api_key: str, transport=None):
         # Import only in the optional integration layer: the benchmark has no HTTP dependency.
         try:
@@ -92,6 +94,15 @@ class OpenAICompatibleClient:
             text = text.replace(self._key, "[REDACTED]")
         return json.loads(text)
 
+    def _safe_http_error(self, response):
+        """Keep bounded provider diagnostics while redacting the configured key."""
+        body = response.text
+        truncated = len(body) > self.MAX_ERROR_BODY_CHARS
+        body = body[:self.MAX_ERROR_BODY_CHARS]
+        if self._key:
+            body = body.replace(self._key, "[REDACTED]")
+        return {"status_code": response.status_code, "body": body, "truncated": truncated}
+
     def complete(self, request):
         import httpx
         # Do not save headers, exception request objects, or raw HTTP error bodies.
@@ -105,7 +116,9 @@ class OpenAICompatibleClient:
         except httpx.HTTPError:
             raise ServiceError("PROVIDER_CONNECTION_ERROR", "LLM transport failed; no retry performed") from None
         if response.status_code != 200:
-            raise ServiceError("PROVIDER_HTTP_ERROR", f"LLM endpoint returned HTTP {response.status_code}; no retry performed")
+            raise ServiceError("PROVIDER_HTTP_ERROR",
+                f"LLM endpoint returned HTTP {response.status_code}; no retry performed",
+                self._safe_http_error(response))
         try:
             raw = strict_json(response.text)
         except ValueError:

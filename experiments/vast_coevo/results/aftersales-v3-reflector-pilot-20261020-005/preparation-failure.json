@@ -1,0 +1,20 @@
+{
+  "protocol": "aftersales-v3-reflector-pilot-preparation-failure-v1",
+  "status": "FAILED_BEFORE_PREREGISTRATION",
+  "observed_at": "2026-10-20",
+  "phase": "prepare",
+  "failure_type": "KeyError",
+  "reason": "The first planned profile_id was absent from the frozen world generated with seed 20261043.",
+  "failed_plan": {
+    "seed": 20261043,
+    "profile_id": "profile_u1_order2_line1",
+    "resolution": "refund",
+    "mixed": false
+  },
+  "profile_id_present": false,
+  "model_requests": 0,
+  "api_key_used": false,
+  "partial_artifacts": [],
+  "superseded_by": "aftersales-v3-reflector-pilot-20261020-006",
+  "superseded_reason": "Replaced stale profile IDs with three distinct, offline-certified frozen worlds; this failed attempt remains immutable."
+}

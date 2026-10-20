@@ -1,4 +1,5 @@
 import json
+from types import SimpleNamespace
 
 from usami.service.models import ModelSettings
 from usami_benchmark.registry import default_spec
@@ -6,10 +7,11 @@ from usami_benchmark.tasks import ConstructionBudget, OpenDialogueComposition, T
 from usami_benchmark.worlds import freeze
 from usami_aftersales import adapter, tasks as aftersales_tasks
 from usami_dialogue.tasks import Goal, InformationRequirement, PreferenceRequirement
-from vast_coevo.skills import DecisionSkill, LibrarySnapshot
+from vast_coevo.skills import DecisionSkill, LibrarySnapshot, Scope, Trigger
 
 from experiments.vast_coevo.examples.aftersales_coevo_support import initial_skill_libraries
 from experiments.vast_coevo.examples import aftersales_service_skill_ab_v3 as evaluator
+from experiments.vast_coevo.examples import aftersales_v3_reflect_from_error as reflection_pilot
 
 
 def _validation_refund_task(frozen):
@@ -68,6 +70,60 @@ def test_v3_config_pins_scenario_and_only_changes_service_skill_context():
     assert config0.skill_contexts["service"].snapshot_hash == s0.snapshot_hash
     assert config1.skill_contexts["service"].snapshot_hash == s1.snapshot_hash
     assert config1.skill_contexts["service"].rendered
+
+
+def test_v3_injection_audit_does_not_count_empty_context_as_skill_injection():
+    from usami_dialogue.agents import SkillPromptContext
+
+    rendered = '<VAST_SKILL id="refund-check" version="1">rule</VAST_SKILL>'
+    empty_context = SkillPromptContext(snapshot_hash="a" * 64, skill_ids=[], rendered="")
+    empty_call = SimpleNamespace(role="service", record=SimpleNamespace(request={
+        "messages": [{"role": "system", "content": "Applied snapshot " + empty_context.snapshot_hash}]}))
+    empty_execution = SimpleNamespace(config=SimpleNamespace(skill_contexts={"service": empty_context}),
+        calls=[empty_call])
+    not_retrieved = evaluator._injection_evidence(empty_execution, ["refund-check"])
+    assert not_retrieved["skill_injection_status"] == "not_retrieved"
+    assert not_retrieved["candidate_skill_injected"] is False
+
+    context = SkillPromptContext(snapshot_hash="a" * 64,
+        skill_ids=["refund-check"], rendered=rendered)
+    call = SimpleNamespace(role="service", record=SimpleNamespace(request={
+        "messages": [{"role": "system", "content": "Applied snapshot " + context.snapshot_hash}]}))
+    execution = SimpleNamespace(config=SimpleNamespace(skill_contexts={"service": context}), calls=[call])
+
+    missing = evaluator._injection_evidence(execution, ["refund-check"])
+    assert missing["all_service_requests_contained_context"] is True
+    assert missing["skill_injection_status"] == "missing"
+    assert missing["all_service_requests_contained_skill"] is False
+
+    call.record.request["messages"][0]["content"] += "\n" + rendered
+    injected = evaluator._injection_evidence(execution, ["refund-check"])
+    assert injected["skill_injection_status"] == "verified"
+    assert injected["all_service_requests_contained_skill"] is True
+
+
+def test_reflector_candidate_must_be_retrieved_before_paid_evaluation(tmp_path):
+    frozen = freeze(default_spec("aftersales", 7, partition="validation"))
+    task = _validation_refund_task(frozen)
+    task_path = tmp_path / "task.json"
+    task_path.write_text(json.dumps(task.model_dump(mode="json")), encoding="utf-8")
+
+    def candidate(keyword):
+        skill = DecisionSkill(id="release_refund_consent_verification", version=1,
+            scope=Scope(domains=("aftersales",)), trigger=Trigger(keywords=(keyword,)),
+            description="Require exact current authorization for settlement.",
+            preconditions=("A settlement is considered.",),
+            procedure=("Check exact current authorization.",),
+            postconditions=("No unauthorized settlement occurs.",),
+            recovery=("Ask for the missing authorization.",))
+        return LibrarySnapshot(role="service", skills=(skill,), provenance="retrieval-preflight-test")
+
+    internal_name_only = reflection_pilot._retrieval_preflight([task_path], candidate("release_refund"))
+    natural_language = reflection_pilot._retrieval_preflight([task_path], candidate("refund"))
+    assert internal_name_only["status"] == "FAIL_NO_CANDIDATE_SKILL_RETRIEVED"
+    assert internal_name_only["paid_evaluation_started"] is False
+    assert natural_language["status"] == "PASS"
+    assert natural_language["tasks"][0]["rendered_chars"] > 0
 
 
 def test_v3_pair_runner_uses_scenario_driver_replays_and_never_reflects(tmp_path, monkeypatch):

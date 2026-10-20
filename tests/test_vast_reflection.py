@@ -82,6 +82,18 @@ def test_one_reflection_call_records_exact_request_response_patch(tmp_path, role
     assert record.call.role == role + "_reflector"
 
 
+def test_reflector_can_use_auto_tool_choice_for_thinking_mode_apis(tmp_path):
+    value = reflection_input(tmp_path, "service")
+    proposal = noop(value)
+    client = Client(completion(proposal.model_dump_json(), via_tool=False))
+    record = ServiceReflector(client, MODEL, tool_choice="auto").reflect(value)
+    assert record.patch == proposal and record.error is None
+    assert len(client.requests) == record.calls == 1
+    assert client.requests[0]["tool_choice"] == "auto"
+    assert record.call.request == client.requests[0]
+    assert "case-insensitive substring" in client.requests[0]["messages"][0]["content"]
+
+
 @pytest.mark.parametrize("response", [
     completion("not JSON"), completion('{"action":"NOOP","action":"ADD"}'),
     completion("[]"), {"choices": []}, {"choices": [{"message": {}}, {"message": {}}]},

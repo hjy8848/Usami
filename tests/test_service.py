@@ -325,7 +325,9 @@ def test_http_errors_do_not_retry_or_echo_sensitive_bodies(status):
 
     def endpoint(request):
         calls.append(request)
-        return httpx.Response(status, json={"error": "credential-secret"}, headers={"Location": "https://other.invalid"})
+        return httpx.Response(status, json={"error": "gateway rejected forced tool_choice",
+                                            "echo": "credential-secret"},
+                              headers={"Location": "https://other.invalid"})
 
     client = OpenAICompatibleClient(FixtureClient.settings, "credential-secret", transport=httpx.MockTransport(endpoint))
     try:
@@ -334,7 +336,10 @@ def test_http_errors_do_not_retry_or_echo_sensitive_bodies(status):
         client.close()
     assert execution.status == "provider_error" and len(calls) == 1
     assert "credential-secret" not in execution.model_dump_json()
+    assert "gateway rejected forced tool_choice" in execution.model_dump_json()
     assert execution.llm_records[0].error["code"] == "PROVIDER_HTTP_ERROR"
+    assert execution.llm_records[0].response["status_code"] == status
+    assert execution.llm_records[0].response["truncated"] is False
 
 
 @pytest.mark.parametrize("name,resource_id,params", [

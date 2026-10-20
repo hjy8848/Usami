@@ -136,11 +136,16 @@ def _parse(response, value):
 
 
 class Reflector:
-    def __init__(self, role, client, model: ModelSpec, max_input_chars=400000):
+    def __init__(self, role, client, model: ModelSpec, max_input_chars=400000,
+                 tool_choice: Optional[Literal["auto"]] = None):
         self.role, self.client = role, client
         self.model = ModelSpec.model_validate(model.model_dump(mode="json"))
         self.model_hash = digest(self.model)
         self.max_input_chars = max_input_chars
+        # Thinking-mode Qwen endpoints reject forced function-name tool_choice.
+        # Keep the historical forced behavior as the default; pilots may opt in
+        # to provider-compatible auto selection and still validate the response.
+        self.tool_choice = tool_choice
 
     def reflect(self, value: ReflectionInput) -> ReflectionRecord:
         value = ReflectionInput.model_validate(value.model_dump(mode="json"))
@@ -223,13 +228,18 @@ class Reflector:
             "ADD uses domain_policy.add_domains; domain scope changes require a separate experiment. "
             "Scope tools may only name supplied tools. Trigger has keywords and/or intents arrays. "
             "Skills are declarative text, never code, authority, hidden Oracle access or specific resource IDs. "
+            "Runtime retrieval is deterministic: domain must match, scope.tools must be a subset of available tools, "
+            "and a skill is retrieved only when a keyword is a case-insensitive substring of the initial public task text "
+            "or a trigger intent exactly matches a supplied intent. Choose triggers from customer-visible natural language "
+            "that is present when the skill must first apply; internal tool names do not match unless the customer text "
+            "contains them. Do not rely on a future tool result to activate a skill. "
             "Cite only supplied episode IDs in evidence_ids. No retries or multiple alternatives."
         )
         request = {"model": self.model.model, **copy.deepcopy(self.model.options),
                    "messages": [{"role": "system", "content": instruction}, {"role": "user", "content": content}],
                    "tools": [{"type": "function", "function": {"name": "submit_skill_patch", "description": "Propose exactly one declarative Skill modification.",
                                "parameters": proposal_json_schema(self.role)}}],
-                   "tool_choice": {"type": "function", "function": {"name": "submit_skill_patch"}}}
+                   "tool_choice": self.tool_choice or {"type": "function", "function": {"name": "submit_skill_patch"}}}
         pending = dict(id="g" + str(value.generation) + "." + self.role + ".reflection", role=self.role + "_reflector",
                        model=self.model, base_request=copy.deepcopy(request), request=copy.deepcopy(request))
         try:

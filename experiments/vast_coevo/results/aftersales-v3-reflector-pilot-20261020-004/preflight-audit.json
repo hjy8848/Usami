@@ -1,0 +1,30 @@
+{
+  "status": "PREFLIGHT_VERIFIED",
+  "model_requests_sent": 0,
+  "protocol": "aftersales-v3-verified-error-service-reflection-v2-auto-tool-choice",
+  "input_hash_matches": true,
+  "tool_choice": "auto",
+  "reflection_calls_max": 1,
+  "automatic_retries": 0,
+  "task_count": 3,
+  "all_task_certificates_verified": true,
+  "task_hashes_match_previous_preregistered_pool": true,
+  "tasks": [
+    {
+      "path": "experiments/vast_coevo/results/aftersales-v3-reflector-pilot-20261020-004/tasks/task-01.json",
+      "task_hash": "7463cb6d7fd2c908a4e2be2f92ab56a0fba794c038295f149f6605204ba9b353",
+      "world_hash": "7dc54a47840a34e2bedfa8345d67c515b1bedb0f21666af792f878c1ee43d184"
+    },
+    {
+      "path": "experiments/vast_coevo/results/aftersales-v3-reflector-pilot-20261020-004/tasks/task-02.json",
+      "task_hash": "bcd25cde0a48230f02f353b7a8b4decf7e18876bd6ab5db03b2b92c9f5473223",
+      "world_hash": "55d5bf40646915c23569a1d8511ce2e51d54de4f94edce7a91e0c9986b505341"
+    },
+    {
+      "path": "experiments/vast_coevo/results/aftersales-v3-reflector-pilot-20261020-004/tasks/task-03.json",
+      "task_hash": "457c19a7144884f184ba2ca38608f28b0e68d6483c8412429d81ebe4626b39ff",
+      "world_hash": "41ba5e2c987163f4c7e3975af15944e665072d0a3e266281c83332df5b335433"
+    }
+  ],
+  "source_setup_failure_preserved": true
+}

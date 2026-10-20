@@ -133,27 +133,29 @@ class FixedCompliantCustomer:
             # declarations authorize the actions relevant to that request; an
             # omitted candidate never receives authority from the harness.
             verify_rows = self._ungranted(by_name.get('verify_evidence', []))
-            if verify_rows:
-                selected.append(verify_rows[0]['id'])
-                disclosures['evidence_id'] = self.profile.facts['evidence_id']
+            review_rows = self._ungranted(by_name.get('request_manager_review', []))
             quote_rows = [row for row in by_name.get('quote_resolution', [])
                           if row['params'].get('option') == preference]
             quote_rows = self._ungranted(quote_rows)
-            if quote_rows:
-                selected.append(quote_rows[0]['id'])
-            review_rows = self._ungranted(by_name.get('request_manager_review', []))
-            if review_rows and re.search(r'manager|approval|review', last_service, re.I):
+            return_rows = self._ungranted(by_name.get('schedule_return', []))
+            # Authorize only the next requested write. Earlier versions could
+            # authorize quote preparation before evidence review, then remember
+            # that unused grant as spent and refuse to authorize it later.
+            if verify_rows:
+                selected.append(verify_rows[0]['id'])
+                disclosures['evidence_id'] = self.profile.facts['evidence_id']
+            elif review_rows and re.search(r'manager|approval|review', last_service, re.I):
                 selected.append(review_rows[0]['id'])
-            if (by_name.get('schedule_return') and
+            elif quote_rows:
+                selected.append(quote_rows[0]['id'])
+            elif (return_rows and
                     re.search(r'return|pickup|collection', last_service, re.I) and
                     re.search(r'agreed|required|arrange|schedule', last_service, re.I)):
-                return_rows = self._ungranted(by_name['schedule_return'])
-                if return_rows:
-                    row = return_rows[0]
-                    selected.append(row['id'])
-                    pickup = row['params'].get('pickup_slot')
-                    if pickup is not None:
-                        disclosures['pickup_slot'] = pickup
+                row = return_rows[0]
+                selected.append(row['id'])
+                pickup = row['params'].get('pickup_slot')
+                if pickup is not None:
+                    disclosures['pickup_slot'] = pickup
             if selected:
                 names = ', '.join(sorted({row['action'] for row in actions if row['id'] in selected}))
                 message = 'I explicitly authorize the selected preparation actions for my requested remedy: ' + names + '.'

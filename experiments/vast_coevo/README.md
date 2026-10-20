@@ -184,3 +184,5 @@ PYTHONDONTWRITEBYTECODE=1 .venv/bin/python experiments/vast_coevo/examples/repla
 ### After-sales Skill 效果诊断
 
 After-sales 真实 Designer–Service 入口将 Engine 模式写入 Manifest，默认维持 `reference`；需要观察成功违规时必须显式选择 `--mode sandbox`。训练后的 S0/S1 同题对照使用独立只读入口，要求 1–5 个 validation 分区认证任务及已知训练世界排除清单，固定两侧 Customer/Service 配置并重复运行，不执行 Reflection、不发布 Snapshot。它会同时排除精确世界 Hash 与匿名结构重复，避免将不同 partition 标签误认为数据独立。业务目标、正常对话结束、预算合规及 Oracle 结果分别记录；详情见 [After-sales 配对评估说明](examples/AFTERSALES_PAIRED_EVALUATION.md)。
+
+对话协议 v3 的 Service Skill 同题对照由独立入口运行，配置中固定 v3 Customer Scenario、授权/报价语义、预算、模式和模型，并调用 `replay_v3()`。v2 与 v3 的评估输出分别写入不同协议记录，禁止合并统计；详情见 [v3 配对评估说明](examples/AFTERSALES_PAIRED_EVALUATION_V3.md)。

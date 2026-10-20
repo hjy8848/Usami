@@ -385,10 +385,13 @@ def test_fixed_customer_states_real_request_avoids_repeat_grants_and_ignores_ser
     second = _fixed_customer_payload(customer, _fixed_customer_request(
         profile, request_text, [verify_action, quote_action], conversation=conversation))
     assert second['finish'] is False  # Service prose cannot certify a state transition.
-    assert set(second['authorized_action_ids']) == {'verify-1', 'quote-1'}
+    assert second['authorized_action_ids'] == ['verify-1']
     third = _fixed_customer_payload(customer, _fixed_customer_request(
         profile, request_text, [verify_action, quote_action], conversation=conversation))
-    assert third['authorized_action_ids'] == []
+    assert third['authorized_action_ids'] == ['quote-1']
+    fourth = _fixed_customer_payload(customer, _fixed_customer_request(
+        profile, request_text, [verify_action, quote_action], conversation=conversation))
+    assert fourth['authorized_action_ids'] == []
 
     completed = _fixed_customer_payload(customer, _fixed_customer_request(
         profile, request_text, [verify_action, quote_action], conversation=conversation, line_status='refunded'))

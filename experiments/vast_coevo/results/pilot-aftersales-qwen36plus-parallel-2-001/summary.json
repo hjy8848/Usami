@@ -1,0 +1,63 @@
+{
+  "protocol": "aftersales-real-model-coevolution-v2",
+  "status": "BLOCKED",
+  "date": "2026-10-20",
+  "code_commit": "515784086ef9437c96ee512a2522606a04862d1f",
+  "model": "dashscope/qwen3.6-plus",
+  "parallel_runs": 2,
+  "per_run_max_model_calls": 65,
+  "aggregate_max_model_calls": 130,
+  "max_concurrency": 2,
+  "run_ids": [
+    "pilot-aftersales-qwen36plus-seed1-001",
+    "pilot-aftersales-qwen36plus-seed2-001"
+  ],
+  "runs": [
+    {
+      "seed": 1,
+      "status": "BLOCKED",
+      "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+      "frozen_registration_hash": "200f77794e7f9c5ee739ec946462621f8167224f5e98de9907b024868b7db0fd",
+      "designer_queries": 9,
+      "model_calls_sent": 5,
+      "model_calls_completed": 4,
+      "proposal_attempts": 1,
+      "proposal_timed_out": true,
+      "known_tokens": {"input": 21347, "output": 843, "total": 22190, "complete": false},
+      "service_tasks_completed": 0,
+      "reflection_calls": 0,
+      "skill_patches": 0,
+      "failed_journal_replay_verified": true,
+      "raw_evidence_path": "outputs/pilot-aftersales-qwen36plus-seed1-001/"
+    },
+    {
+      "seed": 2,
+      "status": "BLOCKED",
+      "frozen_world_hash": "f6c3ec9a4178972535bbb6f85d597a92d400bf5fad92cd48987b91311b79b482",
+      "frozen_registration_hash": "52e6a119df46d72cd305b67951fe793256efa4ce2538ef4a63d8e2556a4332a0",
+      "designer_queries": 8,
+      "model_calls_sent": 5,
+      "model_calls_completed": 4,
+      "proposal_attempts": 1,
+      "proposal_timed_out": true,
+      "known_tokens": {"input": 22732, "output": 1336, "total": 24068, "complete": false},
+      "service_tasks_completed": 0,
+      "reflection_calls": 0,
+      "skill_patches": 0,
+      "failed_journal_replay_verified": true,
+      "raw_evidence_path": "outputs/pilot-aftersales-qwen36plus-seed2-001/"
+    }
+  ],
+  "aggregate": {
+    "model_calls_sent": 10,
+    "model_calls_completed": 8,
+    "proposal_timeouts": 2,
+    "known_tokens": {"input": 44079, "output": 2179, "total": 46258, "complete": false},
+    "service_tasks_completed": 0,
+    "reflection_calls": 0,
+    "skill_patches": 0,
+    "business_episode_replays": 0,
+    "failed_journal_replays_verified": 2
+  },
+  "failure": "Both real Designer submission requests timed out at 120 seconds; no automatic retries."
+}

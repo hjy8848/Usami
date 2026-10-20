@@ -1,0 +1,178 @@
+{
+  "files": [
+    {
+      "bytes": 155696,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/designer/task-1-journal.json",
+      "sha256": "6ca10523c7d83cf6eb59b0bfae4ad590548db48172fb1ef2a98fc4f4b6b7068c"
+    },
+    {
+      "bytes": 128,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/failure.json",
+      "sha256": "4d74ae6ce26e93a4b9b1503cbe0d8538711476530de1ab155bee57a87035a5c2"
+    },
+    {
+      "bytes": 176,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/libraries/customer/initial.json",
+      "sha256": "93674ce99c8faa945924f7a1df878a584d4e1870901661a0e55c0c73f2fb262e"
+    },
+    {
+      "bytes": 884,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/libraries/designer/initial.json",
+      "sha256": "7a9377eb6ad4ba7488f0e40ebf6eb960196856a3f6beb03a85ff42a81903bb88"
+    },
+    {
+      "bytes": 686,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/libraries/designer/skills/designer/aftersales.discovery/1.json",
+      "sha256": "e58223e95a6ec8b657ec7ea14f1b20c8acbc555864795a08d29ba9aac74bccfe"
+    },
+    {
+      "bytes": 884,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+      "sha256": "7a9377eb6ad4ba7488f0e40ebf6eb960196856a3f6beb03a85ff42a81903bb88"
+    },
+    {
+      "bytes": 1151,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/libraries/service/initial.json",
+      "sha256": "8ceb7875d04fec75cc691ec169a4b649ff8a97a2b5eda9daaf12c1c33fbe9871"
+    },
+    {
+      "bytes": 955,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/libraries/service/skills/service/aftersales.service-decision/1.json",
+      "sha256": "97e7a1be476b7d4678682ebcc60721bdb016540be99d3da8757dce384714edb5"
+    },
+    {
+      "bytes": 1151,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+      "sha256": "8ceb7875d04fec75cc691ec169a4b649ff8a97a2b5eda9daaf12c1c33fbe9871"
+    },
+    {
+      "bytes": 3485,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/manifest.json",
+      "sha256": "75e889988f82e5c60ae7bebb0635ea5f35139af824d41fbc62ae1965e7dd0770"
+    },
+    {
+      "bytes": 10818,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/model-calls/0001-designer.json",
+      "sha256": "405f85aff852e94b24855f6cb5e62a96d260a716198fb3ed838bc59cdff23c3c"
+    },
+    {
+      "bytes": 18925,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/model-calls/0002-designer.json",
+      "sha256": "c684fd0a5f4171739457e43ecedffb3956fa48e42fd152b4a632e7155a270233"
+    },
+    {
+      "bytes": 27369,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/model-calls/0003-designer.json",
+      "sha256": "c143316a270ae30e1cd4538e4e76a880217c019b297f1ea1fccee8618897c71f"
+    },
+    {
+      "bytes": 32005,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/model-calls/0004-designer.json",
+      "sha256": "bb0e60051cabb84ed012b210c163e01dc3306734eb402a1928b2c61f6e2dd899"
+    },
+    {
+      "bytes": 46490,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/model-calls/0005-designer.json",
+      "sha256": "91bdad82de7a24335f9491d4bcfb6b5772a2d43dec815f61c339ff50bea5a71d"
+    },
+    {
+      "bytes": 47448,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed1-001/world/frozen_world.json",
+      "sha256": "df0764cb54c14cb1414d1f78f65dd51e51ccc54ef24ca28e514c398c94821373"
+    },
+    {
+      "bytes": 172966,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/designer/task-1-journal.json",
+      "sha256": "3068c0cc5475fd7bbcb5bdf776d1cf99e39afad42cf05b784ebd20c733d4d7af"
+    },
+    {
+      "bytes": 128,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/failure.json",
+      "sha256": "4d74ae6ce26e93a4b9b1503cbe0d8538711476530de1ab155bee57a87035a5c2"
+    },
+    {
+      "bytes": 176,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/libraries/customer/initial.json",
+      "sha256": "93674ce99c8faa945924f7a1df878a584d4e1870901661a0e55c0c73f2fb262e"
+    },
+    {
+      "bytes": 884,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/libraries/designer/initial.json",
+      "sha256": "7a9377eb6ad4ba7488f0e40ebf6eb960196856a3f6beb03a85ff42a81903bb88"
+    },
+    {
+      "bytes": 686,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/libraries/designer/skills/designer/aftersales.discovery/1.json",
+      "sha256": "e58223e95a6ec8b657ec7ea14f1b20c8acbc555864795a08d29ba9aac74bccfe"
+    },
+    {
+      "bytes": 884,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+      "sha256": "7a9377eb6ad4ba7488f0e40ebf6eb960196856a3f6beb03a85ff42a81903bb88"
+    },
+    {
+      "bytes": 1151,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/libraries/service/initial.json",
+      "sha256": "8ceb7875d04fec75cc691ec169a4b649ff8a97a2b5eda9daaf12c1c33fbe9871"
+    },
+    {
+      "bytes": 955,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/libraries/service/skills/service/aftersales.service-decision/1.json",
+      "sha256": "97e7a1be476b7d4678682ebcc60721bdb016540be99d3da8757dce384714edb5"
+    },
+    {
+      "bytes": 1151,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+      "sha256": "8ceb7875d04fec75cc691ec169a4b649ff8a97a2b5eda9daaf12c1c33fbe9871"
+    },
+    {
+      "bytes": 3487,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/manifest.json",
+      "sha256": "4f6eebe8702ec78e97b852197bb735757fb56ab678aebe6500e153a0d2ea2cde"
+    },
+    {
+      "bytes": 10916,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/model-calls/0001-designer.json",
+      "sha256": "89bbcf5a9b80ed220c665052bf2137dc155d8c600bc49dcbab85e7c9c6f8a8b3"
+    },
+    {
+      "bytes": 18637,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/model-calls/0002-designer.json",
+      "sha256": "260bde1cbb0e3916b391f5b08698228da23fdf721246ea8f7c696620879440de"
+    },
+    {
+      "bytes": 32427,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/model-calls/0003-designer.json",
+      "sha256": "ff235153bcd01644b7217d9224deb2faa662f1f532f9ce43a17432edf0bd83e7"
+    },
+    {
+      "bytes": 33685,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/model-calls/0004-designer.json",
+      "sha256": "e927a175bdc39b2be3faa93908764e0d16a707e818921e82c26271c35e9b119d"
+    },
+    {
+      "bytes": 52788,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/model-calls/0005-designer.json",
+      "sha256": "50c24944aa7140ad9047d12a0f5bccd9250c04755249b3956c72ead634a96af7"
+    },
+    {
+      "bytes": 31979,
+      "path": "outputs/pilot-aftersales-qwen36plus-seed2-001/world/frozen_world.json",
+      "sha256": "440b7bd0da1a040be91cdd0b89dba0a34bdc9a50e5b6fc9c6ace34141390e492"
+    }
+  ],
+  "protocol": "aftersales-pilot-evidence-index-v1",
+  "runs": [
+    {
+      "bytes": 348251,
+      "files": 16,
+      "root": "outputs/pilot-aftersales-qwen36plus-seed1-001"
+    },
+    {
+      "bytes": 362900,
+      "files": 16,
+      "root": "outputs/pilot-aftersales-qwen36plus-seed2-001"
+    }
+  ],
+  "tree_digest": "0a11474e9718ddf03365c499ed3a62871435e816a9e13cc54583bd91cae99aa3"
+}

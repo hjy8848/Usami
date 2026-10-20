@@ -1,0 +1,35 @@
+{
+  "record_type": "reflection-preflight-attempt",
+  "attempt_id": "credential-check-001",
+  "checked_at_utc": "2026-10-20T13:07:01.407963+00:00",
+  "status": "BLOCKED_BEFORE_REQUEST",
+  "model_request_sent": false,
+  "llm_calls": 0,
+  "credential_environment_presence": {
+    "USAMI_LLM_API_KEY": false,
+    "OPENAI_API_KEY": false,
+    "USAMI_LLM_KEYCHAIN_SERVICE": false,
+    "USAMI_LLM_KEYCHAIN_ACCOUNT": false
+  },
+  "known_keychain_service_queries": [
+    "LiteLLM",
+    "litellm",
+    "Lite-LLM",
+    "litellm-api-key",
+    "InferAI",
+    "inferai"
+  ],
+  "known_keychain_account_queries": [
+    "litellm-api-key",
+    "api-key",
+    "default",
+    "LiteLLM",
+    "litellm",
+    "openai-api-key",
+    "spring"
+  ],
+  "known_keychain_matches": 0,
+  "metadata_enumeration": "incomplete: security dump-keychain returned no metadata; SecItemCopyMatching returned errSecParam; UI query unavailable",
+  "retry_policy": "no model retry occurred; the pre-registered one Reflection call remains unused",
+  "preregistration_hash": "089367f96d8a60a427e1609a2dcaaaa3b935bb4a833622adbe1b3967378eb161"
+}

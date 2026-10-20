@@ -27,7 +27,7 @@ CUSTOMER_SELF_CHECKS = (
 
 
 class ReflectionInput(FrozenModel):
-    schema_version: Literal[1] = 1
+    schema_version: Literal[1, 2] = 1
     generation: int = Field(ge=0, strict=True)
     role: SkillRole
     library: LibrarySnapshot
@@ -35,15 +35,26 @@ class ReflectionInput(FrozenModel):
     allowed_tools: Tuple[str, ...] = ()
     domain_policy: Optional[DomainPolicy] = Field(default=None, exclude_if=lambda value: value is None)
     interaction_views: Optional[Tuple[InteractionEvidenceView, ...]] = Field(default=None, exclude_if=lambda value: value is None)
+    # Validation evidence may enter Reflection only after the pilot explicitly
+    # consumes it as training data. Held-out evidence remains forbidden.
+    consumed_validation_evidence_ids: Tuple[str, ...] = Field(default=(), exclude_if=lambda value: not value)
     public_policy: str = ""
     boundaries: str = "Use only existing tools; exact Customer authorization precedes every write."
 
     @model_validator(mode="after")
-    def development_only(self):
+    def training_evidence_only(self):
         if self.library.role != self.role:
             raise ValueError("reflection library role mismatch")
-        if any(e.config.partition != "development" for e in self.evidence):
+        if any(e.config.partition == "heldout" for e in self.evidence):
             raise ValueError("heldout evidence cannot enter Reflection")
+        validation_ids = tuple(e.episode_id for e in self.evidence if e.config.partition == "validation")
+        consumed = self.consumed_validation_evidence_ids
+        if len(set(consumed)) != len(consumed):
+            raise ValueError("consumed validation evidence IDs must be unique")
+        if validation_ids != consumed:
+            raise ValueError("validation evidence must be explicitly identified as consumed training data")
+        if validation_ids and self.schema_version != 2:
+            raise ValueError("consumed validation evidence requires ReflectionInput schema v2")
         if any(not e.replay.verified for e in self.evidence):
             raise ValueError("reflection requires replay-verified evidence")
         if self.interaction_views is not None:

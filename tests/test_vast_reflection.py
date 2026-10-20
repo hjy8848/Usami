@@ -118,6 +118,19 @@ def test_reflection_input_blocks_heldout_and_unverified_evidence(tmp_path):
         ReflectionInput(generation=0, role="customer", library=empty_snapshot("customer"), evidence=(evidence(tmp_path, verified=False),))
 
 
+def test_validation_evidence_must_be_explicitly_consumed_before_reflection(tmp_path):
+    source = evidence(tmp_path, "validation")
+    with pytest.raises(ValidationError, match="explicitly identified"):
+        ReflectionInput(generation=1, role="service", library=empty_snapshot("service"), evidence=(source,))
+    consumed = ReflectionInput(schema_version=2, generation=1, role="service",
+        library=empty_snapshot("service"), evidence=(source,),
+        consumed_validation_evidence_ids=(source.episode_id,))
+    assert consumed.consumed_validation_evidence_ids == (source.episode_id,)
+    with pytest.raises(ValidationError, match="schema v2"):
+        ReflectionInput(generation=1, role="service", library=empty_snapshot("service"),
+            evidence=(source,), consumed_validation_evidence_ids=(source.episode_id,))
+
+
 def test_budget_and_provider_failure_are_audited_without_retry(tmp_path):
     value = reflection_input(tmp_path)
     client = Client(error=RuntimeError("provider unavailable"))

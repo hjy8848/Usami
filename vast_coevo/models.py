@@ -10,7 +10,7 @@ from .schema import FrozenModel, digest
 from .skills.models import Hash, SkillRole
 from .skills.retriever import SkillHit
 
-Partition = Literal["development", "heldout"]
+Partition = Literal["development", "validation", "heldout"]
 Classification = Literal["successful_business_violation", "rejected_invalid_attempt", "authorization_only", "false_rejection", "legal_execution", "unscored"]
 
 

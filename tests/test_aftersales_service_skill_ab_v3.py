@@ -103,7 +103,7 @@ def test_v3_pair_runner_uses_scenario_driver_replays_and_never_reflects(tmp_path
     assert len(result["episodes"]) == 2
     assert all(row["execution_status"] == "customer_finished" for row in result["episodes"])
     assert all(row["replay"]["verified"] for row in result["episodes"])
-    assert all(row["customer_skill_injection"]["all_service_requests_contained_context"]
+    assert all(row["service_skill_injection"]["all_service_requests_contained_context"]
                for row in result["episodes"])
     assert all(row["customer_fidelity_status"] in {"pass", "needs_review"}
                for row in result["episodes"])

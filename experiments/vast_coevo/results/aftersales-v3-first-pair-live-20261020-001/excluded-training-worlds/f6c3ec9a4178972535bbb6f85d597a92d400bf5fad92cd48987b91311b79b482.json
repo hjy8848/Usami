@@ -1,0 +1,1589 @@
+{
+  "spec": {
+    "domain": "aftersales",
+    "seed": 2,
+    "generator_version": "aftersales-generator-v1",
+    "rules_version": "aftersales-0.1.0",
+    "generator_config": {},
+    "partition": "train",
+    "generation_mode": "unconditioned"
+  },
+  "world": {
+    "applied_events": [],
+    "approvals": {},
+    "cases": {},
+    "clock": "2026-01-15T12:00:00Z",
+    "domain": "aftersales",
+    "evidence": {
+      "photo_u0_order0_line0": {
+        "holder_id": "u0",
+        "id": "photo_u0_order0_line0",
+        "issue": "missing_parts",
+        "line_id": "u0_order0_line0",
+        "order_id": "u0_order0",
+        "simulated_valid": false
+      },
+      "photo_u0_order0_line1": {
+        "holder_id": "u0",
+        "id": "photo_u0_order0_line1",
+        "issue": "wrong_item",
+        "line_id": "u0_order0_line1",
+        "order_id": "u0_order0",
+        "simulated_valid": true
+      },
+      "photo_u0_order1_line0": {
+        "holder_id": "u0",
+        "id": "photo_u0_order1_line0",
+        "issue": "wrong_item",
+        "line_id": "u0_order1_line0",
+        "order_id": "u0_order1",
+        "simulated_valid": true
+      },
+      "photo_u1_order0_line0": {
+        "holder_id": "u1",
+        "id": "photo_u1_order0_line0",
+        "issue": "damaged",
+        "line_id": "u1_order0_line0",
+        "order_id": "u1_order0",
+        "simulated_valid": true
+      },
+      "photo_u1_order1_line0": {
+        "holder_id": "u1",
+        "id": "photo_u1_order1_line0",
+        "issue": "wrong_item",
+        "line_id": "u1_order1_line0",
+        "order_id": "u1_order1",
+        "simulated_valid": false
+      },
+      "photo_u1_order1_line1": {
+        "holder_id": "u1",
+        "id": "photo_u1_order1_line1",
+        "issue": "damaged",
+        "line_id": "u1_order1_line1",
+        "order_id": "u1_order1",
+        "simulated_valid": true
+      },
+      "photo_u1_order1_line2": {
+        "holder_id": "u1",
+        "id": "photo_u1_order1_line2",
+        "issue": "wrong_item",
+        "line_id": "u1_order1_line2",
+        "order_id": "u1_order1",
+        "simulated_valid": true
+      },
+      "photo_u1_order2_line0": {
+        "holder_id": "u1",
+        "id": "photo_u1_order2_line0",
+        "issue": "wrong_item",
+        "line_id": "u1_order2_line0",
+        "order_id": "u1_order2",
+        "simulated_valid": false
+      },
+      "photo_u1_order2_line1": {
+        "holder_id": "u1",
+        "id": "photo_u1_order2_line1",
+        "issue": "wrong_item",
+        "line_id": "u1_order2_line1",
+        "order_id": "u1_order2",
+        "simulated_valid": true
+      },
+      "photo_u1_order3_line0": {
+        "holder_id": "u1",
+        "id": "photo_u1_order3_line0",
+        "issue": "wrong_item",
+        "line_id": "u1_order3_line0",
+        "order_id": "u1_order3",
+        "simulated_valid": true
+      },
+      "photo_u2_order0_line0": {
+        "holder_id": "u2",
+        "id": "photo_u2_order0_line0",
+        "issue": "damaged",
+        "line_id": "u2_order0_line0",
+        "order_id": "u2_order0",
+        "simulated_valid": true
+      },
+      "photo_u2_order1_line0": {
+        "holder_id": "u2",
+        "id": "photo_u2_order1_line0",
+        "issue": "wrong_item",
+        "line_id": "u2_order1_line0",
+        "order_id": "u2_order1",
+        "simulated_valid": true
+      },
+      "photo_u3_order0_line0": {
+        "holder_id": "u3",
+        "id": "photo_u3_order0_line0",
+        "issue": "damaged",
+        "line_id": "u3_order0_line0",
+        "order_id": "u3_order0",
+        "simulated_valid": true
+      },
+      "photo_u3_order0_line1": {
+        "holder_id": "u3",
+        "id": "photo_u3_order0_line1",
+        "issue": "wrong_item",
+        "line_id": "u3_order0_line1",
+        "order_id": "u3_order0",
+        "simulated_valid": true
+      },
+      "photo_u3_order0_line2": {
+        "holder_id": "u3",
+        "id": "photo_u3_order0_line2",
+        "issue": "wrong_item",
+        "line_id": "u3_order0_line2",
+        "order_id": "u3_order0",
+        "simulated_valid": true
+      },
+      "photo_u3_order1_line0": {
+        "holder_id": "u3",
+        "id": "photo_u3_order1_line0",
+        "issue": "missing_parts",
+        "line_id": "u3_order1_line0",
+        "order_id": "u3_order1",
+        "simulated_valid": false
+      },
+      "photo_u3_order1_line1": {
+        "holder_id": "u3",
+        "id": "photo_u3_order1_line1",
+        "issue": "damaged",
+        "line_id": "u3_order1_line1",
+        "order_id": "u3_order1",
+        "simulated_valid": true
+      },
+      "photo_u3_order2_line0": {
+        "holder_id": "u3",
+        "id": "photo_u3_order2_line0",
+        "issue": "wrong_item",
+        "line_id": "u3_order2_line0",
+        "order_id": "u3_order2",
+        "simulated_valid": true
+      },
+      "photo_u3_order2_line1": {
+        "holder_id": "u3",
+        "id": "photo_u3_order2_line1",
+        "issue": "missing_parts",
+        "line_id": "u3_order2_line1",
+        "order_id": "u3_order2",
+        "simulated_valid": true
+      },
+      "photo_u3_order2_line2": {
+        "holder_id": "u3",
+        "id": "photo_u3_order2_line2",
+        "issue": "damaged",
+        "line_id": "u3_order2_line2",
+        "order_id": "u3_order2",
+        "simulated_valid": true
+      }
+    },
+    "external_events": {
+      "manager_review_u0_order0_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u0_order0_line0",
+        "kind": "manager_review",
+        "line_id": "u0_order0_line0",
+        "outcome": "approved"
+      },
+      "manager_review_u0_order0_line1": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u0_order0_line1",
+        "kind": "manager_review",
+        "line_id": "u0_order0_line1",
+        "outcome": "approved"
+      },
+      "manager_review_u0_order1_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u0_order1_line0",
+        "kind": "manager_review",
+        "line_id": "u0_order1_line0",
+        "outcome": "denied"
+      },
+      "manager_review_u1_order0_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u1_order0_line0",
+        "kind": "manager_review",
+        "line_id": "u1_order0_line0",
+        "outcome": "approved"
+      },
+      "manager_review_u1_order1_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u1_order1_line0",
+        "kind": "manager_review",
+        "line_id": "u1_order1_line0",
+        "outcome": "denied"
+      },
+      "manager_review_u1_order1_line1": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u1_order1_line1",
+        "kind": "manager_review",
+        "line_id": "u1_order1_line1",
+        "outcome": "approved"
+      },
+      "manager_review_u1_order1_line2": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u1_order1_line2",
+        "kind": "manager_review",
+        "line_id": "u1_order1_line2",
+        "outcome": "approved"
+      },
+      "manager_review_u1_order2_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u1_order2_line0",
+        "kind": "manager_review",
+        "line_id": "u1_order2_line0",
+        "outcome": "denied"
+      },
+      "manager_review_u1_order2_line1": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u1_order2_line1",
+        "kind": "manager_review",
+        "line_id": "u1_order2_line1",
+        "outcome": "approved"
+      },
+      "manager_review_u1_order3_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u1_order3_line0",
+        "kind": "manager_review",
+        "line_id": "u1_order3_line0",
+        "outcome": "denied"
+      },
+      "manager_review_u2_order0_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u2_order0_line0",
+        "kind": "manager_review",
+        "line_id": "u2_order0_line0",
+        "outcome": "approved"
+      },
+      "manager_review_u2_order1_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u2_order1_line0",
+        "kind": "manager_review",
+        "line_id": "u2_order1_line0",
+        "outcome": "approved"
+      },
+      "manager_review_u3_order0_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u3_order0_line0",
+        "kind": "manager_review",
+        "line_id": "u3_order0_line0",
+        "outcome": "approved"
+      },
+      "manager_review_u3_order0_line1": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u3_order0_line1",
+        "kind": "manager_review",
+        "line_id": "u3_order0_line1",
+        "outcome": "approved"
+      },
+      "manager_review_u3_order0_line2": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u3_order0_line2",
+        "kind": "manager_review",
+        "line_id": "u3_order0_line2",
+        "outcome": "denied"
+      },
+      "manager_review_u3_order1_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u3_order1_line0",
+        "kind": "manager_review",
+        "line_id": "u3_order1_line0",
+        "outcome": "approved"
+      },
+      "manager_review_u3_order1_line1": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u3_order1_line1",
+        "kind": "manager_review",
+        "line_id": "u3_order1_line1",
+        "outcome": "approved"
+      },
+      "manager_review_u3_order2_line0": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u3_order2_line0",
+        "kind": "manager_review",
+        "line_id": "u3_order2_line0",
+        "outcome": "approved"
+      },
+      "manager_review_u3_order2_line1": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u3_order2_line1",
+        "kind": "manager_review",
+        "line_id": "u3_order2_line1",
+        "outcome": "approved"
+      },
+      "manager_review_u3_order2_line2": {
+        "at": "2026-01-15T13:00:00Z",
+        "id": "manager_review_u3_order2_line2",
+        "kind": "manager_review",
+        "line_id": "u3_order2_line2",
+        "outcome": "approved"
+      },
+      "return_received_u0_order0_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u0_order0_line0",
+        "kind": "return_received",
+        "line_id": "u0_order0_line0",
+        "outcome": "missing"
+      },
+      "return_received_u0_order0_line1": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u0_order0_line1",
+        "kind": "return_received",
+        "line_id": "u0_order0_line1",
+        "outcome": "received"
+      },
+      "return_received_u0_order1_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u0_order1_line0",
+        "kind": "return_received",
+        "line_id": "u0_order1_line0",
+        "outcome": "received"
+      },
+      "return_received_u1_order0_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u1_order0_line0",
+        "kind": "return_received",
+        "line_id": "u1_order0_line0",
+        "outcome": "missing"
+      },
+      "return_received_u1_order1_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u1_order1_line0",
+        "kind": "return_received",
+        "line_id": "u1_order1_line0",
+        "outcome": "received"
+      },
+      "return_received_u1_order1_line1": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u1_order1_line1",
+        "kind": "return_received",
+        "line_id": "u1_order1_line1",
+        "outcome": "received"
+      },
+      "return_received_u1_order1_line2": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u1_order1_line2",
+        "kind": "return_received",
+        "line_id": "u1_order1_line2",
+        "outcome": "received"
+      },
+      "return_received_u1_order2_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u1_order2_line0",
+        "kind": "return_received",
+        "line_id": "u1_order2_line0",
+        "outcome": "missing"
+      },
+      "return_received_u1_order2_line1": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u1_order2_line1",
+        "kind": "return_received",
+        "line_id": "u1_order2_line1",
+        "outcome": "received"
+      },
+      "return_received_u1_order3_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u1_order3_line0",
+        "kind": "return_received",
+        "line_id": "u1_order3_line0",
+        "outcome": "received"
+      },
+      "return_received_u2_order0_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u2_order0_line0",
+        "kind": "return_received",
+        "line_id": "u2_order0_line0",
+        "outcome": "missing"
+      },
+      "return_received_u2_order1_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u2_order1_line0",
+        "kind": "return_received",
+        "line_id": "u2_order1_line0",
+        "outcome": "missing"
+      },
+      "return_received_u3_order0_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u3_order0_line0",
+        "kind": "return_received",
+        "line_id": "u3_order0_line0",
+        "outcome": "missing"
+      },
+      "return_received_u3_order0_line1": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u3_order0_line1",
+        "kind": "return_received",
+        "line_id": "u3_order0_line1",
+        "outcome": "received"
+      },
+      "return_received_u3_order0_line2": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u3_order0_line2",
+        "kind": "return_received",
+        "line_id": "u3_order0_line2",
+        "outcome": "missing"
+      },
+      "return_received_u3_order1_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u3_order1_line0",
+        "kind": "return_received",
+        "line_id": "u3_order1_line0",
+        "outcome": "received"
+      },
+      "return_received_u3_order1_line1": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u3_order1_line1",
+        "kind": "return_received",
+        "line_id": "u3_order1_line1",
+        "outcome": "received"
+      },
+      "return_received_u3_order2_line0": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u3_order2_line0",
+        "kind": "return_received",
+        "line_id": "u3_order2_line0",
+        "outcome": "missing"
+      },
+      "return_received_u3_order2_line1": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u3_order2_line1",
+        "kind": "return_received",
+        "line_id": "u3_order2_line1",
+        "outcome": "missing"
+      },
+      "return_received_u3_order2_line2": {
+        "at": "2026-01-17T12:00:00Z",
+        "id": "return_received_u3_order2_line2",
+        "kind": "return_received",
+        "line_id": "u3_order2_line2",
+        "outcome": "missing"
+      }
+    },
+    "interaction": {
+      "commitments": {},
+      "consents": [],
+      "identity": "",
+      "known_facts": {},
+      "preferences": {},
+      "revision": 0
+    },
+    "lines": {
+      "u0_order0_line0": {
+        "id": "u0_order0_line0",
+        "order_id": "u0_order0",
+        "product_id": "m0_product0",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 6000
+      },
+      "u0_order0_line1": {
+        "id": "u0_order0_line1",
+        "order_id": "u0_order0",
+        "product_id": "m0_product1",
+        "quantity": 1,
+        "status": "unresolved",
+        "unit_price_cents": 2000
+      },
+      "u0_order1_line0": {
+        "id": "u0_order1_line0",
+        "order_id": "u0_order1",
+        "product_id": "m0_product3",
+        "quantity": 1,
+        "status": "unresolved",
+        "unit_price_cents": 6000
+      },
+      "u1_order0_line0": {
+        "id": "u1_order0_line0",
+        "order_id": "u1_order0",
+        "product_id": "m1_product1",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 2000
+      },
+      "u1_order1_line0": {
+        "id": "u1_order1_line0",
+        "order_id": "u1_order1",
+        "product_id": "m1_product0",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 800
+      },
+      "u1_order1_line1": {
+        "id": "u1_order1_line1",
+        "order_id": "u1_order1",
+        "product_id": "m1_product3",
+        "quantity": 1,
+        "status": "unresolved",
+        "unit_price_cents": 800
+      },
+      "u1_order1_line2": {
+        "id": "u1_order1_line2",
+        "order_id": "u1_order1",
+        "product_id": "m1_product2",
+        "quantity": 1,
+        "status": "unresolved",
+        "unit_price_cents": 2000
+      },
+      "u1_order2_line0": {
+        "id": "u1_order2_line0",
+        "order_id": "u1_order2",
+        "product_id": "m1_product0",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 800
+      },
+      "u1_order2_line1": {
+        "id": "u1_order2_line1",
+        "order_id": "u1_order2",
+        "product_id": "m1_product4",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 6000
+      },
+      "u1_order3_line0": {
+        "id": "u1_order3_line0",
+        "order_id": "u1_order3",
+        "product_id": "m0_product0",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 6000
+      },
+      "u2_order0_line0": {
+        "id": "u2_order0_line0",
+        "order_id": "u2_order0",
+        "product_id": "m0_product1",
+        "quantity": 1,
+        "status": "unresolved",
+        "unit_price_cents": 2000
+      },
+      "u2_order1_line0": {
+        "id": "u2_order1_line0",
+        "order_id": "u2_order1",
+        "product_id": "m0_product1",
+        "quantity": 1,
+        "status": "unresolved",
+        "unit_price_cents": 800
+      },
+      "u3_order0_line0": {
+        "id": "u3_order0_line0",
+        "order_id": "u3_order0",
+        "product_id": "m1_product3",
+        "quantity": 1,
+        "status": "unresolved",
+        "unit_price_cents": 800
+      },
+      "u3_order0_line1": {
+        "id": "u3_order0_line1",
+        "order_id": "u3_order0",
+        "product_id": "m1_product2",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 800
+      },
+      "u3_order0_line2": {
+        "id": "u3_order0_line2",
+        "order_id": "u3_order0",
+        "product_id": "m1_product0",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 2000
+      },
+      "u3_order1_line0": {
+        "id": "u3_order1_line0",
+        "order_id": "u3_order1",
+        "product_id": "m1_product3",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 2000
+      },
+      "u3_order1_line1": {
+        "id": "u3_order1_line1",
+        "order_id": "u3_order1",
+        "product_id": "m1_product0",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 2000
+      },
+      "u3_order2_line0": {
+        "id": "u3_order2_line0",
+        "order_id": "u3_order2",
+        "product_id": "m1_product3",
+        "quantity": 1,
+        "status": "unresolved",
+        "unit_price_cents": 6000
+      },
+      "u3_order2_line1": {
+        "id": "u3_order2_line1",
+        "order_id": "u3_order2",
+        "product_id": "m1_product4",
+        "quantity": 2,
+        "status": "unresolved",
+        "unit_price_cents": 800
+      },
+      "u3_order2_line2": {
+        "id": "u3_order2_line2",
+        "order_id": "u3_order2",
+        "product_id": "m1_product1",
+        "quantity": 1,
+        "status": "unresolved",
+        "unit_price_cents": 2000
+      }
+    },
+    "merchants": {
+      "m0": {
+        "id": "m0",
+        "name": "Merchant 0",
+        "refund_approval_limit_cents": 1500
+      },
+      "m1": {
+        "id": "m1",
+        "name": "Merchant 1",
+        "refund_approval_limit_cents": 20000
+      }
+    },
+    "orders": {
+      "u0_order0": {
+        "customer_id": "u0",
+        "delivered_at": "2026-01-14T12:00:00Z",
+        "id": "u0_order0",
+        "merchant_id": "m0",
+        "paid_cents": 14000,
+        "payment_channel": "original_u0",
+        "status": "delivered"
+      },
+      "u0_order1": {
+        "customer_id": "u0",
+        "delivered_at": "2025-12-15T12:00:00Z",
+        "id": "u0_order1",
+        "merchant_id": "m0",
+        "paid_cents": 6000,
+        "payment_channel": "original_u0",
+        "status": "delivered"
+      },
+      "u1_order0": {
+        "customer_id": "u1",
+        "delivered_at": "2025-12-15T12:00:00Z",
+        "id": "u1_order0",
+        "merchant_id": "m1",
+        "paid_cents": 4000,
+        "payment_channel": "original_u1",
+        "status": "delivered"
+      },
+      "u1_order1": {
+        "customer_id": "u1",
+        "delivered_at": "2025-12-31T12:00:00Z",
+        "id": "u1_order1",
+        "merchant_id": "m1",
+        "paid_cents": 4400,
+        "payment_channel": "original_u1",
+        "status": "delivered"
+      },
+      "u1_order2": {
+        "customer_id": "u1",
+        "delivered_at": "2025-12-15T12:00:00Z",
+        "id": "u1_order2",
+        "merchant_id": "m1",
+        "paid_cents": 13600,
+        "payment_channel": "original_u1",
+        "status": "delivered"
+      },
+      "u1_order3": {
+        "customer_id": "u1",
+        "delivered_at": null,
+        "id": "u1_order3",
+        "merchant_id": "m0",
+        "paid_cents": 12000,
+        "payment_channel": "original_u1",
+        "status": "processing"
+      },
+      "u2_order0": {
+        "customer_id": "u2",
+        "delivered_at": null,
+        "id": "u2_order0",
+        "merchant_id": "m0",
+        "paid_cents": 2000,
+        "payment_channel": "original_u2",
+        "status": "processing"
+      },
+      "u2_order1": {
+        "customer_id": "u2",
+        "delivered_at": "2026-01-12T12:00:00Z",
+        "id": "u2_order1",
+        "merchant_id": "m0",
+        "paid_cents": 800,
+        "payment_channel": "original_u2",
+        "status": "delivered"
+      },
+      "u3_order0": {
+        "customer_id": "u3",
+        "delivered_at": null,
+        "id": "u3_order0",
+        "merchant_id": "m1",
+        "paid_cents": 6400,
+        "payment_channel": "original_u3",
+        "status": "processing"
+      },
+      "u3_order1": {
+        "customer_id": "u3",
+        "delivered_at": "2026-01-12T12:00:00Z",
+        "id": "u3_order1",
+        "merchant_id": "m1",
+        "paid_cents": 8000,
+        "payment_channel": "original_u3",
+        "status": "delivered"
+      },
+      "u3_order2": {
+        "customer_id": "u3",
+        "delivered_at": null,
+        "id": "u3_order2",
+        "merchant_id": "m1",
+        "paid_cents": 9600,
+        "payment_channel": "original_u3",
+        "status": "processing"
+      }
+    },
+    "products": {
+      "m0_product0": {
+        "id": "m0_product0",
+        "merchant_id": "m0",
+        "name": "Item 0",
+        "opening_stock": 6,
+        "replacement_days": 1,
+        "return_days": 30,
+        "return_required": false,
+        "returnable": true,
+        "stock": 6
+      },
+      "m0_product1": {
+        "id": "m0_product1",
+        "merchant_id": "m0",
+        "name": "Item 1",
+        "opening_stock": 0,
+        "replacement_days": 1,
+        "return_days": 14,
+        "return_required": false,
+        "returnable": true,
+        "stock": 0
+      },
+      "m0_product2": {
+        "id": "m0_product2",
+        "merchant_id": "m0",
+        "name": "Item 2",
+        "opening_stock": 5,
+        "replacement_days": 3,
+        "return_days": 7,
+        "return_required": false,
+        "returnable": true,
+        "stock": 5
+      },
+      "m0_product3": {
+        "id": "m0_product3",
+        "merchant_id": "m0",
+        "name": "Item 3",
+        "opening_stock": 1,
+        "replacement_days": 1,
+        "return_days": 7,
+        "return_required": true,
+        "returnable": false,
+        "stock": 1
+      },
+      "m0_product4": {
+        "id": "m0_product4",
+        "merchant_id": "m0",
+        "name": "Item 4",
+        "opening_stock": 3,
+        "replacement_days": 3,
+        "return_days": 14,
+        "return_required": true,
+        "returnable": true,
+        "stock": 3
+      },
+      "m1_product0": {
+        "id": "m1_product0",
+        "merchant_id": "m1",
+        "name": "Item 0",
+        "opening_stock": 6,
+        "replacement_days": 7,
+        "return_days": 7,
+        "return_required": false,
+        "returnable": true,
+        "stock": 6
+      },
+      "m1_product1": {
+        "id": "m1_product1",
+        "merchant_id": "m1",
+        "name": "Item 1",
+        "opening_stock": 5,
+        "replacement_days": 1,
+        "return_days": 7,
+        "return_required": true,
+        "returnable": true,
+        "stock": 5
+      },
+      "m1_product2": {
+        "id": "m1_product2",
+        "merchant_id": "m1",
+        "name": "Item 2",
+        "opening_stock": 2,
+        "replacement_days": 7,
+        "return_days": 30,
+        "return_required": false,
+        "returnable": true,
+        "stock": 2
+      },
+      "m1_product3": {
+        "id": "m1_product3",
+        "merchant_id": "m1",
+        "name": "Item 3",
+        "opening_stock": 1,
+        "replacement_days": 3,
+        "return_days": 30,
+        "return_required": true,
+        "returnable": false,
+        "stock": 1
+      },
+      "m1_product4": {
+        "id": "m1_product4",
+        "merchant_id": "m1",
+        "name": "Item 4",
+        "opening_stock": 4,
+        "replacement_days": 1,
+        "return_days": 7,
+        "return_required": true,
+        "returnable": true,
+        "stock": 4
+      }
+    },
+    "profiles": {
+      "profile_u0_order0_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-18T12:00:00+00:00",
+          "evidence_id": "photo_u0_order0_line0",
+          "issue": "missing_parts",
+          "line_id": "u0_order0_line0",
+          "order_id": "u0_order0",
+          "pickup_slot": "morning"
+        },
+        "identity": "u0",
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "ada01f18a245666b8885fc20668302134854903cd8bfcfeab4c9b8d7b383d2a3",
+        "protected_objects": [
+          "u0_order0"
+        ]
+      },
+      "profile_u0_order0_line1": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-16T12:00:00+00:00",
+          "evidence_id": "photo_u0_order0_line1",
+          "issue": "wrong_item",
+          "line_id": "u0_order0_line1",
+          "order_id": "u0_order0",
+          "pickup_slot": "morning"
+        },
+        "identity": "u0",
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "34b3ae9db9ecae3f3b54ea5cb5fc2925c40e2a5ab8cab6d3f9b8b9b349dd9a19",
+        "protected_objects": [
+          "u0_order0"
+        ]
+      },
+      "profile_u0_order1_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-16T12:00:00+00:00",
+          "evidence_id": "photo_u0_order1_line0",
+          "issue": "wrong_item",
+          "line_id": "u0_order1_line0",
+          "order_id": "u0_order1",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u0",
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "b49024eea950f2f0d4297134f03844abaf6d1ec5dd0381f5ff494c2a08e71a07",
+        "protected_objects": [
+          "u0_order1"
+        ]
+      },
+      "profile_u1_order0_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-18T12:00:00+00:00",
+          "evidence_id": "photo_u1_order0_line0",
+          "issue": "damaged",
+          "line_id": "u1_order0_line0",
+          "order_id": "u1_order0",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u1",
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "d4f8120f0acd302afc5a9bace5b812617d86ec741279900a8234218b484e8d95",
+        "protected_objects": [
+          "u1_order0"
+        ]
+      },
+      "profile_u1_order1_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u1_order1_line0",
+          "issue": "wrong_item",
+          "line_id": "u1_order1_line0",
+          "order_id": "u1_order1",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u1",
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "0442d45ad28f295411676c3b6ec2281a6ac269895e2b1aed71ab999e0377adcd",
+        "protected_objects": [
+          "u1_order1"
+        ]
+      },
+      "profile_u1_order1_line1": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u1_order1_line1",
+          "issue": "damaged",
+          "line_id": "u1_order1_line1",
+          "order_id": "u1_order1",
+          "pickup_slot": "morning"
+        },
+        "identity": "u1",
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "32de8946344f9be7514783d7f131721086fdc30866089005f390588cbbf3aa6d",
+        "protected_objects": [
+          "u1_order1"
+        ]
+      },
+      "profile_u1_order1_line2": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u1_order1_line2",
+          "issue": "wrong_item",
+          "line_id": "u1_order1_line2",
+          "order_id": "u1_order1",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u1",
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "b484d40c5de853d8a45514fe7122dacf30a6a0e46c81cec20a125d3f58d95c73",
+        "protected_objects": [
+          "u1_order1"
+        ]
+      },
+      "profile_u1_order2_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u1_order2_line0",
+          "issue": "wrong_item",
+          "line_id": "u1_order2_line0",
+          "order_id": "u1_order2",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u1",
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "93af5f5342ae0677a9e58d659a4fb8601101706fa6cbec2bba862d512fd4ccc2",
+        "protected_objects": [
+          "u1_order2"
+        ]
+      },
+      "profile_u1_order2_line1": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-18T12:00:00+00:00",
+          "evidence_id": "photo_u1_order2_line1",
+          "issue": "wrong_item",
+          "line_id": "u1_order2_line1",
+          "order_id": "u1_order2",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u1",
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "24a65ec2d998ab3795499c722f35d6aebaefbcab07ce45bfb1fc241f2ace2e68",
+        "protected_objects": [
+          "u1_order2"
+        ]
+      },
+      "profile_u1_order3_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-16T12:00:00+00:00",
+          "evidence_id": "photo_u1_order3_line0",
+          "issue": "wrong_item",
+          "line_id": "u1_order3_line0",
+          "order_id": "u1_order3",
+          "pickup_slot": "morning"
+        },
+        "identity": "u1",
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "6297dbf982ce2b974d1070bb37d2142f37cce93138cd61b366606b931ec62f34",
+        "protected_objects": [
+          "u1_order3"
+        ]
+      },
+      "profile_u2_order0_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u2_order0_line0",
+          "issue": "damaged",
+          "line_id": "u2_order0_line0",
+          "order_id": "u2_order0",
+          "pickup_slot": "morning"
+        },
+        "identity": "u2",
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "907a436f2c30c6e1f9c78e9d9f925f6950b6bc57f594666a4617054cb190867a",
+        "protected_objects": [
+          "u2_order0"
+        ]
+      },
+      "profile_u2_order1_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u2_order1_line0",
+          "issue": "wrong_item",
+          "line_id": "u2_order1_line0",
+          "order_id": "u2_order1",
+          "pickup_slot": "morning"
+        },
+        "identity": "u2",
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "b0b65d7da3297bd1a904d6477a0fe292b5e8b2238f49ed0027c8ae4dc0199f58",
+        "protected_objects": [
+          "u2_order1"
+        ]
+      },
+      "profile_u3_order0_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-16T12:00:00+00:00",
+          "evidence_id": "photo_u3_order0_line0",
+          "issue": "damaged",
+          "line_id": "u3_order0_line0",
+          "order_id": "u3_order0",
+          "pickup_slot": "morning"
+        },
+        "identity": "u3",
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "63093bdea2a8248c547700f4ad8776a67ef963c8ed028f6a0c8a55c766288ee5",
+        "protected_objects": [
+          "u3_order0"
+        ]
+      },
+      "profile_u3_order0_line1": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u3_order0_line1",
+          "issue": "wrong_item",
+          "line_id": "u3_order0_line1",
+          "order_id": "u3_order0",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u3",
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "ca243d87b0e97573828f34a689e159fa327f1096fbe6b5172cb2cc5940849b82",
+        "protected_objects": [
+          "u3_order0"
+        ]
+      },
+      "profile_u3_order0_line2": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u3_order0_line2",
+          "issue": "wrong_item",
+          "line_id": "u3_order0_line2",
+          "order_id": "u3_order0",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u3",
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "7081d27c1969f7fccf954f42e3adfc4eb0414682c98036ad6a1ab28a7c62efc4",
+        "protected_objects": [
+          "u3_order0"
+        ]
+      },
+      "profile_u3_order1_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u3_order1_line0",
+          "issue": "missing_parts",
+          "line_id": "u3_order1_line0",
+          "order_id": "u3_order1",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u3",
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "130c620a70139679561b55fe32ff7fc0dd2d3e833155874abcb49f527f152007",
+        "protected_objects": [
+          "u3_order1"
+        ]
+      },
+      "profile_u3_order1_line1": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-18T12:00:00+00:00",
+          "evidence_id": "photo_u3_order1_line1",
+          "issue": "damaged",
+          "line_id": "u3_order1_line1",
+          "order_id": "u3_order1",
+          "pickup_slot": "morning"
+        },
+        "identity": "u3",
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "22c28e8abdc2641e863cd61c3739d4c7b101a36a59cfa18f679282b8dff99ba0",
+        "protected_objects": [
+          "u3_order1"
+        ]
+      },
+      "profile_u3_order2_line0": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u3_order2_line0",
+          "issue": "wrong_item",
+          "line_id": "u3_order2_line0",
+          "order_id": "u3_order2",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u3",
+        "initial_preferences": {
+          "resolution": "refund"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "c2ab63adb13e130b821335d1f2193e6064d1bffe5fedb4fa3b698312e57add42",
+        "protected_objects": [
+          "u3_order2"
+        ]
+      },
+      "profile_u3_order2_line1": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-25T12:00:00+00:00",
+          "evidence_id": "photo_u3_order2_line1",
+          "issue": "missing_parts",
+          "line_id": "u3_order2_line1",
+          "order_id": "u3_order2",
+          "pickup_slot": "morning"
+        },
+        "identity": "u3",
+        "initial_preferences": {
+          "resolution": "reship"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "bdad361960453ac4f992025dfa6128a7253d6f35e86a4106c4d13d3d120e70f5",
+        "protected_objects": [
+          "u3_order2"
+        ]
+      },
+      "profile_u3_order2_line2": {
+        "confirmable_actions": [
+          "open_case",
+          "verify_evidence",
+          "request_manager_review",
+          "quote_resolution",
+          "commit_resolution",
+          "schedule_return",
+          "release_refund"
+        ],
+        "facts": {
+          "deadline": "2026-01-16T12:00:00+00:00",
+          "evidence_id": "photo_u3_order2_line2",
+          "issue": "damaged",
+          "line_id": "u3_order2_line2",
+          "order_id": "u3_order2",
+          "pickup_slot": "afternoon"
+        },
+        "identity": "u3",
+        "initial_preferences": {
+          "resolution": "exchange"
+        },
+        "opening_request": "I need help with an item from one of my purchases.",
+        "preference_space": {
+          "resolution": [
+            "refund",
+            "exchange",
+            "reship"
+          ]
+        },
+        "private_hash": "39e4035b674e9f444bddc874da224ead7fe34dfba60eaee91e3eb4e44abd8d28",
+        "protected_objects": [
+          "u3_order2"
+        ]
+      }
+    },
+    "quotes": {},
+    "refunds": {},
+    "replacements": {},
+    "returns": {},
+    "seed": 2,
+    "users": {
+      "u0": {
+        "id": "u0",
+        "name": "Buyer 0"
+      },
+      "u1": {
+        "id": "u1",
+        "name": "Buyer 1"
+      },
+      "u2": {
+        "id": "u2",
+        "name": "Buyer 2"
+      },
+      "u3": {
+        "id": "u3",
+        "name": "Buyer 3"
+      }
+    },
+    "version": "aftersales-0.1.0"
+  },
+  "world_hash": "f6c3ec9a4178972535bbb6f85d597a92d400bf5fad92cd48987b91311b79b482",
+  "structure_signature": "312265862024692cf1635ba08d6cb77520bdf0696889c2b1358f16666458496f",
+  "permission_signature": "b4ea50c084e66f3eafa700cbc757d6d1cb1bf9b4d28157deb2c00b2c0ad29bff",
+  "generator_source_hash": "d99f2226ce465aaed93ebb13a30b3e5a9c627979a02559a91baf1c9ddf0b569a",
+  "generation_diagnostics": [],
+  "rules_source_hash": "69900ba26dac2f8a07637f1d6155b99a40d23d73d9c03070d98f757244e08ad0"
+}

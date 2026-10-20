@@ -1,0 +1,45 @@
+{
+  "protocol": "aftersales-v3-reflection-live-call-result-v1",
+  "attempt_id": "reflection-call-001",
+  "completed_at_utc": "2026-10-20T13:10:38.566539+00:00",
+  "status": "REFLECTION_FAILED",
+  "calls": 1,
+  "retry_count": 0,
+  "provider_http_status": 400,
+  "provider_error_code": "PROVIDER_HTTP_ERROR",
+  "provider_error_message": "LLM endpoint returned HTTP 400; no retry performed",
+  "provider_error_body": "not retained by OpenAICompatibleClient",
+  "model": "dashscope/qwen3.7-plus",
+  "base_url": "http://10.130.138.46:8010/v1",
+  "request_hash": "08319e35b1d5aa3767acbb7841cd21d5678c3109912e9279672b45be955f1c2c",
+  "request_message_chars": [
+    1074,
+    42267
+  ],
+  "tool_schema_bytes": 7725,
+  "tool_count": 1,
+  "tool_name": "submit_skill_patch",
+  "tool_choice": {
+    "function": {
+      "name": "submit_skill_patch"
+    },
+    "type": "function"
+  },
+  "usage": null,
+  "patch_generated": false,
+  "static_gate_run": false,
+  "evaluation_episodes_run": 0,
+  "diagnostic_note": "HTTP 400 proves the endpoint rejected this request, but without its response body the exact rejected field is unknown. The request contains a 42,267-character reflection payload and an 8,465-byte function schema with conditional/discriminated schema constructs; these are hypotheses to investigate, not a confirmed cause.",
+  "request_bytes_compact": 55540,
+  "request_bytes_default_json": 56300,
+  "tool_schema_bytes_compact": 7725,
+  "tool_schema_bytes_default_json": 8465,
+  "tool_schema_keywords_present": [
+    "$defs",
+    "$ref",
+    "anyOf",
+    "if/then",
+    "oneOf",
+    "discriminator"
+  ]
+}

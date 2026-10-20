@@ -1,0 +1,27 @@
+{
+  "protocol": "offline-pre-reflection-audit-v1",
+  "pre_registration_input_hash_verified": true,
+  "certified_tasks_verified": 3,
+  "source_pair_replays": [
+    {
+      "arm": "S0",
+      "verified": true,
+      "trace_hash": "9c7902bd67a799dfe031a737393d7247039c5467e3409eff1c27f03fde4707bb",
+      "execution_hash": "2f3240375bfe8dcf1ecca1e65481c185389eec5116c4cbe6f9fefa8263777be8"
+    },
+    {
+      "arm": "S1",
+      "verified": true,
+      "trace_hash": "3bda99a5c1dc646868efeabc94cf70a20fb655c7cac136fe01fd94e392db8542",
+      "execution_hash": "9678b2e886af877acfe0113822e6fd966577979861b87531cc8900a63f438aa3"
+    }
+  ],
+  "source_failure_consumed_as_training": [
+    "EXPLICIT_CONSENT_REQUIRED",
+    "UNAUTHORIZED_OPERATION"
+  ],
+  "reflection_calls_sent": 0,
+  "evaluation_episodes_run": 0,
+  "evaluation_episodes_frozen": 12,
+  "source_result_path": "experiments/vast_coevo/results/aftersales-v3-first-pair-live-20261020-001"
+}

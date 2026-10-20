@@ -166,7 +166,7 @@ def _summary(execution: AgentExecutionV3, strict: dict, replay: dict,
         "cost": copy.deepcopy(execution.cost),
         "replay": copy.deepcopy(replay),
         "customer_fidelity_status": fidelity.get("customer_fidelity_status"),
-        "customer_skill_injection": _injection_evidence(execution),
+        "service_skill_injection": _injection_evidence(execution),
         "trace_hash": execution.trace.trace_hash,
         "execution_hash": execution.execution_hash,
     }

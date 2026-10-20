@@ -1,0 +1,10 @@
+{
+  "record_type": "pre-registration-setup-failure",
+  "attempt_id": "prepare-attempt-001",
+  "checked_at_utc": "2026-10-20T13:07:55.380210+00:00",
+  "phase": "prepare",
+  "status": "FAILED_BEFORE_MODEL_REQUEST",
+  "model_requests_sent": 0,
+  "reason": "EvidenceArchive rejected a trace ArtifactRef whose path was not repository-root-relative.",
+  "recovery": "The path was corrected; a new append-only pre-registration was created in aftersales-v3-reflector-pilot-20261020-002. No model call was made and this directory was preserved."
+}

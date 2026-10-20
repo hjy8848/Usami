@@ -1,0 +1,13 @@
+{
+  "protocol": "aftersales-v3-reflection-pilot-run-status-v1",
+  "status": "REFLECTION_FAILED_HTTP_400",
+  "reflection_calls_used": 1,
+  "reflection_calls_max": 1,
+  "retry_performed": false,
+  "patch_generated": false,
+  "static_gate_run": false,
+  "evaluation_status": "NOT_STARTED",
+  "evaluation_episodes_completed": 0,
+  "evaluation_episodes_planned": 12,
+  "reason": "The one pre-registered Reflection request returned HTTP 400. No automatic retry was performed."
+}

@@ -191,6 +191,53 @@ def test_customer_fixture_smoke_uses_real_engine_returns_and_no_reference_witnes
     assert replay_v3(adapter, execution)['verified']
 
 
+def test_customer_must_clarify_finish_with_pending_refund_authorization():
+    world, source, _, _, config = _task_bundle(requires_return=True)
+    values = config.model_dump(mode='json')
+    values['budget'].update(max_customer_turns=12, max_customer_llm_calls=12, max_service_llm_calls=20)
+    config, scenario = configured(world, TaskRunConfigV3.model_validate(values))
+    p = source.private
+    responses = [
+        turn(p, preference='refund', message='My item is damaged. I would like a refund.'),
+        turn(p, disclose=('order_id', 'line_id', 'issue'), authorize=('opening a support case',)),
+        turn(p, disclose=('evidence_id',), authorize=('checking the evidence',)),
+        turn(p, authorize=('submitting this case',)),
+        turn(p, authorize=('preparing an offer',)),
+        turn(p, response='accept', message='I accept this settlement.'),
+        turn(p, disclose=('pickup_slot',), authorize=('arranging return collection',)),
+        lambda request: _customer_tool('invalid-preference', dict(message='Here is my choice.',
+            disclosures={}, preferences={'pickup_slot': 'evening'}, authorized_action_ids=[],
+            offer_response='none', finish=False)),
+        # The first answer grants release consent while also ending the chat.
+        # The harness must reject it before changing Session state and ask for
+        # clarification; the model then repeats consent while staying active.
+        # This follows an unrelated protocol recovery to prove it has a
+        # separate bounded clarification opportunity.
+        turn(p, response='accept', finish=True,
+             message='I authorize release of the refund. Thank you, goodbye.'),
+        turn(p, response='accept', finish=False,
+             message='To clarify, I authorize release and will stay while you process it.'),
+        turn(p, finish=True, message='The refund is visible on my order. Thank you.'),
+    ]
+    transport = ScriptedClient(responses)
+    execution = run_v3(adapter, world, config, ScenarioDrivenCustomer(transport, scenario),
+                       ControlledRefundService())
+
+    assert execution.task_score['success'], (execution.status, execution.errors, execution.oracle)
+    assert execution.oracle['status'] == 'pass'
+    assert any(row['operation'] == 'release_refund' and row['authorized']
+               for row in execution.oracle['operations'])
+    assert execution.cost['customer_calls'] == 11
+    assert any('finish=true cannot accompany pending write authorization' in error['message']
+               for error in execution.errors)
+    assert execution.cost['format_recoveries']['customer'] == 1
+    assert any(error['kind'] == 'clarification' for error in execution.errors)
+    clarification = transport.requests[9]['messages']
+    assert any(message['role'] == 'user' and 'keep the conversation open with finish=false' in message['content']
+               for message in clarification)
+    assert replay_v3(adapter, execution)['verified']
+
+
 def test_fidelity_and_replay_detect_execution_or_scenario_tampering():
     world, source, _, _, config, _, service = _run_scripts()
     config, scenario = configured(world, config)

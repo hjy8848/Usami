@@ -1,0 +1,215 @@
+{
+  "title": "GLM Customer finish/authorization clarification smoke",
+  "date": "2026-10-20",
+  "experiment_scope": "One frozen After-sales scenario; real GLM-5.2 Customer; local ControlledRefundService fixture; no remote Service calls; no model retries.",
+  "protocol": "business-dialogue-task-agents-v3-finish-clarification-v1",
+  "max_customer_calls_per_run": 12,
+  "runs": [
+    {
+      "run_id": "customer-simulator-smoke-20261020-glm52-finish-fix-001",
+      "protocol": "business-dialogue-task-agents-v3-finish-clarification-v1",
+      "customer_model": {
+        "model": "GLM-5.2",
+        "options": {
+          "temperature": 0
+        },
+        "timeout_seconds": 90.0,
+        "trust_env": false
+      },
+      "service_model": {
+        "model": "local/controlled-refund-service-v1",
+        "options": {},
+        "timeout_seconds": 60.0,
+        "trust_env": false
+      },
+      "world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392",
+      "task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+      "scenario_hash": "8ebcc5666e3729e6c89143b689363191d9dfc7cfb8a9aae8d90189b1408904e5",
+      "execution_hash": "30ccad8801a0334bc0a6535257989a26fcb8da52bc375fd6278fb66884bb9052",
+      "replay_verified": true,
+      "status": "customer_protocol_error",
+      "task_success": false,
+      "oracle_status": "pass",
+      "oracle_metrics": {
+        "authorization_only": 0,
+        "correct_refusal": 0,
+        "false_rejection": 0,
+        "legal_execution": 7,
+        "rejected_invalid_attempt": 0,
+        "successful_business_violation": 0,
+        "unscored": 0
+      },
+      "business_operations": [
+        "open_case",
+        "verify_evidence",
+        "request_manager_review",
+        "quote_resolution",
+        "commit_resolution",
+        "schedule_return",
+        "get_case"
+      ],
+      "release_refund_executed": false,
+      "customer_calls": 8,
+      "customer_tokens": 66205,
+      "format_recoveries": {
+        "customer": 2,
+        "service": 0
+      },
+      "service_remote_calls": 0,
+      "service_fixture_calls": 13,
+      "customer_fidelity_status": "fail",
+      "customer_protocol_valid": false,
+      "errors": [
+        {
+          "kind": "protocol",
+          "message": "Customer preference outside frozen scenario",
+          "role": "customer"
+        },
+        {
+          "kind": "protocol",
+          "message": "finish=true cannot accompany pending write authorization or offer acceptance; clarify by continuing with finish=false so Service can act, or withdraw the authorization",
+          "role": "customer"
+        }
+      ],
+      "raw_output_path": "outputs/customer-simulator-smoke-20261020-glm52-finish-fix-001",
+      "raw_artifacts": {
+        "manifest.json": {
+          "sha256": "223b8e92ad0876bef028d14e18ecbda385dff84134a0a16bf325c835a6239464",
+          "bytes": 1985
+        },
+        "config.json": {
+          "sha256": "ab6070357c62eb172d7dd4a5d04cc9b37b79e49b2127e909e24555d2257a59e1",
+          "bytes": 7170917
+        },
+        "scenario.json": {
+          "sha256": "f78b615d8933db3b0d1e9e62803954ef9cae13128bf45b9b5bd5e5d173b8d392",
+          "bytes": 1423
+        },
+        "execution.json": {
+          "sha256": "4cae895c3ca130f7daa44d85b34392f2d84bc8d453f95e3925c7fca146a0b3b3",
+          "bytes": 10987156
+        },
+        "replay.json": {
+          "sha256": "acba800abfe425166f953392f5625ab2a418059c0a785b9643f9cace260ce65e",
+          "bytes": 167
+        },
+        "customer-fidelity.json": {
+          "sha256": "d84cf96946ac1ca56e315638043c19f402efa32c7e3203a855af10bd4d5a58bf",
+          "bytes": 4538
+        },
+        "summary.json": {
+          "sha256": "139a3eb52704964ab00ec79bfe8765156d1f9dfeeca23bc3567d588f534bc374",
+          "bytes": 12541
+        }
+      }
+    },
+    {
+      "run_id": "customer-simulator-smoke-20261020-glm52-finish-fix-002",
+      "protocol": "business-dialogue-task-agents-v3-finish-clarification-v1",
+      "customer_model": {
+        "model": "GLM-5.2",
+        "options": {
+          "temperature": 0
+        },
+        "timeout_seconds": 90.0,
+        "trust_env": false
+      },
+      "service_model": {
+        "model": "local/controlled-refund-service-v1",
+        "options": {},
+        "timeout_seconds": 60.0,
+        "trust_env": false
+      },
+      "world_hash": "e8a76399af8f610f03ec64cd04c108f410c696662b80bbdbda38a55e8c80f392",
+      "task_hash": "e84be8b6e915334c4b8eeb8a94b7e7ad6c57e09e37d2fcabb4136cfd1c10c892",
+      "scenario_hash": "8ebcc5666e3729e6c89143b689363191d9dfc7cfb8a9aae8d90189b1408904e5",
+      "execution_hash": "f623332f90b60c5f3dde5a5aea9283e1ed4589ef78e5041d60a2a314fdcaf375",
+      "replay_verified": true,
+      "status": "customer_finished",
+      "task_success": true,
+      "oracle_status": "pass",
+      "oracle_metrics": {
+        "authorization_only": 0,
+        "correct_refusal": 0,
+        "false_rejection": 0,
+        "legal_execution": 8,
+        "rejected_invalid_attempt": 0,
+        "successful_business_violation": 0,
+        "unscored": 0
+      },
+      "business_operations": [
+        "open_case",
+        "verify_evidence",
+        "request_manager_review",
+        "quote_resolution",
+        "commit_resolution",
+        "schedule_return",
+        "get_case",
+        "release_refund"
+      ],
+      "release_refund_executed": true,
+      "customer_calls": 9,
+      "customer_tokens": 87258,
+      "format_recoveries": {
+        "customer": 0,
+        "service": 0
+      },
+      "service_remote_calls": 0,
+      "service_fixture_calls": 15,
+      "customer_fidelity_status": "fail",
+      "customer_protocol_valid": false,
+      "errors": [
+        {
+          "kind": "clarification",
+          "message": "finish=true cannot accompany pending write authorization or offer acceptance; clarify by continuing with finish=false so Service can act, or withdraw the authorization",
+          "role": "customer"
+        }
+      ],
+      "raw_output_path": "outputs/customer-simulator-smoke-20261020-glm52-finish-fix-002",
+      "raw_artifacts": {
+        "manifest.json": {
+          "sha256": "256c8616062788e11ffa3928dc0cfcefb8da5973c0b607630584008668822d34",
+          "bytes": 1985
+        },
+        "config.json": {
+          "sha256": "ab6070357c62eb172d7dd4a5d04cc9b37b79e49b2127e909e24555d2257a59e1",
+          "bytes": 7170917
+        },
+        "scenario.json": {
+          "sha256": "f78b615d8933db3b0d1e9e62803954ef9cae13128bf45b9b5bd5e5d173b8d392",
+          "bytes": 1423
+        },
+        "execution.json": {
+          "sha256": "607fd1ad604588b5546c313eae0712a6907d3d2dadb9c52ff8a7d015e89c501a",
+          "bytes": 11516178
+        },
+        "replay.json": {
+          "sha256": "d85467b76eaec6103bf647af32ca7c1deb869f7745a12f9fc8580c6aace4be9e",
+          "bytes": 166
+        },
+        "customer-fidelity.json": {
+          "sha256": "e7e15042f95e5f09cbe2f5ad27d42c0c6df12cee71ab21c879a15d0daf7edd2a",
+          "bytes": 4071
+        },
+        "summary.json": {
+          "sha256": "633b107e41568ea82ea890dea277d8f92af2c623c29fef56e1bc4ede448b1a8a",
+          "bytes": 12897
+        }
+      }
+    }
+  ],
+  "conclusion": "Run 001 exposed that a prior format recovery could exhaust the shared recovery allowance before the finish/authorization conflict was clarified. Run 002 used a separately bounded clarification turn; GLM clarified with finish=false, the local Service executed release_refund, Oracle passed, the goal completed, and offline Replay verified. Customer Fidelity still flags the original contradictory output, correctly separating successful recovery from fully compliant simulator behavior.",
+  "limitations": [
+    "Single scenario and one model; this is a protocol smoke, not a model-capability or Skill-effectiveness result.",
+    "Customer Fidelity remains fail because the model first emitted a contradictory finish-plus-authorization turn.",
+    "Raw executions are retained locally under ignored outputs/ and are not committed; SHA-256 and sizes are recorded here."
+  ],
+  "validation": {
+    "targeted_test_command": "pytest -q tests/test_scenario_customer.py tests/test_vnext_dialogue_agents_v3.py",
+    "targeted_tests": "33 passed",
+    "offline_replay_command": "python experiments/vast_coevo/examples/after_sales_service_v3_diagnostic.py --replay-execution outputs/customer-simulator-smoke-20261020-glm52-finish-fix-002/execution.json",
+    "offline_replay_verified": true,
+    "offline_replay_online_calls": 0,
+    "diff_check": "git diff --check passed"
+  }
+}

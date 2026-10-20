@@ -26,6 +26,8 @@ from .user_scenario import UserScenario, validate_scenario
 from .customer_simulator import (authorization_choices, presented_terms, scenario_prompt,
                                  validate_scenario_turn)
 
+PROTOCOL_V3_FINISH_CLARIFICATION = 'business-dialogue-task-agents-v3-finish-clarification-v1'
+
 
 class CustomerTurnV3(Model):
     """Small semantic intent; exact Operations are resolved by trusted code."""
@@ -37,6 +39,10 @@ class CustomerTurnV3(Model):
     finish: bool
 
 
+class CustomerTurnClarificationRequired(ValueError):
+    """The turn is otherwise valid, but its requested control flow is ambiguous."""
+
+
 class OfferReference(Model):
     model_config = {'extra': 'forbid'}
     kind: Literal['commit_resolution', 'release_refund']
@@ -44,7 +50,12 @@ class OfferReference(Model):
 
 
 class TaskRunConfigV3(Model):
-    protocol: Literal['business-dialogue-task-agents-v3'] = 'business-dialogue-task-agents-v3'
+    # Keep legacy v3 runs exactly replayable while new runs use the clarified
+    # finish/authorization control-flow contract.
+    protocol: Literal['business-dialogue-task-agents-v3',
+                      'business-dialogue-task-agents-v3-finish-clarification-v1'] = (
+        PROTOCOL_V3_FINISH_CLARIFICATION
+    )
     profile_id: str
     initial_world_hash: str
     mode: Literal['reference', 'sandbox'] = 'reference'
@@ -71,7 +82,10 @@ class AgentCallV3(Model):
 
 
 class AgentExecutionV3(Model):
-    protocol: Literal['business-dialogue-task-agents-v3'] = 'business-dialogue-task-agents-v3'
+    protocol: Literal['business-dialogue-task-agents-v3',
+                      'business-dialogue-task-agents-v3-finish-clarification-v1'] = (
+        PROTOCOL_V3_FINISH_CLARIFICATION
+    )
     config: TaskRunConfigV3
     customer_model: ModelSettings
     service_model: ModelSettings
@@ -337,7 +351,8 @@ def _resolve_offer_ref(adapter, session, task, raw):
     return canonical
 
 
-def _resolve_customer_turn(adapter, task, session, raw, candidates, *, scenario=None):
+def _resolve_customer_turn(adapter, task, session, raw, candidates, *, scenario=None,
+                           protocol=PROTOCOL_V3_FINISH_CLARIFICATION):
     output = CustomerTurnV3.model_validate(raw)
     if scenario is not None:
         validate_scenario_turn(scenario, output)
@@ -361,6 +376,16 @@ def _resolve_customer_turn(adapter, task, session, raw, candidates, *, scenario=
     requested = [available[action_id] for action_id in ids]
     if confirm is not None and any(op == confirm for op in requested):
         raise ValueError('confirming an offer already grants its exact operation; do not duplicate its action ID')
+    # Do not accept authorization and termination in the same turn. run_v3
+    # stops immediately on finish, before it can forward this turn's one-use
+    # grants to Service. Reject before mutating DialogueSession so the
+    # dedicated clarification path can ask Customer without losing consent.
+    if (protocol == PROTOCOL_V3_FINISH_CLARIFICATION and output.finish and
+            (confirm is not None or requested)):
+        raise CustomerTurnClarificationRequired(
+            'finish=true cannot accompany pending write authorization or offer acceptance; '
+            'clarify by continuing with finish=false so Service can act, or withdraw the authorization'
+        )
     intent = {
         'message': output.message,
         'disclosures': output.disclosures,
@@ -503,6 +528,7 @@ def run_v3(adapter, world, config, customer_client, service_client):
         customer_messages.append({'role': 'user', 'content': json.dumps(
             customer_observation, ensure_ascii=False, sort_keys=True)})
         customer_output = None
+        finish_clarification_used = False
         while counts['customer'] < config.budget.max_customer_llm_calls:
             record = complete('customer', customer_messages, customer_tools)
             if record is None:
@@ -516,12 +542,26 @@ def run_v3(adapter, world, config, customer_client, service_client):
                     raise ValueError('one submit_customer_turn_v3 call is required')
                 parsed = strict_json(proposals[0]['function']['arguments'])
                 customer_output = _resolve_customer_turn(adapter, config.task, session, parsed, candidates,
-                                                          scenario=config.user_scenario)
+                                                          scenario=config.user_scenario, protocol=config.protocol)
                 customer_messages.append(message)
                 customer_messages.append({'role': 'tool', 'tool_call_id': proposals[0]['id'],
                     'content': json.dumps({'accepted': True, 'turn': session.turn,
                                            'granted_action_count': len(session.grants)}, sort_keys=True)})
                 break
+            except CustomerTurnClarificationRequired as exc:
+                record.error = {'stage': 'protocol', 'code': 'OUTPUT_CLARIFICATION_REQUIRED',
+                                'message': str(exc)}
+                errors.append({'role': 'customer', 'kind': 'clarification', 'message': str(exc)})
+                if finish_clarification_used:
+                    status = 'customer_protocol_error'
+                    stopped = True
+                    break
+                finish_clarification_used = True
+                customer_messages.append({'role': 'user', 'content':
+                    'Your last turn both authorized a pending operation and asked to end the conversation. '
+                    'The Service has not received that authorization. Please clarify: keep the conversation '
+                    'open with finish=false so Service can act, or withdraw the authorization before finishing.'})
+                continue
             except (ValueError, TypeError, KeyError, ServiceError) as exc:
                 if not protocol_error('customer', record, exc, customer_messages):
                     status = 'customer_protocol_error'
@@ -660,7 +700,8 @@ def run_v3(adapter, world, config, customer_client, service_client):
     cost.update({'usage_complete': usage_complete, 'by_role': by_role,
                  'customer_calls': counts['customer'], 'service_calls': counts['service'],
                  'tool_calls': len(tool_records), 'format_recoveries': recoveries})
-    result = AgentExecutionV3(config=config, customer_model=customer_model, service_model=service_model,
+    result = AgentExecutionV3(protocol=config.protocol, config=config,
+        customer_model=customer_model, service_model=service_model,
         calls=calls, tools=tool_records, trace=trace, oracle=oracle, task_score=task_score,
         status=status, errors=errors, cost=cost)
     result.execution_hash = result.computed_hash()

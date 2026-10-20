@@ -118,7 +118,13 @@ python -m integrations.usami --root artifacts/vast-coevo \
 
 同一 Run ID 和同一 Plan 路径再次执行 `run` 会恢复已保存配置。已完成 Episode 与 Reflection 返回缓存结果并执行原生 Replay，不再次调用模型；已开始但结果未知的操作将运行标为 interrupted。Restore 从已完成 Generation 创建新 Run，保留原 Run 的历史与报告，不能把未知反思自动伪装成可重试步骤。配置预算无法预留下一操作时返回 budget_exhausted；非 completed 状态以退出码 2 报告。
 
-每代记录当前探索、Customer 更新、选定 Customer 再探索、Service 正常任务预检查与更新、四组跨代执行。拒绝与 NOOP 时相邻代可以引用同一 Snapshot。全局预算包括全部探索、验证、正常任务、Reflection 和交叉执行；每个 Episode 先预留配置上限，完成后按实际调用计费，未知结果保留预留上限。
+### 新运行流程（RunConfig schema v3/v4）
+
+当前新运行使用 RunConfig schema v3/v4 的 `recursive-training-v1` 单链流程：每代由当前选中的 Customer 与 Service 正常自主交互一次，Oracle 核验后的同一批 Evidence 进入双方 Reflection；Customer 仅经过 Static Gate，Service 继续经过 Static + Dynamic Gate；随后保存实际选中的 Snapshot 并进入下一代。新流程不额外执行 Customer 更新后的同代探索，也不把四组交叉执行放进训练循环。交叉比较应在训练结束后，通过独立只读评估执行。
+
+### 历史运行（RunConfig schema v1/v2）
+
+旧版本曾额外记录更新 Customer 后再探索，以及 `parent_parent / selected_parent / parent_selected / selected_selected` 四组跨代执行。拒绝与 NOOP 时相邻代可以引用同一 Snapshot。其历史预算包含额外探索、验证、正常任务、Reflection 和交叉执行；历史结果和成本均保持不变。历史记录继续按原协议解释，不要用这套旧流程估算新运行成本。
 
 ## Python API
 

@@ -21,7 +21,7 @@ from usami.service.models import ModelSettings, ServiceError
 from usami_aftersales import adapter as aftersales
 from usami_aftersales import tasks as aftersales_tasks
 from usami_benchmark.designer import design_and_compile, verify_designer_execution
-from usami_benchmark.designer_exploration import PROTOCOL as DESIGNER_V2, DesignerBudget
+from usami_benchmark.designer_exploration import PROTOCOL as DESIGNER_PROTOCOL_V4, DesignerBudget
 from usami_benchmark.registry import default_spec
 from usami_benchmark.tasks import ConstructionBudget, verify_task
 from usami_benchmark.worlds import FrozenWorld, freeze
@@ -363,7 +363,7 @@ def _designer_metrics(root, task_rows):
 
 def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MODEL_CALLS,
              turns: int = 4, construction_nodes: int = 4096, construction_depth: int = 16,
-             designer_protocol: str = DESIGNER_V2):
+             designer_protocol: str = DESIGNER_PROTOCOL_V4):
     root = Path(output_dir).resolve()
     if root.exists():
         raise FileExistsError("Live runs are append-only; select a new output directory")
@@ -420,7 +420,7 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
     try:
         for number in (1, 2):
             previous = [_summary(row) for row in task_rows]
-            context = _designer_context(d_selected, previous, f"task-{number}", exploration=designer_protocol == DESIGNER_V2)
+            context = _designer_context(d_selected, previous, f"task-{number}", exploration=designer_protocol == DESIGNER_PROTOCOL_V4)
             designer_result = design_and_compile(frozen, clients["designer"],
                 ConstructionBudget(max_nodes=construction_nodes, max_depth=construction_depth, max_paths=1),
                 prompt_context=context, protocol=designer_protocol, designer_budget=designer_budget,
@@ -487,7 +487,7 @@ def run_live(output_dir: Path, *, seed: int = 1, max_calls: int = DEFAULT_MAX_MO
         manifest["reflection_selections"] = reflection_results
         _save(root, "manifest.json", manifest, immutable=False)
 
-        context = _designer_context(d_selected, [_summary(row) for row in task_rows], "task-3-after-reflection", exploration=designer_protocol == DESIGNER_V2)
+        context = _designer_context(d_selected, [_summary(row) for row in task_rows], "task-3-after-reflection", exploration=designer_protocol == DESIGNER_PROTOCOL_V4)
         context["reflection_selections"] = reflection_results
         designer_result = design_and_compile(frozen, clients["designer"],
             ConstructionBudget(max_nodes=construction_nodes, max_depth=construction_depth, max_paths=1),
@@ -580,7 +580,7 @@ def main(argv=None):
     parser.add_argument("--customer-turns", type=int, default=4)
     parser.add_argument("--construction-nodes", type=int, default=4096)
     parser.add_argument("--construction-depth", type=int, default=16)
-    parser.add_argument("--designer-protocol", choices=[DESIGNER_V2, "frozen-world-task-designer-v1"], default=DESIGNER_V2)
+    parser.add_argument("--designer-protocol", choices=[DESIGNER_PROTOCOL_V4, "frozen-world-task-designer-v1"], default=DESIGNER_PROTOCOL_V4)
     args = parser.parse_args(argv)
     output = args.output or Path("experiments/vast_coevo/results") / (
         "aftersales-coevo-live-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"))

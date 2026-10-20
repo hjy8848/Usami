@@ -1,0 +1,87 @@
+{
+  "files": [
+    {
+      "bytes": 157395,
+      "path": "designer/task-1-journal.json",
+      "sha256": "0429f400aa5fe9bed5181e86ab06b163a3edd92d43d12acd3467e6c37a44e12c"
+    },
+    {
+      "bytes": 128,
+      "path": "failure.json",
+      "sha256": "4d74ae6ce26e93a4b9b1503cbe0d8538711476530de1ab155bee57a87035a5c2"
+    },
+    {
+      "bytes": 176,
+      "path": "libraries/customer/initial.json",
+      "sha256": "93674ce99c8faa945924f7a1df878a584d4e1870901661a0e55c0c73f2fb262e"
+    },
+    {
+      "bytes": 884,
+      "path": "libraries/designer/initial.json",
+      "sha256": "7a9377eb6ad4ba7488f0e40ebf6eb960196856a3f6beb03a85ff42a81903bb88"
+    },
+    {
+      "bytes": 686,
+      "path": "libraries/designer/skills/designer/aftersales.discovery/1.json",
+      "sha256": "e58223e95a6ec8b657ec7ea14f1b20c8acbc555864795a08d29ba9aac74bccfe"
+    },
+    {
+      "bytes": 884,
+      "path": "libraries/designer/snapshots/96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb.json",
+      "sha256": "7a9377eb6ad4ba7488f0e40ebf6eb960196856a3f6beb03a85ff42a81903bb88"
+    },
+    {
+      "bytes": 1151,
+      "path": "libraries/service/initial.json",
+      "sha256": "8ceb7875d04fec75cc691ec169a4b649ff8a97a2b5eda9daaf12c1c33fbe9871"
+    },
+    {
+      "bytes": 955,
+      "path": "libraries/service/skills/service/aftersales.service-decision/1.json",
+      "sha256": "97e7a1be476b7d4678682ebcc60721bdb016540be99d3da8757dce384714edb5"
+    },
+    {
+      "bytes": 1151,
+      "path": "libraries/service/snapshots/52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd.json",
+      "sha256": "8ceb7875d04fec75cc691ec169a4b649ff8a97a2b5eda9daaf12c1c33fbe9871"
+    },
+    {
+      "bytes": 3423,
+      "path": "manifest.json",
+      "sha256": "aefe56c556181644c38f88b4da7443f401b59d5a6770fcbe2f521c081c37de08"
+    },
+    {
+      "bytes": 10537,
+      "path": "model-calls/0001-designer.json",
+      "sha256": "9fdde42f4b92853ccee2376a8f052f2c128f7b1f3fbe1cffc2ffa174efde474a"
+    },
+    {
+      "bytes": 18118,
+      "path": "model-calls/0002-designer.json",
+      "sha256": "2a317481586e30ff786da6fabb37409690abdbc379f684d846041fd781785157"
+    },
+    {
+      "bytes": 21863,
+      "path": "model-calls/0003-designer.json",
+      "sha256": "a7aa14b91001fe68e6e1592ce2ea7288fbdb17e1602898046471a68ed27be0d8"
+    },
+    {
+      "bytes": 31637,
+      "path": "model-calls/0004-designer.json",
+      "sha256": "e22f34d6efe12c5ad3479d4ae960bb11c01d77cee2effee654bc6bd655c3e3b1"
+    },
+    {
+      "bytes": 53102,
+      "path": "model-calls/0005-designer.json",
+      "sha256": "699aac3528b95c08a1c8f17593c7ad203014459ea2d191f40e2fd124ee144780"
+    },
+    {
+      "bytes": 47448,
+      "path": "world/frozen_world.json",
+      "sha256": "df0764cb54c14cb1414d1f78f65dd51e51ccc54ef24ca28e514c398c94821373"
+    }
+  ],
+  "protocol": "aftersales-pilot-evidence-index-v1",
+  "root": "outputs/pilot-aftersales-g1-001",
+  "tree_digest": "b61593843c9dcd2bbd6f4c3e859ed97dd486e2027341d5954f20890654508076"
+}

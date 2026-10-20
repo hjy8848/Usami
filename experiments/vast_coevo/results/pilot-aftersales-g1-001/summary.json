@@ -1,0 +1,40 @@
+{
+  "protocol": "aftersales-real-model-coevolution-v2",
+  "status": "BLOCKED",
+  "date": "2026-10-20",
+  "code_commit": "39b8c584ff2ca288794d85bc03ba5ca2c9f043f2",
+  "seed": 1,
+  "partition": "train",
+  "model": "GLM-5.2",
+  "service_execution_mode": "reference",
+  "max_total_model_calls": 65,
+  "model_calls_sent": 5,
+  "model_calls_completed": 4,
+  "model_calls_timed_out": 1,
+  "known_tokens": {
+    "input": 16874,
+    "output": 1692,
+    "total": 18566,
+    "complete": false
+  },
+  "designer_queries": 12,
+  "proposal_attempts": 1,
+  "proposal_response_received": false,
+  "service_tasks_completed": 0,
+  "service_tasks_planned": 3,
+  "reflection_calls": 0,
+  "skill_patches": 0,
+  "business_episodes_replayed": 0,
+  "designer_failure_replay_verified": true,
+  "frozen_world_hash": "c5227e1dc9d8b1a49d93b17eaf64018e64ce3c1bf8b00f3e20611c4a581bb3e6",
+  "frozen_registration_hash": "200f77794e7f9c5ee739ec946462621f8167224f5e98de9907b024868b7db0fd",
+  "initial_designer_snapshot_hash": "96899a726c2ae468a2a162e5ba97aa0c7d20f69274cfc61c9284f61baf3491bb",
+  "initial_service_snapshot_hash": "52de32b10add750883dd988177609a3d9d66f1a82a1181dfb4d9ecf514efebcd",
+  "fixed_customer_snapshot_hash": "e39daeec262ea94daa6e7836b5c32ca61d4c88b30a5d09a074e2c5c6e469d98f",
+  "failure": {
+    "type": "DesignerFailure",
+    "message": "Designer transport failed; no retry performed: LLM request timed out; no retry performed"
+  },
+  "raw_evidence_local_path": "outputs/pilot-aftersales-g1-001/",
+  "raw_evidence_tree_digest": "b61593843c9dcd2bbd6f4c3e859ed97dd486e2027341d5954f20890654508076"
+}

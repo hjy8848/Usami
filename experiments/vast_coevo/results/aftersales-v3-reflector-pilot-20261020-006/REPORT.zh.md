@@ -39,6 +39,8 @@ S0 与 S1 的独立业务违规根因代码集合相同：`DELIVERY_DEADLINE_UNM
 
 候选确实进入了 4 个 S1 Episode 的每次 Service 请求，提示词内容与候选 Skill 一致；其余 2 个换货 Episode 没有触发候选 Skill。注入证据详见 `postrun-replay-audit-v2.json`。
 
+逐条轨迹还显示一个关键差异：S1 的自然语言回复有时会说证据尚未验证、需要先验证，但工具轨迹仍在该 Customer 回合只授权 `verify_evidence` 时调用了 `request_manager_review` 或 `quote_resolution`。这说明“模型能复述规则”“Skill 已进入提示词”和“模型按规则选择工具”是三个不同事实。本次评估轨迹没有反馈给 Reflector，也没有据此修改候选。
+
 ## 解读与边界
 
 这次有一个值得继续验证的局部信号：退款任务中，S0 两次均执行出带有证据/报价条件错误的 `quote_resolution`，S1 两次均未产生该类成功业务违规，其中一次达到最终退款状态。但 S1 在这些任务中还产生了 3 次授权违规，严格成功仍为 0/6；换货任务没有注入该 Skill，重复申请拒绝也没有成功。因此，不能把业务违规计数从 4 降到 2 解读成整体能力改善。

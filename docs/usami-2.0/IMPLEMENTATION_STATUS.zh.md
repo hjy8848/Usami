@@ -44,32 +44,41 @@
 
 测试中的 Customer 授权由明确标注的离线夹具独立建立。这不等于自然 LLM Customer 或新会话授权桥已经接通。
 
-### P2：冻结世界构建与多目标结果判定（部分实现）
+### P2：冻结世界构建与多目标认证（部分实现）
 
 - `ScenarioSpec` 支持多个顾客、订单、订单行、SKU、仓库、库存区间、属性及有界线性关系约束；模型不能提交任意 Python、完整 `World`、Engine、Reference 或 Oracle 实现。
 - Builder 将设计别名转换成种子绑定的业务 ID，保留每次候选的约束拒绝原因，并区分 SAT、完整枚举 UNSAT、预算耗尽 UNKNOWN。SAT 会由独立证书器读取实际生成世界，重新核对数量、实付、属性、库存、路线、事件和未初始化交易状态。
 - `TaskSpec` 支持一项任务中的多个订单行目标、兼容规格、补款上限、承诺送达日期及只读信息请求。目标计分允许多个满足同一硬约束的 SKU；额外或未请求的结算不会算作完成。
 - 信息目标必须绑定到实际公开顾客原话中的请求片段。计分使用独立事实来源和 Service 实际送达文本；只读任务无需交易状态变化，擅自产生任务范围外结算会失败。
 - CLI 已能导出/校验现行 Schema，以及构建、密封和离线重建验证冻结世界包；输出只记录构建证据，明确不声称任务可达或交互可达。
+- 新增有界 `certify_task`：以只读冻结世界、`TaskSpec`、私有 `CustomerScenario` 和固定 `ProofBudget` 搜索退款/换货/补发方案。候选业务操作逐步调用原生 Engine 的 Reference 模式；每步保存 Oracle 结果与原生 Replay。候选路径会保留为可审计的私有 witness。
+- `CustomerScenario` 单独密封测试用业务委托、报价接受范围、补款/到达限制，以及审批与退货事件计划。证明器只在派生副本中建立测试委托和绑定精确报价条款的同意，原始冻结世界不变。审批、退货和退款二次同意逐步记录；事件实际投影必须与独立 Reference 投影相同。
+- 结果区分 `CERTIFIED`、`UNSAT`、`UNKNOWN`。仅在有限候选计划完整枚举且无不支持条件时报告 `UNSAT`；预算耗尽或遇到尚未实现的交互/送达事件则报告 `UNKNOWN`。已证明一条路径即可证明业务可达，但不会冒充满足 `minimum_witnesses` 的多解要求。
+- 新增 `certify-task` / `verify-task-certificate` 离线 CLI，证书封存任务、私有 CustomerScenario、操作轨迹和 witness；复核会重建冻结世界、重跑有界搜索并复算全部轨迹。更改证书内容会被哈希或重建校验发现。
 - 新工程夹具实际走过不变的 Engine、Oracle 与 Replay：两条订单行联合处理；D/E 两个符合规格、价格和时限的替代品均通过；错误规格、超期、超预算的替代品失败；完整枚举无解与预算不足分别判为 UNSAT 和 UNKNOWN。
 
-尚未完成：`TaskSpec` 的通用 Reference 可达性搜索、多个合法完整业务 witness 的独立证书、CustomerScenario/授权桥、交互可达性证书，以及构建前冻结的动态事件计划。工程夹具证明的是当前场景、业务引擎和目标评分可以区分可接受方案，不代表 Designer 自主出题能力或正式题库已通过认证。
+边界：这是受限的 Reference 业务计划搜索，不是任意操作规划器。`CustomerScenario` 是确定性私有证明夹具，委托/同意由它在证明分支生成，不会注入 Service；因此不等于自然 Customer、自然语言授权或交互可达证明。审批与退货事件计划在搜索前密封，不读取模型正确性或 Oracle 标签。当前没有配送完成事件；要求 `target_stage=delivered` 的任务会是 `UNKNOWN`，不会假装可达或宣称无解。
+
+尚未完成：更一般的 Reference 搜索、自然 Customer / AuthorityProof 接线、完整对话可达性证书以及配送完成事件。已实现证书只证明受限业务动作在冻结世界和已登记顾客行为/事件下满足状态目标；不代表 Designer 自主出题能力或正式题库已通过认证。
 
 ## 本阶段验证
 
 | 检查 | 实际结果 |
 |---|---|
+| 当前全部 `tests/test_usami_v2_*.py` | 68 passed |
+| 新增 Task Certification 定向测试 | 6 passed；覆盖双替代 SKU witness、证书复核、UNSAT/UNKNOWN、审批/退货事件、二次同意与篡改检测 |
 | P0/P1 新增测试 | 45 passed |
-| 当前 P2 Builder / TaskSpec / Schema 检查 | 18 passed |
+| P2 Builder / TaskSpec / Schema 定向检查 | 18 项前序检查与 6 项任务认证检查通过 |
 | 相关综合回归 | 178 passed；其中旧测试 144 项，包含旧 Oracle、售后、对话过程、Skill、v3 Agent、开放组合、A/B 和 Live 入口 |
 | 属性测试 | Hypothesis 的分摊守恒、随机部分退款和库存承诺状态机实际通过 |
 | Python 兼容 | 在现有 Python 3.9.6 环境实际运行 |
-| Schema CLI | 本阶段实际导出并离线核验 20 份 Schema，verified=true；上阶段记录的 14 份已扩展 |
+| Schema CLI | 本阶段实际导出并离线核验 27 份 Schema，verified=true；包含 CustomerScenario、ProofBudget 与 TaskCertification |
 | 在线模型调用 | 0 |
 | 真实业务错误就绪 Gate | 未运行 |
 | Designer / Service 学习收益 | 未测量 |
+| 本次全仓回归 | 用户要求停止；中断前累计 287 passed（309.79 秒），不构成完整回归结果 |
 
-综合回归完成后新增了离线 CLI 和工具面覆盖，并加强类型/时间边界，最终对全部 P0/P1 新增测试重新运行，结果为 45 passed。P2 Builder、任务与 Schema 变更在本轮另行运行了 18 项定向检查。没有把分次执行的结果伪称为一次全仓回归。
+此前的相关综合回归检查有 178 项通过；综合回归完成后新增了离线 CLI 和工具面覆盖，并加强类型/时间边界，最终对全部 P0/P1 新增测试重新运行，结果为 45 passed。P2 Builder、任务与 Schema 变更在本轮另行运行了 18 项定向检查。本次 287 项通过后按用户要求中断全仓回归，不将中断结果表述为完整回归。
 
 开发依赖新增 Hypothesis，生产依赖未扩大。本机测试把新增依赖安装到独立临时目录，没有改动原工作树的虚拟环境。
 
@@ -86,8 +95,14 @@
     python -m usami_v2.cli build --scenario scenario.json --seed 1 \
       --output /tmp/usami-v2-world-001
     python -m usami_v2.cli verify-build --directory /tmp/usami-v2-world-001
+    python -m usami_v2.cli certify-task --world-directory /tmp/usami-v2-world-001 \
+      --task task.json --customer-scenario customer-scenario.private.json \
+      --max-plan-candidates 256 --max-operation-steps 64 --max-witnesses 2 \
+      --minimum-witnesses 2 --output /tmp/usami-v2-task-cert-001
+    python -m usami_v2.cli verify-task-certificate \
+      --world-directory /tmp/usami-v2-world-001 --directory /tmp/usami-v2-task-cert-001
 
-所有输出目录必须不存在。构建命令不查凭据、不发模型请求；`verify-build` 重建采样尝试并复核独立世界证书，不代表任务或交互可达，也不产生进化成功声明。
+所有输出目录必须不存在。上述构建、证明和复核命令不查凭据、不发模型请求。`verify-build` 只证明世界约束；`certify-task` 证明有限业务计划下的状态目标可达。CustomerScenario 与 witness 是私有验证档案，不能注入 Service。当前 `interaction_certified=false`，所以不能把业务可达说成完整自然交互可达，也不产生进化成功声明。
 
 ## 仍未完成的整体范围
 
@@ -95,7 +110,7 @@
 |---|---|
 | P0 的运行级接线 | 契约与测试已实现，需随真实 Runner 接入证据来源和归档验证 |
 | P1 完整业务契约 | 原生核心已实现；持续由 P2/P3 场景与交互认证补足完整业务链路 |
-| P2 Builder / 联合目标 | 部分实现；受限 Builder、实际世界约束证书、联合终态评分及离线 build/verify CLI 已有。下一步是 Reference 业务可达性、多合法 witness、任务证书 Replay 与冻结事件计划 |
+| P2 Builder / 联合目标 | 部分实现；受限 Builder、独立世界约束证书、联合终态评分、有界 Reference 计划搜索、多合法 witness、Oracle/Replay 复核及冻结审批/退货事件计划已有。通用搜索、自然交互与配送完成事件仍待补 |
 | P3 自然 Customer Runtime | 未实现；下一步接上公开委托、报价呈现、确认、撤销和独立 AuthorityProof |
 | P4 完整业务 Runner | 未实现；当前仅有原生执行核心和 Schema CLI |
 | P5 两阶段 Designer | 未实现；不能把测试夹具当作 Designer 自主出题 |

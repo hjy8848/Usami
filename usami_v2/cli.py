@@ -14,6 +14,10 @@ from usami_v2.runtime.observations import WorkingState
 from usami_v2.scenarios.builder import BuildResult, build_world, verify_build
 from usami_v2.scenarios.distribution import DistributionSpec
 from usami_v2.scenarios.schema import BuildBudget, ScenarioSpec
+from usami_v2.scenarios.task_certification import (
+    CustomerScenario, PlanCandidate, ProofAttempt, ProofBudget, ProofStep, ReviewPlan,
+    TaskCertification, certify_task, verify_task_certificate,
+)
 from usami_v2.scenarios.tasks import InformationObjective, RemedyGoal, TaskSpec
 
 
@@ -22,7 +26,8 @@ def contract_schemas():
               Quote, World, Operation, DecisionCheckpoint, ChallengeDescriptor,
               ReadinessPolicy, ReadinessReport, WorkingState, DistributionSpec,
               ScenarioSpec, BuildBudget, BuildResult, RemedyGoal,
-              InformationObjective, TaskSpec)
+              InformationObjective, TaskSpec, CustomerScenario, ReviewPlan,
+              ProofBudget, ProofStep, PlanCandidate, ProofAttempt, TaskCertification)
     schemas = {model.__name__: model.model_json_schema() for model in models}
     schemas["BusinessToolParameters"] = {
         "protocol": "commerce-tool-parameters-v1",
@@ -116,6 +121,80 @@ def verify_scenario_artifact(root):
     return {"verified": True, "model_calls": 0, **proof, "manifest_hash": manifest["manifest_hash"]}
 
 
+def certify_task_artifact(world_directory, task_path, customer_scenario_path, output_path,
+                          *, max_plan_candidates=256, max_operation_steps=64,
+                          max_witnesses=2, minimum_witnesses=1):
+    """Create a private, offline Reference certificate without a model call."""
+    world_directory, output_path = Path(world_directory), Path(output_path)
+    if output_path.exists():
+        raise FileExistsError(str(output_path))
+    verify_scenario_artifact(world_directory)
+    build = BuildResult.model_validate(json.loads((world_directory / "build.json").read_text(encoding="utf-8")))
+    if build.status != "SAT" or build.world is None:
+        raise ValueError("task certification requires a previously verified SAT world artifact")
+    task = TaskSpec.model_validate(json.loads(Path(task_path).read_text(encoding="utf-8")))
+    customer_scenario = CustomerScenario.model_validate(
+        json.loads(Path(customer_scenario_path).read_text(encoding="utf-8")))
+    budget = ProofBudget(max_plan_candidates=max_plan_candidates,
+                         max_operation_steps=max_operation_steps, max_witnesses=max_witnesses)
+    certificate = certify_task(build.world, task, customer_scenario, budget,
+                               minimum_witnesses=minimum_witnesses)
+    output_path.mkdir(parents=True, exist_ok=False)
+    atomic_json(output_path / "task.json", task, immutable=True)
+    atomic_json(output_path / "customer-scenario.private.json", customer_scenario, immutable=True)
+    atomic_json(output_path / "certificate.json", certificate, immutable=True)
+    manifest = {
+        "protocol": "commerce-task-certificate-artifact-v1",
+        "research_protocol": PROTOCOL,
+        "world_hash": build.world_hash,
+        "task_hash": task.record_hash,
+        "customer_scenario_hash": customer_scenario.record_hash,
+        "proof_budget_hash": budget.record_hash,
+        "certificate_hash": certificate.record_hash,
+        "status": certificate.status,
+        "model_calls": 0,
+        "artifact_files": ["task.json", "customer-scenario.private.json", "certificate.json"],
+        "privacy_boundary": "CustomerScenario and proof witnesses are private validator artifacts; never inject into Service context.",
+        "claim_boundary": "Reference business reachability only; no natural Customer interaction or model learning is certified.",
+    }
+    manifest["manifest_hash"] = digest(manifest)
+    atomic_json(output_path / "manifest.json", manifest, immutable=True)
+    return {"status": certificate.status, "certificate_hash": certificate.record_hash,
+            "witness_count": len(certificate.witness_hashes), "model_calls": 0,
+            "artifact_path": str(output_path)}
+
+
+def verify_task_certificate_artifact(world_directory, certificate_directory):
+    world_directory, certificate_directory = Path(world_directory), Path(certificate_directory)
+    verify_scenario_artifact(world_directory)
+    manifest = json.loads((certificate_directory / "manifest.json").read_text(encoding="utf-8"))
+    if manifest.get("manifest_hash") != digest({k: v for k, v in manifest.items() if k != "manifest_hash"}):
+        raise ValueError("task certificate manifest integrity differs")
+    expected_files = {"manifest.json", "task.json", "customer-scenario.private.json", "certificate.json"}
+    if set(path.name for path in certificate_directory.iterdir()) != expected_files:
+        raise ValueError("task certificate artifact file set differs")
+    if (manifest.get("protocol") != "commerce-task-certificate-artifact-v1"
+            or manifest.get("model_calls") != 0
+            or manifest.get("artifact_files") != ["task.json", "customer-scenario.private.json", "certificate.json"]):
+        raise ValueError("task certificate artifact protocol differs")
+    build = BuildResult.model_validate(json.loads((world_directory / "build.json").read_text(encoding="utf-8")))
+    task = TaskSpec.model_validate(json.loads((certificate_directory / "task.json").read_text(encoding="utf-8")))
+    customer_scenario = CustomerScenario.model_validate(
+        json.loads((certificate_directory / "customer-scenario.private.json").read_text(encoding="utf-8")))
+    certificate = TaskCertification.model_validate(
+        json.loads((certificate_directory / "certificate.json").read_text(encoding="utf-8")))
+    bindings = (manifest.get("world_hash") == build.world_hash
+                and manifest.get("task_hash") == task.record_hash
+                and manifest.get("customer_scenario_hash") == customer_scenario.record_hash
+                and manifest.get("proof_budget_hash") == certificate.budget_hash
+                and manifest.get("certificate_hash") == certificate.record_hash
+                and manifest.get("status") == certificate.status)
+    if not bindings:
+        raise ValueError("task certificate manifest binding differs")
+    result = verify_task_certificate(build.world, task, customer_scenario, certificate)
+    return {**result, "model_calls": 0, "manifest_hash": manifest["manifest_hash"]}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--version", action="version", version=PROTOCOL)
@@ -131,6 +210,18 @@ def main(argv=None):
     build.add_argument("--output", type=Path, required=True)
     verify_build_parser = commands.add_parser("verify-build", help="reconstruct and verify a frozen world artifact")
     verify_build_parser.add_argument("--directory", type=Path, required=True)
+    certify = commands.add_parser("certify-task", help="bounded offline Reference search for a frozen task")
+    certify.add_argument("--world-directory", type=Path, required=True)
+    certify.add_argument("--task", type=Path, required=True)
+    certify.add_argument("--customer-scenario", type=Path, required=True)
+    certify.add_argument("--max-plan-candidates", type=int, default=256)
+    certify.add_argument("--max-operation-steps", type=int, default=64)
+    certify.add_argument("--max-witnesses", type=int, default=2)
+    certify.add_argument("--minimum-witnesses", type=int, default=1)
+    certify.add_argument("--output", type=Path, required=True)
+    verify_task = commands.add_parser("verify-task-certificate", help="replay a sealed task proof artifact")
+    verify_task.add_argument("--world-directory", type=Path, required=True)
+    verify_task.add_argument("--directory", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.command == "schema":
         result = export_schemas(args.output)
@@ -138,6 +229,14 @@ def main(argv=None):
         result = verify_schemas(args.directory)
     elif args.command == "build":
         result = build_scenario_artifact(args.scenario, args.seed, args.output, args.max_nodes)
+    elif args.command == "certify-task":
+        result = certify_task_artifact(
+            args.world_directory, args.task, args.customer_scenario, args.output,
+            max_plan_candidates=args.max_plan_candidates,
+            max_operation_steps=args.max_operation_steps,
+            max_witnesses=args.max_witnesses, minimum_witnesses=args.minimum_witnesses)
+    elif args.command == "verify-task-certificate":
+        result = verify_task_certificate_artifact(args.world_directory, args.directory)
     else:
         result = verify_scenario_artifact(args.directory)
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2))

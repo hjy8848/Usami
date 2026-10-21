@@ -26,6 +26,8 @@ from usami_dialogue.agents_v3 import (
     replay_v3,
     run_v3,
 )
+from usami_dialogue.decision_audit import analyze_execution, compare_matched_audits
+from usami_dialogue.preflight import customer_interaction_preflight
 from usami_dialogue.customer_fidelity import evaluate_customer_fidelity
 from usami_dialogue.customer_simulator import ScenarioDrivenCustomer
 from usami_dialogue.user_scenario import scenario_from_task
@@ -64,6 +66,9 @@ def _make_config(task_record, snapshot, *, mode: str, turns: int,
     witness = task_record.dialogue_witnesses[0]
     world = aftersales.World.model_validate(task_record.frozen.world)
     scenario = scenario_from_task(aftersales, world, task)
+    preflight = customer_interaction_preflight(aftersales, world, task, scenario)
+    if preflight['status'] == 'fail':
+        raise ValueError('Customer interaction preflight failed: ' + json.dumps(preflight, sort_keys=True))
     retrieval = SkillRetriever("service").retrieve(snapshot, SkillContext(
         domain="aftersales", public_text=task.composition.customer_request,
         intents=("refund order resolution", "after-sales request"),
@@ -80,7 +85,7 @@ def _make_config(task_record, snapshot, *, mode: str, turns: int,
             max_service_llm_calls=service_calls, max_service_tool_calls=service_tool_calls,
             max_format_recoveries=0),
         external_schedule=task.external_schedule,
-        customer_business_view="own-order-line-status-v1",
+        customer_business_view="own-order-after-sales-progress-v1",
         customer_mode=customer_mode,
         user_scenario=scenario,
         skill_contexts={"service": context},
@@ -169,7 +174,8 @@ def _injection_evidence(execution: AgentExecutionV3, available_skill_ids: list[s
 
 
 def _summary(execution: AgentExecutionV3, strict: dict, replay: dict,
-             fidelity: dict, final_goal: bool, available_skill_ids: list[str] | None = None) -> dict:
+             fidelity: dict, final_goal: bool, available_skill_ids: list[str] | None = None,
+             decision_audit: dict | None = None) -> dict:
     operations = execution.oracle.get("operations", [])
     decisions = execution.oracle.get("service_decisions", [])
     return {
@@ -190,6 +196,7 @@ def _summary(execution: AgentExecutionV3, strict: dict, replay: dict,
         "replay": copy.deepcopy(replay),
         "customer_fidelity_status": fidelity.get("customer_fidelity_status"),
         "service_skill_injection": _injection_evidence(execution, available_skill_ids),
+        "decision_failure_audit": decision_audit,
         "trace_hash": execution.trace.trace_hash,
         "execution_hash": execution.execution_hash,
     }
@@ -204,8 +211,13 @@ def _run_episode(root: Path, task_record, snapshot, *, mode: str,
     config, scenario = _make_config(task_record, snapshot, mode=mode, turns=turns,
         service_calls=service_calls, service_tool_calls=service_tool_calls,
         customer_mode=customer_mode)
+    task = task_record.dialogue_witnesses[0].certificate.task
+    preflight = customer_interaction_preflight(aftersales, world, task, scenario)
+    if preflight['status'] == 'fail':
+        raise ValueError('Customer interaction preflight failed: ' + json.dumps(preflight, sort_keys=True))
     atomic_json(root / "config.json", config.model_dump(mode="json"), immutable=True)
     atomic_json(root / "scenario.json", scenario.model_dump(mode="json"), immutable=True)
+    atomic_json(root / "customer-interaction-preflight.json", preflight, immutable=True)
     ledger = CallLedger(root, max_model_calls)
     raw_customer = raw_service = None
     try:
@@ -214,8 +226,12 @@ def _run_episode(root: Path, task_record, snapshot, *, mode: str,
             customer = ScenarioDrivenCustomer(
                 BudgetedClient("customer", raw_customer, customer_settings, ledger), scenario)
         elif customer_mode == "deterministic":
-            private = aftersales.private_state(world, task_record.dialogue_witnesses[0].certificate.task.profile_id)
-            customer = FixedCompliantCustomer(private, scenario.reason_for_call)
+            task = task_record.dialogue_witnesses[0].certificate.task
+            private = aftersales.private_state(world, task.profile_id)
+            customer = FixedCompliantCustomer(private, scenario.reason_for_call,
+                follow_up_requests=task.composition.follow_up_requests,
+                required_disclosures=[key for requirement in task.composition.information_requirements
+                    if requirement.profile_id == task.profile_id for key in requirement.fact_keys])
         else:
             raise ValueError("customer_mode must be scenario-llm or deterministic")
         raw_service = OpenAICompatibleClient(service_settings, service_key)
@@ -225,11 +241,12 @@ def _run_episode(root: Path, task_record, snapshot, *, mode: str,
         strict = _strict_success(execution)
         replay = replay_v3(aftersales, execution, world=world, config=config)
         fidelity = evaluate_customer_fidelity(execution)
-        task = task_record.dialogue_witnesses[0].certificate.task
+        decision_audit = analyze_execution(aftersales, execution, replay_result=replay)
         final_world = aftersales.World.model_validate(execution.trace.final_world)
         final_goal = _final_goal_reached(task, world, final_world)
+        atomic_json(root / "decision-failure-audit.json", decision_audit, immutable=True)
         summary = _summary(execution, strict, replay, fidelity, final_goal,
-                           [skill.id for skill in snapshot.skills])
+                           [skill.id for skill in snapshot.skills], decision_audit)
         atomic_json(root / "strict-score.json", strict, immutable=True)
         atomic_json(root / "oracle.json", execution.oracle, immutable=True)
         atomic_json(root / "replay.json", replay, immutable=True)
@@ -417,9 +434,14 @@ def run_paired_evaluation_v3(
                 conditions[label] = row
                 episode_rows.append(row)
             before, after = conditions["S0"], conditions["S1"]
+            matched_audit = None
+            if before.get("decision_failure_audit") and after.get("decision_failure_audit"):
+                matched_audit = compare_matched_audits(
+                    before["decision_failure_audit"], after["decision_failure_audit"])
             pair_rows.append({"pair_id": pair_id, "task_hash": record.task_hash,
                 "world_hash": record.frozen.world_hash, "scenario_hash": manifest["tasks"][task_index-1]["scenario_hash"],
                 "condition_order": order, "S0": before, "S1": after,
+                "matched_decision_audit": matched_audit,
                 "paired_task_success_delta_S1_minus_S0": (
                     int(bool(after["task_success"])) - int(bool(before["task_success"]))
                     if "task_success" in before and "task_success" in after else None),

@@ -10,7 +10,7 @@ from pydantic import Field
 from usami_harness.models import Model,digest
 from usami_harness.goals import JointGoal
 from usami_dialogue.tasks import (TaskCertificate,DialogueComposition,InformationRequirement,PreferenceRequirement,
-    Goal,CreatedObjectGoal,FrameRule,RefusalGoal,checked_task as checked_dialogue,certify as certify_dialogue)
+    CustomerFollowUp,Goal,CreatedObjectGoal,FrameRule,RefusalGoal,checked_task as checked_dialogue,certify as certify_dialogue)
 from usami_dialogue.engine import ExecutionTrace
 from usami_dialogue.planner import search as dialogue_search,certified_paths
 from .contracts import TRACKS
@@ -29,7 +29,7 @@ class OpenDialogueComposition(Model):
     # v2 aligns the open-composition compiler with native refusal-only tasks:
     # a verified refusal is a complete objective and need not invent a
     # separate information/consent dependency. Serialized v1 remains replayable.
-    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2','open-dialogue-composition-v3']='open-dialogue-composition-v2'
+    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2','open-dialogue-composition-v3','open-dialogue-composition-v4']='open-dialogue-composition-v2'
     profile_ids:list[str]=Field(min_length=1,max_length=64)
     customer_request:str=Field(min_length=1,max_length=6000)
     goals:list[Goal]=Field(default_factory=list,max_length=32)
@@ -40,6 +40,8 @@ class OpenDialogueComposition(Model):
     information_requirements:list[InformationRequirement]=Field(default_factory=list,max_length=64)
     preference_requirements:list[PreferenceRequirement]=Field(default_factory=list,max_length=64)
     confirmation_requirements:list[dict]=Field(default_factory=list,max_length=16)
+    follow_up_requests:list[CustomerFollowUp]=Field(default_factory=list,max_length=16,
+        exclude_if=lambda value:not value)
 
 class TaskSelection(Model):
     kind:Literal['tool','dialogue']
@@ -139,7 +141,8 @@ def _dialogue(frozen,selection,budget):
             require_dependency=(spec.protocol=='open-dialogue-composition-v1' or bool(spec.goals or spec.created_goals)),
             composition=DialogueComposition(protocol=spec.protocol,profile_ids=spec.profile_ids,customer_request=spec.customer_request,
                 information_requirements=spec.information_requirements,preference_requirements=spec.preference_requirements,
-                confirmation_requirements=spec.confirmation_requirements))
+                confirmation_requirements=spec.confirmation_requirements,
+                follow_up_requests=spec.follow_up_requests))
         task=checked_dialogue(adapter,w,task)
         result=search_composed(adapter,w,task,max_nodes=budget.max_nodes,max_depth=budget.max_depth,
             max_paths=budget.max_paths,refusal_code_options=[set(codes) for _ in task.refusals])

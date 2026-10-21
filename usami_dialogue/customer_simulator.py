@@ -33,7 +33,11 @@ SCENARIO_POLICY = (
 
 def scenario_prompt(scenario):
     scenario = scenario.checked()
-    return SCENARIO_POLICY + '\nFrozen user scenario:\n' + json.dumps(
+    policy = SCENARIO_POLICY
+    if scenario.follow_up_requests:
+        policy += (' After you observe the primary remedy is complete, make each listed follow-up request in order, '
+                   'wait for the Service response, and only then finish. Do not treat a follow-up as already handled.')
+    return policy + '\nFrozen user scenario:\n' + json.dumps(
         scenario.model_dump(mode='json'), ensure_ascii=False, sort_keys=True)
 
 

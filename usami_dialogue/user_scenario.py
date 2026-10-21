@@ -23,6 +23,8 @@ class UserScenario(Model):
     unknown_info: tuple[str, ...] = ('internal_policy', 'approval_outcome', 'reference_answer', 'oracle_result')
     preference_space: dict[str, tuple[JsonValue, ...]]
     initial_preferences: dict[str, JsonValue]
+    follow_up_requests: tuple[str, ...] = Field(default=(), max_length=16,
+                                                 exclude_if=lambda value: not value)
     scenario_hash: str = ''
 
     @model_validator(mode='after')
@@ -67,7 +69,8 @@ def scenario_from_task(adapter, world, task):
                    profile_id=task.profile_id, profile_hash=private.private_hash)
     return UserScenario(scenario_id='aftersales_' + digest(binding)[:24], identity=private.identity,
         reason_for_call=task.composition.customer_request, known_info=copy.deepcopy(private.facts),
-        preference_space=preferences, initial_preferences=initial, **binding)
+        preference_space=preferences, initial_preferences=initial,
+        follow_up_requests=tuple(row.message for row in task.composition.follow_up_requests), **binding)
 
 
 def validate_scenario(adapter, world, task, scenario):

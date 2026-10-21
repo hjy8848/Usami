@@ -196,6 +196,23 @@ def validate_composed_task(adapter,world,task):
                    for pid,private in profile_rows):
             raise ValueError('refusal request lies outside selected frozen Customer authority')
 
+    if composition.protocol=='open-dialogue-composition-v4':
+        followups=composition.follow_up_requests
+        if len(followups)!=len(task.refusals):
+            raise ValueError('v4 requires one public Customer follow-up for each refusal objective')
+        declared=[row.requested_action for row in followups]
+        expected=[adapter.Operation.model_validate(row.operation).name for row in task.refusals]
+        if any(not action for action in declared) or sorted(declared)!=sorted(expected):
+            raise ValueError('v4 follow-up action metadata must match the registered refusal operations')
+        for refusal in task.refusals:
+            operation=adapter.Operation.model_validate(refusal.operation).model_dump(mode='json')
+            if not any(operation in [adapter.Operation.model_validate(raw).model_dump(mode='json')
+                                     for raw in adapter.candidate_intents(world, private)]
+                       for _,private in profile_rows if adapter.intent_allowed(world,private,operation)):
+                raise ValueError('v4 refusal request is not an action the selected Customer can explicitly request')
+    elif composition.follow_up_requests:
+        raise ValueError('Customer follow-up requests require open-dialogue-composition-v4')
+
     from usami_benchmark.public_policy import catalogue
     if not catalogue(adapter.name,world.version)['errors']:
         raise ValueError('native Reference exposes no registered refusal vocabulary')
@@ -206,6 +223,20 @@ def validate_composed_task(adapter,world,task):
         private=next(p for pid,p in profile_rows if pid==requirement.profile_id)
         if len(set(requirement.fact_keys))!=len(requirement.fact_keys) or set(requirement.fact_keys)-set(private.facts):
             raise ValueError('information requirement is not a fact in its frozen Customer profile')
+
+    if composition.protocol=='open-dialogue-composition-v4':
+        required_by_profile={row.profile_id:set(row.fact_keys) for row in composition.information_requirements}
+        resolution_by_profile={}
+        for goal in task.goals:
+            if goal.collection=='lines' and goal.field=='status':
+                terminal_to_option={'refunded':'refund','exchanged':'exchange','reshipped':'reship'}
+                for profile_id,private in profile_rows:
+                    if goal.entity==private.facts.get('line_id'):
+                        resolution_by_profile.setdefault(profile_id,set()).update(
+                            terminal_to_option[value] for value in goal.accepted_values if value in terminal_to_option)
+        for profile_id,values in resolution_by_profile.items():
+            if values & {'exchange','reship'} and 'deadline' not in required_by_profile.get(profile_id,set()):
+                raise ValueError('v4 delivery-remedy tasks must register the Customer deadline information requirement')
 
     seen_preferences=set()
     for requirement in composition.preference_requirements:
@@ -241,4 +272,11 @@ def validate_composed_task(adapter,world,task):
              for key,row in collection.items() if isinstance(row,dict) and row.get('id')==key}
     out_of_scope={value for value in all_ids-scope if re.search(r'(?<![\w-])'+re.escape(value)+r'(?![\w-])',request)}
     if out_of_scope:raise ValueError('Customer request mentions identifiers outside the selected frozen profile scope')
+    for followup in composition.follow_up_requests:
+        if re.search(r'(?i)\b(?:oracle|reference answer|expected answer|witness|hidden answer)\b|<\s*(?:system|developer|vast_)',followup.message):
+            raise ValueError('Customer follow-up contains evaluator-only instructions')
+        followup_out_of_scope={value for value in all_ids-scope
+            if re.search(r'(?<![\w-])'+re.escape(value)+r'(?![\w-])',followup.message)}
+        if followup_out_of_scope:
+            raise ValueError('Customer follow-up mentions identifiers outside the selected frozen profile scope')
     return task

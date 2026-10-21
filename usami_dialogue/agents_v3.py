@@ -66,7 +66,8 @@ class TaskRunConfigV3(Model):
                                                            exclude_if=lambda value: not value)
     # Opt-in public status projection for deterministic Customer drivers. The
     # legacy prompt remains byte-for-byte stable for archived v3 replays.
-    customer_business_view: Literal['legacy-v1', 'own-order-line-status-v1'] = Field(
+    customer_business_view: Literal['legacy-v1', 'own-order-line-status-v1',
+                                    'own-order-after-sales-progress-v1'] = Field(
         default='legacy-v1', exclude_if=lambda value: value == 'legacy-v1')
     customer_mode: Literal['legacy-v3', 'deterministic', 'scenario-llm'] = Field(
         default='legacy-v3', exclude_if=lambda value: value == 'legacy-v3')
@@ -273,10 +274,28 @@ def _action_view(rows):
 
 def _customer_business_view(adapter, world, identity, version):
     view = adapter.observation(world, identity)
-    if version == 'own-order-line-status-v1' and adapter.name == 'aftersales':
+    if version in {'own-order-line-status-v1', 'own-order-after-sales-progress-v1'} and adapter.name == 'aftersales':
         for order in view.get('orders', []):
             order['lines'] = [line.model_dump(mode='json') for line in sorted(world.lines.values(), key=lambda row: row.id)
                               if line.order_id == order['id']]
+    if version == 'own-order-after-sales-progress-v1' and adapter.name == 'aftersales':
+        own_order_ids = {row['id'] for row in view.get('orders', [])}
+        cases = [row for row in sorted(world.cases.values(), key=lambda item: item.id)
+                 if row.order_id in own_order_ids]
+        case_ids = {row.id for row in cases}
+        view['cases'] = [{key: getattr(row, key) for key in
+                         ('id', 'order_id', 'line_id', 'issue', 'status', 'review_requested',
+                          'agreement_quote', 'agreement_revision')} for row in cases]
+        view['quotes'] = [{key: getattr(row, key).isoformat() if key in {'delivery_at', 'valid_until'}
+                           and getattr(row, key) is not None else getattr(row, key)
+                           for key in ('id', 'case_id', 'option', 'amount_cents', 'delivery_at',
+                                       'requires_return', 'revision', 'valid_until', 'status')}
+                          for row in sorted(world.quotes.values(), key=lambda item: item.id)
+                          if row.case_id in case_ids]
+        view['returns'] = [{key: getattr(row, key) for key in
+                           ('id', 'case_id', 'pickup_slot', 'status')}
+                           for row in sorted(world.returns.values(), key=lambda item: item.id)
+                           if row.case_id in case_ids]
     return view
 
 
@@ -428,9 +447,14 @@ def _validate_registration(adapter, world, config):
         if config.user_scenario is not None:
             raise ValueError('a UserScenario requires an explicit Customer mode')
     else:
-        if config.user_scenario is None or config.customer_business_view != 'own-order-line-status-v1':
-            raise ValueError('explicit Customer modes require a frozen scenario and visible line status')
+        if config.user_scenario is None or config.customer_business_view not in {
+                'own-order-line-status-v1', 'own-order-after-sales-progress-v1'}:
+            raise ValueError('explicit Customer modes require a frozen scenario and an explicit public status view')
         validate_scenario(adapter, world, task, config.user_scenario)
+        from .preflight import customer_interaction_preflight
+        preflight = customer_interaction_preflight(adapter, world, task, config.user_scenario)
+        if preflight['status'] == 'fail':
+            raise ValueError('Customer interaction preflight failed: ' + json.dumps(preflight, sort_keys=True))
         if 'customer' in config.skill_contexts:
             raise ValueError('scenario Customer is fixed; Customer Skill overrides are not supported')
 

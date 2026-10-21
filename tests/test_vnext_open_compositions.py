@@ -12,7 +12,7 @@ from usami_benchmark.designer import (
     verify_designer_execution,
 )
 from usami_benchmark.contracts import DOMAINS
-from usami_dialogue.tasks import Goal, PreferenceRequirement, InformationRequirement
+from usami_dialogue.tasks import CustomerFollowUp, Goal, PreferenceRequirement, InformationRequirement
 from usami_harness.models import digest
 from test_vast_usami import ScriptedClient, SPEC, answer, call
 
@@ -91,6 +91,39 @@ def test_v2_open_composition_certifies_a_native_refusal_without_fabricating_depe
     assert witness.certificate.evaluation['refusal_subgoals']==[True]
     assert witness.certificate.oracle['status']=='pass'
     assert verify_task(record)
+
+
+def test_v4_refusal_task_requires_public_followup_and_keeps_harness_label_private():
+    from usami_dialogue.preflight import customer_interaction_preflight
+    from usami_dialogue.user_scenario import scenario_from_task
+
+    frozen = freeze(default_spec('aftersales', 1))
+    selection = _expired_open_case_refusal_selection(frozen, protocol='open-dialogue-composition-v4')
+    public_message = 'I still need a support case opened for the item in my order.'
+    selection.composition.follow_up_requests = [CustomerFollowUp(
+        message=public_message, requested_action='open_case')]
+    record = compile_task(frozen, selection, ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1))
+    task = record.dialogue_witnesses[0].certificate.task
+    assert task.composition.protocol == 'open-dialogue-composition-v4'
+    assert task.composition.follow_up_requests[0].requested_action == 'open_case'
+    world = aftersales.World.model_validate(frozen.world)
+    scenario = scenario_from_task(aftersales, world, task)
+    assert scenario.follow_up_requests == (public_message,)
+    assert 'requested_action' not in scenario.model_dump(mode='json')
+    preflight = customer_interaction_preflight(aftersales, world, task, scenario)
+    assert preflight['status'] == 'pass'
+    assert verify_task(record)
+
+
+def test_v4_refusal_task_rejects_missing_or_misaligned_customer_followup():
+    frozen = freeze(default_spec('aftersales', 1))
+    selection = _expired_open_case_refusal_selection(frozen, protocol='open-dialogue-composition-v4')
+    with pytest.raises(ValueError, match='one public Customer follow-up'):
+        compile_task(frozen, selection, ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1))
+    selection.composition.follow_up_requests = [CustomerFollowUp(
+        message='Please prepare a quote for this order.', requested_action='quote_resolution')]
+    with pytest.raises(ValueError, match='action metadata must match'):
+        compile_task(frozen, selection, ConstructionBudget(max_nodes=4096, max_depth=16, max_paths=1))
 
 
 def test_mixed_completion_and_refusal_search_uses_the_refusal_profiles_customer_context():

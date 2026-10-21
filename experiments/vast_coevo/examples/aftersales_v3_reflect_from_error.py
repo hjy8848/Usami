@@ -25,7 +25,8 @@ from usami_aftersales import tasks as aftersales_tasks
 from usami_aftersales.models import Operation
 from usami_dialogue.agents import SkillPromptContext
 from usami_dialogue.agents_v3 import AgentExecutionV3, replay_v3
-from usami_dialogue.tasks import Goal, InformationRequirement, PreferenceRequirement
+from usami_dialogue.decision_audit import analyze_execution
+from usami_dialogue.tasks import CustomerFollowUp, Goal, InformationRequirement, PreferenceRequirement
 from usami_dialogue.user_scenario import scenario_from_task
 from vast_coevo.evidence import EvidenceArchive
 from vast_coevo.models import (
@@ -93,6 +94,9 @@ def _make_source_evidence(root: Path, task_record: CertifiedTask,
     trace = execution.trace.model_dump(mode="json")
     trace_path = _write(root, "source/trace.json", trace)
     execution_path = _write(root, "source/execution.json", execution)
+    decision_audit = analyze_execution(aftersales, execution)
+    _write(root, "source/decision-failure-audit.json", decision_audit)
+    audit_by_event = {row["dialogue_event_id"]: row for row in decision_audit["operations"]}
     trace_ref = ArtifactRef(path=str(trace_path.relative_to(REPO_ROOT)), sha256=digest(trace))
 
     service_spec = _model_spec_for(execution.service_model)
@@ -153,6 +157,7 @@ def _make_source_evidence(root: Path, task_record: CertifiedTask,
         consents = list(interaction.get("consents", []))
         codes = tuple(sorted(row.get("violations", [])))
         exact_consent = any(consent.get("operation") == operation for consent in consents)
+        diagnosis = audit_by_event.get(row["dialogue_event_id"], {})
         failures.append(VerifiedFailure(
             episode_id=episode_id, event_id=row["dialogue_event_id"], domain="aftersales",
             operation=row["operation"], reference_codes=codes,
@@ -165,6 +170,12 @@ def _make_source_evidence(root: Path, task_record: CertifiedTask,
                 "interaction": {"revision": interaction.get("revision"),
                                 "commitments": interaction.get("commitments", {}),
                                 "consents": consents},
+                "decision_diagnosis": {
+                    "observed_mechanism_ids": diagnosis.get("observed_mechanism_ids", []),
+                    "failed_checks": diagnosis.get("failed_checks", []),
+                    "causal_root_verified": False,
+                    "causal_status": diagnosis.get("causal_status", "unavailable"),
+                },
             },
             permission_scope={
                 "identity": trace["private"]["identity"],
@@ -178,6 +189,9 @@ def _make_source_evidence(root: Path, task_record: CertifiedTask,
             causal_prerequisites=(
                 {"kind": "exact_customer_write_grant", "present": operation in grants},
                 {"kind": "exact_current_consent", "present": exact_consent},
+                {"kind": "reference_business_precondition", "present": row.get("reference_allowed"),
+                 "code": row.get("reference_error_code")},
+                {"kind": "causal_root_verified", "present": False},
             ),
             expected={"reference_allowed": False, "reference_codes": list(codes),
                       "expected_execution": "do not execute this write"},
@@ -311,18 +325,27 @@ def _task_record(plan: dict) -> CertifiedTask:
             params={"line_id": line.id, "issue": private.facts["issue"]},
         ).model_dump(mode="json"))
     frames = aftersales_tasks.frame_contract(world, private)
+    resolution_facts = ["order_id", "line_id", "issue", "evidence_id"]
+    if plan["resolution"] in {"exchange", "reship"} and "deadline" in private.facts:
+        resolution_facts.append("deadline")
+    followups = ([CustomerFollowUp(
+        message="I also need a new support case for this item, even though its earlier remedy is complete.",
+        requested_action="open_case",
+    )] if plan["mixed"] else [])
     composition = OpenDialogueComposition(
-        protocol="open-dialogue-composition-v2", profile_ids=[profile_id],
+        protocol="open-dialogue-composition-v4"
+            if plan["mixed"] or plan["resolution"] in {"exchange", "reship"}
+            else "open-dialogue-composition-v2",
+        profile_ids=[profile_id],
         customer_request=(f"I need a {plan['resolution']} for the {private.facts['issue']} item in this order. "
-                          f"Please review the case and handle the {plan['resolution']} if it is eligible." +
-                          (" If this item is already resolved, do not open a duplicate case." if plan["mixed"] else "")),
+                          f"Please review the case and handle the {plan['resolution']} if it is eligible."),
         goals=[goal], frames=frames,
         external_schedule=[event.id for event in world.external_events.values() if event.line_id == line.id],
-        information_requirements=[InformationRequirement(profile_id=profile_id,
-            fact_keys=["order_id", "line_id", "issue", "evidence_id"])],
+        information_requirements=[InformationRequirement(profile_id=profile_id, fact_keys=resolution_facts)],
         preference_requirements=[PreferenceRequirement(profile_id=profile_id,
             preference="resolution", accepted_values=[plan["resolution"]])],
         refusal_operations=refusal_operations,
+        follow_up_requests=followups,
     )
     selection = TaskSelection(kind="dialogue", family="open_composition_v1",
                               profile_id=profile_id, composition=composition)

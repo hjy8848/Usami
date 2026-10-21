@@ -112,3 +112,45 @@ repository.
 
 This implementation task has not invoked that online command. The live result
 is a diagnostic episode, not a Skill effectiveness or generalization claim.
+
+## Frozen Customer preflight and local decision audit
+
+New After-sales registrations may use the opt-in
+`own-order-after-sales-progress-v1` Customer view. It adds only the authenticated
+Customer's own case, quote, and return status fields. Evaluator notices, quote
+hashes, and receipt notices remain hidden. Archived runs keep their original
+`legacy-v1` or `own-order-line-status-v1` projection.
+
+The deterministic Customer fixture treats a grant as a one-turn permission,
+not proof that the Service executed the operation. It checks the visible case,
+quote, return, and line state before advancing; if an authorized action remains
+visibly incomplete, it permits one retry and then stops authorizing it. For
+exchange/reship goals it discloses the frozen Customer's actual delivery
+deadline. A registered information requirement must still be grounded in that
+Customer profile.
+
+`open-dialogue-composition-v4` adds public follow-up messages for requests that
+must happen after the primary goal. Each refusal objective must have one such
+message and a matching harness-only `requested_action`. The compiler validates
+that the operation is in the selected Customer's native action scope. Only the
+message is copied into `UserScenario`; the action label is never sent to the
+Customer LLM. The v4 compiler also requires delivery-deadline information for
+exchange/reship completion goals. Older task protocol versions remain valid for
+historical records.
+
+Before explicit Customer-mode execution, `customer_interaction_preflight` checks
+that the frozen profile contains the required facts and that v4 follow-ups are
+present in the public scenario. This is a consistency check, not a replacement
+for the native Reference certificate or an end-to-end scripted interaction.
+The diagnostic and paired-run outputs save it as
+`customer-interaction-preflight.json`.
+
+`usami_dialogue.decision_audit.analyze_execution` adds a replay-bound offline
+report that keeps positive goal completion, strict task success, denied
+attempts, successful sandbox violations, incorrect refusals, protocol errors,
+and per-role costs separate. It lists observed blockers and stable mechanism
+IDs, but marks every causal root unverified unless a separate counterfactual
+test establishes it. `compare_matched_audits` refuses different task/world
+hashes and reports unvisited decision opportunities separately. These reports
+are diagnostic only: they do not alter Oracle results, task scores, Skill
+selection, or Dynamic Gates.

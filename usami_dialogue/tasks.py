@@ -83,17 +83,30 @@ class PreferenceRequirement(Model):
     accepted_values:list[Any]=Field(min_length=1,max_length=32)
 
 
+class CustomerFollowUp(Model):
+    """A public customer request that must occur after the primary outcome.
+
+    ``requested_action`` is harness metadata for deterministic Customer
+    contract fixtures only. It is deliberately not copied into UserScenario,
+    and therefore is never sent to a live Customer model.
+    """
+    message:str=Field(min_length=1,max_length=6000)
+    requested_action:Optional[str]=Field(default=None,min_length=1,max_length=96)
+
+
 class DialogueComposition(Model):
     """Versioned task scope for evaluator-composed, multi-profile challenges."""
     # v1 preserves the original rule that every composed task claims a process
     # dependency. v2 permits an explicit refusal-only task with no completion
     # goal to be certified on its native policy boundary alone.
-    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2','open-dialogue-composition-v3']='open-dialogue-composition-v1'
+    protocol:Literal['open-dialogue-composition-v1','open-dialogue-composition-v2','open-dialogue-composition-v3','open-dialogue-composition-v4']='open-dialogue-composition-v1'
     profile_ids:list[str]=Field(min_length=1,max_length=64)
     customer_request:str=Field(min_length=1,max_length=6000)
     information_requirements:list[InformationRequirement]=Field(default_factory=list,max_length=64)
     preference_requirements:list[PreferenceRequirement]=Field(default_factory=list,max_length=64)
     confirmation_requirements:list[dict]=Field(default_factory=list,max_length=16)
+    follow_up_requests:list[CustomerFollowUp]=Field(default_factory=list,max_length=16,
+        exclude_if=lambda value:not value)
 
 
 class DialogueTask(Model):

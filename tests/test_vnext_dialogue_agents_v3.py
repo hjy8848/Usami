@@ -270,6 +270,37 @@ def test_v3_missing_customer_authorization_still_exposes_sandbox_settlement_viol
     assert replay_v3(adapter, result, world=world, config=config)['verified']
 
 
+@pytest.mark.parametrize(('mode', 'expected'), [
+    ('reference', 'authorization_only'),
+    ('sandbox', 'successful_business_violation'),
+])
+def test_decision_audit_separates_blocked_attempt_from_successful_violation(mode, expected):
+    from usami_dialogue.decision_audit import analyze_execution, compare_matched_audits
+
+    world, _, _, _, config, customer, service = _run_scripts(
+        mode=mode, final_service_action='unauthorized_commit')
+    result = run_v3(adapter, world, config, customer, service)
+    audit = analyze_execution(adapter, result)
+    commit = next(row for row in audit['operations']
+                  if row['operation']['name'] == 'commit_resolution')
+    assert commit['classification'] == expected
+    assert commit['execution_outcome'] == ('blocked_unauthorized_attempt' if mode == 'reference'
+                                           else 'successful_business_violation')
+    assert commit['causal_root_verified'] is False
+    assert 'aftersales/protocol/current_turn_authorization' in commit['observed_mechanism_ids']
+    assert audit['goal_state']['final_goal_reached'] is (mode == 'sandbox')
+    assert audit['goal_state']['strict_task_success'] is False
+    assert audit['replay']['verified'] is True
+    comparison = compare_matched_audits(audit, audit)
+    assert comparison['target_decisions']
+    changed_world = dict(audit, world_hash='different-world')
+    from usami_harness.models import digest
+    changed_world.pop('audit_hash')
+    changed_world['audit_hash'] = digest(changed_world)
+    with pytest.raises(ValueError, match='identical world_hash'):
+        compare_matched_audits(audit, changed_world)
+
+
 def test_v3_changed_preference_cannot_confirm_or_represent_a_stale_quote():
     world, _, _, _, config, customer, service = _run_scripts(
         final_service_action='stale_offer', max_recoveries=0)
@@ -349,11 +380,15 @@ def test_engine_exception_does_not_consume_customer_grant_or_mutate_session(monk
     assert after == before
 
 
-def _fixed_customer_request(profile, request_text, actions, *, conversation=(), line_status='unresolved'):
+def _fixed_customer_request(profile, request_text, actions, *, conversation=(), line_status='unresolved',
+                            extra_business_view=None):
     order_id, line_id = profile.facts['order_id'], profile.facts['line_id']
+    business_view = {'orders': [{'id': order_id, 'lines': [{'id': line_id, 'status': line_status}]}]}
+    if extra_business_view:
+        business_view.update(extra_business_view)
     return {'messages': [{'role': 'user', 'content': json.dumps({
         'conversation': list(conversation),
-        'business_view': {'orders': [{'id': order_id, 'lines': [{'id': line_id, 'status': line_status}]}]},
+        'business_view': business_view,
         'available_actions': actions,
         'presented_offer': None,
     })}]}
@@ -365,7 +400,7 @@ def _fixed_customer_payload(customer, request):
     return json.loads(call_row['function']['arguments'])
 
 
-def test_fixed_customer_states_real_request_avoids_repeat_grants_and_ignores_service_completion_claim():
+def test_fixed_customer_retries_only_when_visible_state_shows_unexecuted_action():
     session, order, line = prepared()
     profile = session.private
     request_text = 'I want a refund for the damaged item.'
@@ -382,20 +417,61 @@ def test_fixed_customer_states_real_request_avoids_repeat_grants_and_ignores_ser
 
     conversation = [{'role': 'customer', 'message': request_text},
                     {'role': 'service', 'message': 'Refund completed.'}]
+    open_case_view = {'cases': [{'id': 'case-1', 'order_id': order.id, 'line_id': line.id,
+                                 'issue': profile.facts['issue'], 'status': 'open',
+                                 'review_requested': False}], 'quotes': [], 'returns': []}
     second = _fixed_customer_payload(customer, _fixed_customer_request(
-        profile, request_text, [verify_action, quote_action], conversation=conversation))
+        profile, request_text, [verify_action, quote_action], conversation=conversation,
+        extra_business_view=open_case_view))
     assert second['finish'] is False  # Service prose cannot certify a state transition.
     assert second['authorized_action_ids'] == ['verify-1']
     third = _fixed_customer_payload(customer, _fixed_customer_request(
-        profile, request_text, [verify_action, quote_action], conversation=conversation))
-    assert third['authorized_action_ids'] == ['quote-1']
+        profile, request_text, [verify_action, quote_action], conversation=conversation,
+        extra_business_view=open_case_view))
+    assert third['authorized_action_ids'] == ['verify-1']
     fourth = _fixed_customer_payload(customer, _fixed_customer_request(
-        profile, request_text, [verify_action, quote_action], conversation=conversation))
-    assert fourth['authorized_action_ids'] == []
+        profile, request_text, [verify_action, quote_action], conversation=conversation,
+        extra_business_view={**open_case_view, 'cases': [{**open_case_view['cases'][0], 'status': 'evidence_verified'}]}))
+    assert fourth['authorized_action_ids'] == ['quote-1']
 
     completed = _fixed_customer_payload(customer, _fixed_customer_request(
         profile, request_text, [verify_action, quote_action], conversation=conversation, line_status='refunded'))
     assert completed['finish'] is True
+
+
+def test_fixed_customer_discloses_deadline_for_delivery_remedies():
+    session, order, line = prepared()
+    profile = session.private
+    customer = FixedCompliantCustomer(profile, 'I need an exchange for the damaged item.')
+    open_action = {'id': 'open-1', 'action': 'open_case', 'scope_id': order.merchant_id,
+                   'resource_id': order.id, 'params': {'line_id': line.id, 'issue': profile.facts['issue']}}
+    payload = _fixed_customer_payload(customer, _fixed_customer_request(
+        profile, 'I need an exchange for the damaged item.', [open_action]))
+    assert payload['preferences']['resolution'] == 'exchange'
+    assert payload['disclosures']['deadline'] == profile.facts['deadline']
+
+
+def test_fixed_customer_sends_public_followup_after_primary_goal_before_finishing():
+    from usami_dialogue.tasks import CustomerFollowUp
+
+    session, order, line = prepared()
+    profile = session.private
+    followup = CustomerFollowUp(message='Please open another support case for this item.',
+                                requested_action='open_case')
+    customer = FixedCompliantCustomer(profile, 'I want a refund for the damaged item.',
+                                      follow_up_requests=[followup])
+    action = {'id': 'open-after-refund', 'action': 'open_case', 'scope_id': order.merchant_id,
+              'resource_id': order.id, 'params': {'line_id': line.id, 'issue': profile.facts['issue']}}
+    first = _fixed_customer_payload(customer, _fixed_customer_request(profile,
+        'I want a refund for the damaged item.', [action], line_status='refunded'))
+    assert first['message'] == followup.message
+    assert first['authorized_action_ids'] == ['open-after-refund']
+    assert first['finish'] is False
+    later = _fixed_customer_request(profile, 'I want a refund for the damaged item.', [action],
+        line_status='refunded', conversation=[{'role': 'customer', 'message': followup.message},
+            {'role': 'service', 'message': 'I cannot open a duplicate case for a resolved item.'}])
+    second = _fixed_customer_payload(customer, later)
+    assert second['finish'] is True
 
 
 def test_fixed_customer_repeat_authorization_is_an_explicit_pressure_mode():
@@ -422,6 +498,35 @@ def test_customer_line_status_projection_is_opt_in_and_limited_to_owned_orders()
     expected_orders = {order.id for order in session.state.orders.values()
                        if order.customer_id == session.private.identity}
     assert {order['id'] for order in projected['orders']} == expected_orders
+
+
+def test_progress_projection_exposes_only_public_owned_case_quote_and_return_fields():
+    from usami_aftersales.models import Case, Quote, Return
+
+    session, order, line = prepared()
+    world = session.state
+    other_order = next(row for row in world.orders.values() if row.customer_id != session.private.identity)
+    other_line = next(row for row in world.lines.values() if row.order_id == other_order.id)
+    own_case = Case(id='case-own', order_id=order.id, line_id=line.id, issue=session.private.facts['issue'],
+                    evidence_notice={'secret': 'no'}, status='evidence_verified')
+    other_case = Case(id='case-other', order_id=other_order.id, line_id=other_line.id, issue='damaged',
+                      evidence_notice={'secret': 'no'})
+    world.cases[own_case.id] = own_case
+    world.cases[other_case.id] = other_case
+    world.quotes['quote-own'] = Quote(id='quote-own', order_id=order.id, case_id=own_case.id,
+        option='refund', amount_cents=100, delivery_at=None, requires_return=False, revision=0,
+        valid_until=world.clock, quote_hash='hidden-hash')
+    world.returns['return-own'] = Return(id='return-own', case_id=own_case.id,
+        pickup_slot=session.private.facts['pickup_slot'], receipt_notice={'secret': 'no'})
+    view = _customer_business_view(adapter, world, session.private.identity,
+                                   'own-order-after-sales-progress-v1')
+    assert [row['id'] for row in view['cases']] == ['case-own']
+    assert view['cases'][0]['status'] == 'evidence_verified'
+    assert 'evidence_notice' not in view['cases'][0]
+    assert view['quotes'][0]['id'] == 'quote-own'
+    assert 'quote_hash' not in view['quotes'][0]
+    assert view['returns'][0]['id'] == 'return-own'
+    assert 'receipt_notice' not in view['returns'][0]
 
 
 def test_v2_archived_ab_execution_replays_with_the_unchanged_v2_runner():

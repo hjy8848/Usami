@@ -317,6 +317,38 @@ def test_http_transport_uses_actual_function_call_protocol_and_never_exports_key
     assert key not in execution.model_dump_json() and "[REDACTED]" in execution.final_reply
 
 
+def test_http_transport_omits_empty_tool_calls_and_internal_message_hashes():
+    httpx = pytest.importorskip("httpx")
+    from usami.service import OpenAICompatibleClient
+    tool_call = {"id": "call_1", "type": "function",
+                 "function": {"name": "get_order", "arguments": "{}"}}
+    request = {"model": "test", "messages": [
+        {"role": "system", "content": "instructions", "record_hash": "internal-hash-1"},
+        {"role": "user", "content": "help", "tool_calls": [], "record_hash": "internal-hash-2"},
+        {"role": "assistant", "content": None, "tool_calls": [tool_call], "record_hash": "internal-hash-3"},
+    ]}
+    seen = []
+
+    def endpoint(provider_request):
+        seen.append(json.loads(provider_request.content))
+        return httpx.Response(200, json=answer("OK"))
+
+    client = OpenAICompatibleClient(FixtureClient.settings, "test-key",
+                                   transport=httpx.MockTransport(endpoint))
+    try:
+        client.complete(request)
+    finally:
+        client.close()
+
+    sent = seen[0]["messages"]
+    assert "record_hash" not in sent[0] and "record_hash" not in sent[1]
+    assert "tool_calls" not in sent[1]
+    assert sent[2]["tool_calls"] == [tool_call]
+    # Provider normalization must not alter the immutable/audited input.
+    assert request["messages"][1]["tool_calls"] == []
+    assert all("record_hash" in message for message in request["messages"])
+
+
 @pytest.mark.parametrize("status", [401, 429, 500, 302])
 def test_http_errors_do_not_retry_or_echo_sensitive_bodies(status):
     httpx = pytest.importorskip("httpx")

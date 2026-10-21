@@ -103,6 +103,26 @@ class OpenAICompatibleClient:
             body = body.replace(self._key, "[REDACTED]")
         return {"status_code": response.status_code, "body": body, "truncated": truncated}
 
+    @staticmethod
+    def _provider_payload(request):
+        """Remove internal message metadata and empty optional tool-call fields.
+
+        Audited messages may carry a record_hash and an empty tool_calls list.
+        Those fields are not useful to the provider; some OpenAI-compatible
+        backends reject an explicitly empty tool_calls array. Keep the
+        recorded request untouched for exact offline replay.
+        """
+        payload = copy.deepcopy(request)
+        messages = payload.get("messages")
+        if isinstance(messages, list):
+            for message in messages:
+                if not isinstance(message, dict):
+                    continue
+                message.pop("record_hash", None)
+                if message.get("tool_calls") in ([], None):
+                    message.pop("tool_calls", None)
+        return payload
+
     def complete(self, request):
         import httpx
         # Do not save headers, exception request objects, or raw HTTP error bodies.
@@ -110,7 +130,8 @@ class OpenAICompatibleClient:
         if self._key:
             headers["Authorization"] = "Bearer " + self._key
         try:
-            response = self._http.post(self.settings.base_url + "/chat/completions", headers=headers, json=request)
+            response = self._http.post(self.settings.base_url + "/chat/completions", headers=headers,
+                                       json=self._provider_payload(request))
         except httpx.TimeoutException:
             raise ServiceError("PROVIDER_TIMEOUT", "LLM request timed out; no retry performed") from None
         except httpx.HTTPError:

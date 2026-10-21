@@ -490,7 +490,9 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
             terminal_reason = "episode_model_call_budget_exhausted"
             break
         prompt = ServicePrompt(customer_id=task.customer_id, customer_request=task.customer_request,
-                               conversation=tuple(conversation), observed_subject_ids=tuple(sorted(observed_ids)))
+                               conversation=tuple(conversation),
+                               available_merchant_scope_ids=tuple(sorted(runtime_initial_world.merchants)),
+                               observed_subject_ids=tuple(sorted(observed_ids)))
         _notify_progress(on_progress, "service_running", service_decisions=service_decisions,
                          tool_calls=tool_count, message="正在调用 Service 模型。")
         if hasattr(service_agent, "last_call"):

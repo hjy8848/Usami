@@ -7,8 +7,8 @@ import pytest
 
 from usami_harness.models import digest
 from usami_v2.commerce.models import ExternalEvent, Operation, case_id, quote_id
-from usami_v2.runtime.agents import CustomerPrompt, ServiceAction, ServicePrompt
-from usami_v2.runtime.agents import OpenAICustomerAgent, OpenAIServiceAgent
+from usami_v2.runtime.agents import AgentMessage, CustomerPrompt, ServiceAction, ServicePrompt
+from usami_v2.runtime.agents import OpenAICustomerAgent, OpenAIServiceAgent, service_tools
 from usami_v2.runtime.customer import (
     CustomerDecision, CustomerProfile, CustomerProfileV2, CustomerRuntime, OfferPresentation, render_offer,
 )
@@ -549,11 +549,40 @@ def test_explicit_openai_adapters_capture_request_and_raw_output_without_network
         "present_for": "commit_accepted_quote", "subject_ids": ["line-own"]}
     service_client = RecordedClient(response("respond_to_customer", service_args))
     service = OpenAIServiceAgent(service_client)
-    action = service.decide(ServicePrompt(customer_id="customer-own",
-        customer_request="Help with line-own.", observed_subject_ids=("customer-own", "line-own")))
+    service_prompt = ServicePrompt(customer_id="customer-own",
+        customer_request="Help with line-own.", available_merchant_scope_ids=("merchant-own",),
+        conversation=(AgentMessage(role="user", content="Help with line-own."),),
+        observed_subject_ids=("customer-own", "line-own"))
+    action = service.decide(service_prompt)
     assert action.kind == "reply" and action.subject_ids == ("line-own",)
     assert action.call.request == service_client.requests[0]
+    assert service_client.requests[0]["tool_choice"] == "auto"
+    assert service_client.requests[0]["parallel_tool_calls"] is False
+    prompt_messages = service_client.requests[0]["messages"]
+    assert len(prompt_messages) == 2  # the initial request is not duplicated
+    operational_context = json.loads(prompt_messages[1]["content"])
+    assert operational_context == {
+        "authenticated_customer_id": "customer-own",
+        "available_merchant_scope_ids": ["merchant-own"],
+        "customer_request": "Help with line-own.",
+    }
     assert "PRIVATE CUSTOMER PROFILE" not in json.dumps(service_client.requests[0])
+    available_tools = {row["function"]["name"]: row["function"] for row in service_tools()}
+    assert "merchant ID" in available_tools["list_customer_orders"]["description"]
+    assert "case ID" in available_tools["prepare_remedy_quote"]["description"]
+    assert "exact customer consent" in available_tools["commit_accepted_quote"]["description"]
+
+    # Some compatible providers choose a normal final response under tool_choice=auto.
+    # It is a safe, side-effect-free Customer reply rather than a malformed operation.
+    text_only = {"choices": [{"finish_reason": "stop", "message": {
+        "role": "assistant", "content": "I will check your order."}}],
+        "usage": {"prompt_tokens": 9, "completion_tokens": 4}}
+    text_client = RecordedClient(text_only)
+    text_action = OpenAIServiceAgent(text_client).decide(service_prompt)
+    assert text_action.kind == "reply"
+    assert text_action.message == "I will check your order."
+    assert text_action.call.response == text_only
+    assert text_action.operation is None
 
     malformed = response("respond_to_customer", service_args, finish_reason="length")
     broken_service = OpenAIServiceAgent(RecordedClient(malformed))

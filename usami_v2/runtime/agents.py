@@ -33,6 +33,9 @@ class ServicePrompt(Sealed):
     customer_id: str
     customer_request: str
     conversation: Tuple[AgentMessage, ...] = ()
+    # Public operational context required to route the authenticated caller's
+    # queries. These identifiers do not reveal hidden task goals or witnesses.
+    available_merchant_scope_ids: Tuple[str, ...] = ()
     # These are public tool results already delivered to the Service.
     observed_subject_ids: Tuple[str, ...] = ()
 
@@ -138,13 +141,33 @@ def _schema_with_defs(model):
 
 
 def service_tools():
+    descriptions = {
+        "list_customer_orders": "List orders belonging to the authenticated customer in a merchant scope. Set scope_id to a merchant ID and resource_id to that same merchant ID; params is an empty object.",
+        "get_order_details": "Read an order and its lines. resource_id is the order ID; scope_id is its merchant ID; params is empty.",
+        "search_catalog": "Search a merchant catalog. Set scope_id and resource_id to the same merchant ID; use params to filter product_family and attributes.",
+        "get_sku_details": "Read one SKU. resource_id is the SKU ID and scope_id is its merchant ID; params is empty.",
+        "get_inventory": "Read inventory rows for one SKU. resource_id is the SKU ID and scope_id is its merchant ID; params is empty.",
+        "estimate_delivery": "Estimate delivery for one SKU. resource_id is the SKU ID, scope_id is its merchant ID, and params supplies warehouse_id and optionally quantity.",
+        "get_refundable_balance": "Read the unrefunded purchased units and original credit for one order line. resource_id is the order-line ID; scope_id is its merchant ID; params is empty.",
+        "get_case_status": "Read one remedy case and its quotes and returns. resource_id is the case ID; scope_id is its merchant ID; params is empty.",
+        "open_remedy_case": "Prepare a remedy case for one purchased order line after customer delegation. resource_id is the order-line ID; params supplies quantity and issue.",
+        "verify_submitted_evidence": "Verify evidence for an existing remedy case. resource_id is the case ID; params supplies evidence_id.",
+        "request_policy_review": "Request policy review for an existing remedy case. resource_id is the case ID; params is empty.",
+        "prepare_remedy_quote": "Prepare refund, exchange, or reship terms for a verified remedy case. resource_id is the case ID; params supplies remedy and any replacement details.",
+        "commit_accepted_quote": "Commit an existing quote only when the runtime has recorded exact customer consent. resource_id is the quote ID; params is empty.",
+        "schedule_authorized_return": "Schedule the return required by a committed quote. resource_id is the case ID; params is empty.",
+        "release_accepted_refund": "Release a refund for a committed case only when the runtime has recorded exact refund-release consent. resource_id is the case ID; params is empty.",
+        "ship_accepted_replacement": "Ship the replacement for a committed case after required return conditions are met. resource_id is the case ID; params is empty.",
+        "cancel_pending_commitment": "Cancel an existing pending quote commitment. resource_id is the quote ID; params is empty.",
+    }
     tools = []
     for name, parameter_model in sorted(PARAMETERS.items()):
         schema, definitions = _schema_with_defs(parameter_model)
         tools.append({"type": "function", "function": {
-            "name": name, "description": "Execute one registered commerce operation through the business engine.",
+            "name": name, "description": descriptions[name],
             "parameters": {"type": "object", "properties": {
-                "scope_id": {"type": "string"}, "resource_id": {"type": "string"}, "params": schema,
+                "scope_id": {"type": "string", "description": "Merchant ID defining the business scope."},
+                "resource_id": {"type": "string", "description": descriptions[name]}, "params": schema,
             }, "required": ["scope_id", "resource_id", "params"], "additionalProperties": False,
                 **({"$defs": definitions} if definitions else {})}}})
     tools.append({"type": "function", "function": {
@@ -234,7 +257,11 @@ class OpenAIServiceAgent:
         "Customer preferences, proof witnesses or Oracle decisions. Tool writes are not Customer consent. "
         "Never commit a quote unless the Customer runtime has separately recorded exact consent; never claim "
         "completion without a successful tool result. Present the actual quote to the Customer before asking "
-        "for acceptance. Use one tool call per response and continue reasoning from its result."
+        "for acceptance. The caller is already authenticated; use the supplied customer ID and merchant "
+        "scope IDs instead of asking the Customer for account or order identifiers that the tools can look up. "
+        "Use one function call for a business operation. A normal assistant message is also allowed for a "
+        "customer-facing clarification or status update, but it has no business side effect and must not claim "
+        "that an operation was performed. Never make multiple function calls in one response."
     )
 
     def __init__(self, client: CompletionClient):
@@ -245,9 +272,21 @@ class OpenAIServiceAgent:
     def decide(self, prompt: ServicePrompt):
         self.last_call = None
         messages = [{"role": "system", "content": self.SYSTEM},
-                    {"role": "user", "content": "Customer request: " + prompt.customer_request}]
-        messages.extend(row.model_dump(mode="json", exclude_none=True) for row in prompt.conversation)
+                    {"role": "user", "content": json.dumps({
+                        "authenticated_customer_id": prompt.customer_id,
+                        "available_merchant_scope_ids": list(prompt.available_merchant_scope_ids),
+                        "customer_request": prompt.customer_request,
+                    }, ensure_ascii=False)}]
+        history = list(prompt.conversation)
+        # The initial request is already included with trusted routing context.
+        # Do not repeat it as a second, context-free message on the first turn.
+        if history and history[0].role == "user" and history[0].content == prompt.customer_request:
+            history = history[1:]
+        messages.extend(row.model_dump(mode="json", exclude_none=True) for row in history)
         request = self.settings.request(messages, service_tools())
+        # Qwen thinking models reject `tool_choice=required`; keep automatic
+        # selection and handle a safe, side-effect-free text reply explicitly.
+        request["parallel_tool_calls"] = False
         try:
             raw = self.client.complete(request)
         except Exception as exc:
@@ -256,6 +295,21 @@ class OpenAIServiceAgent:
         self.last_call = AgentCall(role="service", request=request, response=raw,
                                    prompt_tokens=_usage(raw, "prompt_tokens"),
                                    completion_tokens=_usage(raw, "completion_tokens"))
+        # OpenAI-compatible providers may validly choose a plain assistant reply
+        # when tool_choice=auto. Treat only complete, nonempty final text as a
+        # user-facing response. It cannot execute a business operation; all
+        # side effects still require a validated function call.
+        try:
+            choices = raw["choices"]
+            message = choices[0]["message"] if isinstance(choices, list) and len(choices) == 1 else {}
+            no_tool_calls = not message.get("tool_calls")
+            content = message.get("content")
+            if (message.get("role") == "assistant" and no_tool_calls
+                    and choices[0].get("finish_reason") == "stop"
+                    and isinstance(content, str) and content.strip()):
+                return ServiceAction(kind="reply", message=content, call=self.last_call)
+        except (KeyError, TypeError, IndexError, AttributeError):
+            pass
         action = ServiceAction.from_tool_message(raw, prompt.customer_id, prompt.observed_subject_ids)
         data = action.model_dump(mode="json", exclude={"record_hash"})
         data["call"] = self.last_call.model_dump(mode="json")

@@ -44,20 +44,32 @@
 
 测试中的 Customer 授权由明确标注的离线夹具独立建立。这不等于自然 LLM Customer 或新会话授权桥已经接通。
 
+### P2：冻结世界构建与多目标结果判定（部分实现）
+
+- `ScenarioSpec` 支持多个顾客、订单、订单行、SKU、仓库、库存区间、属性及有界线性关系约束；模型不能提交任意 Python、完整 `World`、Engine、Reference 或 Oracle 实现。
+- Builder 将设计别名转换成种子绑定的业务 ID，保留每次候选的约束拒绝原因，并区分 SAT、完整枚举 UNSAT、预算耗尽 UNKNOWN。SAT 会由独立证书器读取实际生成世界，重新核对数量、实付、属性、库存、路线、事件和未初始化交易状态。
+- `TaskSpec` 支持一项任务中的多个订单行目标、兼容规格、补款上限、承诺送达日期及只读信息请求。目标计分允许多个满足同一硬约束的 SKU；额外或未请求的结算不会算作完成。
+- 信息目标必须绑定到实际公开顾客原话中的请求片段。计分使用独立事实来源和 Service 实际送达文本；只读任务无需交易状态变化，擅自产生任务范围外结算会失败。
+- CLI 已能导出/校验现行 Schema，以及构建、密封和离线重建验证冻结世界包；输出只记录构建证据，明确不声称任务可达或交互可达。
+- 新工程夹具实际走过不变的 Engine、Oracle 与 Replay：两条订单行联合处理；D/E 两个符合规格、价格和时限的替代品均通过；错误规格、超期、超预算的替代品失败；完整枚举无解与预算不足分别判为 UNSAT 和 UNKNOWN。
+
+尚未完成：`TaskSpec` 的通用 Reference 可达性搜索、多个合法完整业务 witness 的独立证书、CustomerScenario/授权桥、交互可达性证书，以及构建前冻结的动态事件计划。工程夹具证明的是当前场景、业务引擎和目标评分可以区分可接受方案，不代表 Designer 自主出题能力或正式题库已通过认证。
+
 ## 本阶段验证
 
 | 检查 | 实际结果 |
 |---|---|
-| 最终新增测试 | 45 passed |
+| P0/P1 新增测试 | 45 passed |
+| 当前 P2 Builder / TaskSpec / Schema 检查 | 18 passed |
 | 相关综合回归 | 178 passed；其中旧测试 144 项，包含旧 Oracle、售后、对话过程、Skill、v3 Agent、开放组合、A/B 和 Live 入口 |
 | 属性测试 | Hypothesis 的分摊守恒、随机部分退款和库存承诺状态机实际通过 |
 | Python 兼容 | 在现有 Python 3.9.6 环境实际运行 |
-| Schema CLI | 实际导出并离线核验 14 份 Schema，verified=true |
+| Schema CLI | 本阶段实际导出并离线核验 20 份 Schema，verified=true；上阶段记录的 14 份已扩展 |
 | 在线模型调用 | 0 |
 | 真实业务错误就绪 Gate | 未运行 |
 | Designer / Service 学习收益 | 未测量 |
 
-综合回归完成后新增了离线 CLI 和工具面覆盖，并加强类型/时间边界，最终对全部新增测试重新运行，结果为 45 passed。没有把分次执行的结果伪称为一次全仓回归。
+综合回归完成后新增了离线 CLI 和工具面覆盖，并加强类型/时间边界，最终对全部 P0/P1 新增测试重新运行，结果为 45 passed。P2 Builder、任务与 Schema 变更在本轮另行运行了 18 项定向检查。没有把分次执行的结果伪称为一次全仓回归。
 
 开发依赖新增 Hypothesis，生产依赖未扩大。本机测试把新增依赖安装到独立临时目录，没有改动原工作树的虚拟环境。
 
@@ -71,8 +83,11 @@
 
     python -m usami_v2.cli schema --output /tmp/usami-v2-new-schemas
     python -m usami_v2.cli verify-schemas --directory /tmp/usami-v2-new-schemas
+    python -m usami_v2.cli build --scenario scenario.json --seed 1 \
+      --output /tmp/usami-v2-world-001
+    python -m usami_v2.cli verify-build --directory /tmp/usami-v2-world-001
 
-输出目录必须不存在。以上只导出和核验 Schema，不查凭据，不发模型请求，不产生进化成功声明。
+所有输出目录必须不存在。构建命令不查凭据、不发模型请求；`verify-build` 重建采样尝试并复核独立世界证书，不代表任务或交互可达，也不产生进化成功声明。
 
 ## 仍未完成的整体范围
 
@@ -80,7 +95,7 @@
 |---|---|
 | P0 的运行级接线 | 契约与测试已实现，需随真实 Runner 接入证据来源和归档验证 |
 | P1 完整业务契约 | 原生核心已实现；持续由 P2/P3 场景与交互认证补足完整业务链路 |
-| P2 Builder / 联合目标 | 未实现；下一步实现 ScenarioSpec、受限构建、SAT/UNSAT/UNKNOWN 和独立证书 |
+| P2 Builder / 联合目标 | 部分实现；受限 Builder、实际世界约束证书、联合终态评分及离线 build/verify CLI 已有。下一步是 Reference 业务可达性、多合法 witness、任务证书 Replay 与冻结事件计划 |
 | P3 自然 Customer Runtime | 未实现；下一步接上公开委托、报价呈现、确认、撤销和独立 AuthorityProof |
 | P4 完整业务 Runner | 未实现；当前仅有原生执行核心和 Schema CLI |
 | P5 两阶段 Designer | 未实现；不能把测试夹具当作 Designer 自主出题 |

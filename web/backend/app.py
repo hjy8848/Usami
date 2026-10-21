@@ -343,6 +343,8 @@ def create_app() -> FastAPI:
     install_release_routes(app, current, snapshot, assert_current)
     from web.backend.domains import install_domain_routes
     install_domain_routes(app)
+    from web.backend.human_customer import install_human_customer_routes
+    install_human_customer_routes(app)
 
     # Optional single-origin preview after `npm run build`; API routes take precedence.
     dist = Path(__file__).resolve().parents[1] / "frontend" / "dist"

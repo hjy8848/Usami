@@ -5,6 +5,7 @@ __pycache__/
 build/
 dist/
 outputs/
+human_records/
 private/
 node_modules/
 playwright-report/

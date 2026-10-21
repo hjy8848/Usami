@@ -8,7 +8,7 @@ import json
 import os
 from pathlib import Path
 import tempfile
-from typing import Any, Dict, Literal, Optional, Protocol, Tuple, Union
+from typing import Any, Callable, Dict, Literal, Optional, Protocol, Tuple, Union
 
 from pydantic import Field
 
@@ -73,7 +73,7 @@ class EpisodeRecord(Sealed):
     runtime_initial_world: World
     final_world: World
     status: Literal["customer_finished", "budget_exhausted", "service_protocol_error",
-                    "customer_protocol_error", "agent_error", "runner_error"]
+                    "customer_protocol_error", "agent_error", "runner_error", "cancelled"]
     terminal_reason: str
     events: Tuple[EpisodeEvent, ...]
     tool_executions: Tuple[ToolExecution, ...]
@@ -122,6 +122,20 @@ class ServiceAgent(Protocol):
     last_call: Optional[AgentCall]
 
     def decide(self, prompt: ServicePrompt) -> ServiceAction: ...
+
+
+class EpisodeCancelled(Exception):
+    """A caller stopped an interactive Episode; this is incomplete evidence, not a Service error."""
+
+
+def _notify_progress(callback, kind, **payload):
+    if callback is None:
+        return
+    try:
+        callback({"kind": kind, **payload})
+    except Exception:
+        # UI observers are deliberately outside the evidence and execution path.
+        pass
 
 
 def _append(events, kind, payload, before, after):
@@ -409,7 +423,9 @@ def replay_episode(record: EpisodeRecord):
 def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
                 customer_agent: CustomerAgent, service_agent: ServiceAgent, *,
                 budget: Optional[EpisodeBudget] = None, mode: Literal["reference", "sandbox"] = "reference",
-                external_events: Tuple[ExternalEvent, ...] = ()) -> EpisodeRecord:
+                external_events: Tuple[ExternalEvent, ...] = (),
+                on_progress: Optional[Callable[[dict], None]] = None,
+                cancel_check: Optional[Callable[[], bool]] = None) -> EpisodeRecord:
     """Run a complete independent episode; task targets never enter Service context."""
     initial_world, task, profile = initial_world.clone(), task.checked(), profile.checked()
     budget = (budget or EpisodeBudget()).checked()
@@ -467,11 +483,16 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
     service_uses_model = bool(getattr(service_agent, "uses_model", True))
     customer_uses_model = bool(getattr(customer_agent, "uses_model", True))
     while service_decisions < budget.max_service_decisions and tool_count < budget.max_service_tool_calls:
+        if cancel_check and cancel_check():
+            status, terminal_reason = "cancelled", "human_session_cancelled"
+            break
         if service_uses_model and model_calls >= budget.max_model_calls:
             terminal_reason = "episode_model_call_budget_exhausted"
             break
         prompt = ServicePrompt(customer_id=task.customer_id, customer_request=task.customer_request,
                                conversation=tuple(conversation), observed_subject_ids=tuple(sorted(observed_ids)))
+        _notify_progress(on_progress, "service_running", service_decisions=service_decisions,
+                         tool_calls=tool_count, message="正在调用 Service 模型。")
         if hasattr(service_agent, "last_call"):
             service_agent.last_call = None
         try:
@@ -488,7 +509,10 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
             else:
                 events = _append(events, "agent_error", {"role": "service", "agent_call_hash": None,
                                     "error_type": type(exc).__name__}, world, world)
-            status, terminal_reason = "agent_error", type(exc).__name__ + ": " + str(exc)
+            if cancel_check and cancel_check():
+                status, terminal_reason = "cancelled", "human_session_cancelled_during_service_call"
+            else:
+                status, terminal_reason = "agent_error", type(exc).__name__ + ": " + str(exc)
             break
         service_decisions += 1
         service_call = action.call or getattr(service_agent, "last_call", None)
@@ -512,6 +536,9 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
         events = _append(events, "agent_response", {"role": "service",
                             "agent_call_hash": service_call.record_hash if service_call else None,
                             "decision_kind": action.kind}, world, world)
+        if cancel_check and cancel_check():
+            status, terminal_reason = "cancelled", "human_session_cancelled"
+            break
         if action.kind == "operation":
             if action.operation is None:
                 status, terminal_reason = "service_protocol_error", "operation action missing native operation"
@@ -533,6 +560,9 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
             operation_event_payload = {"request_id": request_id, "tool_execution_hash": row.record_hash,
                                        "operation": row.operation, "result": row.result}
             events = _append(events, "service_tool", operation_event_payload, before, world)
+            _notify_progress(on_progress, "service_tool", operation=row.operation,
+                             result=row.result, before_state_hash=row.before_state_hash,
+                             after_state_hash=row.after_state_hash, tool_count=tool_count)
             observed_ids.update(_public_ids(row.result))
             if row.result.get("success"):
                 # A successful tool result confirms the exact requested public
@@ -609,6 +639,8 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
         service_messages.append(service_message)
         events = _append(events, "service_reply", {"message": service_message.model_dump(mode="json"),
                                                     "presented_offer_hash": current_offer.record_hash if current_offer else None}, world, world)
+        _notify_progress(on_progress, "service_reply", message=service_message.model_dump(mode="json"),
+                         offer=current_offer.model_dump(mode="json") if current_offer else None)
         conversation.append(AgentMessage(role="assistant", content=customer_text))
 
         if customer_turns >= budget.max_customer_turns or (
@@ -621,6 +653,9 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
             customer_agent.last_call = None
         try:
             decision = customer_agent.decide(cp, profile)
+        except EpisodeCancelled as exc:
+            status, terminal_reason = "cancelled", str(exc) or "human_session_cancelled"
+            break
         except Exception as exc:
             failed_call = getattr(customer_agent, "last_call", None)
             if failed_call is not None:

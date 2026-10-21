@@ -18,6 +18,23 @@ python web/run.py
 
 打开 <http://127.0.0.1:5173>。一键启动默认使用 API 8001、前端 5173；Ctrl+C 停止两项子进程。端口被占用时脚本会明确报错，可以设置 `USAMI_BACKEND_PORT` / `USAMI_FRONTEND_PORT`。
 
+### 真人顾客实验台
+
+这是一个本机运行的定性实验工具：真人扮演 Customer，真实 `OpenAIServiceAgent` 负责服务决策，业务操作仍走 `commerce-2.0.0` Engine、Oracle 和 Replay。当前提供一个已认证的“损坏耳机退款”场景。页面中的结束、取消、报价接受和报价拒绝都是显式 Customer 动作；普通文字不会创建报价同意。未完成会话按未决证据处理。
+
+先在后端进程环境中设置模型和 OpenAI-compatible 服务地址，并按现有客户端配置后端凭据；不要把 Key 写进前端环境或浏览器。`web/run.py` 会将 UI 的本地来源加入 CSRF 白名单：
+
+```bash
+export USAMI_LLM_MODEL="your-model"
+export USAMI_LLM_BASE_URL="https://your-openai-compatible-endpoint/v1"
+# 凭据沿用 OpenAICompatibleClient 支持的后端环境 / 本机凭据配置
+python web/run.py
+```
+
+打开 <http://127.0.0.1:5173/?mode=human>。未检测到真实模型配置时，页面会禁用开始按钮；不会切换到脚本客服。后端最多同时运行两个 Episode，每个浏览器最多一个，单次模型调用预算为 32，客服会话 30 分钟过期。运行数据写入仓库根目录 `human_records/<session-id>/`，目录权限限制为当前用户；此目录已加入 `.gitignore`。每次记录包括完整 Episode、任务与世界认证证书、Oracle、Outcome、成本和 Replay，并标记 `benchmark_eligible=false`、`training_evidence_eligible=false`。真人顾客数据只用于定性人工检查，不进入正式 Benchmark、训练或 Skill 进化。
+
+关闭对话或取消时，系统先等待当前决策调用结束，再封存 Episode 并验证离线 Replay；因此界面会先显示“正在取消并封存”，随后才能下载完整报告。若模型调用一直没有返回，记录也会等待该调用结束，进程停止则内存中的活动会话无法恢复。
+
 也可以在两个终端分别运行，支持后端热重载：
 
 ```bash

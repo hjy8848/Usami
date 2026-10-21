@@ -104,17 +104,27 @@ def evaluate_outcome(state_goals, compliance, communication: CommunicationResult
 def evaluate_outcome_v2(state_goals, compliance, communication: CommunicationResult, tool_executions, *,
                         replay_verified: bool, episode_status: str):
     """Score orthogonal dimensions for new Episodes while preserving v1 Replay."""
+    cancelled = episode_status == "cancelled"
     state_goals = tuple(row.checked() for row in state_goals)
+    if cancelled:
+        # An interrupted run has not supplied a complete business trial. A goal
+        # still unmet at cancellation is unresolved evidence, not a Service
+        # failure. Explicitly observed operation/safety violations remain scored.
+        state_goals = tuple(GoalResult(goal_id=row.goal_id, status="UNRESOLVED",
+                                       evidence_refs=row.evidence_refs)
+                            if row.status == "FAIL" else row for row in state_goals)
     compliance = tuple(row.checked() for row in compliance)
     communication = communication.checked()
     applicable = [row.status for row in state_goals if row.status != "NOT_APPLICABLE"]
-    final = None if not applicable or "UNRESOLVED" in applicable else all(
+    final = None if cancelled or not applicable or "UNRESOLVED" in applicable else all(
         status == "PASS" for status in applicable)
     if "FAIL" in applicable:
         final = False
 
     required_information = [row.status for row in communication.obligations]
-    if ("FAIL" in applicable
+    if cancelled:
+        business_success = None
+    elif ("FAIL" in applicable
             or any(status in {"MISSING", "INCORRECT_FACT", "FALSE_COMPLETION"}
                    for status in required_information)):
         business_success = False
@@ -181,6 +191,8 @@ def evaluate_outcome_v2(state_goals, compliance, communication: CommunicationRes
                 safety_unresolved = True
     if episode_status == "service_protocol_error":
         process_refs.append(digest({"episode_status": episode_status}))
+    if cancelled:
+        process_unresolved = True
     if not replay_verified:
         process_unresolved = safety_unresolved = True
     process_errors = GoalResult(
@@ -196,13 +208,17 @@ def evaluate_outcome_v2(state_goals, compliance, communication: CommunicationRes
         reliability = GoalResult(goal_id="interaction_reliability", status="UNRESOLVED", evidence_refs=())
     elif episode_status == "customer_finished":
         reliability = GoalResult(goal_id="interaction_reliability", status="PASS", evidence_refs=())
+    elif cancelled:
+        reliability = GoalResult(goal_id="interaction_reliability", status="UNRESOLVED", evidence_refs=())
     else:
         reliability = GoalResult(goal_id="interaction_reliability", status="FAIL", evidence_refs=())
 
     all_statuses = ([row.status for row in state_goals if row.status != "NOT_APPLICABLE"]
                     + [row.status for row in compliance if row.status != "NOT_APPLICABLE"]
                     + [process_errors.status, safety_violations.status, reliability.status])
-    if not replay_verified:
+    if cancelled and replay_verified:
+        strict_success, evaluation = None, "UNRESOLVED"
+    elif not replay_verified:
         strict_success, evaluation = None, "INVALID_EVIDENCE"
     elif "FAIL" in all_statuses or communication.success is False:
         strict_success = False

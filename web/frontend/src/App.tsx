@@ -1,6 +1,8 @@
 import { Activity, ArrowDownToLine, ArrowRight, Box, Building2, CheckCircle2, ChevronRight, CircleHelp, Clock3, Code2, ExternalLink, FlaskConical, GitBranch, Layers3, LayoutDashboard, Loader2, Network, Play, Plus, RefreshCw, RotateCcw, Search, Settings2, ShieldCheck, Sparkles, Users, Wallet, X } from 'lucide-react';
 import { lazy, Suspense, useCallback, useEffect, useState, type ReactNode } from 'react';
 import { api, ApiError, download } from './api';
+import HumanCustomerPlayground from './HumanCustomerPlayground';
+import './human-mode-entry.css';
 import { Avatar, Badge, CopyValue, Inspector, JsonView, ModeSwitch, ResultView, Status, amount, date, operationLabel, roleLabel, short } from './ui';
 import WorldGraph from './WorldGraph';
 import Benchmark from './Benchmark';
@@ -23,6 +25,13 @@ type Inspect = (title: string, data: Json, extra?: ReactNode) => void;
 type Mutate = <T>(work: () => Promise<T>) => Promise<T | undefined>;
 
 export default function App() {
+  if (new URLSearchParams(location.search).get('mode') === 'human') {
+    return <HumanCustomerPlayground />;
+  }
+  return <WorldExplorerApp />;
+}
+
+function WorldExplorerApp() {
   const [domain, setDomain] = useState<Domain>(() => {
     const value = new URLSearchParams(location.search).get('domain') ?? localStorage.getItem('usami-domain') ?? 'saas';
     return value in names ? value as Domain : 'saas';
@@ -97,7 +106,7 @@ function SaaSExplorer({ changeDomain }: { changeDomain: (domain: Domain) => void
       <DomainSwitch domain="saas" change={changeDomain} />
       <div className="workspace-switch"><span className="workspace-icon"><Layers3 size={17} /></span><div><strong>SaaS World</strong><span>Local workspace</span></div><Badge>{snapshot?.world.rules.version.endsWith("0.2.0") ? "v0.2" : "v0.1"}</Badge></div>
       <div className="nav-label">EXPLORE</div><nav aria-label="Main navigation">{pages.map(item => <button key={item.id} className={`nav-item ${page === item.id ? 'active' : ''}`} aria-label={item.label} title={item.label} aria-current={page === item.id ? 'page' : undefined} onClick={() => setPage(item.id)}><item.icon size={18} strokeWidth={1.7} /><span>{item.label}</span>{page === item.id && <span className="nav-dot" />}</button>)}</nav>
-      <div className="sidebar-bottom"><div className="local-status"><span className={`live-dot ${snapshot ? '' : 'inactive'}`} /><span>{snapshot ? 'Python engine connected' : error ? 'Engine unavailable' : 'Connecting to engine'}</span></div><div className="sidebar-info"><ShieldCheck size={17} /><p>真实业务状态<br /><strong>独立 Oracle 验证</strong></p></div><a href="https://github.com/hjy8848/Usami" target="_blank" rel="noreferrer">View repository<ExternalLink size={13} /></a></div>
+      <div className="sidebar-bottom"><div className="local-status"><span className={`live-dot ${snapshot ? '' : 'inactive'}`} /><span>{snapshot ? 'Python engine connected' : error ? 'Engine unavailable' : 'Connecting to engine'}</span></div><div className="sidebar-info"><ShieldCheck size={17} /><p>真实业务状态<br /><strong>独立 Oracle 验证</strong></p></div><a href="/?mode=human" className="human-mode-link"><Users size={15} />真人顾客实验台<ArrowRight size={13} /></a><a href="https://github.com/hjy8848/Usami" target="_blank" rel="noreferrer">View repository<ExternalLink size={13} /></a></div>
     </aside>
     <div className="main-shell"><header className="topbar"><div className="breadcrumb"><span>Workspace</span><ChevronRight size={13} /><strong>World Explorer</strong></div><div className="topbar-right"><span className="desktop-only">IN-MEMORY · LOCAL</span><Badge tone="blue">SaaS / {snapshot?.world.rules.version.endsWith("0.2.0") ? "v0.2" : "v0.1"}</Badge></div></header>
       <div className="world-toolbar"><div className="world-ident"><span className="live-dot" /><span>WORLD</span>{snapshot ? <CopyValue value={snapshot.world.world_id} label={snapshot.world.world_id} /> : <span>Connecting…</span>}</div>

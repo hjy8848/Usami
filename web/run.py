@@ -36,7 +36,13 @@ def main():
     try:
         children.append(subprocess.Popen([sys.executable, "-m", "uvicorn", "web.backend.app:app",
                                          "--host", "127.0.0.1", "--port", str(backend_port)], cwd=root))
-        environment = dict(os.environ, USAMI_BACKEND_URL=f"http://127.0.0.1:{backend_port}")
+        origin_values = ",".join(sorted({
+            f"http://127.0.0.1:{frontend_port}", f"http://localhost:{frontend_port}",
+            f"http://127.0.0.1:{backend_port}", f"http://localhost:{backend_port}",
+        }))
+        environment = dict(os.environ, USAMI_BACKEND_URL=f"http://127.0.0.1:{backend_port}",
+                           USAMI_HUMAN_ALLOWED_ORIGINS=os.environ.get(
+                               "USAMI_HUMAN_ALLOWED_ORIGINS", origin_values))
         children.append(subprocess.Popen(["node", str(vite), "--host", "127.0.0.1", "--port", str(frontend_port)],
                                          cwd=frontend, env=environment))
         print(f"\nUsami World Explorer: http://127.0.0.1:{frontend_port}\nCtrl+C stops both servers.\n", flush=True)

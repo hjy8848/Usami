@@ -11,7 +11,7 @@ requires-python = ">=3.9"
 dependencies = ["pydantic>=2.12,<3"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<9", "jsonschema>=4,<5"]
+dev = ["pytest>=8,<9", "jsonschema>=4,<5", "hypothesis>=6,<7"]
 web = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "httpx>=0.27,<1"]
 service = ["httpx>=0.27,<1"]
 

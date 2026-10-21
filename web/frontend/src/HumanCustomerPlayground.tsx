@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight, Check, CheckCircle2, CircleHelp, Download, Loade
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { api } from './api';
 import './HumanCustomerPlayground.css';
+import './human-goal-note.css';
 
 type Scenario = {
   scenario_id: string; title: string; description: string; customer_request: string;
@@ -213,7 +214,7 @@ export default function HumanCustomerPlayground() {
             </div>
             {waiting && <form className="human-composer" onSubmit={sendMessage}>
               {activeOffer && <div className="offer-actions"><div><strong>请决定是否接受这份实际报价</strong><span>点击接受才会写入精确报价授权；普通文字不会产生成交授权。</span></div><div><button type="button" className="offer-accept" disabled={busy} onClick={() => void submit('accept_offer')}><Check size={15} />接受报价</button><button type="button" className="offer-reject" disabled={busy} onClick={() => void submit('reject_offer')}><StopCircle size={15} />拒绝</button></div></div>}
-              <label htmlFor="human-message">你的回复</label><div className="composer-line"><textarea id="human-message" data-testid="human-message" value={message} onChange={event => setMessage(event.target.value)} placeholder={activeOffer ? '也可以先追问或说明你改变了主意；这不会确认报价。' : '输入你的回复、问题或补充要求…'} maxLength={2000} rows={3} /><button className="send-human" type="submit" disabled={busy || !message.trim()}>{busy ? <Loader2 className="human-spin" size={16} /> : <ArrowRight size={17} />}发送</button></div><div className="composer-footer"><span>最多 2,000 字 · 只有明确的“接受报价”按钮会创建交易同意。</span><button type="button" className="finish-button" disabled={busy} onClick={() => void submit('finish', message.trim() || '我结束本次沟通。')}>结束对话</button></div>
+              <label htmlFor="human-message">你的回复</label><div className="composer-line"><textarea id="human-message" data-testid="human-message" value={message} onChange={event => setMessage(event.target.value)} placeholder={activeOffer ? '也可以先追问或说明你改变了主意；这不会确认报价。' : '输入你的回复、问题或补充要求…'} maxLength={2000} rows={3} /><button className="send-human" type="submit" disabled={busy || !message.trim()}>{busy ? <Loader2 className="human-spin" size={16} /> : <ArrowRight size={17} />}发送</button></div><p className="goal-boundary-note" data-testid="goal-boundary-note">本次评分只针对上方的初始认证需求。你可以提出新需求，但它会留在对话记录中，不会自动加入评分目标。</p><div className="composer-footer"><span>最多 2,000 字 · 只有明确的“接受报价”按钮会创建交易同意。</span><button type="button" className="finish-button" disabled={busy} onClick={() => void submit('finish', message.trim() || '我结束本次沟通。')}>结束对话</button></div>
             </form>}
             {!waiting && !finished && <div className="chat-wait-footer"><Loader2 className="human-spin" size={14} />{session.status === 'cancelling' ? '正在封存取消记录…' : session.status === 'service_running' ? 'Service 正在工作。工具调用由后端自动执行。' : '正在准备对话…'}<button disabled={busy || session.status === 'cancelling'} onClick={() => void cancel()}>{session.status === 'cancelling' ? '正在取消…' : '取消本次实验'}</button></div>}
           </section>

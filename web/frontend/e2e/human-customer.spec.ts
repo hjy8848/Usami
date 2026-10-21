@@ -65,6 +65,7 @@ test('restores the same pending customer turn after reload and sends only the se
   await page.addInitScript(() => sessionStorage.setItem('usami-human-session-id', 'saved-test-session'));
   await page.goto('/?mode=human');
   await expect(page.getByRole('button', { name: '接受报价' })).toBeVisible();
+  await expect(page.getByTestId('goal-boundary-note')).toContainText('不会自动加入评分目标');
   await page.reload();
   await expect(page.getByRole('button', { name: '接受报价' })).toBeVisible();
   expect(postedTurn).toBeNull();

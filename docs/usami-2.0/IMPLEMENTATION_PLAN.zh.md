@@ -893,15 +893,15 @@ P1 的工作量和正确性风险最高；P6 的因果结论风险最高；P3 �
 
 P5 与 P6 的离线实现可在 P4 后分别推进，但 P6–P9 的正式学习运行受 R2 控制。基础 Oracle 和事实审计先在 P4 提供，R2 不依赖尚未实现的完整反事实 Learner，避免循环依赖。
 
-### 14.1 我会先实际完成的前三个 PR
+### 14.1 实施顺序记录
 
-P0 先补齐配套研究契约并通过 R0 审查；下面三个代码 PR 才对应 P1–P4 的首条完整切片。当前只完成文档修订，R0 状态仍按实际交付与证据记录。
+本计划后续已按独立变更推进：P0 研究契约和 P1 原生电商核心先行，随后完成 P2 冻结世界 Builder 与有界任务认证。本次在这些组件上接入 P3 Customer Runtime、P4 Episode Runner 和 P5 两阶段 Designer 的最小离线切片。阶段完成状态以 `IMPLEMENTATION_STATUS.zh.md` 和 P3–P5 运行说明为准，不代表 R1/R2 或真实模型进化验收通过。
 
-**第一 PR：契约 + 电商核心。** 先把 SKU、仓库、行级账务、数量和报价对象做实，完成确定性业务与独立规则。先不接模型。
+**P3：自然顾客侧授权。** 固定身份与私有场景配置；顾客侧事件建立/撤销委托、披露信息并绑定精确报价同意；Runtime 和 Replay 重建授权来源。初始委托来自受信任的任务配置，不声称由模型自主推断。
 
-**第二 PR：可组合世界 + 联合目标。** 让约束 Builder 构建前述多选项世界，再由独立认证给出任何合法方案都能通过的任务。
+**P4：独立单任务运行。** Customer / Service Adapter 通过原生 Engine、Reference / Sandbox、Oracle 和 Replay 执行；分开计分状态目标、合规与沟通；Episode 私有落盘并可离线验证。显式模型 Adapter 才会访问在线端点。
 
-**第三 PR：自然顾客 + 单任务 Runner。** 取消新协议中无必要的逐操作 grant；通过真实报价确认执行交易；把第一条完整链路跑通并形成可恢复证据。
+**P5：两阶段 Designer。** Designer 先提交受限世界约束，再针对冻结的真实世界提交任务；编译器附来源、绑定采样槽、反馈编译/认证错误，Reference 产生业务证书，质量向量仅供诊断。完整自然交互需显式接入并通过独立 Episode Replay。
 
 这三个 PR 完成后，已经有一个可以单独使用的业务 Benchmark 纵向切片。后续进化工作建立在它之上。
 
@@ -950,28 +950,21 @@ P0 先补齐配套研究契约并通过 R0 审查；下面三个代码 PR 才对
 
 旧源码绑定的实验用它自己的源快照验证；不能要求旧归档在新源码上仍产生相同源码哈希。
 
-## 16. 拟提供的操作入口
+## 16. 当前操作入口与后续计划
 
-命令是接口设计目标，目前尚未实现：
+当前实现的离线 CLI：
 
-    # 纯离线构建与认证
+    # Schema 导出/校验、世界构建/复核、任务证明/复核
+    python -m usami_v2.cli schema --output <new-dir>
+    python -m usami_v2.cli verify-schemas --directory <schema-dir>
     python -m usami_v2.cli build --scenario scenario.json --seed 1 --output <new-dir>
-    python -m usami_v2.cli certify --task task.json --world world.json
+    python -m usami_v2.cli verify-build --directory <world-dir>
+    python -m usami_v2.cli certify-task --world-directory <world-dir> \
+      --task task.json --customer-scenario customer-scenario.private.json --output <new-dir>
+    python -m usami_v2.cli verify-task-certificate --world-directory <world-dir> --directory <cert-dir>
+    python -m usami_v2.cli verify-episode --path <private-episode.json>
 
-    # 零费用工程链路
-    python -m usami_v2.cli smoke --offline --output <new-dir>
-
-    # 显式开启真实业务诊断；不学习
-    python -m usami_v2.cli run --manifest run.json --execute-live --learn disabled
-
-    # 训练结束后独立配对
-    python -m usami_v2.cli evaluate --manifest evaluation.json --parent <hash> --candidate <hash>
-
-    # 明确的递归训练
-    python -m usami_v2.cli evolve --manifest evolution.json --execute-live
-
-    # 无模型 Replay
-    python -m usami_v2.cli replay --run <dir> --verify-all
+Episode 执行当前通过 `usami_v2.runtime.runner.run_episode()` Python API 调用；在线 Customer / Service Adapter 需要由调用方显式配置和传入。P5 的 `design_and_certify()` 也接受显式 DesignerProvider。尚未实现通用 `smoke`、`run --manifest`、`evaluate`、`evolve` 和批量 `replay` CLI；这些属于后续入口，不应在状态报告中说成现有功能。
 
 默认命令不会查询凭据或调用模型。在线命令使用现有 OpenAI-compatible 客户端与本机凭据，Model / Base URL 不写死；发送和返回原文脱离 Key 归档。
 

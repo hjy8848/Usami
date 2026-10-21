@@ -18,7 +18,7 @@
 - 就绪统计使用分层权重和 Clopper–Pearson 区间，并对声明的维度与分层作 Bonferroni 调整。契约测试模式即使模拟得到 PASS，也不允许正式学习。
 - 原生 Schema 导出、不可覆盖发布和离线内容校验命令。
 
-这些是接口与校验代码。检查点与就绪检查的正式证据验证器，仍需在后续 Runner / Validator 中接到真实运行档案；本阶段没有正式 R2 通过记录。
+这些是接口与校验代码。P4 Runner 现在可以为单 Episode 记录真实执行证据并离线 Replay；检查点比较和就绪检查的正式证据验证器仍未接入批量冻结实验，本阶段没有正式 R2 通过记录。
 
 沟通的默认抽取器目前只支持明确的中英文金额、日期、数量和业务状态表述。复杂自由文本保留 UNRESOLVED；不宣称覆盖任意自然语言，也不让辅助引用自动证明整段文字正确。
 
@@ -59,24 +59,36 @@
 
 边界：这是受限的 Reference 业务计划搜索，不是任意操作规划器。`CustomerScenario` 是确定性私有证明夹具，委托/同意由它在证明分支生成，不会注入 Service；因此不等于自然 Customer、自然语言授权或交互可达证明。审批与退货事件计划在搜索前密封，不读取模型正确性或 Oracle 标签。当前没有配送完成事件；要求 `target_stage=delivered` 的任务会是 `UNKNOWN`，不会假装可达或宣称无解。
 
-尚未完成：更一般的 Reference 搜索、自然 Customer / AuthorityProof 接线、完整对话可达性证书以及配送完成事件。已实现证书只证明受限业务动作在冻结世界和已登记顾客行为/事件下满足状态目标；不代表 Designer 自主出题能力或正式题库已通过认证。
+P2 本身仍未完成：更一般的 Reference 搜索、完整对话可达性证书以及配送完成事件。P3 的自然 Customer / AuthorityProof 已作为单 Episode Runtime 独立接入，但没有把自然交互折叠进 P2 业务证明。已实现证书只证明受限业务动作在冻结世界和登记的顾客行为/事件下满足状态目标；不代表 Designer 自主出题能力或正式题库已通过认证。
 
-## 本阶段验证
+## 前序阶段验证记录（非本次回归）
 
 | 检查 | 实际结果 |
 |---|---|
-| 当前全部 `tests/test_usami_v2_*.py` | 68 passed |
+| 前序阶段 `tests/test_usami_v2_*.py` | 68 passed |
 | 新增 Task Certification 定向测试 | 6 passed；覆盖双替代 SKU witness、证书复核、UNSAT/UNKNOWN、审批/退货事件、二次同意与篡改检测 |
 | P0/P1 新增测试 | 45 passed |
 | P2 Builder / TaskSpec / Schema 定向检查 | 18 项前序检查与 6 项任务认证检查通过 |
 | 相关综合回归 | 178 passed；其中旧测试 144 项，包含旧 Oracle、售后、对话过程、Skill、v3 Agent、开放组合、A/B 和 Live 入口 |
 | 属性测试 | Hypothesis 的分摊守恒、随机部分退款和库存承诺状态机实际通过 |
 | Python 兼容 | 在现有 Python 3.9.6 环境实际运行 |
-| Schema CLI | 本阶段实际导出并离线核验 27 份 Schema，verified=true；包含 CustomerScenario、ProofBudget 与 TaskCertification |
+| Schema CLI | P2 阶段核验过 27 份；本次扩展后的 54 份 P3–P5 Schema 重新导出并离线核验，verified=true |
 | 在线模型调用 | 0 |
 | 真实业务错误就绪 Gate | 未运行 |
 | Designer / Service 学习收益 | 未测量 |
-| 本次全仓回归 | 用户要求停止；中断前累计 287 passed（309.79 秒），不构成完整回归结果 |
+| 前序全仓回归尝试 | 用户要求停止；中断前累计 287 passed（309.79 秒），不构成完整回归结果 |
+
+### P3–P5 定向实现状态（本次更新）
+
+| 工作包 | 已实现的最小纵向切片 | 边界 / 尚未声称 |
+|---|---|---|
+| P3 Customer Runtime | 固定身份和私有 CustomerProfile；身份所有权检查；顾客侧初始请求/后续事件产生委托、撤销、披露和精确报价同意；同意绑定实际报价、操作、条款哈希与有效期；未执行的同意阻止顾客提前结束 | 初始委托来自冻结的私有场景配置，不等于模型从自然对话中自主形成委托；未做真实模型保真度验证 |
+| P4 Episode Runner | Customer / Service Adapter 接口；每个业务操作走原生 Engine、Reference 或 Sandbox、Oracle 与 trace Replay；分别评分最终目标、业务合规、事实沟通；计入成功/失败请求；事件级重建和篡改检测；原子私有 Episode 归档及 `verify-episode` | 运行入口是 Python API `run_episode()`；CLI 提供离线校验，没有通用的在线运行 CLI；未接真实 LLM 运行 |
+| P5 Designer | 两阶段 Designer：先提受限世界，再在冻结世界上提任务；最多三次确定性编译反馈；来源分布/预登记采样槽绑定；训练证据哈希白名单；Reference 证书与可选自然交互 Episode Replay；ID/种子不敏感的决策结构签名；运行前/后诊断分开 | Designer 的动态质量向量是诊断，不是 Skill 接受 Gate；默认没有隐式在线调用；未证明真实模型能稳定生成高质量题目 |
+
+本次新增 11 个 P3–P5 聚焦测试函数，并以本机 Python 3.12 直接调用测试函数完成断言（为导入测试使用了轻量 `pytest.raises` 兼容垫片，因为当前运行环境没有安装 pytest）。11 项全部通过，覆盖身份/授权、准确报价同意、顾客同意后不可提前终止、Sandbox 中间业务违规不会被误判严格成功、只读任务评分、归档与 Replay、事件篡改检测、重复外部事件拒绝、OpenAI-compatible Adapter 的显式 Function Calling 与原始失败输出记录、两阶段 Designer 来源绑定/证书/有界纠错、结构去 ID/种子差异、以及运行后诊断不控制选择。Schema CLI 本次导出并离线复核 54 份 Schema，`verified=true` 且 `model_calls=0`。另完成新增模块 `py_compile` 和导入检查。
+
+本次按要求没有运行 pytest 全量回归，也没有调用真实模型。新增聚焦测试之外的既有测试、不同 Engine Adapter 的交互、真实模型请求格式与运行成本均未在本次验证。
 
 此前的相关综合回归检查有 178 项通过；综合回归完成后新增了离线 CLI 和工具面覆盖，并加强类型/时间边界，最终对全部 P0/P1 新增测试重新运行，结果为 45 passed。P2 Builder、任务与 Schema 变更在本轮另行运行了 18 项定向检查。本次 287 项通过后按用户要求中断全仓回归，不将中断结果表述为完整回归。
 
@@ -108,12 +120,12 @@
 
 | 工作包 | 当前状态与下一步 |
 |---|---|
-| P0 的运行级接线 | 契约与测试已实现，需随真实 Runner 接入证据来源和归档验证 |
+| P0 的运行级接线 | 契约、Customer/Service 来源投影、离线 Episode Replay 与私有归档已有最小接线；正式 R2 验证器尚无通过记录 |
 | P1 完整业务契约 | 原生核心已实现；持续由 P2/P3 场景与交互认证补足完整业务链路 |
 | P2 Builder / 联合目标 | 部分实现；受限 Builder、独立世界约束证书、联合终态评分、有界 Reference 计划搜索、多合法 witness、Oracle/Replay 复核及冻结审批/退货事件计划已有。通用搜索、自然交互与配送完成事件仍待补 |
-| P3 自然 Customer Runtime | 未实现；下一步接上公开委托、报价呈现、确认、撤销和独立 AuthorityProof |
-| P4 完整业务 Runner | 未实现；当前仅有原生执行核心和 Schema CLI |
-| P5 两阶段 Designer | 未实现；不能把测试夹具当作 Designer 自主出题 |
+| P3 自然 Customer Runtime | 最小离线运行时已实现；固定身份、Customer 侧委托/撤销/披露、精确报价确认与 AuthorityProof 已接入。真实 Customer LLM 保真度仍未测 |
+| P4 独立业务 Runner | 最小 Python Episode Runner 已实现；原生 Engine、Oracle、沟通与状态评分、精确 Replay、私有归档可运行。没有通用在线 CLI；未做全量回归 |
+| P5 两阶段 Designer | 最小入口已实现；世界/任务分阶段提案、受限编译、来源和训练证据绑定、有界 Reference 证书及可选交互 Replay、结构签名和诊断向量已接入。真实模型生成质量未验证 |
 | R2 业务错误就绪 | 尚无真实 S0 数据；具体模型/采样/预算需在正式运行前冻结 |
 | P6 局部诊断与双重对照 | 比较契约已实现，真实检查点恢复、替代搜索和完整任务配对仍未接通 |
 | P7 三种记忆 | 公开 Working State 契约已有，运行中更新、案例存储和检索未接通 |

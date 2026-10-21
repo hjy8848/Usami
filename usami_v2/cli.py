@@ -22,12 +22,31 @@ from usami_v2.scenarios.tasks import InformationObjective, RemedyGoal, TaskSpec
 
 
 def contract_schemas():
+    from usami_v2.runtime.agents import AgentCall, AgentMessage, CustomerPrompt, ServiceAction, ServicePrompt
+    from usami_v2.runtime.customer import (
+        AuthorityProof, CustomerDecision, CustomerEvent, CustomerProfile, CustomerTransition,
+        OfferPresentation, PrivateCustomerFact,
+    )
+    from usami_v2.runtime.runner import EpisodeBudget, EpisodeEvent, EpisodeRecord, EpisodeReplay, ToolExecution
+    from usami_v2.scenarios.designer import (
+        ChallengeQualityVector, DesignerCall, DesignerRun, DesignerTrainingEvidence, PostRunQualityVector,
+        ScenarioDraft, TaskDesignAttempt, TaskDraft, WorldDesignAttempt,
+    )
+    from usami_v2.scenarios.distribution import SamplingSlot
+
     models = (CommunicationObligation, FactEvidence, PublicRequest, ServiceMessage,
               Quote, World, Operation, DecisionCheckpoint, ChallengeDescriptor,
               ReadinessPolicy, ReadinessReport, WorkingState, DistributionSpec,
               ScenarioSpec, BuildBudget, BuildResult, RemedyGoal,
               InformationObjective, TaskSpec, CustomerScenario, ReviewPlan,
-              ProofBudget, ProofStep, PlanCandidate, ProofAttempt, TaskCertification)
+              ProofBudget, ProofStep, PlanCandidate, ProofAttempt, TaskCertification,
+              CustomerDecision, CustomerProfile, PrivateCustomerFact, OfferPresentation,
+              AuthorityProof, CustomerEvent, CustomerTransition,
+              AgentMessage, AgentCall, CustomerPrompt, ServicePrompt, ServiceAction,
+              EpisodeBudget, EpisodeEvent, EpisodeRecord, EpisodeReplay, ToolExecution,
+              SamplingSlot, ScenarioDraft, TaskDraft, DesignerCall, DesignerRun,
+              TaskDesignAttempt, WorldDesignAttempt, DesignerTrainingEvidence,
+              ChallengeQualityVector, PostRunQualityVector)
     schemas = {model.__name__: model.model_json_schema() for model in models}
     schemas["BusinessToolParameters"] = {
         "protocol": "commerce-tool-parameters-v1",
@@ -195,6 +214,15 @@ def verify_task_certificate_artifact(world_directory, certificate_directory):
     return {**result, "model_calls": 0, "manifest_hash": manifest["manifest_hash"]}
 
 
+def verify_episode_artifact(path):
+    """Offline replay only. Episode artifacts contain private Customer/model context."""
+    from usami_v2.runtime.runner import verify_episode_artifact as verify
+    result = verify(path)
+    if not result["verified"]:
+        raise ValueError("Episode Replay failed: " + str(result["replay"].get("errors", ())))
+    return result
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--version", action="version", version=PROTOCOL)
@@ -222,6 +250,8 @@ def main(argv=None):
     verify_task = commands.add_parser("verify-task-certificate", help="replay a sealed task proof artifact")
     verify_task.add_argument("--world-directory", type=Path, required=True)
     verify_task.add_argument("--directory", type=Path, required=True)
+    verify_episode = commands.add_parser("verify-episode", help="offline Engine/Oracle/communication Replay of a private Episode artifact")
+    verify_episode.add_argument("--path", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.command == "schema":
         result = export_schemas(args.output)
@@ -237,6 +267,8 @@ def main(argv=None):
             max_witnesses=args.max_witnesses, minimum_witnesses=args.minimum_witnesses)
     elif args.command == "verify-task-certificate":
         result = verify_task_certificate_artifact(args.world_directory, args.directory)
+    elif args.command == "verify-episode":
+        result = verify_episode_artifact(args.path)
     else:
         result = verify_scenario_artifact(args.directory)
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2))

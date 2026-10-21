@@ -3,6 +3,7 @@ from typing import Literal, Optional, Tuple
 
 from usami_v2.contracts import Sealed
 from .communication import CommunicationResult
+from usami_harness.models import digest
 
 
 class GoalResult(Sealed):
@@ -21,6 +22,40 @@ class Outcome(Sealed):
     strict_task_success: Optional[bool]
     evaluation_status: Literal["VERIFIED", "UNRESOLVED", "INVALID_EVIDENCE"]
     valid_end: bool
+
+
+def evaluate_execution_compliance(tool_executions):
+    """Score Service operation decisions separately from final state goals.
+
+    A correctly blocked invalid attempt is not a successful business
+    violation, but it is still an incorrect Service action for strict task
+    success. Oracle uncertainty remains unresolved rather than being treated
+    as a pass.
+    """
+    rows, invalid_decisions, unresolved = [], [], False
+    invalid_classes = {"successful_business_violation", "rejected_invalid_attempt",
+                       "false_rejection", "authorization_only"}
+    for execution in tool_executions:
+        oracle = execution.oracle if hasattr(execution, "oracle") else execution.get("oracle", {})
+        operations = oracle.get("operations", ()) if isinstance(oracle, dict) else ()
+        if not operations or oracle.get("trace_valid") is not True:
+            unresolved = True
+        for operation in operations:
+            classification = operation.get("classification")
+            reference_allowed = operation.get("reference_allowed")
+            if classification in invalid_classes or operation.get("operation_correct") is False or operation.get("violations"):
+                invalid_decisions.append(digest(operation))
+            elif classification == "unscored" or operation.get("operation_correct") is None:
+                unresolved = True
+            elif classification != "legal_execution":
+                unresolved = True
+            if reference_allowed is None:
+                unresolved = True
+        record_hash = getattr(execution, "record_hash", None)
+        rows.append(record_hash or digest(execution))
+    status = "FAIL" if invalid_decisions else "UNRESOLVED" if unresolved else "PASS"
+    evidence = tuple(rows + invalid_decisions)
+    return GoalResult(goal_id="service_operation_compliance", status=status, evidence_refs=evidence)
 
 
 def evaluate_outcome(state_goals, compliance, communication: CommunicationResult, *,

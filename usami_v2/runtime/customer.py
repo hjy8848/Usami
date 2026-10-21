@@ -4,7 +4,8 @@ Private Customer policy is held by this runtime and must never be projected to
 the Service. Service tool calls cannot create or widen a delegation/consent.
 """
 from datetime import timedelta
-from typing import Literal, Optional, Tuple
+import re
+from typing import Dict, Literal, Optional, Tuple
 
 from pydantic import Field, model_validator
 
@@ -12,6 +13,7 @@ from usami_harness.models import digest
 from usami_v2.contracts import FactEvidence, FactKind, Scalar, Sealed, SourceRef
 from usami_v2.commerce.invariants import invariants
 from usami_v2.commerce.models import Consent, Delegation, PREPARATIONS, World
+from usami_v2.scenarios.tasks import public_line_match_ids
 
 
 class CustomerProfile(Sealed):
@@ -50,6 +52,21 @@ class CustomerProfile(Sealed):
         return self
 
 
+class CustomerProfileV2(CustomerProfile):
+    """Customer policy whose delegations cite the request that authorizes them."""
+
+    protocol: Literal["commerce-customer-profile-v2"] = "commerce-customer-profile-v2"
+    delegation_request_spans: Dict[str, str] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def all_delegations_have_public_intent(self):
+        if set(self.delegation_request_spans) != set(self.delegated_line_ids):
+            raise ValueError("each delegated line needs exactly one public-request span")
+        if any(not " ".join(span.casefold().split()) for span in self.delegation_request_spans.values()):
+            raise ValueError("delegation request spans cannot be blank")
+        return self
+
+
 class PrivateCustomerFact(Sealed):
     fact_id: str
     subject_id: str
@@ -59,6 +76,7 @@ class PrivateCustomerFact(Sealed):
 
 
 CustomerProfile.model_rebuild()
+CustomerProfileV2.model_rebuild()
 
 
 class CustomerDecision(Sealed):
@@ -162,11 +180,37 @@ def render_offer(world: World, quote_id: str, operation: str, event_id: str,
                              service_message=service_message, rendered_terms=rendered)
 
 
+def _explicit_consent_intent(message: str) -> Optional[bool]:
+    """Conservative lexical check for structured quote consent.
+
+    This is intentionally narrow: ambiguity returns None and cannot create
+    authority. It is not a general natural-language understanding score.
+    """
+    text = " ".join(message.casefold().split())
+    negative = (
+        r"\b(?:i\s+)?(?:do\s+not|don't|cannot|can't|will\s+not|won't)\s+"
+        r"(?:accept|agree|confirm|approve|authorize|consent|proceed)\b",
+        r"\b(?:no|reject|decline)\b",
+        r"不接受|不同意|拒绝|不要|不确认|不授权",
+    )
+    if any(re.search(pattern, text) for pattern in negative):
+        return False
+    affirmative = (
+        r"\b(?:i\s+)?(?:accept|agree|confirm|approve|authorize|consent)\b",
+        r"\b(?:yes|approved|confirmed)\b",
+        r"我接受|我同意|我确认|同意|接受|确认|批准",
+    )
+    if any(re.search(pattern, text) for pattern in affirmative):
+        return True
+    return None
+
+
 class CustomerRuntime:
     """Apply Customer-originated business events; never trusts Service requests as consent."""
 
-    def __init__(self, profile: CustomerProfile):
+    def __init__(self, profile: CustomerProfile, *, allow_legacy: bool = False):
         self.profile = profile.checked()
+        self.allow_legacy = allow_legacy
 
     def initialize(self, world: World, public_request: str, *, event_index: int = 0) -> CustomerTransition:
         if not public_request.strip():
@@ -184,11 +228,27 @@ class CustomerRuntime:
             order = world.orders.get(line.order_id) if line else None
             if not order or order.customer_id != self.profile.customer_id:
                 raise ValueError("Customer profile delegation crosses identity scope")
+        if self.profile.delegated_line_ids and self.profile.protocol != "commerce-customer-profile-v2":
+            if not self.allow_legacy:
+                raise ValueError("new Episodes require public-request-bound CustomerProfileV2 delegations")
+        if self.profile.protocol == "commerce-customer-profile-v2":
+            normalized_request = " ".join(public_request.casefold().split())
+            for line_id, request_span in self.profile.delegation_request_spans.items():
+                span = " ".join(request_span.casefold().split())
+                if span not in normalized_request:
+                    raise ValueError("Customer delegation is not grounded in the public request text")
+                if public_line_match_ids(world, self.profile.customer_id, span) != (line_id,):
+                    raise ValueError("Customer delegation span must uniquely identify its frozen business line")
         before = world
         new = world.clone()
         event_id = "customer_initial_" + digest([self.profile.record_hash, public_request])[:20]
-        request_hash = digest({"customer_id": self.profile.customer_id, "message": public_request,
-                               "profile_hash": self.profile.record_hash})
+        if self.profile.protocol == "commerce-customer-profile-v1" and self.allow_legacy:
+            # Preserve byte-for-byte Replay semantics for archived v1 Episodes.
+            request_hash = digest({"customer_id": self.profile.customer_id, "message": public_request,
+                                   "profile_hash": self.profile.record_hash})
+        else:
+            request_hash = digest({"customer_id": self.profile.customer_id, "message": public_request,
+                                   "event_index": event_index, "kind": "initial_request"})
         proofs = ()
         if self.profile.delegated_line_ids:
             did = "delegation_" + digest([event_id, self.profile.delegated_line_ids,
@@ -220,6 +280,12 @@ class CustomerRuntime:
             raise ValueError("Customer attempted to delegate an unapproved preparation")
         if decision.disclose_fact_ids and not set(decision.disclose_fact_ids).issubset(profile.disclose_fact_ids):
             raise ValueError("Customer attempted to disclose a fact outside its private profile")
+        if decision.delegate_line_ids and profile.protocol == "commerce-customer-profile-v2":
+            normalized_message = " ".join(decision.message.casefold().split())
+            for line_id in decision.delegate_line_ids:
+                span = " ".join(profile.delegation_request_spans[line_id].casefold().split())
+                if span not in normalized_message:
+                    raise ValueError("Customer delegation must be supported by its visible turn text")
         if decision.accept_quote_id or decision.reject_quote_id:
             quote_id = decision.accept_quote_id or decision.reject_quote_id
             if presentation is None or presentation.quote_id != quote_id:
@@ -233,6 +299,12 @@ class CustomerRuntime:
                 expected_customer_id=profile.customer_id)
             if presentation != expected_presentation:
                 raise ValueError("presented quote terms differ from the actual business quote")
+            if profile.protocol == "commerce-customer-profile-v2":
+                consent_intent = _explicit_consent_intent(decision.message)
+                if decision.accept_quote_id and consent_intent is not True:
+                    raise ValueError("structured quote acceptance lacks clear affirmative Customer text")
+                if decision.reject_quote_id and consent_intent is not False:
+                    raise ValueError("structured quote rejection lacks clear negative Customer text")
             if decision.accept_quote_id:
                 if decision.accept_operation != presentation.operation:
                     raise ValueError("Customer consent operation differs from the presented request")

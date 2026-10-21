@@ -24,7 +24,7 @@ from usami_v2.scenarios.tasks import InformationObjective, RemedyGoal, TaskSpec
 def contract_schemas():
     from usami_v2.runtime.agents import AgentCall, AgentMessage, CustomerPrompt, ServiceAction, ServicePrompt
     from usami_v2.runtime.customer import (
-        AuthorityProof, CustomerDecision, CustomerEvent, CustomerProfile, CustomerTransition,
+        AuthorityProof, CustomerDecision, CustomerEvent, CustomerProfile, CustomerProfileV2, CustomerTransition,
         OfferPresentation, PrivateCustomerFact,
     )
     from usami_v2.runtime.runner import EpisodeBudget, EpisodeEvent, EpisodeRecord, EpisodeReplay, ToolExecution
@@ -33,6 +33,8 @@ def contract_schemas():
         ScenarioDraft, TaskDesignAttempt, TaskDraft, WorldDesignAttempt,
     )
     from usami_v2.scenarios.distribution import SamplingSlot
+    from usami_v2.scenarios.tasks import GroundedRemedyGoal, TaskSpecV2
+    from usami_v2.evaluation.outcomes import OutcomeV2
 
     models = (CommunicationObligation, FactEvidence, PublicRequest, ServiceMessage,
               Quote, World, Operation, DecisionCheckpoint, ChallengeDescriptor,
@@ -41,6 +43,7 @@ def contract_schemas():
               InformationObjective, TaskSpec, CustomerScenario, ReviewPlan,
               ProofBudget, ProofStep, PlanCandidate, ProofAttempt, TaskCertification,
               CustomerDecision, CustomerProfile, PrivateCustomerFact, OfferPresentation,
+              CustomerProfileV2, GroundedRemedyGoal, TaskSpecV2, OutcomeV2,
               AuthorityProof, CustomerEvent, CustomerTransition,
               AgentMessage, AgentCall, CustomerPrompt, ServicePrompt, ServiceAction,
               EpisodeBudget, EpisodeEvent, EpisodeRecord, EpisodeReplay, ToolExecution,

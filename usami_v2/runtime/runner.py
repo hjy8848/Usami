@@ -8,7 +8,7 @@ import json
 import os
 from pathlib import Path
 import tempfile
-from typing import Any, Dict, Literal, Optional, Protocol, Tuple
+from typing import Any, Dict, Literal, Optional, Protocol, Tuple, Union
 
 from pydantic import Field
 
@@ -19,16 +19,18 @@ from usami_v2.commerce import adapter
 from usami_v2.commerce.external import apply_event, reference_event
 from usami_v2.commerce.models import ExternalEvent, Operation, World
 from usami_v2.contracts import FactEvidence, Sealed, ServiceMessage, SourceRef
-from usami_v2.evaluation.outcomes import Outcome, evaluate_execution_compliance, evaluate_outcome
+from usami_v2.evaluation.outcomes import (
+    Outcome, OutcomeV2, evaluate_execution_compliance, evaluate_outcome, evaluate_outcome_v2,
+)
 from usami_v2.evaluation.communication import CommunicationResult
 from usami_v2.runtime.agents import (
     AgentCall, AgentMessage, CustomerPrompt, ServiceAction, ServicePrompt,
 )
 from usami_v2.runtime.customer import (
-    CustomerDecision, CustomerProfile, CustomerRuntime, OfferPresentation, render_offer,
+    CustomerDecision, CustomerProfile, CustomerProfileV2, CustomerRuntime, OfferPresentation, render_offer,
 )
 from usami_v2.scenarios.tasks import (
-    TaskSpec, check_task_scope, evaluate_state_goals, evaluate_task_compliance,
+    TaskSpec, TaskSpecV2, check_task_scope, evaluate_state_goals, evaluate_task_compliance,
     evaluate_task_communication,
 )
 
@@ -62,8 +64,8 @@ class ToolExecution(Sealed):
 
 class EpisodeRecord(Sealed):
     protocol: Literal["commerce-episode-v1"] = "commerce-episode-v1"
-    task: TaskSpec
-    profile: CustomerProfile
+    task: Union[TaskSpec, TaskSpecV2]
+    profile: Union[CustomerProfile, CustomerProfileV2]
     budget: EpisodeBudget
     mode: Literal["reference", "sandbox"]
     initial_world: World
@@ -79,7 +81,7 @@ class EpisodeRecord(Sealed):
     facts: Tuple[FactEvidence, ...]
     model_calls: Tuple[AgentCall, ...]
     communication: CommunicationResult
-    outcome: Outcome
+    outcome: Union[Outcome, OutcomeV2]
     replay_verified: bool
 
     @property
@@ -218,7 +220,7 @@ def _event_replay(initial_world, task, profile, record):
         errors.append("Replay input differs from the Episode's frozen initial world")
     if task.record_hash != record.task.record_hash or profile.record_hash != record.profile.record_hash:
         errors.append("Replay task or Customer profile differs from the Episode")
-    customer = CustomerRuntime(profile)
+    customer = CustomerRuntime(profile, allow_legacy=record.task.protocol == "commerce-task-v1")
     tool_iter = iter(record.tool_executions)
     reconstructed_facts, reconstructed_messages, reconstructed_calls = [], [], []
     scheduled_ids = {row.id for row in record.scheduled_external_events} | set(initial_world.external_events)
@@ -387,9 +389,14 @@ def replay_episode(record: EpisodeRecord):
                                                      messages=record.service_messages, end_event_index=end_index)
         if communication != record.communication:
             errors.append("communication evaluation differs")
-        expected_outcome = evaluate_outcome(goals, compliance, communication,
-                                            replay_verified=replay.verified,
-                                            valid_end=record.status == "customer_finished")
+        if record.outcome.protocol == "commerce-outcome-v2":
+            expected_outcome = evaluate_outcome_v2(
+                goals, compliance, communication, record.tool_executions,
+                replay_verified=replay.verified, episode_status=record.status)
+        else:
+            expected_outcome = evaluate_outcome(goals, compliance, communication,
+                                                replay_verified=replay.verified,
+                                                valid_end=record.status == "customer_finished")
         if expected_outcome != record.outcome:
             errors.append("task outcome evaluation differs")
     except Exception as exc:
@@ -411,6 +418,22 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
     check_task_scope(initial_world, task)
     if profile.customer_id != task.customer_id:
         raise ValueError("Customer identity differs from the fixed TaskSpec identity")
+    if profile.delegated_line_ids and profile.protocol != "commerce-customer-profile-v2":
+        raise ValueError("new Episodes require public-request-bound CustomerProfileV2 delegations")
+    if task.remedy_goals:
+        if task.protocol != "commerce-task-v2":
+            raise ValueError("new transaction Episodes require public-request-grounded TaskSpecV2 goals")
+        if profile.protocol != "commerce-customer-profile-v2":
+            raise ValueError("new transaction Episodes require CustomerProfileV2 public-intent bindings")
+    if task.protocol == "commerce-task-v2":
+        expected_delegations = {goal.line_id for goal in task.remedy_goals}
+        if set(profile.delegated_line_ids) != expected_delegations:
+            raise ValueError("Customer delegations must match exactly the publicly requested transaction targets")
+        for goal in task.remedy_goals:
+            profile_span = profile.delegation_request_spans.get(goal.line_id)
+            if (goal.line_id not in profile.delegated_line_ids
+                    or profile_span != goal.public_request_span):
+                raise ValueError("Customer delegation and transaction goal must share the same public request span")
     base_world = initial_world.clone()
     runtime_initial_world = initial_world.clone()
     scheduled_ids = [event.id for event in external_events]
@@ -428,7 +451,7 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
     conversation = [AgentMessage(role="user", content=task.customer_request)]
     events = _append(events, "customer_request", {"request": task.customer_request,
                          "customer_id": task.customer_id}, world, world)
-    customer_runtime = CustomerRuntime(profile)
+    customer_runtime = CustomerRuntime(profile, allow_legacy=task.protocol == "commerce-task-v1")
     initialized = customer_runtime.initialize(world, task.customer_request, event_index=len(events))
     before = world
     world = initialized.world
@@ -664,8 +687,9 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
     communication = evaluate_task_communication(base_world, task, facts=facts, messages=service_messages,
                                                  end_event_index=end_index)
     # First build a provisional record, replay all event/operation evidence, then seal the result.
-    placeholder = evaluate_outcome(state_goals, compliance, communication,
-                                   replay_verified=False, valid_end=status == "customer_finished")
+    placeholder = evaluate_outcome_v2(
+        state_goals, compliance, communication, tools,
+        replay_verified=False, episode_status=status)
     provisional = EpisodeRecord(task=task, profile=profile, budget=budget, mode=mode,
         initial_world=base_world, runtime_initial_world=runtime_initial_world,
         final_world=world, status=status, terminal_reason=terminal_reason,
@@ -674,8 +698,9 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
         facts=tuple(facts), model_calls=tuple(calls), communication=communication,
         outcome=placeholder, replay_verified=False)
     replay = _event_replay(initial_world, task, profile, provisional)
-    outcome = evaluate_outcome(state_goals, compliance, communication,
-                               replay_verified=replay.verified, valid_end=status == "customer_finished")
+    outcome = evaluate_outcome_v2(
+        state_goals, compliance, communication, tools,
+        replay_verified=replay.verified, episode_status=status)
     final_data = provisional.model_dump(mode="json", exclude={"record_hash"})
     final_data.update({"outcome": outcome.model_dump(mode="json"), "replay_verified": replay.verified})
     return EpisodeRecord.model_validate(final_data)

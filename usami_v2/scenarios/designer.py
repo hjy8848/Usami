@@ -28,7 +28,10 @@ from usami_v2.scenarios.task_certification import (
     CustomerScenario as ProofCustomerScenario, ProofBudget, TaskCertification, certify_task,
     verify_task_certificate,
 )
-from usami_v2.scenarios.tasks import InformationObjective, RemedyGoal, TaskSpec, check_task_scope
+from usami_v2.scenarios.tasks import (
+    GroundedRemedyGoal, InformationObjective, TaskSpec, TaskSpecV2,
+    check_task_scope, request_names_remedy,
+)
 
 
 class ScenarioDraft(Sealed):
@@ -56,6 +59,8 @@ class ScenarioDraft(Sealed):
 class RemedyDraft(Sealed):
     goal_id: str
     line_alias: str
+    public_request_span: str = Field(min_length=1)
+    subject_mention: str = Field(min_length=1)
     quantity: int = Field(ge=1, strict=True)
     allowed_remedies: Tuple[Literal["refund", "exchange", "reship"], ...] = Field(min_length=1)
     required_attributes: Tuple[Attribute, ...] = ()
@@ -89,6 +94,16 @@ class TaskDraft(Sealed):
         if any(len(value) != 64 or any(ch not in "0123456789abcdef" for ch in value)
                for value in self.parent_training_evidence_hashes):
             raise ValueError("training evidence references must be SHA-256 hashes")
+        normalized_request = " ".join(self.customer_request.casefold().split())
+        for goal in self.remedy_goals:
+            span = " ".join(goal.public_request_span.casefold().split())
+            if not span or span not in normalized_request:
+                raise ValueError("each remedy goal must quote its supporting public request span")
+            mention = " ".join(goal.subject_mention.casefold().split())
+            if not mention or mention not in span:
+                raise ValueError("each remedy goal must name its object in the public request span")
+            if not request_names_remedy(span, goal.allowed_remedies):
+                raise ValueError("public request span must state every accepted remedy")
         return self
 
 
@@ -269,14 +284,22 @@ def compile_task(draft: TaskDraft, spec: ScenarioSpec, build: BuildResult,
     for row in draft.remedy_goals:
         if row.line_alias not in aliases:
             raise ValueError("TaskDraft references an unknown order-line alias")
+        line_variable = next(line for order in spec.orders for line in order.lines
+                             if line.alias == row.line_alias)
+        sku_variable = next(sku for sku in spec.skus if sku.alias == line_variable.original_sku)
+        normalized_mention = " ".join(row.subject_mention.casefold().split())
+        if (" ".join(line_variable.issue.casefold().split()) not in normalized_mention
+                or " ".join(sku_variable.family.casefold().split()) not in normalized_mention):
+            raise ValueError("public object mention must identify the frozen line issue and SKU family")
         original_id = aliases[row.line_alias]
         arrival = (build.world.clock + timedelta(days=row.latest_arrival_within_days)
                    if row.latest_arrival_within_days is not None else None)
-        remedies.append(RemedyGoal(
+        remedies.append(GroundedRemedyGoal(
             goal_id=row.goal_id, line_id=original_id, quantity=row.quantity,
             allowed_remedies=row.allowed_remedies, required_attributes=row.required_attributes,
             maximum_extra_charge_cents=row.maximum_extra_charge_cents,
-            latest_arrival=arrival, target_stage=row.target_stage))
+            latest_arrival=arrival, target_stage=row.target_stage,
+            public_request_span=row.public_request_span, subject_mention=row.subject_mention))
     for row in draft.information_goals:
         if row.subject_alias not in aliases:
             raise ValueError("TaskDraft references an unknown public order or line alias")
@@ -286,7 +309,7 @@ def compile_task(draft: TaskDraft, spec: ScenarioSpec, build: BuildResult,
     if any(len(value) != 64 or any(ch not in "0123456789abcdef" for ch in value)
            for value in draft.parent_training_evidence_hashes):
         raise ValueError("invalid training evidence hash")
-    task = TaskSpec(
+    task = TaskSpecV2(
         task_id=draft.task_id, world_hash=build.world_hash, customer_id=aliases[draft.customer_alias],
         customer_request=draft.customer_request, remedy_goals=tuple(remedies),
         information_goals=tuple(information), partition=distribution.split,

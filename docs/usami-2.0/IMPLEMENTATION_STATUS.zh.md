@@ -42,13 +42,13 @@
 
 实际 transitions 不导入 Reference；Reference 不调用实际 transitions 或实际查询输出。两者共享 Schema、稳定标识及基础整数分摊函数，状态变化分别实现。
 
-测试中的 Customer 授权由明确标注的离线夹具独立建立。这不等于自然 LLM Customer 或新会话授权桥已经接通。
+P1/P2 历史证明中的 Customer 授权由明确标注的离线夹具独立建立。当前 P3 新交易 Episode 已增加请求原文和目标对象绑定；这仍不等于真实 Customer LLM 保真度已验证。
 
 ### P2：冻结世界构建与多目标认证（部分实现）
 
 - `ScenarioSpec` 支持多个顾客、订单、订单行、SKU、仓库、库存区间、属性及有界线性关系约束；模型不能提交任意 Python、完整 `World`、Engine、Reference 或 Oracle 实现。
 - Builder 将设计别名转换成种子绑定的业务 ID，保留每次候选的约束拒绝原因，并区分 SAT、完整枚举 UNSAT、预算耗尽 UNKNOWN。SAT 会由独立证书器读取实际生成世界，重新核对数量、实付、属性、库存、路线、事件和未初始化交易状态。
-- `TaskSpec` 支持一项任务中的多个订单行目标、兼容规格、补款上限、承诺送达日期及只读信息请求。目标计分允许多个满足同一硬约束的 SKU；额外或未请求的结算不会算作完成。
+- `TaskSpec` 支持一项任务中的多个订单行目标、兼容规格、补款上限、承诺送达日期及只读信息请求。目标计分允许多个满足同一硬约束的 SKU；额外或未请求的结算不会算作完成。新 Designer 交易任务使用 `TaskSpecV2`，要求目标绑定公开请求原文、明确提出的处置方式和唯一冻结订单行；历史 v1 Task 保留 Replay 兼容。
 - 信息目标必须绑定到实际公开顾客原话中的请求片段。计分使用独立事实来源和 Service 实际送达文本；只读任务无需交易状态变化，擅自产生任务范围外结算会失败。
 - CLI 已能导出/校验现行 Schema，以及构建、密封和离线重建验证冻结世界包；输出只记录构建证据，明确不声称任务可达或交互可达。
 - 新增有界 `certify_task`：以只读冻结世界、`TaskSpec`、私有 `CustomerScenario` 和固定 `ProofBudget` 搜索退款/换货/补发方案。候选业务操作逐步调用原生 Engine 的 Reference 模式；每步保存 Oracle 结果与原生 Replay。候选路径会保留为可审计的私有 witness。
@@ -72,7 +72,7 @@ P2 本身仍未完成：更一般的 Reference 搜索、完整对话可达性证
 | 相关综合回归 | 178 passed；其中旧测试 144 项，包含旧 Oracle、售后、对话过程、Skill、v3 Agent、开放组合、A/B 和 Live 入口 |
 | 属性测试 | Hypothesis 的分摊守恒、随机部分退款和库存承诺状态机实际通过 |
 | Python 兼容 | 在现有 Python 3.9.6 环境实际运行 |
-| Schema CLI | P2 阶段核验过 27 份；本次扩展后的 54 份 P3–P5 Schema 重新导出并离线核验，verified=true |
+| Schema CLI | P2 阶段核验 27 份；P3–P5 初次核验 54 份；本轮新增 V2 合同后重新导出并复核 58 份，`verified=true`、`model_calls=0` |
 | 在线模型调用 | 0 |
 | 真实业务错误就绪 Gate | 未运行 |
 | Designer / Service 学习收益 | 未测量 |
@@ -82,13 +82,13 @@ P2 本身仍未完成：更一般的 Reference 搜索、完整对话可达性证
 
 | 工作包 | 已实现的最小纵向切片 | 边界 / 尚未声称 |
 |---|---|---|
-| P3 Customer Runtime | 固定身份和私有 CustomerProfile；身份所有权检查；顾客侧初始请求/后续事件产生委托、撤销、披露和精确报价同意；同意绑定实际报价、操作、条款哈希与有效期；未执行的同意阻止顾客提前结束 | 初始委托来自冻结的私有场景配置，不等于模型从自然对话中自主形成委托；未做真实模型保真度验证 |
-| P4 Episode Runner | Customer / Service Adapter 接口；每个业务操作走原生 Engine、Reference 或 Sandbox、Oracle 与 trace Replay；分别评分最终目标、业务合规、事实沟通；计入成功/失败请求；事件级重建和篡改检测；原子私有 Episode 归档及 `verify-episode` | 运行入口是 Python API `run_episode()`；CLI 提供离线校验，没有通用的在线运行 CLI；未接真实 LLM 运行 |
-| P5 Designer | 两阶段 Designer：先提受限世界，再在冻结世界上提任务；最多三次确定性编译反馈；来源分布/预登记采样槽绑定；训练证据哈希白名单；Reference 证书与可选自然交互 Episode Replay；ID/种子不敏感的决策结构签名；运行前/后诊断分开 | Designer 的动态质量向量是诊断，不是 Skill 接受 Gate；默认没有隐式在线调用；未证明真实模型能稳定生成高质量题目 |
+| P3 Customer Runtime | 固定身份和私有 CustomerProfile；新交易任务用 V2 请求片段绑定、唯一订单行委托、顾客侧委托/撤销/披露与精确报价同意；结构化确认须与顾客文本中的明确表达一致 | 文本匹配是有限词法规则，不是通用自然语言理解；历史 v1 Profile / Episode 保留 Replay 兼容；未做真实 Customer LLM 保真度验证 |
+| P4 Episode Runner | Customer / Service Adapter 接口；每个业务操作走原生 Engine、Reference 或 Sandbox、Oracle 与 trace Replay；OutcomeV2 分开评分业务目标、过程错误、安全违规及交互可靠性；事件级重建和篡改检测；原子私有 Episode 归档及 `verify-episode` | 运行入口是 Python API `run_episode()`；CLI 提供离线校验，没有通用的在线运行 CLI；未接真实 LLM 运行 |
+| P5 Designer | 两阶段 Designer：先提受限世界，再在冻结世界上提任务；最多三次确定性编译反馈；来源分布/预登记采样槽绑定；训练证据哈希白名单；Reference 证书与可选自然交互 Episode Replay；交易目标绑定公开原文并唯一映射到冻结订单行 | Designer 的动态质量向量是诊断，不是 Skill 接受 Gate；有限词法规则会保守拒绝未覆盖表达；未证明真实模型能稳定生成高质量题目 |
 
-本次新增 11 个 P3–P5 聚焦测试函数，并以本机 Python 3.12 直接调用测试函数完成断言（为导入测试使用了轻量 `pytest.raises` 兼容垫片，因为当前运行环境没有安装 pytest）。11 项全部通过，覆盖身份/授权、准确报价同意、顾客同意后不可提前终止、Sandbox 中间业务违规不会被误判严格成功、只读任务评分、归档与 Replay、事件篡改检测、重复外部事件拒绝、OpenAI-compatible Adapter 的显式 Function Calling 与原始失败输出记录、两阶段 Designer 来源绑定/证书/有界纠错、结构去 ID/种子差异、以及运行后诊断不控制选择。Schema CLI 本次导出并离线复核 54 份 Schema，`verified=true` 且 `model_calls=0`。另完成新增模块 `py_compile` 和导入检查。
+本轮一致性修正只运行 `tests/test_usami_v2_runtime.py` 与 `tests/test_usami_v2_designer.py` 两个定向模块，21 passed。断言覆盖隐藏/歧义目标、未请求处置选项、错绑委托、结构化同意文本不一致、拦截错误与实际安全违规的区别、未完成目标的过程遗漏、Service 协议错误分类，以及 Episode Replay。未运行全量回归。
 
-本次按要求没有运行 pytest 全量回归，也没有调用真实模型。新增聚焦测试之外的既有测试、不同 Engine Adapter 的交互、真实模型请求格式与运行成本均未在本次验证。
+本次没有调用真实模型。新增聚焦测试之外的既有测试、不同 Engine Adapter 的交互、真实模型请求格式与运行成本均未在本次验证。当前 58 份 Schema 导出并离线复核通过，`model_calls=0`。
 
 此前的相关综合回归检查有 178 项通过；综合回归完成后新增了离线 CLI 和工具面覆盖，并加强类型/时间边界，最终对全部 P0/P1 新增测试重新运行，结果为 45 passed。P2 Builder、任务与 Schema 变更在本轮另行运行了 18 项定向检查。本次 287 项通过后按用户要求中断全仓回归，不将中断结果表述为完整回归。
 

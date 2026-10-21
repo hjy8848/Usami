@@ -38,11 +38,14 @@ def scenario_draft(name="scenario"):
 
 
 def task_draft(evidence_hashes=()):
+    request = "Please replace the damaged device with a USB-C option within three days."
     return TaskDraft(
         task_id="designer-exchange", customer_alias="customer",
-        customer_request="Please replace the damaged device with a USB-C option within three days.",
+        customer_request=request,
         remedy_goals=({
             "goal_id": "replace-device", "line_alias": "damaged", "quantity": 1,
+            "public_request_span": request,
+            "subject_mention": "damaged device",
             "allowed_remedies": ["exchange"],
             "required_attributes": [{"name": "interface", "value": "USB_C"}],
             "maximum_extra_charge_cents": 2000,
@@ -104,6 +107,8 @@ def test_two_stage_designer_builds_frozen_world_and_certified_task_with_provenan
     assert len(run.world_attempts) == len(run.build_attempts) == 1
     assert run.world_attempts[0].status == "SAT"
     assert run.task.partition == "train"
+    assert run.task.protocol == "commerce-task-v2"
+    assert run.task.remedy_goals[0].public_request_span in run.task.customer_request
     assert run.task.source_distribution_hash == run.distribution.record_hash
     assert run.task.parent_training_evidence_hashes == (evidence.source_record_hash,)
     assert run.certification.business_reachability_certified
@@ -165,3 +170,14 @@ def test_post_run_quality_is_separate_diagnostic_not_a_selection_rule():
     vector = post_run_quality(run.pre_run_quality, fake_episode)
     assert vector.decision_power == "diagnostic_only"
     assert vector.strict_task_success is False and vector.model_calls == 0
+
+
+def test_designer_cannot_attach_unmentioned_transaction_goal():
+    import pytest
+    with pytest.raises(ValueError, match="supporting public request span"):
+        TaskDraft(task_id="hidden-goal", customer_alias="customer",
+            customer_request="Please refund the damaged item.",
+            remedy_goals=({"goal_id": "exchange", "line_alias": "damaged", "quantity": 1,
+                           "public_request_span": "Please exchange my laptop instead.",
+                           "subject_mention": "laptop",
+                           "allowed_remedies": ["exchange"]},))

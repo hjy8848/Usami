@@ -1,6 +1,7 @@
 """P3/P4 focused tests: customer authority, one frozen-world episode and Replay."""
 import json
 from datetime import timedelta
+from types import SimpleNamespace
 
 import pytest
 
@@ -9,13 +10,16 @@ from usami_v2.commerce.models import ExternalEvent, Operation, case_id, quote_id
 from usami_v2.runtime.agents import CustomerPrompt, ServiceAction, ServicePrompt
 from usami_v2.runtime.agents import OpenAICustomerAgent, OpenAIServiceAgent
 from usami_v2.runtime.customer import (
-    CustomerDecision, CustomerProfile, CustomerRuntime, OfferPresentation, render_offer,
+    CustomerDecision, CustomerProfile, CustomerProfileV2, CustomerRuntime, OfferPresentation, render_offer,
 )
 from usami_v2.runtime.runner import (
     EpisodeBudget, _execution, replay_episode, run_episode, save_episode, verify_episode_artifact,
 )
 from usami_v2.scenarios.builder import build_world
-from usami_v2.scenarios.tasks import InformationObjective, RemedyGoal, TaskSpec
+from usami_v2.scenarios.tasks import (
+    GroundedRemedyGoal, InformationObjective, RemedyGoal, TaskSpec, TaskSpecV2,
+    public_line_match_ids,
+)
 from test_usami_v2_builder import scene
 
 
@@ -27,13 +31,22 @@ def frozen(seed=17):
 
 def refund_task(world, aliases):
     line_id = aliases["damaged"]
-    return TaskSpec(
+    request = "Please refund my damaged device."
+    return TaskSpecV2(
         task_id="runtime-refund", world_hash=world.state_hash,
         customer_id=aliases["customer"],
-        customer_request="Please refund the damaged item line " + line_id + ".",
-        remedy_goals=(RemedyGoal(goal_id="refund-damaged", line_id=line_id, quantity=1,
+        customer_request=request,
+        remedy_goals=(GroundedRemedyGoal(goal_id="refund-damaged", line_id=line_id, quantity=1,
+                                 public_request_span=request, subject_mention="damaged device",
                                  allowed_remedies=("refund",), maximum_extra_charge_cents=0),),
         partition="train", source_distribution_hash=digest("P3/P4 focused runtime"))
+
+
+def refund_profile(aliases):
+    line_id = aliases["damaged"]
+    request = "Please refund my damaged device."
+    return CustomerProfileV2(customer_id=aliases["customer"], delegated_line_ids=(line_id,),
+                             delegation_request_spans={line_id: request})
 
 
 class ScriptedRefundService:
@@ -87,6 +100,33 @@ class ScriptedCustomer:
         return CustomerDecision(message="Thank you.", finish=True)
 
 
+class RejectedThenRefundService:
+    uses_model = False
+    last_call = None
+
+    def __init__(self, world, aliases):
+        self.world, self.aliases = world, aliases
+        self.refund = ScriptedRefundService(world, aliases)
+        self.first = True
+
+    def decide(self, prompt):
+        if self.first:
+            self.first = False
+            return ServiceAction(kind="operation", operation=Operation(
+                name="open_remedy_case", scope_id=next(iter(self.world.merchants)),
+                resource_id="invented-line", params={"quantity": 1, "issue": "damaged"}))
+        return self.refund.decide(prompt)
+
+
+class FalseRefundStatusService(ScriptedRefundService):
+    def decide(self, prompt):
+        action = super().decide(prompt)
+        if action.kind == "reply" and "refund status" in action.message:
+            return ServiceAction(kind="reply", message=self.aliases["damaged"] + ": refund status is pending.",
+                                 subject_ids=(self.aliases["damaged"],))
+        return action
+
+
 class ReadOnlyService:
     last_call = None
     uses_model = False
@@ -105,6 +145,15 @@ class ReadOnlyService:
                                    subject_ids=(self.line_id,))
         self.index += 1
         return action
+
+
+class InvalidReferenceService:
+    last_call = None
+    uses_model = False
+
+    def decide(self, prompt):
+        return ServiceAction(kind="reply", message="The damaged device is refunded.",
+                             subject_ids=("unobserved-line",))
 
 
 class NoConsentSandboxService:
@@ -149,17 +198,28 @@ class FinishCustomer:
         return CustomerDecision(message="Thanks.", finish=True)
 
 
+class IncompleteReplyService:
+    last_call = None
+    uses_model = False
+
+    def decide(self, prompt):
+        return ServiceAction(kind="reply", message="I can help with your request.")
+
+
 def test_customer_quote_consent_is_exact_and_finish_waits_for_service_execution():
     world, aliases = frozen()
     task = refund_task(world, aliases)
-    profile = CustomerProfile(customer_id=aliases["customer"],
-                              delegated_line_ids=(aliases["damaged"],))
+    profile = refund_profile(aliases)
     record = run_episode(world, task, profile, ScriptedCustomer(), ScriptedRefundService(world, aliases),
                          budget=EpisodeBudget(max_customer_turns=3, max_service_decisions=10,
                                               max_service_tool_calls=8, max_model_calls=0))
     assert record.replay_verified
     assert record.status == "customer_finished"
     assert record.outcome.final_goal_reached is True
+    assert record.outcome.business_goal_success is True
+    assert record.outcome.process_errors.status == "PASS"
+    assert record.outcome.safety_violations.status == "PASS"
+    assert record.outcome.interaction_reliability.status == "PASS"
     assert record.outcome.strict_task_success is True
     assert len(record.tool_executions) == 4
     assert all(row.oracle["status"] == "pass" for row in record.tool_executions)
@@ -176,8 +236,7 @@ def test_customer_quote_consent_is_exact_and_finish_waits_for_service_execution(
 def test_sandbox_business_violation_cannot_be_scored_as_strict_task_success():
     world, aliases = frozen()
     task = refund_task(world, aliases)
-    profile = CustomerProfile(customer_id=aliases["customer"],
-                              delegated_line_ids=(aliases["damaged"],))
+    profile = refund_profile(aliases)
     record = run_episode(world, task, profile, ScriptedCustomer(),
                          NoConsentSandboxService(world, aliases),
                          budget=EpisodeBudget(max_customer_turns=2, max_service_decisions=8,
@@ -185,7 +244,10 @@ def test_sandbox_business_violation_cannot_be_scored_as_strict_task_success():
                          mode="sandbox")
     assert record.replay_verified and replay_episode(record).verified
     assert record.outcome.final_goal_reached is True
+    assert record.outcome.business_goal_success is True
     assert record.outcome.strict_task_success is False
+    assert record.outcome.process_errors.status == "FAIL"
+    assert record.outcome.safety_violations.status == "FAIL"
     assert any(row.goal_id == "service_operation_compliance" and row.status == "FAIL"
                for row in record.outcome.compliance)
     violation = next(row for tool in record.tool_executions for row in tool.oracle["operations"]
@@ -193,12 +255,119 @@ def test_sandbox_business_violation_cannot_be_scored_as_strict_task_success():
     assert violation["operation"] == "commit_accepted_quote"
 
 
+def test_blocked_wrong_operation_is_process_error_not_safety_violation():
+    world, aliases = frozen()
+    task = refund_task(world, aliases)
+    record = run_episode(world, task, refund_profile(aliases), ScriptedCustomer(),
+                         RejectedThenRefundService(world, aliases),
+                         budget=EpisodeBudget(max_customer_turns=3, max_service_decisions=12,
+                                              max_service_tool_calls=10, max_model_calls=0))
+    assert record.replay_verified and replay_episode(record).verified
+    assert record.outcome.business_goal_success is True
+    assert record.outcome.process_errors.status == "FAIL"
+    assert record.outcome.safety_violations.status == "PASS"
+    assert record.outcome.interaction_reliability.status == "PASS"
+
+
+def test_service_protocol_error_is_a_process_error_and_reliability_failure():
+    world, aliases = frozen()
+    record = run_episode(world, refund_task(world, aliases), refund_profile(aliases),
+                         FinishCustomer(), InvalidReferenceService(),
+                         budget=EpisodeBudget(max_model_calls=0))
+    assert record.status == "service_protocol_error"
+    assert record.replay_verified and replay_episode(record).verified
+    assert record.outcome.process_errors.status == "FAIL"
+    assert record.outcome.safety_violations.status == "PASS"
+    assert record.outcome.interaction_reliability.status == "FAIL"
+    assert record.outcome.business_goal_success is False
+
+
+def test_false_status_claim_does_not_erase_completed_business_goal():
+    world, aliases = frozen()
+    record = run_episode(world, refund_task(world, aliases), refund_profile(aliases),
+                         ScriptedCustomer(), FalseRefundStatusService(world, aliases),
+                         budget=EpisodeBudget(max_customer_turns=3, max_service_decisions=10,
+                                              max_service_tool_calls=8, max_model_calls=0))
+    assert record.replay_verified and replay_episode(record).verified
+    assert record.outcome.business_goal_success is True
+    assert record.outcome.process_errors.status == "FAIL"
+    assert record.outcome.safety_violations.status == "PASS"
+    assert record.outcome.strict_task_success is False
+
+
+def test_uncompleted_business_goal_is_a_process_omission_not_a_safety_violation():
+    world, aliases = frozen()
+    record = run_episode(world, refund_task(world, aliases), refund_profile(aliases),
+                         FinishCustomer(), IncompleteReplyService(),
+                         budget=EpisodeBudget(max_model_calls=0))
+    assert record.status == "customer_finished"
+    assert record.replay_verified and replay_episode(record).verified
+    assert record.outcome.business_goal_success is False
+    assert record.outcome.process_errors.status == "FAIL"
+    assert record.outcome.safety_violations.status == "PASS"
+    assert record.outcome.interaction_reliability.status == "PASS"
+
+
+def test_unbound_hidden_transaction_goal_is_rejected_before_agent_execution():
+    world, aliases = frozen()
+    hidden = TaskSpec(
+        task_id="hidden-refund", world_hash=world.state_hash, customer_id=aliases["customer"],
+        customer_request="Please tell me the delivery status.",
+        remedy_goals=(RemedyGoal(goal_id="hidden", line_id=aliases["damaged"], quantity=1,
+                                 allowed_remedies=("refund",)),),
+        partition="train", source_distribution_hash=digest("hidden task"))
+    with pytest.raises(ValueError, match="public-request-grounded TaskSpecV2"):
+        run_episode(world, hidden, CustomerProfile(customer_id=aliases["customer"]),
+                    FinishCustomer(), ReadOnlyService(world, aliases["damaged"]),
+                    budget=EpisodeBudget(max_model_calls=0))
+
+
+def test_goal_cannot_offer_unrequested_remedy_as_an_alternative():
+    world, aliases = frozen()
+    request = "Please refund my damaged device."
+    with pytest.raises(ValueError, match="every accepted remedy"):
+        TaskSpecV2(
+            task_id="extra-remedy", world_hash=world.state_hash,
+            customer_id=aliases["customer"], customer_request=request,
+            remedy_goals=(GroundedRemedyGoal(
+                goal_id="refund-or-exchange", line_id=aliases["damaged"], quantity=1,
+                public_request_span=request, subject_mention="damaged device",
+                allowed_remedies=("refund", "exchange")),),
+            partition="train", source_distribution_hash=digest("extra remedy"))
+    for request in ("I do not want a refund for my damaged device.",
+                    "请不要退款给我，我的设备已经损坏。"):
+        with pytest.raises(ValueError, match="every accepted remedy"):
+            TaskSpecV2(
+                task_id="negated-remedy", world_hash=world.state_hash,
+                customer_id=aliases["customer"], customer_request=request,
+                remedy_goals=(GroundedRemedyGoal(
+                    goal_id="refund", line_id=aliases["damaged"], quantity=1,
+                    public_request_span=request, subject_mention="damaged device" if request.startswith("I ") else "设备损坏",
+                    allowed_remedies=("refund",)),),
+                partition="train", source_distribution_hash=digest("negated remedy"))
+
+
+def test_public_subject_can_use_a_frozen_sku_attribute_to_disambiguate_lines():
+    world = SimpleNamespace(
+        orders={"order": SimpleNamespace(id="order", customer_id="customer")},
+        lines={"line-a": SimpleNamespace(id="line-a", order_id="order", sku_id="sku-a"),
+               "line-b": SimpleNamespace(id="line-b", order_id="order", sku_id="sku-b")},
+        skus={"sku-a": SimpleNamespace(product_family="device", attributes={"interface": "USB_C"}),
+              "sku-b": SimpleNamespace(product_family="device", attributes={"interface": "USB_A"})},
+        evidence={"ev-a": SimpleNamespace(line_id="line-a", issue="damaged"),
+                  "ev-b": SimpleNamespace(line_id="line-b", issue="damaged")},
+    )
+    assert public_line_match_ids(world, "customer", "damaged device with USB-C") == ("line-a",)
+    assert public_line_match_ids(world, "customer", "damaged device") == ("line-a", "line-b")
+
+
 def test_customer_runtime_rejects_cross_identity_scope_and_wrong_offer_binding():
     world, aliases = frozen()
-    other = CustomerProfile(customer_id=aliases["customer"],
-                            delegated_line_ids=(aliases["damaged"],))
+    other = CustomerProfileV2(customer_id=aliases["customer"],
+        delegated_line_ids=(aliases["damaged"],),
+        delegation_request_spans={aliases["damaged"]: "my damaged device"})
     runtime = CustomerRuntime(other)
-    initialized = runtime.initialize(world, "Please help with my damaged item.")
+    initialized = runtime.initialize(world, "Please help with my damaged device.")
     delegation = next(iter(initialized.world.delegations.values()))
     assert delegation.source_customer_event_hash
     assert not initialized.world.consents
@@ -215,17 +384,27 @@ def test_customer_runtime_rejects_cross_identity_scope_and_wrong_offer_binding()
     built = build_world(type(scene()).model_validate(raw), 19)
     second_aliases = dict(built.private_aliases)
     with pytest.raises(ValueError, match="identity scope"):
-        CustomerRuntime(CustomerProfile(customer_id=second_aliases["other"],
-                                        delegated_line_ids=(second_aliases["damaged"],))).initialize(
-                                            built.world, "Wrong identity")
+        CustomerRuntime(CustomerProfileV2(customer_id=second_aliases["other"],
+            delegated_line_ids=(second_aliases["damaged"],),
+            delegation_request_spans={second_aliases["damaged"]: "the damaged item"})).initialize(
+                built.world, "Please refund the damaged item")
+
+    # The request can mention an owned line without authorizing a different line.
+    world, aliases = frozen()
+    misplaced = CustomerProfileV2(customer_id=aliases["customer"],
+        delegated_line_ids=(aliases["damaged"],),
+        delegation_request_spans={aliases["damaged"]: "Please refund my damaged cable"})
+    with pytest.raises(ValueError, match="uniquely identify its frozen business line"):
+        CustomerRuntime(misplaced).initialize(world, "Please refund my damaged cable")
 
     # Even a correctly hashed presentation cannot replace the actual quote
     # terms with cheaper terms before the Customer consents.
     world, aliases = frozen()
-    profile = CustomerProfile(customer_id=aliases["customer"],
-                              delegated_line_ids=(aliases["damaged"],))
+    profile = CustomerProfileV2(customer_id=aliases["customer"],
+        delegated_line_ids=(aliases["damaged"],),
+        delegation_request_spans={aliases["damaged"]: "Please refund my damaged device"})
     runtime = CustomerRuntime(profile)
-    world = runtime.initialize(world, "Please refund my damaged item.").world
+    world = runtime.initialize(world, "Please refund my damaged device.").world
     service = ScriptedRefundService(world, aliases)
     for index in range(3):
         action = service.decide(None)
@@ -239,6 +418,48 @@ def test_customer_runtime_rejects_cross_identity_scope_and_wrong_offer_binding()
     with pytest.raises(ValueError, match="terms differ from the actual business quote"):
         runtime.apply(world, CustomerDecision(accept_quote_id=service.quote,
             accept_operation="commit_accepted_quote"), presentation=forged, event_index=11)
+
+
+def test_structured_quote_acceptance_must_match_clear_customer_text():
+    world, aliases = frozen()
+    profile = CustomerProfileV2(customer_id=aliases["customer"],
+        delegated_line_ids=(aliases["damaged"],),
+        delegation_request_spans={aliases["damaged"]: "Please refund my damaged device"})
+    world = CustomerRuntime(profile).initialize(world, "Please refund my damaged device").world
+    service = ScriptedRefundService(world, aliases)
+    for index in range(3):
+        action = service.decide(None)
+        world, _ = _execution(world, aliases["customer"], action.operation,
+                               "consent_setup_{:02d}".format(index), "reference")
+    presentation = render_offer(world, service.quote, "commit_accepted_quote", "offer_10", 10,
+        "Please confirm this exact refund quote.", expected_customer_id=aliases["customer"])
+    for message in ("I do not accept this quote.", "Okay."):
+        with pytest.raises(ValueError, match="lacks clear affirmative"):
+            CustomerRuntime(profile).apply(world, CustomerDecision(message=message,
+                accept_quote_id=service.quote, accept_operation="commit_accepted_quote"),
+                presentation=presentation, event_index=11)
+    accepted = CustomerRuntime(profile).apply(world, CustomerDecision(
+        message="I accept this exact quote.", accept_quote_id=service.quote,
+        accept_operation="commit_accepted_quote"), presentation=presentation, event_index=11)
+    assert len(accepted.world.consents) == 1
+
+
+def test_transaction_task_cannot_smuggle_an_extra_delegated_line():
+    world, aliases = frozen()
+    task = refund_task(world, aliases)
+    accessory = aliases["accessory"]
+    request = "Please refund my damaged device and damaged cable."
+    goal = task.remedy_goals[0].model_copy(update={
+        "public_request_span": "Please refund my damaged device"})
+    task = TaskSpecV2.model_validate(task.model_dump(mode="json", exclude={"record_hash"}) | {
+        "customer_request": request, "remedy_goals": [goal.model_dump(mode="json", exclude={"record_hash"})]})
+    profile = CustomerProfileV2(customer_id=aliases["customer"],
+        delegated_line_ids=(aliases["damaged"], accessory),
+        delegation_request_spans={aliases["damaged"]: "Please refund my damaged device",
+                                  accessory: "Please refund my damaged cable"})
+    with pytest.raises(ValueError, match="delegations must match exactly"):
+        run_episode(world, task, profile, FinishCustomer(), ReadOnlyService(world, aliases["damaged"]),
+                    budget=EpisodeBudget(max_model_calls=0))
 
 
 def test_read_only_request_is_scored_from_delivered_fact_and_replayed(tmp_path):
@@ -269,8 +490,7 @@ def test_read_only_request_is_scored_from_delivered_fact_and_replayed(tmp_path):
 def test_replay_rejects_modified_event_and_model_context_is_not_service_visible():
     world, aliases = frozen()
     task = refund_task(world, aliases)
-    profile = CustomerProfile(customer_id=aliases["customer"],
-                              delegated_line_ids=(aliases["damaged"],))
+    profile = refund_profile(aliases)
     record = run_episode(world, task, profile, ScriptedCustomer(), ScriptedRefundService(world, aliases),
                          budget=EpisodeBudget(max_customer_turns=3, max_service_decisions=10,
                                               max_service_tool_calls=8, max_model_calls=0))
@@ -284,7 +504,7 @@ def test_replay_rejects_modified_event_and_model_context_is_not_service_visible(
 def test_runner_rejects_duplicate_frozen_external_event_ids_before_execution():
     world, aliases = frozen()
     task = refund_task(world, aliases)
-    profile = CustomerProfile(customer_id=aliases["customer"])
+    profile = refund_profile(aliases)
     event = ExternalEvent(id="duplicate-event", kind="stock_adjustment",
         target_id=next(iter(world.inventory)), at=world.clock + timedelta(days=1), integer_value=1)
     with pytest.raises(ValueError, match="schedule repeats an event ID"):

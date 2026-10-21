@@ -1,5 +1,6 @@
 """Open, multi-line business objectives; evaluation accepts any compliant SKU."""
 from datetime import datetime
+import re
 from typing import Literal, Optional, Tuple
 
 from pydantic import Field, field_validator, model_validator
@@ -14,6 +15,91 @@ from usami_v2.commerce.models import unit_credit
 from usami_v2.evaluation.outcomes import GoalResult
 from usami_v2.evaluation.communication import evaluate_communication
 from .schema import Attribute
+
+
+REMEDY_REQUEST_PATTERNS = {
+    "refund": (
+        r"\b(?:please\s+)?refund\s+(?:my|this|the|me|it)\b",
+        r"\b(?:i\s+(?:want|need|request|would\s+like))\s+(?:a\s+)?(?:refund|reimbursement)\b",
+        r"\b(?:give|send)\s+me\s+(?:a\s+)?refund\b",
+        r"\b(?:i\s+(?:want|need))\s+my\s+money\s+back\b",
+        r"(?:给我退款|请.{0,8}退款|我(?:要|想|需要|要求|希望).{0,4}退款|退钱给我)",
+    ),
+    "exchange": (
+        r"\b(?:please\s+)?(?:exchange|replace|swap)\s+(?:my|this|the|it)\b",
+        r"\b(?:i\s+(?:want|need|request|would\s+like))\s+(?:an?\s+)?(?:exchange|replacement)\b",
+        r"(?:给我换货|请.{0,8}(?:换货|更换)|我(?:要|想|需要|要求|希望).{0,4}(?:换货|更换))",
+    ),
+    "reship": (
+        r"\b(?:please\s+)?(?:reship|send|ship)\s+(?:it|this|the|my|another|a\s+replacement)\b",
+        r"\b(?:i\s+(?:want|need|request|would\s+like))\s+(?:it\s+)?(?:resent|reshipped|sent\s+again)\b",
+        r"(?:给我补发|请.{0,8}(?:补发|重寄)|我(?:要|想|需要|要求|希望).{0,4}(?:补发|重寄))",
+    ),
+}
+
+
+def _positive_remedy_request(text, remedy):
+    negative_prefix = re.compile(
+        r"(?:\b(?:no|not|never|without|don't|do\s+not|didn't|cannot|can't|won't|wouldn't|shouldn't)\b)"
+        r"(?:\s+[a-z]+){0,4}\s*$", re.I)
+    negative_suffix = re.compile(r"^\s*(?:not|isn't|is\s+not|not\s+wanted|not\s+needed|not\s+accepted)\b", re.I)
+    negative_cjk_prefix = re.compile(r"(?:不接受|不同意|不要|不想|不需要|无需|拒绝|不愿|不希望|别|禁止|请勿).{0,10}$")
+    negative_cjk_suffix = re.compile(r"^.{0,8}(?:不接受|不同意|不要|不想|不需要|无需|拒绝|别|禁止|请勿)")
+    text = " ".join(text.casefold().split())
+    for pattern in REMEDY_REQUEST_PATTERNS[remedy]:
+        for match in re.finditer(pattern, text, re.I):
+            prefix = text[max(0, match.start() - 48):match.start()]
+            suffix = text[match.end():match.end() + 18]
+            if negative_prefix.search(prefix) or negative_suffix.search(suffix):
+                continue
+            if (negative_cjk_prefix.search(prefix) or negative_cjk_suffix.search(suffix)
+                    or negative_cjk_prefix.search(match.group(0))
+                    or negative_cjk_suffix.search(match.group(0))):
+                continue
+            return True
+    return False
+
+
+def request_names_remedy(text, remedies):
+    return bool(remedies) and all(_positive_remedy_request(text, remedy) for remedy in remedies)
+
+
+def public_line_match_ids(world, customer_id, mention):
+    """Return owned lines whose frozen issue and SKU family are named publicly."""
+    def normalized(value):
+        return re.sub(r"[^a-z0-9\u4e00-\u9fff]+", " ", value.casefold()).strip()
+
+    def contains(text, phrase):
+        text, phrase = normalized(text), normalized(phrase)
+        if not phrase:
+            return False
+        if re.search(r"[\u4e00-\u9fff]", phrase):
+            return phrase in text
+        return " " + phrase + " " in " " + text + " "
+
+    normalized_mention = normalized(mention)
+    owned_orders = {row.id for row in world.orders.values() if row.customer_id == customer_id}
+    candidates = []
+    for line in world.lines.values():
+        if line.order_id not in owned_orders:
+            continue
+        sku = world.skus.get(line.sku_id)
+        issues = {row.issue for row in world.evidence.values() if row.line_id == line.id}
+        if (sku is not None
+                and contains(normalized_mention, sku.product_family)
+                and any(contains(normalized_mention, issue) for issue in issues)):
+            candidates.append((line, sku))
+
+    # A phrase such as "the damaged device" may match multiple lines. Publicly
+    # named SKU attributes can disambiguate them without exposing internal IDs.
+    attribute_names = {name for _, sku in candidates for name in sku.attributes}
+    for name in sorted(attribute_names):
+        values = {sku.attributes.get(name) for _, sku in candidates if sku.attributes.get(name)}
+        named_values = {value for value in values if contains(normalized_mention, value)}
+        if named_values:
+            candidates = [(line, sku) for line, sku in candidates
+                          if sku.attributes.get(name) in named_values]
+    return tuple(sorted(line.id for line, _ in candidates))
 
 
 class RemedyGoal(Sealed):
@@ -37,6 +123,20 @@ class RemedyGoal(Sealed):
         if len({row.name for row in self.required_attributes}) != len(self.required_attributes):
             raise ValueError("duplicate required attribute")
         return self
+
+
+class GroundedRemedyGoal(RemedyGoal):
+    """A new-protocol business goal linked to an exact public request span."""
+
+    public_request_span: str = Field(min_length=1)
+    subject_mention: str = Field(min_length=1)
+
+    @field_validator("public_request_span")
+    @classmethod
+    def nonblank_request_span(cls, value):
+        if not " ".join(value.casefold().split()):
+            raise ValueError("remedy goal request span cannot be blank")
+        return value
 
 
 class InformationObjective(Sealed):
@@ -92,17 +192,46 @@ class TaskSpec(Sealed):
         return self
 
 
+class TaskSpecV2(TaskSpec):
+    """Versioned task with public-source binding for every remedy objective.
+
+    The v1 TaskSpec remains readable for historical certificates and Episodes.
+    New Designer output uses v2 so hidden transaction goals cannot be scored.
+    """
+
+    protocol: Literal["commerce-task-v2"] = "commerce-task-v2"
+    remedy_goals: Tuple[GroundedRemedyGoal, ...] = ()
+
+    @model_validator(mode="after")
+    def remedy_goals_are_public(self):
+        normalized_request = " ".join(self.customer_request.casefold().split())
+        for goal in self.remedy_goals:
+            span = " ".join(goal.public_request_span.casefold().split())
+            mention = " ".join(goal.subject_mention.casefold().split())
+            if (not span or span not in normalized_request or not mention or mention not in span
+                    or not request_names_remedy(span, goal.allowed_remedies)):
+                raise ValueError("remedy objective must quote the public request and name every accepted remedy")
+        return self
+
+
 def check_task_scope(world, task: TaskSpec):
     task = task.checked()
     if world.state_hash != task.world_hash or invariants(world):
         raise ValueError("task world binding or native invariants differ")
     if task.customer_id not in world.customers:
         raise ValueError("task Customer does not exist")
+
+    owned_orders = {row.id for row in world.orders.values() if row.customer_id == task.customer_id}
+    owned_lines = {row.id for row in world.lines.values() if row.order_id in owned_orders}
+
     for goal in task.remedy_goals:
         line = world.lines.get(goal.line_id)
         order = world.orders.get(line.order_id) if line else None
         if not order or order.customer_id != task.customer_id:
             raise ValueError("task crosses the frozen Customer identity")
+        if isinstance(goal, GroundedRemedyGoal):
+            if public_line_match_ids(world, task.customer_id, goal.subject_mention) != (line.id,):
+                raise ValueError("public remedy mention must uniquely identify the frozen line issue and product family")
         occupied = {unit for row in world.cases.values()
                     if row.line_id == goal.line_id and row.status not in ("resolved", "cancelled")
                     for unit in row.unit_indices}
@@ -110,11 +239,16 @@ def check_task_scope(world, task: TaskSpec):
                    for unit in row.unit_indices}
         if goal.quantity > line.quantity - len(occupied | settled):
             raise ValueError("task exceeds the uncommitted purchased quantity")
-    owned_orders = {row.id for row in world.orders.values() if row.customer_id == task.customer_id}
-    owned_lines = {row.id for row in world.lines.values() if row.order_id in owned_orders}
+
     for goal in task.information_goals:
         if goal.subject_id not in owned_orders | owned_lines:
             raise ValueError("information objective is not about an owned order/line")
+        if task.protocol == "commerce-task-v2":
+            if goal.subject_id in owned_lines:
+                if public_line_match_ids(world, task.customer_id, goal.subject_mention) != (goal.subject_id,):
+                    raise ValueError("public information mention must uniquely identify the frozen line issue and product family")
+            elif goal.subject_id in owned_orders and len(owned_orders) != 1:
+                raise ValueError("order-level information target is ambiguous for this Customer")
     return task
 
 

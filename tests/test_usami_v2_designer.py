@@ -8,7 +8,7 @@ from usami_v2.scenarios.distribution import (
     BusinessSource, BusinessStratum, DistributionSpec, sample_schedule,
 )
 from usami_v2.scenarios.designer import (
-    DesignerTrainingEvidence, RemedyDraft, ScenarioDraft, TaskDraft, design_and_certify,
+    DesignerTrainingEvidence, RemedyDraft, ScenarioDraft, TaskDraft, _chat, design_and_certify,
 )
 from usami_v2.scenarios.task_certification import CustomerScenario, ProofBudget
 from test_usami_v2_builder import scene
@@ -205,10 +205,24 @@ def test_post_run_quality_is_separate_diagnostic_not_a_selection_rule():
 
 def test_designer_cannot_attach_unmentioned_transaction_goal():
     import pytest
-    with pytest.raises(ValueError, match="supporting public request span"):
+    with pytest.raises(ValueError, match="copied verbatim"):
         TaskDraft(task_id="hidden-goal", customer_alias="customer",
             customer_request="Please refund the damaged item.",
             remedy_goals=({"goal_id": "exchange", "line_alias": "damaged", "quantity": 1,
                            "public_request_span": "Please exchange my laptop instead.",
                            "subject_mention": "laptop",
                            "allowed_remedies": ["exchange"]},))
+
+
+def test_task_proposal_schema_and_feedback_explain_verbatim_public_quote():
+    schema = TaskDraft.model_json_schema()["$defs"]["RemedyDraft"]["properties"]
+    assert "exact, contiguous substring" in schema["public_request_span"]["description"]
+    assert "appears inside public_request_span" in schema["subject_mention"]["description"]
+    assert "explicitly requested" in schema["allowed_remedies"]["description"]
+
+    distribution, slot = distribution_and_slot(65)
+    messages = _chat("task", {"world_hash": "a" * 64}, distribution, slot,
+                     errors=("public_request_span must be copied verbatim",))
+    instruction = messages[0]["content"]
+    assert "never paraphrase" in instruction
+    assert "replace the span with text copied exactly" in instruction

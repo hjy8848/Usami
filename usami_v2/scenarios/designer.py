@@ -59,10 +59,21 @@ class ScenarioDraft(Sealed):
 class RemedyDraft(Sealed):
     goal_id: str
     line_alias: str
-    public_request_span: str = Field(min_length=1)
-    subject_mention: str = Field(min_length=1)
+    public_request_span: str = Field(
+        min_length=1,
+        description=("Copy one exact, contiguous substring from customer_request. Do not paraphrase, summarize, "
+                     "or combine separated phrases. The quote must include subject_mention and explicitly "
+                     "request every remedy in allowed_remedies."),
+    )
+    subject_mention: str = Field(
+        min_length=1,
+        description="Exact product/object wording that appears inside public_request_span.",
+    )
     quantity: int = Field(ge=1, strict=True)
-    allowed_remedies: Tuple[Literal["refund", "exchange", "reship"], ...] = Field(min_length=1)
+    allowed_remedies: Tuple[Literal["refund", "exchange", "reship"], ...] = Field(
+        min_length=1,
+        description="List only remedies explicitly requested in public_request_span; do not infer alternatives.",
+    )
     required_attributes: Tuple[Attribute, ...] = ()
     maximum_extra_charge_cents: Optional[int] = Field(default=None, ge=0, strict=True)
     latest_arrival_within_days: Optional[int] = Field(default=None, ge=0, strict=True)
@@ -98,12 +109,20 @@ class TaskDraft(Sealed):
         for goal in self.remedy_goals:
             span = " ".join(goal.public_request_span.casefold().split())
             if not span or span not in normalized_request:
-                raise ValueError("each remedy goal must quote its supporting public request span")
+                raise ValueError(
+                    "each remedy goal's public_request_span must be copied verbatim as a contiguous quote "
+                    "from its supporting public request; do not paraphrase or combine phrases"
+                )
             mention = " ".join(goal.subject_mention.casefold().split())
             if not mention or mention not in span:
-                raise ValueError("each remedy goal must name its object in the public request span")
+                raise ValueError(
+                    "each remedy goal's subject_mention must appear in its verbatim public_request_span"
+                )
             if not request_names_remedy(span, goal.allowed_remedies):
-                raise ValueError("public request span must state every accepted remedy")
+                raise ValueError(
+                    "public_request_span must explicitly request every listed allowed_remedies value; "
+                    "do not infer a remedy"
+                )
         return self
 
 
@@ -465,11 +484,20 @@ def _quality(spec, world, task, certificate, history_signatures, training_hashes
 
 
 def _chat(phase, content, distribution, slot, errors=()):
+    phase_instruction = ""
+    if phase == "task":
+        phase_instruction = (
+            " For each remedy goal, copy public_request_span verbatim from customer_request as one contiguous "
+            "substring; never paraphrase, summarize, or join non-adjacent words. Put an exact object phrase from "
+            "that quote in subject_mention. List only remedies the quote explicitly requests, and make the "
+            "customer_request itself state each intended remedy clearly. If validation feedback reports a quote "
+            "error, replace the span with text copied exactly from customer_request."
+        )
     return [
         {"role": "system", "content": (
             "You are the autonomous Usami Designer. Propose only the requested structured artifact. "
             "Do not invent or modify business rules, customer identity, Oracle results, task certificates, "
-            "or a solution witness. Use the frozen distribution and supplied aliases."
+            "or a solution witness. Use the frozen distribution and supplied aliases." + phase_instruction
         )},
         {"role": "user", "content": json.dumps({"phase": phase, "frozen_distribution": distribution.model_dump(mode="json"),
             "pre_registered_slot": slot.model_dump(mode="json"), "available_context": content,

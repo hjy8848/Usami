@@ -352,7 +352,10 @@ class TaskSpecV2(TaskSpec):
             mention = " ".join(goal.subject_mention.casefold().split())
             if (not span or span not in normalized_request or not mention or mention not in span
                     or not request_names_remedy(span, goal.allowed_remedies)):
-                raise ValueError("remedy objective must quote the public request and name every accepted remedy")
+                raise ValueError(
+                    "remedy objective must quote the public request and support every accepted remedy; "
+                    "replacement wording supports exchange or reship but does not imply a refund"
+                )
         return self
 
 

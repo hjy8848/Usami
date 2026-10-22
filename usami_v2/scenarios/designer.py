@@ -138,8 +138,8 @@ class TaskDraft(Sealed):
                 )
             if not request_names_remedy(span, goal.allowed_remedies):
                 raise ValueError(
-                    "public_request_span must explicitly request every listed allowed_remedies value; "
-                    "do not infer a remedy"
+                    "public_request_span must support every listed remedy; replacement wording supports exchange "
+                    "or reship, but refund still requires explicit refund language"
                 )
         return self
 

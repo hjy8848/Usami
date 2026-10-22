@@ -219,9 +219,10 @@ function DesignerResult({ run, onRetry, onNext, onCancel, canCancel }: { run: Ru
   return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">REAL DESIGNER OUTPUT</span><h2>生成与验证状态 <StatusPill value={run.status} /></h2><p>世界构建和任务认证分别记录；UNSAT、UNKNOWN 与模型协议失败不会合并。</p></div><button className="research-button" onClick={onRetry}>新建另一运行</button></div>
     {!designer ? <div className="research-wait" role="status"><Loader2 className="research-spin" size={20} /><div><strong>{humanState(run.status)}</strong><span>等待真实模型提交。当前阶段：{humanState(run.phases?.world)} / {humanState(run.phases?.task)}</span></div>{canCancel && <button className="research-button" onClick={onCancel}>请求取消</button>}</div> : <>
       <div className="research-result-grid"><Metric label="World" value={designer.build_result?.status || '未生成'} detail={designer.build_result?.reason || '没有 Builder 结果'} /><Metric label="Task" value={designer.status} detail={designer.validation_errors?.slice(-1)[0] || '查看 Native Reference 认证'} /><Metric label="Designer 请求" value={designer.calls?.length ?? 0} detail="实际模型调用，含失败响应" /><Metric label="World Hash" value={designer.build_result?.world_hash?.slice(0, 13) || '—'} detail="完整哈希在记录中" /></div>
+      {designer.pre_run_quality && <DesignerQualityDiagnostic quality={designer.pre_run_quality} />}
       {run.error && <div className="research-warning"><CircleAlert size={15} />{run.error.messages?.join(' · ') || run.error.message}</div>}
       <div className="research-subheading"><h3>生成轨迹</h3><span>真实请求与模型响应</span></div>
-      {(designer.calls || []).map((call: AnyRow, index: number) => <div className="designer-call-row" key={index}><span className="call-phase">{call.phase === 'world' ? '世界' : '任务'} · 第 {call.attempt + 1} 次</span><span>{call.call?.prompt_tokens != null ? `${call.call.prompt_tokens} in / ${call.call.completion_tokens ?? '—'} out` : 'Token 未报告'}</span><StatusPill value={call.call?.response?.error?.code || (call.validation_feedback ? 'REJECTED' : 'SUBMITTED')} /><JsonDetails title="模型原始请求与回复" value={{ request: call.call?.request, response: call.call?.response, validation_feedback: call.validation_feedback }} /></div>)}
+      {(designer.calls || []).map((call: AnyRow, index: number) => <div className="designer-call-row" key={index}><span className="call-phase">{call.phase === 'world' ? '世界' : '任务'} · 第 {call.attempt + 1} 次</span><span>{call.call?.prompt_tokens != null ? `${call.call.prompt_tokens} in / ${call.call.completion_tokens ?? '—'} out` : 'Token 未报告'}</span><StatusPill value={call.call?.response?.error?.code || (call.validation_feedback ? 'REJECTED' : 'SUBMITTED')} /><small className="call-hashes">Prompt {call.prompt_hash?.slice(0, 12) || '—'} · Schema {call.submission_schema_hash?.slice(0, 12) || '—'}{call.capability_manifest_hash ? ` · Capability ${call.capability_manifest_hash.slice(0, 12)}` : ''}</small><JsonDetails title="模型原始请求与回复" value={{ request: call.call?.request, response: call.call?.response, validation_feedback: call.validation_feedback }} /></div>)}
       <div className="research-two-cards"><article><span className="research-eyebrow">BUILDER</span><h3>世界构造</h3><p>{designer.build_result?.status || '未运行'} · {designer.build_result?.reason || '—'}</p>{designer.build_result?.world && <div className="world-facts"><span>{Object.keys(designer.build_result.world.customers || {}).length} 顾客</span><span>{Object.keys(designer.build_result.world.orders || {}).length} 订单</span><span>{Object.keys(designer.build_result.world.lines || {}).length} 商品行</span><span>{Object.keys(designer.build_result.world.skus || {}).length} SKU</span><span>{Object.keys(designer.build_result.world.warehouses || {}).length} 仓库</span></div>}{designer.scenario_spec && <JsonDetails title="ScenarioSpec 与 SAT 约束" value={designer.scenario_spec} />}</article><article><span className="research-eyebrow">TASK DESIGNER</span><h3>任务提交</h3><p>{designer.task_draft?.customer_request || '尚未提交公开请求'}</p>{designer.task_draft && <JsonDetails title="TaskDraft 原始内容" value={designer.task_draft} />}{designer.task_attempts?.map((attempt: AnyRow, i: number) => <div className="attempt-line" key={i}><StatusPill value={attempt.status} /><span>{attempt.reason || '原生任务认证已运行'}</span></div>)}</article></div>
       {designer.build_result?.world && <WorldOverview world={designer.build_result.world} />}
       {designer.status === 'CERTIFIED' ? <button className="research-primary narrow" onClick={onNext}>查看任务目标与证书<ArrowRight size={16} /></button> : <div className="research-notice"><LockKeyhole size={16} />当前没有通过认证的任务，因此不会暴露 Human Episode 启动入口。</div>}
@@ -229,6 +230,23 @@ function DesignerResult({ run, onRetry, onNext, onCancel, canCancel }: { run: Ru
   </div>;
 }
 function Metric({ label, value, detail }: { label: string; value: unknown; detail: string }) { return <div className="research-metric"><span>{label}</span><strong>{String(value)}</strong><small>{detail}</small></div>; }
+function DesignerQualityDiagnostic({ quality }: { quality: AnyRow }) {
+  const novelty: Record<string, string> = {
+    EVALUATED_NOVEL: '已与历史索引比较：未发现相同结构',
+    EVALUATED_SEEN: '已与历史索引比较：发现相同结构',
+    NOT_EVALUATED: '没有历史索引，尚未评估新颖性',
+  };
+  const diagnostics: AnyRow[] = Array.isArray(quality.candidate_consequence_diagnostics)
+    ? quality.candidate_consequence_diagnostics : [];
+  return <section className="designer-quality-diagnostic">
+    <div className="quality-diagnostic-heading"><div><span className="research-eyebrow">RESEARCHER DIAGNOSTICS</span><h3>出题结构诊断</h3></div><span>仅用于研究分析，不参与任务认证或版本选择</span></div>
+    <div className="quality-diagnostic-summary"><div><small>历史新颖性</small><strong>{novelty[quality.novelty_status] || '未评估'}</strong></div><div><small>结构后果类别下界</small><strong>{quality.distinct_consequence_classes ?? '—'}</strong></div><div><small>历史索引</small><code>{String(quality.history_index_hash || '').slice(0, 12) || '未提供'}</code></div></div>
+    {diagnostics.length > 0 && <div className="quality-alternative-list"><strong>候选方案约束筛查（不是执行或 Oracle 结果）</strong>{diagnostics.map((row, index) => {
+      const exclusions: Array<[string, number]> = Array.isArray(row.excluded_condition_counts) ? row.excluded_condition_counts : [];
+      return <div key={`${row.goal_id || index}-${index}`}><span>{row.goal_id || `目标 ${index + 1}`}</span><span>{row.feasible_alternatives ?? 0} / {row.alternatives_examined ?? 0} 项规则筛查可行</span><small>{exclusions.length ? exclusions.map(([name, count]) => `${name} ×${count}`).join(' · ') : '未记录被排除条件'}</small></div>;
+    })}</div>}
+  </section>;
+}
 function WorldOverview({ world }: { world: AnyRow }) {
   const skus: AnyRow[] = Object.values(world.skus || {});
   const orders: AnyRow[] = Object.values(world.orders || {});

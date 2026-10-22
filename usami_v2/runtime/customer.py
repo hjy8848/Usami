@@ -53,7 +53,13 @@ class CustomerProfile(Sealed):
 
 
 class CustomerProfileV2(CustomerProfile):
-    """Customer policy whose delegations cite the request that authorizes them."""
+    """Customer policy whose delegations cite public product wording in the request.
+
+    The v2 field name is retained for archived Episode compatibility. New
+    profiles store a line-specific subject mention there, allowing one public
+    request to authorize several distinct owned lines without matching every
+    product in the full sentence against each line.
+    """
 
     protocol: Literal["commerce-customer-profile-v2"] = "commerce-customer-profile-v2"
     delegation_request_spans: Dict[str, str] = Field(default_factory=dict)
@@ -236,9 +242,16 @@ class CustomerRuntime:
             for line_id, request_span in self.profile.delegation_request_spans.items():
                 span = " ".join(request_span.casefold().split())
                 if span not in normalized_request:
-                    raise ValueError("Customer delegation is not grounded in the public request text")
-                if public_line_match_ids(world, self.profile.customer_id, span) != (line_id,):
-                    raise ValueError("Customer delegation span must uniquely identify its frozen business line")
+                    raise ValueError("Customer delegation wording is not grounded in the public request text")
+                # New Research Studio profiles store a line-specific product
+                # phrase and use the complete public request only as issue
+                # context. The fallback preserves older v2 profiles that
+                # stored the whole quoted request in this field.
+                resolved = public_line_match_ids(world, self.profile.customer_id, span, public_request)
+                if resolved != (line_id,):
+                    resolved = public_line_match_ids(world, self.profile.customer_id, span)
+                if resolved != (line_id,):
+                    raise ValueError("Customer delegation wording must uniquely identify its frozen business line")
         before = world
         new = world.clone()
         event_id = "customer_initial_" + digest([self.profile.record_hash, public_request])[:20]

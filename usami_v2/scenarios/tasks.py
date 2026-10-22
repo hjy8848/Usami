@@ -68,6 +68,21 @@ _ISSUE_PUBLIC_TERMS = {
                       "part is missing", "parts are missing", "component is missing"),
 }
 
+_INFORMATION_FACT_TERMS = {
+    "refund_amount": ("refund amount", "amount refunded", "how much refund", "how much was refunded",
+                      "money back", "退款金额", "退了多少钱", "退多少钱"),
+    "extra_charge": ("extra charge", "additional charge", "extra cost", "additional cost",
+                     "how much more", "pay extra", "补差", "额外费用", "还要付多少"),
+    "arrival_date": ("arrival date", "delivery date", "when will it arrive", "when will it be delivered",
+                     "什么时候送到", "何时送达", "预计送达"),
+    "refund_status": ("refund status", "status of my refund", "was my refund", "has my refund",
+                      "退款状态", "退款进度", "退了吗"),
+    "shipment_status": ("shipment status", "shipping status", "tracking status", "where is my package",
+                        "物流状态", "配送状态", "包裹到哪"),
+    "quantity": ("how many", "quantity", "number of items", "how many items", "多少件", "数量"),
+    "currency": ("currency", "which currency", "what currency", "币种", "什么货币"),
+}
+
 _SMALL_NUMBERS = {"zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
                   "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
 
@@ -205,6 +220,12 @@ def request_names_remedy(text, remedies):
     reship. It never implies a refund; other methods require explicit intent.
     """
     return bool(remedies) and all(_positive_remedy_request(text, remedy) for remedy in remedies)
+
+
+def request_names_fact(text, fact_kind):
+    """Conservatively bind an information objective to an explicit public question."""
+    terms = _INFORMATION_FACT_TERMS.get(fact_kind)
+    return bool(terms) and any(_contains_public_phrase(text, term) for term in terms)
 
 
 def public_line_match_ids(world, customer_id, mention, request_context=None, *, require_issue=True):
@@ -356,6 +377,9 @@ class TaskSpecV2(TaskSpec):
                     "remedy objective must quote the public request and support every accepted remedy; "
                     "replacement wording supports exchange or reship but does not imply a refund"
                 )
+        for goal in self.information_goals:
+            if not request_names_fact(goal.public_request, goal.fact_kind):
+                raise ValueError("information fact_kind must match the explicitly quoted public question")
         return self
 
 

@@ -60,7 +60,9 @@ class ChallengeDescriptor(Sealed):
         return self
 
 
-class PreRunQuality(Sealed):
+class PreRunQualityV1(Sealed):
+    """Read-only parser for archived quality records that lacked an index state."""
+
     protocol: Literal["commerce-challenge-quality-v1"] = "commerce-challenge-quality-v1"
     descriptor_hash: str
     world_hash: str
@@ -76,8 +78,25 @@ class PreRunQuality(Sealed):
     selection_power: Literal["diagnostic_only"] = "diagnostic_only"
 
 
+class PreRunQuality(Sealed):
+    protocol: Literal["commerce-challenge-quality-v2"] = "commerce-challenge-quality-v2"
+    descriptor_hash: str
+    world_hash: str
+    task_hash: str
+    business_valid: bool
+    consequence_class_lower_bound: int
+    consequence_count_exact: bool
+    diagnostic_inputs_available: bool
+    structural_signature: str
+    novelty_status: Literal["EVALUATED_NOVEL", "EVALUATED_SEEN", "NOT_EVALUATED"]
+    novel_against_history: Optional[bool] = None
+    history_index_hash: str
+    proof_refs: Tuple[str, ...]
+    selection_power: Literal["diagnostic_only"] = "diagnostic_only"
+
+
 def evaluate_challenge(descriptor: ChallengeDescriptor, *,
-                       verify_proof: Callable[[str], bool], history_signatures=()):
+                       verify_proof: Callable[[str], bool], history_signatures=None):
     descriptor = descriptor.checked()
     refs = (descriptor.business_certificate_hash, descriptor.interaction_certificate_hash) + tuple(
         row.proof_hash for row in descriptor.alternatives)
@@ -105,15 +124,20 @@ def evaluate_challenge(descriptor: ChallengeDescriptor, *,
         "events": sorted(descriptor.event_relations),
         "consequences": sorted(set(qualitative)),
     })
-    history = tuple(sorted(set(history_signatures)))
+    history_available = history_signatures is not None
+    history = tuple(sorted(set(history_signatures or ())))
+    novelty_status = ("NOT_EVALUATED" if not history_available else
+                      "EVALUATED_NOVEL" if structural not in history else "EVALUATED_SEEN")
     return PreRunQuality(
         descriptor_hash=descriptor.record_hash, world_hash=descriptor.world_hash,
         task_hash=descriptor.task_hash, business_valid=True,
         consequence_class_lower_bound=len({row.consequence.consequence_class for row in descriptor.alternatives}),
         consequence_count_exact=descriptor.search_complete,
         diagnostic_inputs_available=bool(descriptor.replay_inputs_hash),
-        structural_signature=structural, novel_against_history=structural not in history,
-        history_index_hash=digest(history), proof_refs=refs)
+        structural_signature=structural, novelty_status=novelty_status,
+        novel_against_history=(structural not in history) if history_available else None,
+        history_index_hash=digest({"available": history_available, "signatures": history}),
+        proof_refs=refs)
 
 
 class PostRunUtility(Sealed):

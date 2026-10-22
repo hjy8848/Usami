@@ -7,7 +7,7 @@ an answer key, Reference implementation or proof witness.
 """
 from datetime import timedelta
 import json
-from typing import Any, Callable, Dict, Literal, Optional, Protocol, Tuple
+from typing import Any, Callable, Dict, Literal, Optional, Protocol, Tuple, Union
 
 from pydantic import Field, ValidationError, model_validator
 
@@ -25,12 +25,13 @@ from usami_v2.scenarios.schema import (
     SKUVariable, StockConstraint, WarehouseVariable, ScenarioSpec, BuildBudget,
 )
 from usami_v2.scenarios.task_certification import (
-    CustomerScenario as ProofCustomerScenario, ProofBudget, TaskCertification, certify_task,
+    CustomerScenario as ProofCustomerScenario, CustomerTaskScope, ProofBudget,
+    TaskCertification, TaskDesignCapabilities, certify_task, diagnose_candidate_alternatives,
     verify_task_certificate,
 )
 from usami_v2.scenarios.tasks import (
     GroundedRemedyGoal, InformationObjective, TaskSpec, TaskSpecV2, _validate_public_remedy_bounds,
-    check_task_scope, request_names_remedy,
+    check_task_scope, request_names_fact, request_names_remedy,
 )
 
 
@@ -95,12 +96,21 @@ class RemedyDraft(Sealed):
 class InformationDraft(Sealed):
     goal_id: str
     subject_alias: str = Field(
-        description="Alias of this Customer's owned order or order line; never a Customer, SKU, or another Customer's object."
+        description=("Alias of an existing order or order line owned by the selected Customer, exactly as listed "
+                     "in that Customer's scope. Never use a Customer, SKU, or another Customer's object."),
     )
-    subject_mention: str
+    subject_mention: str = Field(
+        min_length=1,
+        description="Natural subject wording that appears in the quoted public question and uniquely identifies the owned order/line.",
+    )
     fact_kind: Literal["refund_amount", "extra_charge", "arrival_date", "refund_status",
-                       "shipment_status", "quantity", "currency"]
-    public_request: str
+                       "shipment_status", "quantity", "currency"] = Field(
+        description="The business fact the Customer explicitly asks for; do not infer a different question.",
+    )
+    public_request: str = Field(
+        min_length=1,
+        description="An exact contiguous quote from customer_request that contains both the subject and requested fact.",
+    )
 
 
 class TaskDraft(Sealed):
@@ -141,6 +151,18 @@ class TaskDraft(Sealed):
                     "public_request_span must support every listed remedy; replacement wording supports exchange "
                     "or reship, but refund still requires explicit refund language"
                 )
+        for goal in self.information_goals:
+            span = " ".join(goal.public_request.casefold().split())
+            mention = " ".join(goal.subject_mention.casefold().split())
+            if not span or span not in normalized_request:
+                raise ValueError(
+                    "each information goal's public_request must be copied verbatim as a contiguous quote "
+                    "from customer_request"
+                )
+            if not mention or mention not in span:
+                raise ValueError("information goal subject_mention must appear in its verbatim public question")
+            if not request_names_fact(span, goal.fact_kind):
+                raise ValueError("information fact_kind must match the explicitly quoted public question")
         return self
 
 
@@ -157,6 +179,9 @@ class DesignerCall(Sealed):
     phase: Literal["world", "task"]
     attempt: int = Field(ge=0, strict=True)
     call: AgentCall
+    prompt_hash: str = ""
+    submission_schema_hash: str = ""
+    capability_manifest_hash: str = ""
     parsed_output_hash: str
     validation_feedback: str = ""
 
@@ -178,7 +203,50 @@ class WorldDesignAttempt(Sealed):
     reason: str = ""
 
 
+class CandidateConsequenceDiagnostic(Sealed):
+    """Researcher-only screen of alternatives excluded by business constraints."""
+
+    protocol: Literal["commerce-candidate-consequence-diagnostic-v1"] = "commerce-candidate-consequence-diagnostic-v1"
+    world_hash: str
+    task_hash: str
+    certificate_hash: str
+    goal_id: str
+    alternatives_examined: int = Field(ge=0, strict=True)
+    feasible_alternatives: int = Field(ge=0, strict=True)
+    excluded_condition_counts: Tuple[Tuple[str, int], ...] = ()
+    method: Literal["pre_reference_rule_screen_not_execution"] = "pre_reference_rule_screen_not_execution"
+    decision_power: Literal["diagnostic_only"] = "diagnostic_only"
+
+
 class ChallengeQualityVector(Sealed):
+    protocol: Literal["commerce-challenge-quality-vector-v2"] = "commerce-challenge-quality-vector-v2"
+    world_hash: str
+    task_hash: str
+    business_certificate_hash: str
+    business_valid: bool
+    business_witnesses: int = Field(ge=0, strict=True)
+    distinct_consequence_classes: int = Field(ge=0, strict=True)
+    diagnosability: bool
+    diagnostic_evidence_refs: Tuple[str, ...] = ()
+    objective_kinds: Tuple[str, ...] = ()
+    scenario_structure: str
+    task_structure: str
+    structural_signature: str
+    novelty_status: Literal["EVALUATED_NOVEL", "EVALUATED_SEEN", "NOT_EVALUATED"]
+    novel_against_history: Optional[bool] = None
+    history_index_hash: str
+    candidate_consequence_diagnostics: Tuple[CandidateConsequenceDiagnostic, ...] = ()
+    authorized_training_evidence_hash: str
+    interaction_certified: bool = False
+    interaction_certificate_hash: str = ""
+    decision_power: Literal["diagnostic_only"] = "diagnostic_only"
+    quality_status: Literal["business_certified_interaction_pending", "fully_interaction_certified",
+                            "task_certification_incomplete"]
+
+
+class ChallengeQualityVectorV1(Sealed):
+    """Read-only compatibility model for archived v1 Designer records."""
+
     protocol: Literal["commerce-challenge-quality-vector-v1"] = "commerce-challenge-quality-vector-v1"
     world_hash: str
     task_hash: str
@@ -236,7 +304,7 @@ class DesignerRun(Sealed):
     task: Optional[TaskSpec] = None
     certification: Optional[TaskCertification] = None
     task_attempts: Tuple[TaskDesignAttempt, ...] = ()
-    pre_run_quality: Optional[ChallengeQualityVector] = None
+    pre_run_quality: Optional[Union[ChallengeQualityVectorV1, ChallengeQualityVector]] = None
     interaction_episode: Optional[EpisodeRecord] = None
     calls: Tuple[DesignerCall, ...] = ()
     validation_errors: Tuple[str, ...] = ()
@@ -246,19 +314,82 @@ class DesignerProvider(Protocol):
     def submit(self, phase: str, messages, model_schema): ...
 
 
+class ProposalError(ValueError):
+    """A deterministic proposal/compiler/certifier rejection with a stable code."""
+
+    def __init__(self, code, message):
+        self.code = code
+        super().__init__(str(message))
+
+
 def _tool_schema(name, model):
     schema = model.model_json_schema()
-    schema.pop("title", None)
+
+    def strip_internal_metadata(node):
+        if not isinstance(node, dict):
+            return
+        node.pop("title", None)
+        properties = node.get("properties")
+        if isinstance(properties, dict):
+            properties.pop("record_hash", None)
+        required = node.get("required")
+        if isinstance(required, list):
+            node["required"] = [name for name in required if name != "record_hash"]
+        for value in node.values():
+            if isinstance(value, dict):
+                strip_internal_metadata(value)
+            elif isinstance(value, list):
+                for row in value:
+                    strip_internal_metadata(row)
+
+    strip_internal_metadata(schema)
     tool = {"type": "function", "function": {"name": name,
         "description": "Submit exactly one structured proposal for this design stage.",
         "parameters": schema}}
     return tool
 
 
+def _call_provenance(phase, call):
+    request = call.request if isinstance(call.request, dict) else {}
+    messages = request.get("messages")
+    tools = request.get("tools")
+    capability_hash = ""
+    if phase == "task" and isinstance(messages, list):
+        for message in messages:
+            if not isinstance(message, dict) or not isinstance(message.get("content"), str):
+                continue
+            try:
+                payload = json.loads(message["content"])
+            except (TypeError, ValueError):
+                continue
+            context = payload.get("available_context") if isinstance(payload, dict) else None
+            manifest = context.get("task_certification_capabilities") if isinstance(context, dict) else None
+            if isinstance(manifest, dict):
+                capability_hash = digest(manifest)
+                break
+    return {
+        "prompt_hash": digest(messages) if isinstance(messages, list) else "",
+        "submission_schema_hash": digest(tools) if isinstance(tools, list) else "",
+        "capability_manifest_hash": capability_hash,
+    }
+
+
 def _feedback(exc):
     if isinstance(exc, ServiceError):
-        return "{}: {}".format(exc.code, str(exc))
-    return "{}: {}".format(type(exc).__name__, str(exc))
+        code, message = exc.code, str(exc)
+    elif isinstance(exc, ValidationError):
+        code = "DESIGNER_SCHEMA_INVALID"
+        message = "; ".join(
+            "{}: {}".format(".".join(str(part) for part in error["loc"]), error["msg"])
+            for error in exc.errors(include_input=False)[:6]
+        )
+    else:
+        code = getattr(exc, "code", None) or "PROPOSAL_INVALID"
+        message = str(exc)
+    # Validation feedback is a repair cue, not a transcript dump. The full
+    # model request/response remains preserved in DesignerCall for audit.
+    message = " ".join(message.split())[:700]
+    return "{}: {}".format(code, message)
 
 
 def _is_provider_failure(exc):
@@ -280,6 +411,7 @@ def _submit(provider, phase, messages, model, attempt, calls):
         call = getattr(exc, "agent_call", None) or getattr(provider, "last_call", None)
         if call is not None:
             calls.append(DesignerCall(phase=phase, attempt=attempt, call=call,
+                                      **_call_provenance(phase, call),
                                       parsed_output_hash="",
                                       validation_feedback="" if _is_provider_failure(exc) else _feedback(exc)))
         raise
@@ -349,30 +481,109 @@ class OpenAIDesignerProvider:
         return output, self.last_call
 
 
+def task_design_capabilities(spec: ScenarioSpec, build: BuildResult, *,
+                             interaction_certifier_available=False,
+                             information_goals_certifiable=False,
+                             delivery_confirmation_available=False,
+                             return_receipt_event_configured=False,
+                             policy_review_event_configured=False):
+    """Construct the exact capability manifest shared by prompt and compiler."""
+    aliases = dict(build.private_aliases)
+    scopes = []
+    for customer_alias in spec.customer_aliases:
+        orders = tuple(row.alias for row in spec.orders if row.customer_alias == customer_alias)
+        lines = tuple(line.alias for row in spec.orders if row.customer_alias == customer_alias
+                      for line in row.lines)
+        scopes.append(CustomerTaskScope(customer_alias=customer_alias,
+                                        order_aliases=orders, line_aliases=lines))
+    required_aliases = {spec.merchant_alias, *spec.customer_aliases}
+    required_aliases.update(row.alias for row in spec.orders)
+    required_aliases.update(line.alias for row in spec.orders for line in row.lines)
+    required_aliases.update(row.alias for row in spec.skus)
+    required_aliases.update(row.alias for row in spec.warehouses)
+    if not required_aliases.issubset(aliases):
+        raise ValueError("the frozen world alias map is unavailable")
+    interaction = bool(interaction_certifier_available)
+    information = bool(information_goals_certifiable)
+    delivery = bool(delivery_confirmation_available)
+    return TaskDesignCapabilities(
+        scenario_hash=spec.record_hash,
+        world_hash=build.world_hash,
+        supported_target_stages=("settled", "delivered") if delivery else ("settled",),
+        interaction_certifier_available=interaction,
+        information_goals_certifiable=information,
+        delivery_confirmation_available=delivery,
+        return_receipt_event_configured=bool(return_receipt_event_configured),
+        policy_review_event_configured=bool(policy_review_event_configured),
+        customer_scopes=tuple(scopes),
+    )
+
+
 def compile_task(draft: TaskDraft, spec: ScenarioSpec, build: BuildResult,
                  distribution: DistributionSpec, allowed_training_hashes=(), *,
-                 interaction_certifier_available=False):
+                 interaction_certifier_available: Optional[bool] = None,
+                 information_goals_certifiable: Optional[bool] = None,
+                 delivery_confirmation_available: Optional[bool] = None,
+                 capabilities: Optional[TaskDesignCapabilities] = None):
     draft, spec, build, distribution = draft.checked(), spec.checked(), build.checked(), distribution.checked()
     if build.status != "SAT" or not build.world:
         raise ValueError("a SAT frozen world is required before task design")
     aliases = dict(build.private_aliases)
+    capabilities = (capabilities.checked() if capabilities is not None else
+                    task_design_capabilities(spec, build,
+                        interaction_certifier_available=bool(interaction_certifier_available),
+                        information_goals_certifiable=information_goals_certifiable,
+                        delivery_confirmation_available=bool(delivery_confirmation_available)))
+    if capabilities.scenario_hash != spec.record_hash or capabilities.world_hash != build.world_hash:
+        raise ValueError("Task capability manifest belongs to a different frozen world")
+    if (interaction_certifier_available is not None
+            and capabilities.interaction_certifier_available != bool(interaction_certifier_available)):
+        raise ValueError("Task capability manifest differs from the configured interaction certifier")
+    if (delivery_confirmation_available is not None
+            and capabilities.delivery_confirmation_available != bool(delivery_confirmation_available)):
+        raise ValueError("Task capability manifest differs from configured delivery confirmation")
+    if (information_goals_certifiable is not None
+            and capabilities.information_goals_certifiable != bool(information_goals_certifiable)):
+        raise ValueError("Task capability manifest differs from configured information certification")
+    scopes = {row.customer_alias: row for row in capabilities.customer_scopes}
+    customer_scope = scopes.get(draft.customer_alias)
+    if customer_scope is None:
+        raise ValueError("TaskDraft references a Customer alias outside the declared capability scope")
     if draft.customer_alias not in aliases:
         raise ValueError("TaskDraft references a Customer alias outside the frozen world")
     if not set(draft.parent_training_evidence_hashes).issubset(set(allowed_training_hashes)):
         raise ValueError("TaskDraft references training evidence outside the authorized input set")
-    if draft.information_goals and not interaction_certifier_available:
+    if draft.information_goals and not capabilities.information_goals_certifiable:
         raise ValueError(
-            "information goals require a natural-runtime interaction certifier; this run can only certify remedy goals"
+            "information goals require an explicitly enabled natural-runtime interaction certification capability"
         )
+    if draft.remedy_goals and not capabilities.native_reference_certifies and not capabilities.interaction_certifier_available:
+        raise ValueError("this run has no configured certifier for remedy goals")
     remedies, information = [], []
     for row in draft.remedy_goals:
-        if row.line_alias not in aliases:
+        unsupported_remedies = set(row.allowed_remedies) - set(capabilities.supported_remedies)
+        if unsupported_remedies:
+            raise ValueError("unsupported remedy method(s): {}".format(", ".join(sorted(unsupported_remedies))))
+        if row.line_alias not in customer_scope.line_aliases:
             raise ValueError("TaskDraft references an unknown order-line alias")
         original_id = aliases[row.line_alias]
-        if row.target_stage == "delivered" and not interaction_certifier_available:
+        if row.target_stage not in capabilities.supported_target_stages:
             raise ValueError(
-                "actual delivery is not certified by the native proof in this run; use target_stage='settled'"
+                "target_stage '{}' is outside this run's certified capabilities; supported stages are {}".format(
+                    row.target_stage, ", ".join(capabilities.supported_target_stages))
             )
+        line = build.world.lines[original_id]
+        original_sku = build.world.skus[line.sku_id]
+        if row.quantity > line.quantity:
+            raise ValueError("TaskDraft quantity exceeds the purchased line quantity")
+        if (original_sku.return_required and not capabilities.return_receipt_event_configured):
+            raise ValueError("this task requires a return-receipt event that is not configured for certification")
+        if "refund" in row.allowed_remedies:
+            credit = unit_credit(line, tuple(range(row.quantity)))
+            merchant_id = build.world.orders[line.order_id].merchant_id
+            approval_limit = build.world.merchants[merchant_id].refund_approval_limit_cents
+            if credit > approval_limit and not capabilities.policy_review_event_configured:
+                raise ValueError("this refund requires a policy-review event that is not configured for certification")
         arrival = (build.world.clock + timedelta(days=row.latest_arrival_within_days)
                    if row.latest_arrival_within_days is not None else None)
         compiled_goal = GroundedRemedyGoal(
@@ -386,11 +597,7 @@ def compile_task(draft: TaskDraft, spec: ScenarioSpec, build: BuildResult,
     for row in draft.information_goals:
         if row.subject_alias not in aliases:
             raise ValueError("TaskDraft references an unknown public order or line alias")
-        owned_order_aliases = {order.alias for order in spec.orders
-                               if order.customer_alias == draft.customer_alias}
-        owned_line_aliases = {line.alias for order in spec.orders
-                              if order.customer_alias == draft.customer_alias for line in order.lines}
-        if row.subject_alias not in owned_order_aliases | owned_line_aliases:
+        if row.subject_alias not in set(customer_scope.order_aliases) | set(customer_scope.line_aliases):
             raise ValueError(
                 "information subject must be the selected Customer's owned order or order-line alias"
             )
@@ -498,7 +705,7 @@ def all_rows_raw(certificate, candidate_outcome):
 
 
 def _quality(spec, world, task, certificate, history_signatures, training_hashes,
-             interaction_episode=None):
+             proof_customer, interaction_episode=None):
     ws, ts, world_sig, task_sig, combined, consequence_count = _structure_signatures(
         spec, world, task, certificate)
     witnesses = [row for row in certificate.attempts if row.status == "WITNESS"]
@@ -510,6 +717,14 @@ def _quality(spec, world, task, certificate, history_signatures, training_hashes
     business_valid = certificate.business_reachability_certified or interaction_ok
     objectives = tuple(sorted(("remedy" for _ in task.remedy_goals),)) + tuple(
         sorted("information:" + row.fact_kind for row in task.information_goals))
+    history_available = history_signatures is not None
+    history = tuple(sorted(set(history_signatures or ())))
+    novelty_status = ("NOT_EVALUATED" if not history_available else
+                      "EVALUATED_NOVEL" if combined not in history else "EVALUATED_SEEN")
+    candidate_diagnostics = tuple(CandidateConsequenceDiagnostic(
+        world_hash=certificate.world_hash, task_hash=certificate.task_hash,
+        certificate_hash=certificate.record_hash, **row)
+        for row in diagnose_candidate_alternatives(world, task, proof_customer))
     return ChallengeQualityVector(
         world_hash=certificate.world_hash, task_hash=certificate.task_hash,
         business_certificate_hash=certificate.record_hash,
@@ -518,7 +733,10 @@ def _quality(spec, world, task, certificate, history_signatures, training_hashes
         diagnosability=bool(witnesses or interaction_ok), diagnostic_evidence_refs=tuple(proof_refs),
         objective_kinds=objectives,
         scenario_structure=json.dumps(ws, sort_keys=True), task_structure=json.dumps(ts, sort_keys=True),
-        structural_signature=combined, novel_against_history=combined not in set(history_signatures),
+        structural_signature=combined, novelty_status=novelty_status,
+        novel_against_history=(combined not in history) if history_available else None,
+        history_index_hash=digest({"available": history_available, "signatures": history}),
+        candidate_consequence_diagnostics=candidate_diagnostics,
         authorized_training_evidence_hash=digest(tuple(sorted(training_hashes))),
         interaction_certified=interaction_ok,
         interaction_certificate_hash=interaction_episode.record_hash if interaction_ok else "",
@@ -528,30 +746,52 @@ def _quality(spec, world, task, certificate, history_signatures, training_hashes
 
 
 def _chat(phase, content, distribution, slot, errors=()):
-    phase_instruction = ""
+    active = next((row for row in distribution.strata if row.stratum_id == slot.stratum_id), None)
+    if active is None:
+        raise ValueError("sampling slot names a stratum outside its frozen distribution")
+    active_stratum = {"stratum_id": active.stratum_id, "design_focus": list(active.contexts),
+                      "dependencies": list(active.dependencies)}
     if phase == "task":
-        phase_instruction = (
-            " For each remedy goal, copy public_request_span verbatim from customer_request as one contiguous "
-            "substring; never paraphrase, summarize, or join non-adjacent words. Put an exact object phrase from "
-            "that quote in subject_mention. Use natural customer-facing product words; do not require internal SKU "
-            "family or issue codes in the quote. The compiler matches product descriptors and issue language to "
-            "the frozen world and rejects ambiguity. 'Replace' or 'replacement' is an explicit replacement intent "
-            "that may be fulfilled by exchange or reship; it does not authorize a refund. Only add a quantity, "
-            "required attribute, arrival deadline, or extra-charge cap when the public request explicitly states it; "
-            "a quantity of one is the default, and larger quantities must be explicit. "
-            "Use only task goals supported by task_certification_capabilities in the supplied context: if "
-            "actual_delivery_certifiable is false, use target_stage='settled'; if information_goals_certifiable "
-            "is false, omit information_goals. If validation feedback "
-            "reports a quote error, replace the span with text copied exactly from customer_request."
+        system = (
+            "You are the Usami Commerce Task Designer. The business world is already frozen; do not edit it. "
+            "Choose the Customer, product references, natural request, objectives and constraints yourself from "
+            "the supplied frozen facts. Produce one realistic request and one complete TaskDraft certifiable "
+            "under the supplied TaskDesignCapabilities. Follow the active stratum's focus without inventing "
+            "unsupported events or hidden goals. Use only aliases listed under the selected Customer's scope. "
+            "For every remedy goal, copy public_request_span as an exact contiguous substring from customer_request; "
+            "never paraphrase or join separated phrases. subject_mention must be a natural product phrase in that "
+            "quote; do not require internal SKU-family or issue codes. The compiler resolves it uniquely to a "
+            "Customer-owned frozen line and rejects ambiguity. 'Replace'/'replacement' supports exchange or reship, "
+            "not refund. Include quantity, attributes, arrival deadlines and charge caps only when explicitly "
+            "requested; one item is the default. Information goals, delivery, return receipts and policy-review "
+            "events are allowed only when the capability manifest enables them. For information goals, use an "
+            "owned order/order-line alias and quote the actual public question. On correction, fix only the cited "
+            "proposal issue; never alter the frozen world. Submit exactly one complete TaskDraft using the registered tool."
         )
+    elif phase == "world":
+        system = (
+            "You are the Usami Commerce World Designer. Propose a ScenarioDraft for this pre-registered sampling "
+            "slot and active business stratum. Create meaningful, observable business decision conditions while "
+            "keeping values and relationships internally consistent; do not add unrelated entities just to enlarge "
+            "the world. SKU family means a narrow after-sales replacement-compatibility group, not a broad retail "
+            "category: laptop and mouse are different families even if both are electronics; compatible laptop "
+            "configurations may share a family. Prices, paid amounts, quantities, stock, fees and durations use "
+            "their declared integer units. Use registered fields and native business assumptions only. Do not create "
+            "a Task, modify policy, state Oracle labels, or provide a Reference solution. Submit exactly one "
+            "ScenarioDraft using the registered tool."
+        )
+    else:
+        raise ValueError("unknown Designer phase")
     return [
-        {"role": "system", "content": (
-            "You are the autonomous Usami Designer. Propose only the requested structured artifact. "
-            "Do not invent or modify business rules, customer identity, Oracle results, task certificates, "
-            "or a solution witness. Use the frozen distribution and supplied aliases." + phase_instruction
-        )},
-        {"role": "user", "content": json.dumps({"phase": phase, "frozen_distribution": distribution.model_dump(mode="json"),
-            "pre_registered_slot": slot.model_dump(mode="json"), "available_context": content,
+        {"role": "system", "content": system},
+        {"role": "user", "content": json.dumps({
+            "phase": phase,
+            "distribution": {"id": distribution.distribution_id, "version": distribution.version,
+                             "hash": distribution.record_hash, "split": distribution.split,
+                             "population_scope": distribution.population_scope, "claim": distribution.claim},
+            "active_stratum": active_stratum,
+            "pre_registered_slot": slot.model_dump(mode="json"),
+            "available_context": content,
             "validator_feedback": list(errors)}, ensure_ascii=False)},
     ]
 
@@ -559,10 +799,14 @@ def _chat(phase, content, distribution, slot, errors=()):
 def design_and_certify(provider: DesignerProvider, distribution: DistributionSpec, slot: SamplingSlot, *,
                        build_budget: Optional[BuildBudget] = None,
                        proof_budget: Optional[ProofBudget] = None,
-                       allowed_training_hashes=(), history_signatures=(),
+                       allowed_training_hashes=(), history_signatures: Optional[Tuple[str, ...]] = None,
                        customer_scenario_factory: Optional[Callable[[Any, TaskSpec], ProofCustomerScenario]] = None,
                        training_evidence: Tuple[DesignerTrainingEvidence, ...] = (),
                        interaction_certifier: Optional[Callable[[World, TaskSpec, ProofCustomerScenario], EpisodeRecord]] = None,
+                       information_goals_certifiable=False,
+                       delivery_confirmation_available=False,
+                       return_receipt_event_configured=False,
+                       policy_review_event_configured=False,
                        max_attempts: int = 3) -> DesignerRun:
     """Run the two LLM phases with bounded compiler feedback and native proof.
 
@@ -592,12 +836,13 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
             draft, call = _submit(provider, "world", _chat("world", content, distribution, slot, errors),
                                   ScenarioDraft, attempt, calls)
             calls.append(DesignerCall(phase="world", attempt=attempt, call=call,
+                                      **_call_provenance("world", call),
                                       parsed_output_hash=draft.record_hash))
             scenario = draft.compile(distribution)
             candidate_build = build_world(scenario, slot.seed, build_budget)
             build_attempts.append(candidate_build)
             if candidate_build.status != "SAT":
-                feedback = "world builder returned {}: {}".format(candidate_build.status, candidate_build.reason)
+                feedback = "WORLD_BUILDER_{}: {}".format(candidate_build.status, candidate_build.reason)
                 errors.append(feedback)
                 world_attempts.append(WorldDesignAttempt(attempt=attempt, proposal_hash=draft.record_hash,
                     build_result_hash=candidate_build.record_hash, status=candidate_build.status, reason=feedback))
@@ -618,6 +863,9 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
                 last = calls[-1]
                 if last.phase == "world" and last.attempt == attempt:
                     calls[-1] = DesignerCall(phase=last.phase, attempt=last.attempt, call=last.call,
+                                             prompt_hash=last.prompt_hash,
+                                             submission_schema_hash=last.submission_schema_hash,
+                                             capability_manifest_hash=last.capability_manifest_hash,
                                              parsed_output_hash=last.parsed_output_hash,
                                              validation_feedback=feedback)
             if _is_provider_failure(exc):
@@ -632,19 +880,38 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
             calls=tuple(calls), validation_errors=tuple(errors or ["no parseable world proposal"]))
 
     aliases = dict(build.private_aliases)
+    capabilities = task_design_capabilities(
+        scenario, build, interaction_certifier_available=interaction_certifier is not None,
+        information_goals_certifiable=information_goals_certifiable,
+        delivery_confirmation_available=delivery_confirmation_available,
+        return_receipt_event_configured=return_receipt_event_configured,
+        policy_review_event_configured=policy_review_event_configured)
+
+    def public_product_description(sku):
+        attributes = {row.name: row.value for row in sku.attributes}
+        preferred = ("brand", "product", "product_name", "model", "name")
+        details = [attributes[name] for name in preferred if attributes.get(name)]
+        return " ".join(dict.fromkeys(details)) or sku.alias
+
     world_context = {
         "world_hash": build.world_hash,
-        "customers": [{"alias": alias, "id": aliases[alias]} for alias in scenario.customer_aliases],
-        "orders": [{"alias": order.alias, "id": aliases[order.alias], "customer_alias": order.customer_alias,
-                    "lines": [{"alias": line.alias, "id": aliases[line.alias],
+        "customers": [{"alias": alias} for alias in scenario.customer_aliases],
+        "orders": [{"alias": order.alias, "customer_alias": order.customer_alias,
+                    "delivered_days_ago": (build.world.clock - build.world.orders[aliases[order.alias]].delivered_at).days,
+                    "lines": [{"alias": line.alias,
                                "original_sku_alias": line.original_sku,
                                "quantity": build.world.lines[aliases[line.alias]].quantity,
+                               "line_paid_cents": build.world.lines[aliases[line.alias]].allocated_paid_cents,
                                "issue": line.issue, "evidence_valid": line.evidence_valid}
                               for line in order.lines]} for order in scenario.orders],
-        "skus": [{"alias": sku.alias, "id": aliases[sku.alias], "family": sku.family,
+        "skus": [{"alias": sku.alias, "product_description": public_product_description(sku),
+                  "replacement_compatibility_family": sku.family,
+                  "price_cents": build.world.skus[aliases[sku.alias]].price_cents,
+                  "return_days": build.world.skus[aliases[sku.alias]].return_days,
+                  "return_required": build.world.skus[aliases[sku.alias]].return_required,
                   "attributes": {row.name: row.value for row in sku.attributes}}
                  for sku in scenario.skus],
-        "warehouses": [{"alias": row.alias, "id": aliases[row.alias],
+        "warehouses": [{"alias": row.alias,
                          "delivery_days": next(r.days for r in build.world.routes.values()
                                                if r.warehouse_id == aliases[row.alias]),
                          "delivery_fee_cents": next(r.fee_cents for r in build.world.routes.values()
@@ -656,12 +923,9 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
                                          and inv.warehouse_id == aliases[wh.alias])}
                       for sku in scenario.skus for wh in scenario.warehouses],
         "clock": build.world.clock.isoformat(),
-        "task_certification_capabilities": {
-            "native_reference_certifies": ["settled_remedy_goals"],
-            "actual_delivery_certifiable": interaction_certifier is not None,
-            "information_goals_certifiable": interaction_certifier is not None,
-            "interaction_certifier_available": interaction_certifier is not None,
-        },
+        "merchant_policy": {"refund_approval_limit_cents": scenario.refund_approval_limit_cents,
+                            "currency_unit": "CNY_cents"},
+        "task_certification_capabilities": capabilities.model_dump(mode="json"),
         "reference_policy": "independent; not included in this context",
     }
     errors, task_attempts = [], []
@@ -674,12 +938,37 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
             draft_task, call = _submit(provider, "task", _chat("task", task_context, distribution, slot, errors),
                                        TaskDraft, attempt, calls)
             calls.append(DesignerCall(phase="task", attempt=attempt, call=call,
+                                      **_call_provenance("task", call),
                                       parsed_output_hash=draft_task.record_hash))
             if not set(draft_task.parent_training_evidence_hashes).issubset(set(allowed_training_hashes)):
                 raise ValueError("TaskDraft cites training evidence outside the authorized context")
-            task = compile_task(draft_task, scenario, build, distribution, allowed_training_hashes,
-                                interaction_certifier_available=interaction_certifier is not None)
+            try:
+                task = compile_task(draft_task, scenario, build, distribution, allowed_training_hashes,
+                                    interaction_certifier_available=interaction_certifier is not None,
+                                    information_goals_certifiable=capabilities.information_goals_certifiable,
+                                    delivery_confirmation_available=capabilities.delivery_confirmation_available,
+                                    capabilities=capabilities)
+            except Exception as exc:
+                raise ProposalError("TASK_COMPILE_INVALID", str(exc)) from None
             proof_customer = customer_scenario_factory(build.world, task)
+            if proof_customer.customer_id != task.customer_id:
+                raise ProposalError("CAPABILITY_MANIFEST_MISMATCH",
+                                    "trusted Customer proof policy belongs to a different identity")
+            for goal in task.remedy_goals:
+                line = build.world.lines[goal.line_id]
+                sku = build.world.skus[line.sku_id]
+                if sku.return_required and capabilities.return_receipt_event_configured and (
+                        not proof_customer.return_pickup_slot or proof_customer.return_received_after_days is None):
+                    raise ProposalError("CAPABILITY_MANIFEST_MISMATCH",
+                        "return-receipt capability was declared but the frozen Customer plan has no receipt event")
+                merchant_id = build.world.orders[line.order_id].merchant_id
+                credit = unit_credit(line, tuple(range(goal.quantity)))
+                if ("refund" in goal.allowed_remedies
+                        and credit > build.world.merchants[merchant_id].refund_approval_limit_cents
+                        and capabilities.policy_review_event_configured
+                        and not any(row.line_id == line.id for row in proof_customer.reviews)):
+                    raise ProposalError("CAPABILITY_MANIFEST_MISMATCH",
+                        "policy-review capability was declared but the frozen Customer plan has no review event")
             certificate = certify_task(build.world, task, proof_customer, proof_budget, minimum_witnesses=1)
             if certificate.status == "CERTIFIED":
                 verify_task_certificate(build.world, task, proof_customer, certificate)
@@ -704,8 +993,8 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
                 task_hash=task.record_hash, certification_hash=certificate.record_hash,
                 status="UNKNOWN" if certificate.status == "UNKNOWN" else "REJECTED",
                 reason=", ".join(certificate.blockers)))
-            raise ValueError("independent Reference returned {}: {}".format(
-                certificate.status, ", ".join(certificate.blockers)))
+            raise ProposalError("REFERENCE_{}".format(certificate.status),
+                                ", ".join(certificate.blockers) or "no certified witness")
         except Exception as exc:
             provider_failure = _is_provider_failure(exc)
             feedback = (_attempt_error("task", exc) if provider_failure else
@@ -719,9 +1008,19 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
                 last = calls[-1]
                 if last.attempt == attempt:
                     calls[-1] = DesignerCall(phase=last.phase, attempt=last.attempt, call=last.call,
+                                             prompt_hash=last.prompt_hash,
+                                             submission_schema_hash=last.submission_schema_hash,
+                                             capability_manifest_hash=last.capability_manifest_hash,
                                              parsed_output_hash=last.parsed_output_hash,
                                              validation_feedback=feedback)
             if provider_failure:
+                break
+            if isinstance(exc, ProposalError) and exc.code == "CAPABILITY_MANIFEST_MISMATCH":
+                break
+            if certificate is not None and certificate.status == "UNKNOWN":
+                # UNKNOWN denotes an incomplete proof boundary or exhausted
+                # deterministic budget; a replacement proposal cannot make
+                # this configured certifier more decisive.
                 break
     if task is None or certificate is None or certificate.status != "CERTIFIED":
         # A pure communication task can be fully proved by the independent
@@ -737,7 +1036,7 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
                 task_draft=draft_task, task=task, certification=certificate, interaction_episode=interaction_episode,
                 task_attempts=tuple(task_attempts), calls=tuple(calls), validation_errors=tuple(errors))
     quality = _quality(scenario, build.world, task, certificate, history_signatures,
-                       draft_task.parent_training_evidence_hashes, interaction_episode)
+                       draft_task.parent_training_evidence_hashes, proof_customer, interaction_episode)
     return DesignerRun(
         run_id="designer-" + digest([slot.record_hash, scenario.record_hash, task.record_hash])[:20],
         status="CERTIFIED", sampling_slot=slot, distribution=distribution, scenario_spec=scenario,

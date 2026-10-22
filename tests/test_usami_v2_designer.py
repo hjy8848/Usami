@@ -4,6 +4,7 @@ from datetime import timedelta
 
 import pytest
 
+from vast_coevo.schema import digest
 from usami_v2.runtime.agents import AgentCall
 from usami.service.models import ModelSettings, ServiceError
 from usami_v2.scenarios.distribution import (
@@ -15,6 +16,7 @@ from usami_v2.scenarios.designer import (
 )
 from usami_v2.scenarios.task_certification import CustomerScenario, ProofBudget
 from usami_v2.scenarios.builder import build_world
+from usami_v2.scenarios.schema import SKUVariable
 from test_usami_v2_builder import scene
 
 
@@ -41,9 +43,12 @@ def scenario_draft(name="scenario", natural_product_names=False):
                 natural_skus.append(row)
                 continue
             data = row.model_dump(mode="json", exclude={"record_hash"})
-            data["family"] = "electronics"
+            # Broad retail category belongs in customer-visible attributes;
+            # the family field is the narrower replacement-compatibility key.
+            data["family"] = "laptop"
             data["attributes"] += [{"name": "brand", "value": "TechPro"},
-                                   {"name": "product", "value": "laptop"}]
+                                   {"name": "product", "value": "laptop"},
+                                   {"name": "category", "value": "electronics"}]
             natural_skus.append(type(row).model_validate(data))
         skus = tuple(natural_skus)
     return ScenarioDraft(
@@ -156,6 +161,7 @@ def test_two_stage_designer_builds_frozen_world_and_certified_task_with_provenan
     run, provider = run_designer(21, evidence)
     assert run.status == "CERTIFIED"
     assert len(run.calls) == 2 and [call.phase for call in run.calls] == ["world", "task"]
+    assert all(len(call.prompt_hash) == 64 for call in run.calls)
     assert len(run.world_attempts) == len(run.build_attempts) == 1
     assert run.world_attempts[0].status == "SAT"
     assert run.task.partition == "train"
@@ -169,9 +175,35 @@ def test_two_stage_designer_builds_frozen_world_and_certified_task_with_provenan
     task_context = json.loads(provider.contexts[1][1][1]["content"])
     rendered = json.dumps(task_context, sort_keys=True)
     assert evidence.source_record_hash in rendered
-    assert task_context["available_context"]["task_certification_capabilities"]["actual_delivery_certifiable"] is False
-    assert task_context["available_context"]["task_certification_capabilities"]["information_goals_certifiable"] is False
+    capabilities = task_context["available_context"]["task_certification_capabilities"]
+    assert capabilities["scenario_hash"] == run.scenario_spec.record_hash
+    assert capabilities["world_hash"] == run.build_result.world_hash
+    assert run.calls[1].capability_manifest_hash == digest(capabilities)
+    assert capabilities["information_goals_certifiable"] is False
+    assert capabilities["interaction_certifier_available"] is False
+    assert capabilities["delivery_confirmation_available"] is False
+    assert capabilities["supported_target_stages"] == ["settled"]
+    assert capabilities["return_receipt_event_configured"] is False
+    assert capabilities["policy_review_event_configured"] is False
+    sku_context = next(row for row in task_context["available_context"]["skus"] if row["alias"] == "original")
+    line_context = next(line for order in task_context["available_context"]["orders"]
+                        for line in order["lines"] if line["alias"] == "damaged")
+    assert sku_context["price_cents"] > 0 and sku_context["return_days"] == 30
+    assert line_context["line_paid_cents"] == 20000 and "delivered_days_ago" in task_context["available_context"]["orders"][0]
+    assert task_context["available_context"]["merchant_policy"]["refund_approval_limit_cents"] == 50000
+    def has_internal_id_key(value):
+        if isinstance(value, dict):
+            return any(key == "id" or has_internal_id_key(item) for key, item in value.items())
+        if isinstance(value, list):
+            return any(has_internal_id_key(item) for item in value)
+        return False
+    assert not has_internal_id_key(task_context["available_context"])
+    assert task_context["active_stratum"]["stratum_id"] == "single-order"
+    assert task_context["active_stratum"]["design_focus"] == ["damaged-item-remedy"]
     assert "candidate_hash" not in rendered and "witness_hashes" not in rendered
+    assert run.pre_run_quality.novelty_status == "NOT_EVALUATED"
+    assert run.pre_run_quality.novel_against_history is None
+    assert run.pre_run_quality.candidate_consequence_diagnostics
     assert run.pre_run_quality.quality_status == "business_certified_interaction_pending"
 
 
@@ -238,6 +270,10 @@ def test_empty_and_incomplete_task_tool_calls_are_classified_and_preserved(argum
     assert feedback in str(error.value)
     assert provider.last_call is not None
     assert provider.last_call.response == client.response
+    from usami_v2.scenarios.designer import _call_provenance
+    provenance = _call_provenance("task", provider.last_call)
+    assert len(provenance["prompt_hash"]) == 64
+    assert len(provenance["submission_schema_hash"]) == 64
 
 
 def test_post_run_quality_is_separate_diagnostic_not_a_selection_rule():
@@ -267,6 +303,21 @@ def test_designer_cannot_attach_unmentioned_transaction_goal():
                            "allowed_remedies": ["exchange"]},))
 
 
+def test_information_goal_requires_exact_public_question_quote():
+    with pytest.raises(ValueError, match="information goal's public_request.*copied verbatim"):
+        TaskDraft(task_id="paraphrased-info", customer_alias="customer",
+            customer_request="What is the refund status of my damaged device?", information_goals=({
+                "goal_id": "status", "subject_alias": "purchase", "subject_mention": "my damaged device",
+                "fact_kind": "refund_status", "public_request": "Tell me whether the damaged device was refunded.",
+            },))
+    with pytest.raises(ValueError, match="information fact_kind must match"):
+        TaskDraft(task_id="wrong-info-kind", customer_alias="customer",
+            customer_request="What is the shipment status of my damaged device?", information_goals=({
+                "goal_id": "status", "subject_alias": "purchase", "subject_mention": "my damaged device",
+                "fact_kind": "refund_status", "public_request": "What is the shipment status of my damaged device?",
+            },))
+
+
 def test_task_proposal_schema_and_feedback_explain_verbatim_public_quote():
     schema = TaskDraft.model_json_schema()["$defs"]["RemedyDraft"]["properties"]
     assert "exact, contiguous substring" in schema["public_request_span"]["description"]
@@ -274,12 +325,17 @@ def test_task_proposal_schema_and_feedback_explain_verbatim_public_quote():
     assert "exchange or reship" in schema["allowed_remedies"]["description"]
     assert "actual receipt" in schema["target_stage"]["description"]
 
+    from usami_v2.scenarios.designer import _tool_schema
+    task_schema = _tool_schema("submit_customer_task", TaskDraft)["function"]["parameters"]
+    assert "record_hash" not in json.dumps(task_schema)
+    assert "replacement-compatibility group" in SKUVariable.model_json_schema()["properties"]["family"]["description"]
+
     distribution, slot = distribution_and_slot(65)
     messages = _chat("task", {"world_hash": "a" * 64}, distribution, slot,
                      errors=("public_request_span must be copied verbatim",))
     instruction = messages[0]["content"]
     assert "never paraphrase" in instruction
-    assert "replace the span with text copied exactly" in instruction
+    assert "exact contiguous substring from customer_request" in instruction
 
 
 def test_natural_product_names_and_replacement_intent_compile_against_frozen_world():
@@ -309,8 +365,45 @@ def test_natural_product_names_and_replacement_intent_compile_against_frozen_wor
         customer_scenario_factory=proof_customer, max_attempts=1)
     assert run.status == "CERTIFIED"
     context = json.loads(provider.contexts[1][1][1]["content"])["available_context"]
-    assert context["task_certification_capabilities"]["actual_delivery_certifiable"] is False
+    assert context["task_certification_capabilities"]["delivery_confirmation_available"] is False
     assert context["task_certification_capabilities"]["information_goals_certifiable"] is False
+
+
+def test_broad_electronics_category_does_not_make_laptop_and_mouse_compatible():
+    from usami_v2.scenarios.task_certification import certify_task
+
+    distribution, slot = distribution_and_slot(70)
+    draft = scenario_draft("separate-compatibility-families", natural_product_names=True)
+    skus = []
+    for row in draft.skus:
+        data = row.model_dump(mode="json", exclude={"record_hash"})
+        if row.alias == "original":
+            data["family"] = "laptop"
+        elif row.alias == "wrong":
+            data["family"] = "mouse"
+            data["attributes"] = [
+                ({**attribute, "value": "mouse"} if attribute["name"] == "product" else attribute)
+                for attribute in (value.model_dump(mode="json", exclude={"record_hash"})
+                                  for value in row.attributes)
+            ]
+        skus.append(type(row).model_validate(data))
+    draft = replace_sealed(draft, skus=tuple(skus))
+    spec = draft.compile(distribution)
+    built = build_world(spec, slot.seed)
+    assert built.status == "SAT"
+    world, aliases = built.world, dict(built.private_aliases)
+    request = "Please replace my damaged TechPro laptop."
+    draft_task = TaskDraft(task_id="laptop-only", customer_alias="customer", customer_request=request,
+        remedy_goals=({"goal_id": "replace", "line_alias": "damaged", "quantity": 1,
+                       "public_request_span": request, "subject_mention": "TechPro laptop",
+                       "allowed_remedies": ["exchange"]},))
+    task = compile_task(draft_task, spec, built, distribution)
+    proof = CustomerScenario(customer_id=aliases["customer"], delegated_line_ids=(aliases["damaged"],),
+                             maximum_extra_charge_cents=100000)
+    certificate = certify_task(world, task, proof)
+    assert certificate.status == "CERTIFIED"
+    assert all(row.target_sku_id != aliases["wrong"] for attempt in certificate.attempts
+               for row in attempt.candidates if row.target_sku_id)
 
 
 def test_task_compiler_gives_actionable_feedback_for_uncertifiable_targets_and_bad_info_aliases():
@@ -322,7 +415,7 @@ def test_task_compiler_gives_actionable_feedback_for_uncertifiable_targets_and_b
     delivered = task_draft()
     goal = replace_sealed(delivered.remedy_goals[0], target_stage="delivered")
     delivered = replace_sealed(delivered, remedy_goals=(goal,))
-    with pytest.raises(ValueError, match="actual delivery is not certified.*settled"):
+    with pytest.raises(ValueError, match="outside this run's certified capabilities.*settled"):
         compile_task(delivered, scenario, built, distribution)
 
     information = TaskDraft(task_id="customer-alias-info", customer_alias="customer",
@@ -331,7 +424,8 @@ def test_task_compiler_gives_actionable_feedback_for_uncertifiable_targets_and_b
             "fact_kind": "refund_status", "public_request": "Please tell me the refund status for my order.",
         },))
     with pytest.raises(ValueError, match="selected Customer's owned order or order-line alias"):
-        compile_task(information, scenario, built, distribution, interaction_certifier_available=True)
+        compile_task(information, scenario, built, distribution, interaction_certifier_available=True,
+                     information_goals_certifiable=True)
 
     line_request = "Please tell me the refund status for my damaged device."
     line_information = TaskDraft(task_id="owned-line-info", customer_alias="customer",
@@ -340,13 +434,49 @@ def test_task_compiler_gives_actionable_feedback_for_uncertifiable_targets_and_b
             "fact_kind": "refund_status", "public_request": line_request,
         },))
     compiled_information = compile_task(
-        line_information, scenario, built, distribution, interaction_certifier_available=True)
+        line_information, scenario, built, distribution, interaction_certifier_available=True,
+        information_goals_certifiable=True)
     assert compiled_information.information_goals[0].subject_id == dict(built.private_aliases)["damaged"]
 
     supported_alias_goal = replace_sealed(information.information_goals[0], subject_alias="purchase")
     unsupported_information = replace_sealed(information, information_goals=(supported_alias_goal,))
-    with pytest.raises(ValueError, match="require a natural-runtime interaction certifier"):
+    with pytest.raises(ValueError, match="explicitly enabled natural-runtime interaction certification capability"):
         compile_task(unsupported_information, scenario, built, distribution)
+
+
+def test_capability_manifest_blocks_unconfigured_return_and_policy_review_events():
+    from usami_v2.scenarios.designer import task_design_capabilities
+
+    distribution, slot = distribution_and_slot(71)
+    base = scenario_draft()
+
+    return_skus = [replace_sealed(row, return_required=True) if row.alias == "original" else row
+                   for row in base.skus]
+    return_draft = replace_sealed(base, skus=return_skus)
+    return_spec = return_draft.compile(distribution)
+    return_build = build_world(return_spec, slot.seed)
+    assert return_build.status == "SAT"
+    return_capabilities = task_design_capabilities(return_spec, return_build)
+    with pytest.raises(ValueError, match="return-receipt event that is not configured"):
+        compile_task(task_draft(), return_spec, return_build, distribution, capabilities=return_capabilities)
+
+    review_draft = replace_sealed(base, refund_approval_limit_cents=1)
+    review_spec = review_draft.compile(distribution)
+    review_build = build_world(review_spec, slot.seed)
+    assert review_build.status == "SAT"
+    review_request = "Please refund my damaged device."
+    refund = TaskDraft(task_id="needs-policy-review", customer_alias="customer",
+        customer_request=review_request, remedy_goals=({
+            "goal_id": "refund", "line_alias": "damaged", "quantity": 1,
+            "public_request_span": review_request, "subject_mention": "damaged device",
+            "allowed_remedies": ["refund"], "maximum_extra_charge_cents": 0,
+        },))
+    review_capabilities = task_design_capabilities(review_spec, review_build)
+    with pytest.raises(ValueError, match="policy-review event that is not configured"):
+        compile_task(refund, review_spec, review_build, distribution, capabilities=review_capabilities)
+    no_refund = replace_sealed(review_capabilities, supported_remedies=("exchange",))
+    with pytest.raises(ValueError, match="unsupported remedy method.*refund"):
+        compile_task(refund, review_spec, review_build, distribution, capabilities=no_refund)
 
 
 def test_grounded_bounds_cannot_exceed_the_customer_request():

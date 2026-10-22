@@ -161,7 +161,7 @@ def _proof_customer(world, task: TaskSpecV2) -> CustomerScenario:
 def _profile(world, task: TaskSpecV2, proof: CustomerScenario) -> CustomerProfileV2:
     spans = {}
     for goal in task.remedy_goals:
-        spans.setdefault(goal.line_id, goal.public_request_span)
+        spans.setdefault(goal.line_id, goal.subject_mention)
     return CustomerProfileV2(
         customer_id=task.customer_id, delegated_line_ids=proof.delegated_line_ids,
         delegation_request_spans=spans, accepted_remedies=proof.accepted_remedies,

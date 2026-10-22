@@ -245,6 +245,8 @@ def test_quality_counts_consequences_not_ids_and_is_not_a_performance_gate():
     first = evaluate_challenge(descriptor, verify_proof=lambda ref: True)
     assert first.consequence_class_lower_bound == 1
     assert not first.consequence_count_exact
+    assert first.novelty_status == "NOT_EVALUATED"
+    assert first.novel_against_history is None
     renamed = reseal(descriptor, alternatives=[
         reseal(row, alternative_id="renamed" + str(i)).model_dump(mode="json")
         for i, row in enumerate(descriptor.alternatives)])
@@ -263,6 +265,19 @@ def test_quality_counts_consequences_not_ids_and_is_not_a_performance_gate():
         evaluate_challenge(descriptor, verify_proof=lambda ref: ref != "business-proof")
     info = reseal(descriptor, task_kind="information", alternatives=[])
     assert evaluate_challenge(info, verify_proof=lambda ref: True).business_valid
+
+
+def test_contract_bundle_exports_versioned_designer_capabilities_and_history_compatibility():
+    from usami_v2.cli import contract_schemas
+
+    schemas = contract_schemas()
+    assert "TaskDesignCapabilities" in schemas
+    assert "CustomerTaskScope" in schemas
+    assert "ChallengeQualityVectorV1" in schemas
+    assert "ChallengeQualityVector" in schemas
+    assert "PreRunQualityV1" in schemas and "PreRunQuality" in schemas
+    assert schemas["TaskDesignCapabilities"]["properties"]["protocol"]["default"] == \
+        "commerce-task-design-capabilities-v1"
 
 
 def checkpoint():

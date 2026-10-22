@@ -24,7 +24,15 @@ class Attribute(Sealed):
 
 class SKUVariable(Sealed):
     alias: str = Field(min_length=1)
-    family: str = Field(min_length=1)
+    family: str = Field(
+        min_length=1,
+        description=(
+            "Narrow after-sales replacement-compatibility group, not a broad retail category. "
+            "Use distinct families for products that must not replace one another (for example, "
+            "'laptop' and 'mouse' may both be electronics but belong to different families; "
+            "different laptop configurations may share a family)."
+        ),
+    )
     attributes: Tuple[Attribute, ...] = ()
     price_cents: IntegerRange
     return_days: int = Field(default=30, ge=0, strict=True)

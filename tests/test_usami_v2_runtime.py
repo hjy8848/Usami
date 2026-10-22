@@ -563,6 +563,22 @@ def test_customer_runtime_rejects_cross_identity_scope_and_wrong_offer_binding()
             accept_operation="commit_accepted_quote"), presentation=forged, event_index=11)
 
 
+def test_customer_runtime_binds_multiple_line_specific_mentions_in_one_public_request():
+    world, aliases = frozen()
+    request = "Please refund my damaged laptop and please refund my damaged cable."
+    profile = CustomerProfileV2(
+        customer_id=aliases["customer"],
+        delegated_line_ids=(aliases["damaged"], aliases["accessory"]),
+        delegation_request_spans={
+            aliases["damaged"]: "damaged laptop",
+            aliases["accessory"]: "damaged cable",
+        },
+    )
+    transition = CustomerRuntime(profile).initialize(world, request)
+    delegated = {line_id for row in transition.world.delegations.values() for line_id in row.line_ids}
+    assert delegated == {aliases["damaged"], aliases["accessory"]}
+
+
 def test_structured_quote_acceptance_must_match_clear_customer_text():
     world, aliases = frozen()
     profile = CustomerProfileV2(customer_id=aliases["customer"],

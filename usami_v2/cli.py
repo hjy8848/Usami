@@ -8,14 +8,15 @@ from usami_v2 import PROTOCOL
 from usami_v2.contracts import CommunicationObligation, FactEvidence, PublicRequest, ServiceMessage
 from usami_v2.commerce.models import Operation, PARAMETERS, Quote, World
 from usami_v2.evaluation.checkpoints import DecisionCheckpoint
-from usami_v2.evaluation.challenge_quality import ChallengeDescriptor
+from usami_v2.evaluation.challenge_quality import ChallengeDescriptor, PreRunQuality, PreRunQualityV1
 from usami_v2.evaluation.readiness import ReadinessPolicy, ReadinessReport
 from usami_v2.runtime.observations import WorkingState
 from usami_v2.scenarios.builder import BuildResult, build_world, verify_build
 from usami_v2.scenarios.distribution import DistributionSpec
 from usami_v2.scenarios.schema import BuildBudget, ScenarioSpec
 from usami_v2.scenarios.task_certification import (
-    CustomerScenario, PlanCandidate, ProofAttempt, ProofBudget, ProofStep, ReviewPlan,
+    CustomerScenario, CustomerTaskScope, PlanCandidate, ProofAttempt, ProofBudget, ProofStep, ReviewPlan,
+    TaskDesignCapabilities,
     TaskCertification, certify_task, verify_task_certificate,
 )
 from usami_v2.scenarios.tasks import InformationObjective, RemedyGoal, TaskSpec
@@ -29,7 +30,8 @@ def contract_schemas():
     )
     from usami_v2.runtime.runner import EpisodeBudget, EpisodeEvent, EpisodeRecord, EpisodeReplay, ToolExecution
     from usami_v2.scenarios.designer import (
-        ChallengeQualityVector, DesignerCall, DesignerRun, DesignerTrainingEvidence, PostRunQualityVector,
+        CandidateConsequenceDiagnostic, ChallengeQualityVector, ChallengeQualityVectorV1,
+        DesignerCall, DesignerRun, DesignerTrainingEvidence, PostRunQualityVector,
         ScenarioDraft, TaskDesignAttempt, TaskDraft, WorldDesignAttempt,
     )
     from usami_v2.scenarios.distribution import SamplingSlot
@@ -38,10 +40,12 @@ def contract_schemas():
 
     models = (CommunicationObligation, FactEvidence, PublicRequest, ServiceMessage,
               Quote, World, Operation, DecisionCheckpoint, ChallengeDescriptor,
+              PreRunQuality, PreRunQualityV1,
               ReadinessPolicy, ReadinessReport, WorkingState, DistributionSpec,
               ScenarioSpec, BuildBudget, BuildResult, RemedyGoal,
               InformationObjective, TaskSpec, CustomerScenario, ReviewPlan,
               ProofBudget, ProofStep, PlanCandidate, ProofAttempt, TaskCertification,
+              CustomerTaskScope, TaskDesignCapabilities,
               CustomerDecision, CustomerProfile, PrivateCustomerFact, OfferPresentation,
               CustomerProfileV2, GroundedRemedyGoal, TaskSpecV2, OutcomeV2,
               AuthorityProof, CustomerEvent, CustomerTransition,
@@ -49,7 +53,8 @@ def contract_schemas():
               EpisodeBudget, EpisodeEvent, EpisodeRecord, EpisodeReplay, ToolExecution,
               SamplingSlot, ScenarioDraft, TaskDraft, DesignerCall, DesignerRun,
               TaskDesignAttempt, WorldDesignAttempt, DesignerTrainingEvidence,
-              ChallengeQualityVector, PostRunQualityVector)
+              CandidateConsequenceDiagnostic, ChallengeQualityVectorV1, ChallengeQualityVector,
+              PostRunQualityVector)
     schemas = {model.__name__: model.model_json_schema() for model in models}
     schemas["BusinessToolParameters"] = {
         "protocol": "commerce-tool-parameters-v1",

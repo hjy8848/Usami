@@ -120,6 +120,13 @@ def test_return_required_refund_needs_frozen_return_event_and_second_consent():
                for step in witness.steps) == 1
     assert verify_task_certificate(world, task, scenario, certificate)["verified"]
 
+    missing_event = customer_scenario(aliases, return_pickup_slot=None,
+                                      return_received_after_days=None, latest_arrival=None,
+                                      maximum_extra_charge_cents=0)
+    blocked = certify_task(world, task, missing_event)
+    assert blocked.status == "UNKNOWN"
+    assert "return_receipt_event_not_registered_in_frozen_customer_scenario" in blocked.blockers
+
 
 def test_frozen_approval_event_is_used_only_after_reference_requests_review():
     world, aliases = frozen_world()
@@ -139,6 +146,11 @@ def test_frozen_approval_event_is_used_only_after_reference_requests_review():
                and step.evidence.get("request", {}).get("operation", {}).get("name") == "request_policy_review"
                for step in witness.steps)
     assert verify_task_certificate(world, task, scenario, certificate)["verified"]
+
+    no_review = customer_scenario(aliases, maximum_extra_charge_cents=0, latest_arrival=None)
+    blocked = certify_task(world, task, no_review)
+    assert blocked.status == "UNKNOWN"
+    assert "policy_review_event_not_registered_in_frozen_customer_scenario" in blocked.blockers
 
 
 def test_task_certificate_cli_artifact_rebuilds_world_and_replays_private_witness(tmp_path):

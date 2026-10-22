@@ -56,7 +56,15 @@ def _expected_query(world, actor, op):
         return {"line_id": key, "remaining_units": list(indices),
                 "remaining_original_credit_cents": unit_credit(line, indices)}
     if op.name == "get_case_status":
-        return {"case": world.cases[key].model_dump(mode="json"),
+        case = world.cases[key]
+        case_line = world.lines[case.line_id]
+        return {"case": case.model_dump(mode="json"),
+                # Independent expected projection: reveal only references
+                # owned by this caller and tied to the case line. The oracle
+                # does not disclose whether evidence will pass verification.
+                "evidence": [{"evidence_id": row.id, "issue": row.issue}
+                             for row in sorted(world.evidence.values(), key=lambda x: x.id)
+                             if row.customer_id == actor and row.line_id == case_line.id],
                 "quotes": [world.quotes[k].model_dump(mode="json") for k in sorted(world.quotes)
                            if world.quotes[k].case_id == key],
                 "returns": [world.returns[k].model_dump(mode="json") for k in sorted(world.returns)

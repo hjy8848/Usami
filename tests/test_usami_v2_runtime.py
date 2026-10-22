@@ -6,7 +6,7 @@ from types import SimpleNamespace
 import pytest
 
 from usami_harness.models import digest
-from usami_v2.commerce.models import ExternalEvent, Operation, case_id, quote_id
+from usami_v2.commerce.models import Customer, ExternalEvent, Operation, case_id, quote_id
 from usami_v2.runtime.agents import AgentMessage, CustomerPrompt, ServiceAction, ServicePrompt
 from usami_v2.runtime.agents import OpenAICustomerAgent, OpenAIServiceAgent, service_tools
 from usami_v2.runtime.customer import (
@@ -84,6 +84,95 @@ class ScriptedRefundService:
         ]
         action = actions[self.index]
         self.index += 1
+        return action
+
+
+class QueryDrivenRefundService:
+    """Test Service that discovers every business ID only from its tool history."""
+
+    last_call = None
+    uses_model = False
+
+    def __init__(self):
+        self.step = 0
+        self.order_id = None
+        self.lines = ()
+        self.skus = []
+        self.line_id = None
+        self.case_id = None
+        self.quote_id = None
+        self.evidence_id = None
+
+    @staticmethod
+    def _latest_data(prompt):
+        tool_messages = [row for row in prompt.conversation if row.role == "tool"]
+        assert tool_messages, "the scripted Service can only use a recorded public tool result"
+        result = json.loads(tool_messages[-1].content)
+        assert result["success"] is True
+        return result["data"]
+
+    def decide(self, prompt: ServicePrompt):
+        assert not hasattr(prompt, "profile") and not hasattr(prompt, "task_goals")
+        assert not hasattr(self, "world") and not hasattr(self, "aliases")
+        merchant = prompt.available_merchant_scope_ids[0]
+        if self.step == 0:
+            operation = Operation(name="list_customer_orders", scope_id=merchant,
+                                  resource_id=merchant, params={})
+        elif self.step == 1:
+            orders = self._latest_data(prompt)["orders"]
+            assert len(orders) == 1
+            self.order_id = orders[0]["id"]
+            operation = Operation(name="get_order_details", scope_id=merchant,
+                                  resource_id=self.order_id, params={})
+        elif self.step == 2:
+            self.lines = tuple(self._latest_data(prompt)["lines"])
+            line = self.lines[0]
+            operation = Operation(name="get_sku_details", scope_id=merchant,
+                                  resource_id=line["sku_id"], params={})
+        elif self.step == 3:
+            self.skus.append(self._latest_data(prompt)["sku"])
+            line = self.lines[1]
+            operation = Operation(name="get_sku_details", scope_id=merchant,
+                                  resource_id=line["sku_id"], params={})
+        elif self.step == 4:
+            self.skus.append(self._latest_data(prompt)["sku"])
+            self.line_id = next(line["id"] for line, sku in zip(self.lines, self.skus)
+                                if sku["product_family"] == "device")
+            operation = Operation(name="open_remedy_case", scope_id=merchant,
+                                  resource_id=self.line_id,
+                                  params={"quantity": 1, "issue": "damaged"})
+        elif self.step == 5:
+            self.case_id = self._latest_data(prompt)["case_id"]
+            operation = Operation(name="get_case_status", scope_id=merchant,
+                                  resource_id=self.case_id, params={})
+        elif self.step == 6:
+            evidence_refs = self._latest_data(prompt)["evidence"]
+            assert evidence_refs and all("valid" not in row for row in evidence_refs)
+            self.evidence_id = next(row["evidence_id"] for row in evidence_refs
+                                    if row["issue"] == "damaged")
+            operation = Operation(name="verify_submitted_evidence", scope_id=merchant,
+                                  resource_id=self.case_id,
+                                  params={"evidence_id": self.evidence_id})
+        elif self.step == 7:
+            operation = Operation(name="prepare_remedy_quote", scope_id=merchant,
+                                  resource_id=self.case_id,
+                                  params={"remedy": "refund", "target_sku_id": None,
+                                          "warehouse_id": None, "pickup_slot": None})
+        elif self.step == 8:
+            quote = self._latest_data(prompt)["quote"]
+            self.quote_id = quote["id"]
+            action = ServiceAction(kind="reply", message="Please confirm this refund quote.",
+                                   present_quote_id=self.quote_id,
+                                   present_for="commit_accepted_quote")
+        elif self.step == 9:
+            operation = Operation(name="commit_accepted_quote", scope_id=merchant,
+                                  resource_id=self.quote_id, params={})
+        else:
+            action = ServiceAction(kind="reply", message="Your refund has been processed.",
+                                   subject_ids=(self.line_id,))
+        if self.step in (0, 1, 2, 3, 4, 5, 6, 7, 9):
+            action = ServiceAction(kind="operation", operation=operation)
+        self.step += 1
         return action
 
 
@@ -231,6 +320,60 @@ def test_customer_quote_consent_is_exact_and_finish_waits_for_service_execution(
     assert consent.operation == "commit_accepted_quote"
     assert consent.quote_id == next(iter(record.final_world.quotes))
     assert replay_episode(record).verified
+
+
+def test_service_discovers_and_verifies_evidence_from_public_case_query():
+    world, aliases = frozen()
+    task = refund_task(world, aliases)
+    profile = refund_profile(aliases)
+    expected_evidence = next(row.id for row in world.evidence.values()
+                             if row.customer_id == aliases["customer"]
+                             and row.line_id == aliases["damaged"])
+    service = QueryDrivenRefundService()
+    record = run_episode(
+        world, task, profile, ScriptedCustomer(), service,
+        budget=EpisodeBudget(max_customer_turns=3, max_service_decisions=16,
+                             max_service_tool_calls=12, max_model_calls=0))
+
+    assert record.replay_verified and replay_episode(record).verified
+    assert record.status == "customer_finished"
+    assert record.outcome.business_goal_success is True
+    assert record.outcome.process_errors.status == "PASS"
+    assert record.outcome.safety_violations.status == "PASS"
+    assert service.evidence_id == expected_evidence
+    case_query = next(row for row in record.tool_executions
+                      if row.operation["name"] == "get_case_status")
+    refs = case_query.result["data"]["evidence"]
+    assert refs == [{"evidence_id": expected_evidence, "issue": "damaged"}]
+    assert "valid" not in refs[0]
+    assert case_query.oracle["status"] == "pass"
+    verify_call = next(row for row in record.tool_executions
+                       if row.operation["name"] == "verify_submitted_evidence")
+    assert verify_call.operation["params"]["evidence_id"] == expected_evidence
+    assert all(row.oracle["status"] == "pass" for row in record.tool_executions)
+    assert len(record.tool_executions) == 9
+
+
+def test_case_evidence_query_cannot_cross_customer_scope():
+    world, aliases = frozen()
+    world = CustomerRuntime(refund_profile(aliases)).initialize(
+        world, "Please refund my damaged device.").world
+    merchant = next(iter(world.merchants))
+    line = aliases["damaged"]
+    world, opened = _execution(world, aliases["customer"], Operation(
+        name="open_remedy_case", scope_id=merchant, resource_id=line,
+        params={"quantity": 1, "issue": "damaged"}), "open-case-for-scope-test", "reference")
+    case_key = opened.result["data"]["case_id"]
+    other_customer_id = "customer-outside-scope"
+    world.customers[other_customer_id] = Customer(id=other_customer_id, name="Other customer")
+
+    _, query = _execution(world, other_customer_id, Operation(
+        name="get_case_status", scope_id=merchant, resource_id=case_key, params={}),
+        "cross-customer-case-query", "reference")
+    assert query.result["success"] is False
+    assert query.result["error_code"] == "OBJECT_ACCESS_DENIED"
+    assert query.result["data"] == {}
+    assert query.oracle["status"] == "pass"
 
 
 def test_sandbox_business_violation_cannot_be_scored_as_strict_task_success():
@@ -569,6 +712,7 @@ def test_explicit_openai_adapters_capture_request_and_raw_output_without_network
     assert "PRIVATE CUSTOMER PROFILE" not in json.dumps(service_client.requests[0])
     available_tools = {row["function"]["name"]: row["function"] for row in service_tools()}
     assert "merchant ID" in available_tools["list_customer_orders"]["description"]
+    assert "evidence references" in available_tools["get_case_status"]["description"]
     assert "case ID" in available_tools["prepare_remedy_quote"]["description"]
     assert "exact customer consent" in available_tools["commit_accepted_quote"]["description"]
 

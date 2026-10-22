@@ -34,7 +34,15 @@ def query_data(world, actor, op):
         remaining = tuple(i for i in range(line.quantity) if i not in spent)
         return {"line_id": key, "remaining_units": list(remaining), "remaining_original_credit_cents": unit_credit(line, remaining)}
     if op.name == "get_case_status":
+        case = world.cases[key]
+        line = world.lines[case.line_id]
         return {"case": world.cases[key].model_dump(mode="json"),
+                # Expose only evidence references belonging to this caller and
+                # case line. Verification remains a separate business action;
+                # do not reveal the hidden validity label in a query response.
+                "evidence": [{"evidence_id": row.id, "issue": row.issue}
+                             for row in sorted(world.evidence.values(), key=lambda x: x.id)
+                             if row.customer_id == actor and row.line_id == line.id],
                 "quotes": [row.model_dump(mode="json") for row in sorted(world.quotes.values(), key=lambda x: x.id)
                            if row.case_id == key],
                 "returns": [row.model_dump(mode="json") for row in sorted(world.returns.values(), key=lambda x: x.id)

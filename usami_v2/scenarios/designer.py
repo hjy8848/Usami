@@ -250,7 +250,16 @@ class OpenAIDesignerProvider:
         name = "submit_world_constraints" if phase == "world" else "submit_customer_task"
         tool = _tool_schema(name, model)
         request = self.settings.request(messages, [tool])
-        request["tool_choice"] = {"type": "function", "function": {"name": name}}
+        # Qwen3 thinking-mode endpoints reject both `required` and forced
+        # function objects with HTTP 400. `auto` remains usable there; the
+        # local parser below still requires exactly one complete call to this
+        # phase's expected function, so provider compatibility does not relax
+        # the Designer protocol.
+        if "qwen3" in self.settings.model.casefold():
+            request["tool_choice"] = "auto"
+        else:
+            request["tool_choice"] = {"type": "function", "function": {"name": name}}
+        request["parallel_tool_calls"] = False
         try:
             raw = self.client.complete(request)
         except Exception as exc:

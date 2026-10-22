@@ -59,6 +59,30 @@ def test_designer_failure_record_keeps_only_redacted_provider_diagnostics():
     assert "sk-secret-value" not in json.dumps(provider.last_call.model_dump())
 
 
+def test_qwen3_designer_uses_auto_but_still_requires_a_complete_function_call():
+    client = TextReplyClient()
+    client.settings = ModelSettings(model="dashscope/qwen3.7-plus", base_url="http://127.0.0.1/v1",
+                                   options={"max_tokens": 64})
+    provider = OpenAIDesignerProvider(client)
+    with pytest.raises(ServiceError, match="exactly one complete structured function call"):
+        provider.submit("world", [{"role": "user", "content": "test"}], ScenarioDraft)
+    request = client.requests[0]
+    assert request["tool_choice"] == "auto"
+    assert request["parallel_tool_calls"] is False
+    assert len(request["tools"]) == 1
+
+
+def test_non_qwen_designer_keeps_forced_phase_submission_tool():
+    client = TextReplyClient()
+    provider = OpenAIDesignerProvider(client)
+    with pytest.raises(ServiceError, match="exactly one complete structured function call"):
+        provider.submit("task", [{"role": "user", "content": "test"}], ScenarioDraft)
+    request = client.requests[0]
+    assert request["tool_choice"] == {
+        "type": "function", "function": {"name": "submit_customer_task"}}
+    assert request["parallel_tool_calls"] is False
+
+
 def test_candidate_skill_enters_only_the_s1_real_model_request():
     skill = DecisionSkill(
         id="transaction-consent-check", version=1,

@@ -9,7 +9,7 @@ from datetime import timedelta
 import json
 from typing import Any, Callable, Dict, Literal, Optional, Protocol, Tuple
 
-from pydantic import Field, model_validator
+from pydantic import Field, ValidationError, model_validator
 
 from usami.service.client import CompletionClient
 from usami.service.models import ModelSettings, ServiceError
@@ -29,7 +29,7 @@ from usami_v2.scenarios.task_certification import (
     verify_task_certificate,
 )
 from usami_v2.scenarios.tasks import (
-    GroundedRemedyGoal, InformationObjective, TaskSpec, TaskSpecV2,
+    GroundedRemedyGoal, InformationObjective, TaskSpec, TaskSpecV2, _validate_public_remedy_bounds,
     check_task_scope, request_names_remedy,
 )
 
@@ -63,26 +63,40 @@ class RemedyDraft(Sealed):
         min_length=1,
         description=("Copy one exact, contiguous substring from customer_request. Do not paraphrase, summarize, "
                      "or combine separated phrases. The quote must include subject_mention and explicitly "
-                     "request every remedy in allowed_remedies."),
+                     "support the requested outcome. A public 'replace'/'replacement' request supports the "
+                     "engine methods exchange or reship; refund still requires explicit refund language."),
     )
     subject_mention: str = Field(
         min_length=1,
         description="Exact product/object wording that appears inside public_request_span.",
     )
-    quantity: int = Field(ge=1, strict=True)
+    quantity: int = Field(ge=1, strict=True,
+                          description="Use 1 for the default single item; use a larger number only when the request states it.")
     allowed_remedies: Tuple[Literal["refund", "exchange", "reship"], ...] = Field(
         min_length=1,
-        description="List only remedies explicitly requested in public_request_span; do not infer alternatives.",
+        description=("List engine methods supported by the public intent. 'Replace'/'replacement' supports "
+                     "exchange or reship; only explicit refund language supports refund."),
     )
-    required_attributes: Tuple[Attribute, ...] = ()
-    maximum_extra_charge_cents: Optional[int] = Field(default=None, ge=0, strict=True)
-    latest_arrival_within_days: Optional[int] = Field(default=None, ge=0, strict=True)
-    target_stage: Literal["settled", "delivered"] = "settled"
+    required_attributes: Tuple[Attribute, ...] = Field(
+        default=(), description="Only score attributes explicitly named in the quoted request; use the frozen SKU values.")
+    maximum_extra_charge_cents: Optional[int] = Field(
+        default=None, ge=0, strict=True,
+        description="Only set when the quoted request states an explicit extra/additional charge limit; value is cents.")
+    latest_arrival_within_days: Optional[int] = Field(
+        default=None, ge=0, strict=True,
+        description="Only set for an explicit 'within/in N days' request, using the exact public N.")
+    target_stage: Literal["settled", "delivered"] = Field(
+        default="settled",
+        description=("Use 'settled' for the currently supported Reference proof. 'delivered' means actual receipt, "
+                     "which this run can certify only when a natural interaction certifier is explicitly available."),
+    )
 
 
 class InformationDraft(Sealed):
     goal_id: str
-    subject_alias: str
+    subject_alias: str = Field(
+        description="Alias of this Customer's owned order or order line; never a Customer, SKU, or another Customer's object."
+    )
     subject_mention: str
     fact_kind: Literal["refund_amount", "extra_charge", "arrival_date", "refund_status",
                        "shipment_status", "quantity", "currency"]
@@ -94,7 +108,11 @@ class TaskDraft(Sealed):
     customer_alias: str
     customer_request: str = Field(min_length=1)
     remedy_goals: Tuple[RemedyDraft, ...] = ()
-    information_goals: Tuple[InformationDraft, ...] = ()
+    information_goals: Tuple[InformationDraft, ...] = Field(
+        default=(),
+        description=("Only use when task_certification_capabilities says a natural interaction certifier is available; "
+                     "the bounded native Reference proof certifies remedy goals, not communication goals."),
+    )
     parent_training_evidence_hashes: Tuple[str, ...] = ()
 
     @model_validator(mode="after")
@@ -313,12 +331,27 @@ class OpenAIDesignerProvider:
         call = message["tool_calls"][0]
         if call["function"]["name"] != name:
             raise ServiceError("MODEL_OUTPUT_INVALID", "Designer called the wrong phase submission tool")
-        output = model.model_validate(_json_arguments(call["function"]["arguments"]))
+        arguments = _json_arguments(call["function"]["arguments"])
+        if not arguments:
+            raise ServiceError(
+                "EMPTY_TOOL_ARGUMENTS",
+                "Designer submitted an empty object; provide the required fields for this proposal stage",
+            )
+        try:
+            output = model.model_validate(arguments)
+        except ValidationError as exc:
+            details = "; ".join(
+                "{}: {}".format(".".join(str(part) for part in error["loc"]), error["msg"])
+                for error in exc.errors(include_input=False)
+            )
+            raise ServiceError("DESIGNER_SCHEMA_INVALID", "Designer proposal does not match the {} schema: {}".format(
+                model.__name__, details)) from None
         return output, self.last_call
 
 
 def compile_task(draft: TaskDraft, spec: ScenarioSpec, build: BuildResult,
-                 distribution: DistributionSpec, allowed_training_hashes=()):
+                 distribution: DistributionSpec, allowed_training_hashes=(), *,
+                 interaction_certifier_available=False):
     draft, spec, build, distribution = draft.checked(), spec.checked(), build.checked(), distribution.checked()
     if build.status != "SAT" or not build.world:
         raise ValueError("a SAT frozen world is required before task design")
@@ -327,29 +360,40 @@ def compile_task(draft: TaskDraft, spec: ScenarioSpec, build: BuildResult,
         raise ValueError("TaskDraft references a Customer alias outside the frozen world")
     if not set(draft.parent_training_evidence_hashes).issubset(set(allowed_training_hashes)):
         raise ValueError("TaskDraft references training evidence outside the authorized input set")
+    if draft.information_goals and not interaction_certifier_available:
+        raise ValueError(
+            "information goals require a natural-runtime interaction certifier; this run can only certify remedy goals"
+        )
     remedies, information = [], []
     for row in draft.remedy_goals:
         if row.line_alias not in aliases:
             raise ValueError("TaskDraft references an unknown order-line alias")
-        line_variable = next(line for order in spec.orders for line in order.lines
-                             if line.alias == row.line_alias)
-        sku_variable = next(sku for sku in spec.skus if sku.alias == line_variable.original_sku)
-        normalized_mention = " ".join(row.subject_mention.casefold().split())
-        if (" ".join(line_variable.issue.casefold().split()) not in normalized_mention
-                or " ".join(sku_variable.family.casefold().split()) not in normalized_mention):
-            raise ValueError("public object mention must identify the frozen line issue and SKU family")
         original_id = aliases[row.line_alias]
+        if row.target_stage == "delivered" and not interaction_certifier_available:
+            raise ValueError(
+                "actual delivery is not certified by the native proof in this run; use target_stage='settled'"
+            )
         arrival = (build.world.clock + timedelta(days=row.latest_arrival_within_days)
                    if row.latest_arrival_within_days is not None else None)
-        remedies.append(GroundedRemedyGoal(
+        compiled_goal = GroundedRemedyGoal(
             goal_id=row.goal_id, line_id=original_id, quantity=row.quantity,
             allowed_remedies=row.allowed_remedies, required_attributes=row.required_attributes,
             maximum_extra_charge_cents=row.maximum_extra_charge_cents,
             latest_arrival=arrival, target_stage=row.target_stage,
-            public_request_span=row.public_request_span, subject_mention=row.subject_mention))
+            public_request_span=row.public_request_span, subject_mention=row.subject_mention)
+        _validate_public_remedy_bounds(compiled_goal, build.world.clock)
+        remedies.append(compiled_goal)
     for row in draft.information_goals:
         if row.subject_alias not in aliases:
             raise ValueError("TaskDraft references an unknown public order or line alias")
+        owned_order_aliases = {order.alias for order in spec.orders
+                               if order.customer_alias == draft.customer_alias}
+        owned_line_aliases = {line.alias for order in spec.orders
+                              if order.customer_alias == draft.customer_alias for line in order.lines}
+        if row.subject_alias not in owned_order_aliases | owned_line_aliases:
+            raise ValueError(
+                "information subject must be the selected Customer's owned order or order-line alias"
+            )
         information.append(InformationObjective(
             goal_id=row.goal_id, subject_id=aliases[row.subject_alias], subject_mention=row.subject_mention,
             fact_kind=row.fact_kind, public_request=row.public_request))
@@ -489,9 +533,16 @@ def _chat(phase, content, distribution, slot, errors=()):
         phase_instruction = (
             " For each remedy goal, copy public_request_span verbatim from customer_request as one contiguous "
             "substring; never paraphrase, summarize, or join non-adjacent words. Put an exact object phrase from "
-            "that quote in subject_mention. List only remedies the quote explicitly requests, and make the "
-            "customer_request itself state each intended remedy clearly. If validation feedback reports a quote "
-            "error, replace the span with text copied exactly from customer_request."
+            "that quote in subject_mention. Use natural customer-facing product words; do not require internal SKU "
+            "family or issue codes in the quote. The compiler matches product descriptors and issue language to "
+            "the frozen world and rejects ambiguity. 'Replace' or 'replacement' is an explicit replacement intent "
+            "that may be fulfilled by exchange or reship; it does not authorize a refund. Only add a quantity, "
+            "required attribute, arrival deadline, or extra-charge cap when the public request explicitly states it; "
+            "a quantity of one is the default, and larger quantities must be explicit. "
+            "Use only task goals supported by task_certification_capabilities in the supplied context: if "
+            "actual_delivery_certifiable is false, use target_stage='settled'; if information_goals_certifiable "
+            "is false, omit information_goals. If validation feedback "
+            "reports a quote error, replace the span with text copied exactly from customer_request."
         )
     return [
         {"role": "system", "content": (
@@ -605,6 +656,12 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
                                          and inv.warehouse_id == aliases[wh.alias])}
                       for sku in scenario.skus for wh in scenario.warehouses],
         "clock": build.world.clock.isoformat(),
+        "task_certification_capabilities": {
+            "native_reference_certifies": ["settled_remedy_goals"],
+            "actual_delivery_certifiable": interaction_certifier is not None,
+            "information_goals_certifiable": interaction_certifier is not None,
+            "interaction_certifier_available": interaction_certifier is not None,
+        },
         "reference_policy": "independent; not included in this context",
     }
     errors, task_attempts = [], []
@@ -620,7 +677,8 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
                                       parsed_output_hash=draft_task.record_hash))
             if not set(draft_task.parent_training_evidence_hashes).issubset(set(allowed_training_hashes)):
                 raise ValueError("TaskDraft cites training evidence outside the authorized context")
-            task = compile_task(draft_task, scenario, build, distribution, allowed_training_hashes)
+            task = compile_task(draft_task, scenario, build, distribution, allowed_training_hashes,
+                                interaction_certifier_available=interaction_certifier is not None)
             proof_customer = customer_scenario_factory(build.world, task)
             certificate = certify_task(build.world, task, proof_customer, proof_budget, minimum_witnesses=1)
             if certificate.status == "CERTIFIED":

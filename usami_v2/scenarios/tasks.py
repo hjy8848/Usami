@@ -28,14 +28,152 @@ REMEDY_REQUEST_PATTERNS = {
     "exchange": (
         r"\b(?:please\s+)?(?:exchange|replace|swap)\s+(?:my|this|the|it)\b",
         r"\b(?:i\s+(?:want|need|request|would\s+like))\s+(?:an?\s+)?(?:exchange|replacement)\b",
+        r"\b(?:i\s+(?:want|need|request|would\s+like))\s+(?:my|this|the)\b.{1,48}\b(?:replaced|replacement)\b",
         r"(?:给我换货|请.{0,8}(?:换货|更换)|我(?:要|想|需要|要求|希望).{0,4}(?:换货|更换))",
     ),
     "reship": (
         r"\b(?:please\s+)?(?:reship|send|ship)\s+(?:it|this|the|my|another|a\s+replacement)\b",
+        r"\b(?:please\s+)?(?:send|ship)\s+me\s+(?:the\s+)?(?:correct|right|replacement)\b",
+        r"\b(?:please\s+)?replace\s+(?:my|this|the|it)\b",
         r"\b(?:i\s+(?:want|need|request|would\s+like))\s+(?:it\s+)?(?:resent|reshipped|sent\s+again)\b",
+        r"\b(?:i\s+(?:want|need|request|would\s+like))\s+(?:my|this|the)\b.{1,48}\b(?:replaced|replacement)\b",
         r"(?:给我补发|请.{0,8}(?:补发|重寄)|我(?:要|想|需要|要求|希望).{0,4}(?:补发|重寄))",
     ),
 }
+
+# Public language often names the thing a customer bought rather than an
+# internal catalog family. These aliases are deliberately small and
+# deterministic; SKU attribute values (for example brand, model, or color)
+# provide additional world-grounded descriptions.
+_FAMILY_PUBLIC_TERMS = {
+    "device": ("gadget", "electronic device", "computer", "laptop", "notebook", "phone",
+               "smartphone", "tablet", "headphones", "headset", "earbuds", "mouse",
+               "keyboard", "monitor", "camera"),
+    "electronics": ("electronic device", "computer", "laptop", "notebook", "phone",
+                    "smartphone", "tablet", "headphones", "headset", "earbuds", "mouse",
+                    "keyboard", "monitor", "camera"),
+    "consumer electronics": ("electronic device", "computer", "laptop", "notebook", "phone",
+                             "smartphone", "tablet", "headphones", "headset", "earbuds",
+                             "mouse", "keyboard", "monitor", "camera"),
+    "audio": ("headphones", "headset", "earbuds", "earphones", "speaker"),
+    "cable": ("cord", "charging cable", "usb cable"),
+}
+
+_ISSUE_PUBLIC_TERMS = {
+    "damaged": ("damaged", "damage", "broken", "defective", "faulty", "cracked", "not working"),
+    "wrong_item": ("wrong item", "incorrect item", "wrong product", "different item",
+                   "not what i ordered", "got something else", "received something else",
+                   "ordered black but got", "ordered white but got", "ordered blue but got"),
+    "missing_parts": ("missing part", "missing parts", "missing component", "missing components",
+                      "part is missing", "parts are missing", "component is missing"),
+}
+
+_SMALL_NUMBERS = {"zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+                  "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
+
+
+def _normalized_public_text(value):
+    return re.sub(r"[^a-z0-9\u4e00-\u9fff]+", " ", str(value).casefold()).strip()
+
+
+def _contains_public_phrase(text, phrase):
+    text, phrase = _normalized_public_text(text), _normalized_public_text(phrase)
+    if not phrase:
+        return False
+    if re.search(r"[\u4e00-\u9fff]", phrase):
+        return phrase in text
+    return " " + phrase + " " in " " + text + " "
+
+
+def _issue_is_named(text, issue, product_terms=()):
+    terms = _ISSUE_PUBLIC_TERMS.get(issue, (issue,))
+    if issue == "wrong_item":
+        terms += tuple("wrong " + term for term in product_terms if term)
+    return any(_contains_public_phrase(text, term) for term in (issue,) + terms)
+
+
+def _number_value(value):
+    value = value.casefold()
+    return int(value) if value.isdigit() else _SMALL_NUMBERS.get(value)
+
+
+def _public_day_limits(text):
+    pattern = re.compile(
+        r"\b(?:within|in|no later than|by)\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+days?\b",
+        re.I)
+    return tuple(_number_value(match.group(1)) for match in pattern.finditer(text))
+
+
+def _public_charge_limit(text):
+    normalized = _normalized_public_text(text)
+    if any(phrase in " " + normalized + " " for phrase in (
+            " no extra charge ", " no additional charge ", " without extra charge ",
+            " at no extra cost ", " at no additional cost ", " free of charge ")):
+        return 0
+    amounts = re.findall(
+        r"(?:no more than|up to|at most|within)\s*(?:\$\s*)?"
+        r"(\d+(?:\.\d{1,2})?)\s*(?:usd|dollars?)?\s*(?:extra|additional|more|extra charge|additional cost)\b",
+        text, flags=re.I)
+    amounts.extend(re.findall(
+        r"maximum\s+(?:extra\s+charge|extra)\s+of\s*(?:\$\s*)?"
+        r"(\d+(?:\.\d{1,2})?)\s*(?:usd|dollars?)?\b",
+        text, flags=re.I))
+    amounts.extend(re.findall(
+        r"(?:extra|additional)\s+(?:charge|cost)\s+(?:of|up to|no more than|at most)\s*"
+        r"(?:\$\s*)?(\d+(?:\.\d{1,2})?)\s*(?:usd|dollars?)?\b",
+        text, flags=re.I))
+    values = []
+    for amount in amounts:
+        try:
+            values.append(round(float(amount) * 100))
+        except ValueError:
+            continue
+    return tuple(values)
+
+
+def _public_quantity(text):
+    pattern = re.compile(r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+"
+                         r"(?:items?|units?|pieces?|pairs?|headphones?|earbuds?|earphones?|headsets?|"
+                         r"devices?|laptops?|computers?|tablets?|phones?|mice|mouse|keyboards?|"
+                         r"cables?|chargers?)\b", re.I)
+    for match in pattern.finditer(text):
+        return _number_value(match.group(1))
+    return None
+
+
+def _validate_public_remedy_bounds(goal, initial_clock):
+    """Reject score conditions that cannot be traced to the quoted request."""
+    text = goal.public_request_span
+    if goal.quantity > 1:
+        quantity = _public_quantity(text)
+        if quantity != goal.quantity:
+            raise ValueError("remedy quantity must be stated in the public request")
+    elif (quantity := _public_quantity(text)) not in (None, goal.quantity):
+        raise ValueError("remedy quantity differs from the public request")
+
+    if goal.required_attributes:
+        for attribute in goal.required_attributes:
+            if not _contains_public_phrase(text, attribute.value):
+                raise ValueError("required product attributes must appear in the public request")
+
+    day_limits = _public_day_limits(text)
+    if day_limits and goal.latest_arrival is None:
+        raise ValueError("a public arrival deadline must be included in the remedy goal")
+    if goal.latest_arrival is not None:
+        if not day_limits:
+            raise ValueError("an arrival deadline may only be scored when the public request states it in days")
+        seconds = (goal.latest_arrival - initial_clock).total_seconds()
+        if seconds < 0 or seconds % 86400 or int(seconds // 86400) not in day_limits:
+            raise ValueError("arrival deadline differs from the public request")
+
+    charge_limits = _public_charge_limit(text)
+    if charge_limits and goal.maximum_extra_charge_cents is None:
+        raise ValueError("a public extra-charge limit must be included in the remedy goal")
+    if goal.maximum_extra_charge_cents is not None:
+        if not charge_limits:
+            raise ValueError("an extra-charge cap may only be scored when the public request states it")
+        if goal.maximum_extra_charge_cents not in charge_limits:
+            raise ValueError("extra-charge cap differs from the public request")
 
 
 def _positive_remedy_request(text, remedy):
@@ -61,23 +199,22 @@ def _positive_remedy_request(text, remedy):
 
 
 def request_names_remedy(text, remedies):
+    """Check public customer intent against engine methods.
+
+    A public replace/replacement request may be realized as an exchange or
+    reship. It never implies a refund; other methods require explicit intent.
+    """
     return bool(remedies) and all(_positive_remedy_request(text, remedy) for remedy in remedies)
 
 
-def public_line_match_ids(world, customer_id, mention):
-    """Return owned lines whose frozen issue and SKU family are named publicly."""
-    def normalized(value):
-        return re.sub(r"[^a-z0-9\u4e00-\u9fff]+", " ", value.casefold()).strip()
+def public_line_match_ids(world, customer_id, mention, request_context=None, *, require_issue=True):
+    """Resolve natural product words to owned frozen lines, rejecting ambiguity.
 
-    def contains(text, phrase):
-        text, phrase = normalized(text), normalized(phrase)
-        if not phrase:
-            return False
-        if re.search(r"[\u4e00-\u9fff]", phrase):
-            return phrase in text
-        return " " + phrase + " " in " " + text + " "
-
-    normalized_mention = normalized(mention)
+    ``mention`` is the product phrase visible in the request. ``request_context``
+    is its exact public quote and carries the natural-language issue description.
+    Neither needs to contain internal SKU-family or issue codes.
+    """
+    request_context = mention if request_context is None else request_context
     owned_orders = {row.id for row in world.orders.values() if row.customer_id == customer_id}
     candidates = []
     for line in world.lines.values():
@@ -85,9 +222,14 @@ def public_line_match_ids(world, customer_id, mention):
             continue
         sku = world.skus.get(line.sku_id)
         issues = {row.issue for row in world.evidence.values() if row.line_id == line.id}
-        if (sku is not None
-                and contains(normalized_mention, sku.product_family)
-                and any(contains(normalized_mention, issue) for issue in issues)):
+        family_terms = (sku.product_family, *_FAMILY_PUBLIC_TERMS.get(
+            _normalized_public_text(sku.product_family), ())) if sku is not None else ()
+        attribute_terms = tuple(value for value in (sku.attributes.values() if sku else ()) if value)
+        product_named = any(_contains_public_phrase(mention, term)
+                            for term in family_terms + attribute_terms)
+        issue_named = (not require_issue or any(
+            _issue_is_named(request_context, issue, family_terms + attribute_terms) for issue in issues))
+        if sku is not None and product_named and issue_named:
             candidates.append((line, sku))
 
     # A phrase such as "the damaged device" may match multiple lines. Publicly
@@ -95,7 +237,7 @@ def public_line_match_ids(world, customer_id, mention):
     attribute_names = {name for _, sku in candidates for name in sku.attributes}
     for name in sorted(attribute_names):
         values = {sku.attributes.get(name) for _, sku in candidates if sku.attributes.get(name)}
-        named_values = {value for value in values if contains(normalized_mention, value)}
+        named_values = {value for value in values if _contains_public_phrase(mention, value)}
         if named_values:
             candidates = [(line, sku) for line, sku in candidates
                           if sku.attributes.get(name) in named_values]
@@ -230,8 +372,9 @@ def check_task_scope(world, task: TaskSpec):
         if not order or order.customer_id != task.customer_id:
             raise ValueError("task crosses the frozen Customer identity")
         if isinstance(goal, GroundedRemedyGoal):
-            if public_line_match_ids(world, task.customer_id, goal.subject_mention) != (line.id,):
-                raise ValueError("public remedy mention must uniquely identify the frozen line issue and product family")
+            if public_line_match_ids(world, task.customer_id, goal.subject_mention,
+                                     goal.public_request_span) != (line.id,):
+                raise ValueError("public product mention and issue description must uniquely identify one owned frozen line")
         occupied = {unit for row in world.cases.values()
                     if row.line_id == goal.line_id and row.status not in ("resolved", "cancelled")
                     for unit in row.unit_indices}
@@ -245,8 +388,9 @@ def check_task_scope(world, task: TaskSpec):
             raise ValueError("information objective is not about an owned order/line")
         if task.protocol == "commerce-task-v2":
             if goal.subject_id in owned_lines:
-                if public_line_match_ids(world, task.customer_id, goal.subject_mention) != (goal.subject_id,):
-                    raise ValueError("public information mention must uniquely identify the frozen line issue and product family")
+                if public_line_match_ids(world, task.customer_id, goal.subject_mention,
+                                         goal.public_request, require_issue=False) != (goal.subject_id,):
+                    raise ValueError("public information mention must uniquely identify one owned frozen line")
             elif goal.subject_id in owned_orders and len(owned_orders) != 1:
                 raise ValueError("order-level information target is ambiguous for this Customer")
     return task

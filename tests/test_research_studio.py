@@ -14,7 +14,7 @@ from vast_coevo.skills.library import LibrarySnapshot, empty_snapshot
 from vast_coevo.skills.models import DecisionSkill, Scope, Trigger
 from web.backend.human_customer import HumanSessionManager
 from web.backend.research_studio import (
-    ResearchRunCreate, ResearchRunManager, _designer_settings, _distribution,
+    ResearchRunCreate, ResearchRunManager, _designer_client, _designer_settings, _distribution,
     install_research_studio_routes,
 )
 
@@ -51,6 +51,18 @@ def test_research_designer_uses_frozen_long_timeout_without_output_token_cap():
     assert ResearchRunCreate().designer_timeout_seconds == 180
     with pytest.raises(ValueError):
         ResearchRunCreate(designer_timeout_seconds=601)
+
+
+def test_research_designer_http_transport_uses_frozen_timeout():
+    settings = ModelSettings(model="fixed-test-model", base_url="http://127.0.0.1/v1",
+                             timeout_seconds=180, options={})
+    client = _designer_client(settings, {"USAMI_LLM_API_KEY": "test-key"})
+    try:
+        assert client.settings.timeout_seconds == 180
+        assert client._http.timeout.read == 180
+        assert client._http.timeout.connect == 180
+    finally:
+        client.close()
 
 
 def test_designer_failure_record_keeps_only_redacted_provider_diagnostics():

@@ -20,7 +20,7 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from usami.service.client import OpenAICompatibleClient, settings_from_env
+from usami.service.client import OpenAICompatibleClient, key_from_env, settings_from_env
 from usami.service.models import ServiceError
 from usami_harness.models import digest
 from usami_v2.runtime.agents import service_tools
@@ -207,6 +207,11 @@ def _designer_settings(settings, timeout_seconds: float):
     options = {key: value for key, value in settings.options.items()
                if key not in {"max_tokens", "max_completion_tokens", "max_output_tokens"}}
     return settings.model_copy(update={"timeout_seconds": timeout_seconds, "options": options})
+
+
+def _designer_client(settings, env=None):
+    """Build the HTTP transport from the exact frozen settings used by the run."""
+    return OpenAICompatibleClient(settings, key_from_env(env))
 
 
 def _provider_failure(result: DesignerRun):
@@ -547,10 +552,10 @@ class ResearchRunManager:
                 settings = settings.model_copy(update={"model": command.designer_model})
             settings = _designer_settings(settings, command.designer_timeout_seconds)
             model_spec = _model_spec(settings)
-            client = OpenAICompatibleClient.from_env()
-            client.settings = _designer_settings(
-                client.settings.model_copy(update={"model": settings.model}),
-                command.designer_timeout_seconds)
+            # Construct the transport only after applying the run-specific
+            # timeout. Updating client.settings after from_env() would leave
+            # the already-created httpx.Client at its environment default.
+            client = _designer_client(settings)
             with self.lock:
                 row = self.runs[run_id]; row["model"] = model_spec.model_dump(mode="json")
                 self._persist(row, "designer_model_frozen")

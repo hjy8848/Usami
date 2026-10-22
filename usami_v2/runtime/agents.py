@@ -264,14 +264,29 @@ class OpenAIServiceAgent:
         "that an operation was performed. Never make multiple function calls in one response."
     )
 
-    def __init__(self, client: CompletionClient):
+    def __init__(self, client: CompletionClient, *, skill_snapshot=None,
+                 skill_domain: str = "aftersales"):
         self.client = client
         self.settings: ModelSettings = client.settings.model_copy(deep=True)
         self.last_call: Optional[AgentCall] = None
+        # Skills are optional and are only used by the Research Studio's
+        # isolated candidate runs. The default path keeps the historical S0
+        # prompt byte-for-byte unchanged.
+        self.skill_snapshot = skill_snapshot
+        self.skill_domain = skill_domain
+        self.last_skill_injection: Optional[Dict[str, Any]] = None
+        if skill_snapshot is not None:
+            from vast_coevo.skills.library import LibrarySnapshot
+            checked = LibrarySnapshot.model_validate(skill_snapshot.model_dump(mode="json"))
+            if checked.role != "service":
+                raise ValueError("Service can only receive a Service Skill snapshot")
+            self.skill_snapshot = checked
 
     def decide(self, prompt: ServicePrompt):
         self.last_call = None
-        messages = [{"role": "system", "content": self.SYSTEM},
+        system_prompt = self.SYSTEM
+        self.last_skill_injection = None
+        messages = [{"role": "system", "content": system_prompt},
                     {"role": "user", "content": json.dumps({
                         "authenticated_customer_id": prompt.customer_id,
                         "available_merchant_scope_ids": list(prompt.available_merchant_scope_ids),
@@ -283,10 +298,39 @@ class OpenAIServiceAgent:
         if history and history[0].role == "user" and history[0].content == prompt.customer_request:
             history = history[1:]
         messages.extend(row.model_dump(mode="json", exclude_none=True) for row in history)
+        if self.skill_snapshot is not None:
+            from vast_coevo.schema import digest
+            from vast_coevo.skills.renderer import render_skills
+            from vast_coevo.skills.retriever import SkillContext, SkillRetriever
+            context = SkillContext(
+                domain=self.skill_domain,
+                public_text=prompt.customer_request,
+                available_tools=tuple(sorted({
+                    row["function"]["name"] for row in service_tools()
+                    if isinstance(row, dict) and isinstance(row.get("function"), dict)
+                    and isinstance(row["function"].get("name"), str)
+                })),
+            )
+            retrieval = SkillRetriever("service").retrieve(self.skill_snapshot, context)
+            rendered = render_skills(retrieval.skills)
+            if rendered:
+                # A separate system message keeps the immutable base contract
+                # untouched and makes the exact injected guidance auditable.
+                messages.append({"role": "system", "content": rendered})
+            self.last_skill_injection = {
+                "snapshot_hash": self.skill_snapshot.snapshot_hash,
+                "context_hash": digest(context),
+                "hits": [hit.model_dump(mode="json") for hit in retrieval.hits],
+                "rendered": rendered,
+                "rendered_hash": digest(rendered),
+            }
         request = self.settings.request(messages, service_tools())
         # Qwen thinking models reject `tool_choice=required`; keep automatic
         # selection and handle a safe, side-effect-free text reply explicitly.
         request["parallel_tool_calls"] = False
+        if self.last_skill_injection is not None:
+            from vast_coevo.schema import digest
+            self.last_skill_injection["request_hash"] = digest(request)
         try:
             raw = self.client.complete(request)
         except Exception as exc:

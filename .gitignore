@@ -6,6 +6,7 @@ build/
 dist/
 outputs/
 human_records/
+research_records/
 private/
 node_modules/
 playwright-report/

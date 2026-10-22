@@ -255,9 +255,17 @@ class OpenAIDesignerProvider:
             raw = self.client.complete(request)
         except Exception as exc:
             code = getattr(exc, "code", None)
+            error = {"type": type(exc).__name__,
+                     "code": code if isinstance(code, str) else "DESIGNER_REQUEST_FAILED"}
+            # Keep bounded provider diagnostics for offline audit. The native
+            # OpenAI-compatible client redacts its credential in ServiceError
+            # responses; only persist a response after applying that redactor.
+            provider_response = getattr(exc, "response", None)
+            redactor = getattr(self.client, "_redact", None)
+            if isinstance(provider_response, dict) and callable(redactor):
+                error["provider_response"] = redactor(provider_response)
             self.last_call = AgentCall(role="designer", request=request,
-                response={"error": {"type": type(exc).__name__,
-                                     "code": code if isinstance(code, str) else "DESIGNER_REQUEST_FAILED"}})
+                                       response={"error": error})
             raise
         self.last_call = AgentCall(role="designer", request=request, response=raw,
                                    prompt_tokens=_usage(raw, "prompt_tokens"),

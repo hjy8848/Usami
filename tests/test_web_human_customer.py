@@ -8,6 +8,11 @@ from fastapi.testclient import TestClient
 from usami_v2.commerce.models import Operation, case_id, quote_id
 from usami_v2.runtime.agents import ServiceAction
 from usami_v2.runtime.runner import replay_episode
+from vast_coevo.models import ModelSpec
+from vast_coevo.reflection.reflector import ReflectionInput
+from vast_coevo.reflection.scope import DomainPolicy
+from vast_coevo.skills.library import empty_snapshot
+from web.backend.research_studio import _native_evidence
 from web.backend.app import create_app
 
 
@@ -88,7 +93,9 @@ def start(client):
                            json={"scenario_id": "refund-damaged-headphones"}, headers=headers())
     assert response.status_code == 200, response.text
     cookie = response.headers.get("set-cookie", "").lower()
-    assert "httponly" in cookie and "samesite=strict" in cookie and "path=/api/human" in cookie
+    assert "httponly" in cookie and "samesite=strict" in cookie and "path=/api" in cookie
+    # Research Studio and Human Playground intentionally share one owner cookie.
+    assert client.get("/api/research/runs").status_code == 200
     return response.json()
 
 
@@ -133,6 +140,20 @@ def test_human_reply_and_explicit_offer_accept_flow_through_runtime_engine_oracl
         assert data["study_type"] == "qualitative_manual_pilot"
         assert data["benchmark_eligible"] is False and data["training_evidence_eligible"] is False
         assert replay_episode(app.state.human_sessions.sessions[session_id].record).verified
+        evidence, interaction = _native_evidence(
+            app.state.human_sessions.sessions[session_id].record, session_id,
+            ModelSpec(model="offline-test", base_url="http://127.0.0.1/v1"),
+            service_snapshot=empty_snapshot("service"))
+        reflected = ReflectionInput(
+            generation=0, role="service", library=empty_snapshot("service"),
+            evidence=(evidence,), interaction_views=(interaction,),
+            allowed_tools=evidence.config.tools,
+            domain_policy=DomainPolicy(add_domains=("aftersales",)),
+            public_policy="manual evidence only", boundaries="no policy changes")
+        assert reflected.evidence[0].replay.verified
+        assert interaction.source == "verified_native"
+        assert interaction.customer_requests[0].message == "Please refund my damaged headphones."
+        assert interaction.oracle_events == tuple(row.model_dump(mode="json") for row in evidence.events)
         root = tmp_path / session_id
         assert json.loads((root / "manifest.json").read_text())["customer_source"] == "human"
         assert (root / "episode.json").is_file()

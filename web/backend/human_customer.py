@@ -15,6 +15,7 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
+from vast_coevo.models import ModelSpec
 from vast_coevo.schema import digest
 from usami.service.client import OpenAICompatibleClient
 from usami_v2.runtime.agents import CustomerPrompt, OpenAIServiceAgent, ServicePrompt
@@ -45,6 +46,9 @@ MAX_SERVICE_MODEL_CALLS = 32
 
 class HumanSessionCreate(BaseModel):
     scenario_id: str = Field(min_length=1, max_length=100)
+    research_run_id: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    service_skill_snapshot_hash: Optional[str] = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    comparison_arm: Optional[Literal["S0", "S1"]] = None
 
 
 class HumanTurn(BaseModel):
@@ -203,7 +207,13 @@ class HumanSession:
     replay: Optional[dict] = None
     error: Optional[str] = None
     model_name: Optional[str] = None
+    service_model_spec: Optional[Dict[str, Any]] = None
     output_path: Optional[str] = None
+    research_run_id: Optional[str] = None
+    service_skill_snapshot_hash: Optional[str] = None
+    comparison_arm: Optional[str] = None
+    service_skill_snapshot: Any = None
+    skill_audit: Dict[str, Any] = field(default_factory=dict)
     condition: threading.Condition = field(default_factory=lambda: threading.Condition(threading.RLock()))
     agent: Any = None
     thread: Any = None
@@ -261,14 +271,35 @@ class HumanSessionManager:
         self.sessions: Dict[str, HumanSession] = {}
         self.lock = threading.RLock()
         self.service_factory = service_factory or self._real_service
+        self.skill_snapshots: Dict[str, Any] = {}
         self.output_dir = Path(output_dir or os.environ.get(
             "USAMI_HUMAN_OUTPUT_DIR",
             Path(__file__).resolve().parents[2] / "human_records"))
 
     @staticmethod
-    def _real_service():
+    def _real_service(skill_snapshot=None):
         client = OpenAICompatibleClient.from_env()
-        return OpenAIServiceAgent(client), client
+        return OpenAIServiceAgent(client, skill_snapshot=skill_snapshot), client
+
+    def register_scenario(self, scenario: CertifiedScenario):
+        """Register a native, independently certified scenario for local research."""
+        if not isinstance(scenario, CertifiedScenario):
+            raise TypeError("only a native CertifiedScenario can be registered")
+        if scenario.world.state_hash != scenario.task.world_hash:
+            raise ValueError("registered scenario task is not bound to its frozen world")
+        if not verify_task_certificate(scenario.world, scenario.task, scenario.proof_customer,
+                                      scenario.task_certificate)["verified"]:
+            raise ValueError("registered scenario certificate failed independent verification")
+        with self.lock:
+            self.scenarios[scenario.scenario_id] = scenario
+
+    def register_skill_snapshot(self, snapshot):
+        from vast_coevo.skills.library import LibrarySnapshot
+        checked = LibrarySnapshot.model_validate(snapshot.model_dump(mode="json"))
+        if checked.role != "service":
+            raise ValueError("only Service snapshots can be injected into Human Service sessions")
+        with self.lock:
+            self.skill_snapshots[checked.snapshot_hash] = checked
 
     def cleanup(self):
         now = time.monotonic()
@@ -286,8 +317,19 @@ class HumanSessionManager:
                     if row.agent:
                         row.agent.cancel(row.cancel_reason)
 
-    def create(self, owner_id: str, scenario_id: str) -> HumanSession:
+    def create(self, owner_id: str, scenario_id: str, *, research_run_id: Optional[str] = None,
+               service_skill_snapshot_hash: Optional[str] = None,
+               comparison_arm: Optional[str] = None) -> HumanSession:
         self.cleanup()
+        if comparison_arm == "S0" and service_skill_snapshot_hash is not None:
+            raise HTTPException(422, detail={"code": "S0_MUST_BE_SKILL_FREE",
+                "message": "S0 is the no-candidate-Skill arm; a Skill Snapshot cannot be attached."})
+        if comparison_arm == "S1" and (not research_run_id or not service_skill_snapshot_hash):
+            raise HTTPException(422, detail={"code": "S1_REQUIRES_CANDIDATE",
+                "message": "S1 needs a Research Run and a statically validated candidate Snapshot."})
+        if service_skill_snapshot_hash and not research_run_id:
+            raise HTTPException(422, detail={"code": "SKILL_RUN_BINDING_REQUIRED",
+                "message": "A candidate Skill may only be injected from a bound Research Run."})
         scenario = self.scenarios.get(scenario_id)
         if scenario is None:
             raise HTTPException(404, detail={"code": "SCENARIO_NOT_FOUND", "message": "该认证场景不存在。"})
@@ -304,16 +346,43 @@ class HumanSessionManager:
                 self.cleanup()
                 if len(self.sessions) >= MAX_RETAINED_SESSIONS:
                     raise HTTPException(503, detail={"code": "SESSION_CAPACITY", "message": "本地会话存储已满。"})
+        skill_snapshot = None
+        if service_skill_snapshot_hash:
+            with self.lock:
+                skill_snapshot = self.skill_snapshots.get(service_skill_snapshot_hash)
+            if skill_snapshot is None:
+                raise HTTPException(404, detail={"code": "SKILL_SNAPSHOT_NOT_FOUND",
+                    "message": "候选 Service Snapshot 不存在或尚未通过静态检查。"})
         try:
-            service_agent, client = self.service_factory()
+            if skill_snapshot is not None and getattr(self.service_factory, "__func__", None) is HumanSessionManager._real_service:
+                service_agent, client = self.service_factory(skill_snapshot=skill_snapshot)
+            elif skill_snapshot is not None:
+                import inspect
+                if "skill_snapshot" not in inspect.signature(self.service_factory).parameters:
+                    raise ValueError("configured service factory cannot attest Skill injection")
+                service_agent, client = self.service_factory(skill_snapshot=skill_snapshot)
+            else:
+                service_agent, client = self.service_factory()
         except Exception as exc:
             # Provider exceptions are sanitized by the client; never include env or headers.
             raise HTTPException(503, detail={"code": "SERVICE_NOT_CONFIGURED",
                 "message": "真实 Service 尚未配置或初始化失败。请检查 USAMI_LLM_MODEL、USAMI_LLM_BASE_URL 和本机凭据配置；密钥不会由浏览器读取。"}) from exc
         sid = secrets.token_urlsafe(32)
+        service_settings = getattr(service_agent, "settings", None)
+        service_model_spec = None
+        if service_settings is not None:
+            service_model_spec = ModelSpec(
+                model=service_settings.model, base_url=service_settings.base_url,
+                options=service_settings.options, timeout_seconds=service_settings.timeout_seconds,
+                trust_env=service_settings.trust_env).model_dump(mode="json")
         session = HumanSession(session_id=sid, owner_id=owner_id,
                                scenario=scenario, status="starting",
-                               model_name=getattr(getattr(service_agent, "settings", None), "model", None))
+                               model_name=getattr(getattr(service_agent, "settings", None), "model", None),
+                               service_model_spec=service_model_spec,
+                               research_run_id=research_run_id,
+                               service_skill_snapshot_hash=service_skill_snapshot_hash,
+                               comparison_arm=comparison_arm,
+                               service_skill_snapshot=skill_snapshot)
         human_agent = HumanCustomerAgent(session)
         session.agent = human_agent
         with self.lock:
@@ -361,10 +430,12 @@ class HumanSessionManager:
                                          max_model_calls=MAX_SERVICE_MODEL_CALLS),
                     mode="reference", on_progress=progress, cancel_check=cancelled)
                 replay = replay_episode(record)
-                output_path = self._persist(session, record, replay.model_dump(mode="json"))
+                skill_audit = self._skill_audit(record, service_agent, skill_snapshot)
+                output_path = self._persist(session, record, replay.model_dump(mode="json"), skill_audit)
                 with session.condition:
                     session.record = record
                     session.replay = replay.model_dump(mode="json")
+                    session.skill_audit = skill_audit
                     session.output_path = str(output_path)
                     if record.status == "customer_finished":
                         session.status = "completed"
@@ -395,7 +466,32 @@ class HumanSessionManager:
         thread.start()
         return session
 
-    def _persist(self, session: HumanSession, record: EpisodeRecord, replay: dict) -> Path:
+    @staticmethod
+    def _skill_audit(record: EpisodeRecord, service_agent, snapshot) -> dict:
+        from vast_coevo.schema import digest
+        if snapshot is None:
+            return {"snapshot_hash": None, "injected_request_count": 0,
+                    "matched_skill_ids": [], "request_hashes": []}
+        needles = {row.id: f'<VAST_SKILL id="{row.id}" version="{row.version}" type="{row.type}" content_hash="{row.content_hash}">'
+                   for row in snapshot.skills}
+        hashes, matched = [], set()
+        injected = 0
+        for call in record.model_calls:
+            if call.role != "service":
+                continue
+            messages = call.request.get("messages", []) if isinstance(call.request, dict) else []
+            content = "\n".join(str(row.get("content", "")) for row in messages if isinstance(row, dict))
+            found = [skill_id for skill_id, needle in needles.items() if needle in content]
+            if found:
+                injected += 1
+                matched.update(found)
+                hashes.append(digest(call.request))
+        return {"snapshot_hash": snapshot.snapshot_hash, "injected_request_count": injected,
+                "matched_skill_ids": sorted(matched), "request_hashes": hashes,
+                "last_retrieval_trace": getattr(service_agent, "last_skill_injection", None)}
+
+    def _persist(self, session: HumanSession, record: EpisodeRecord, replay: dict,
+                 skill_audit: Optional[dict] = None) -> Path:
         root = self.output_dir / session.session_id
         root.mkdir(parents=True, exist_ok=False, mode=0o700)
         os.chmod(root, 0o700)
@@ -415,6 +511,11 @@ class HumanSessionManager:
             "task_certificate": session.scenario.task_certificate.model_dump(mode="json"),
             "profile_hash": session.scenario.profile.record_hash,
             "service_model": session.model_name,
+            "service_model_spec": session.service_model_spec,
+            "service_skill_snapshot_hash": session.service_skill_snapshot_hash,
+            "comparison_arm": session.comparison_arm,
+            "research_run_id": session.research_run_id,
+            "skill_injection_audit": skill_audit or {},
             "episode_hash": record.record_hash,
             "replay": replay,
             "episode_file": "episode.json",
@@ -450,6 +551,11 @@ class HumanSessionManager:
                 "scenario": _public_scenario(session.scenario),
                 "timeline": list(session.timeline), "pending_turn": pending,
                 "model_name": session.model_name, "model_calls_limit": MAX_SERVICE_MODEL_CALLS,
+                "service_model_spec": session.service_model_spec,
+                "research_run_id": session.research_run_id,
+                "service_skill_snapshot_hash": session.service_skill_snapshot_hash,
+                "comparison_arm": session.comparison_arm,
+                "skill_injection_audit": session.skill_audit,
                 "tool_calls": sum(item.get("kind") == "tool" for item in session.timeline),
                 "error": session.error,
                 "study_type": "qualitative_manual_pilot", "customer_source": "human",
@@ -473,6 +579,11 @@ class HumanSessionManager:
                 "replay": session.replay,
                 "costs": record.costs,
                 "model_name": session.model_name,
+                "service_model_spec": session.service_model_spec,
+                "service_skill_snapshot_hash": session.service_skill_snapshot_hash,
+                "comparison_arm": session.comparison_arm,
+                "research_run_id": session.research_run_id,
+                "skill_injection_audit": session.skill_audit,
                 "persisted_at": session.output_path,
             }
 
@@ -507,7 +618,7 @@ def install_human_customer_routes(app: FastAPI):
             value = secrets.token_urlsafe(32)
             response.set_cookie(HUMAN_COOKIE, value, httponly=True, samesite="strict",
                                 secure=request.url.scheme == "https", max_age=HUMAN_TTL_SECONDS,
-                                path="/api/human")
+                                path="/api")
             return value
         raise HTTPException(401, detail={"code": "HUMAN_COOKIE_REQUIRED", "message": "请重新打开本地实验台。"})
 
@@ -534,12 +645,15 @@ def install_human_customer_routes(app: FastAPI):
     def create_human_session(command: HumanSessionCreate, request: Request, response: Response):
         local_browser(request, mutation=True)
         owner_id = owner(request, response)
-        session = manager.create(owner_id, command.scenario_id)
+        session = manager.create(owner_id, command.scenario_id,
+                                 research_run_id=command.research_run_id,
+                                 service_skill_snapshot_hash=command.service_skill_snapshot_hash,
+                                 comparison_arm=command.comparison_arm)
         # If an existing cookie was used, keep its remaining local lifetime fresh.
         if request.cookies.get(HUMAN_COOKIE):
             response.set_cookie(HUMAN_COOKIE, owner_id, httponly=True, samesite="strict",
                                 secure=request.url.scheme == "https", max_age=HUMAN_TTL_SECONDS,
-                                path="/api/human")
+                                path="/api")
         return manager.public_session(session)
 
     @app.get("/api/human/sessions/{session_id}")

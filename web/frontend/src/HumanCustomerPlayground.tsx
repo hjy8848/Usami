@@ -46,6 +46,10 @@ const money = (cents?: number | null) => cents == null ? '—' : `¥${(cents / 1
 const display = (status: string) => labels[status] ?? status;
 
 export default function HumanCustomerPlayground() {
+  const entryParams = useMemo(() => new URLSearchParams(location.search), []);
+  const researchRunId = entryParams.get('researchRunId');
+  const comparisonArm = entryParams.get('arm') === 'S1' ? 'S1' : entryParams.get('arm') === 'S0' ? 'S0' : null;
+  const skillSnapshotHash = entryParams.get('skillSnapshotHash');
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [config, setConfig] = useState<Config | null>(null);
   const [scenarioId, setScenarioId] = useState('');
@@ -64,10 +68,12 @@ export default function HumanCustomerPlayground() {
         api<Config>('/human/config'),
       ]);
       setScenarios(catalog.scenarios);
-      setScenarioId(current => current || catalog.scenarios[0]?.scenario_id || '');
+      const requestedScenario = entryParams.get('scenario');
+      setScenarioId(current => current || (catalog.scenarios.some(row => row.scenario_id === requestedScenario)
+        ? requestedScenario! : catalog.scenarios[0]?.scenario_id || ''));
       setConfig(model);
     } catch (cause) { setError(String(cause)); }
-  }, []);
+  }, [entryParams]);
   useEffect(() => {
     void loadCatalog();
     const savedSession = sessionStorage.getItem(SESSION_STORAGE_KEY);
@@ -113,7 +119,9 @@ export default function HumanCustomerPlayground() {
     if (!scenario) return;
     setBusy(true); setError(''); setReport(null); setReportError('');
     try {
-      const created = await api<Session>('/human/sessions', { scenario_id: scenario.scenario_id });
+      const created = await api<Session>('/human/sessions', { scenario_id: scenario.scenario_id,
+        research_run_id: researchRunId, comparison_arm: comparisonArm,
+        service_skill_snapshot_hash: comparisonArm === 'S1' ? skillSnapshotHash : null });
       setSession(created);
       sessionStorage.setItem(SESSION_STORAGE_KEY, created.session_id);
     } catch (cause) { setError(String(cause)); }
@@ -144,7 +152,9 @@ export default function HumanCustomerPlayground() {
     if (current) {
       setBusy(true);
       try {
-        const created = await api<Session>('/human/sessions', { scenario_id: current });
+        const created = await api<Session>('/human/sessions', { scenario_id: current,
+          research_run_id: researchRunId, comparison_arm: comparisonArm,
+          service_skill_snapshot_hash: comparisonArm === 'S1' ? skillSnapshotHash : null });
         setSession(created);
         sessionStorage.setItem(SESSION_STORAGE_KEY, created.session_id);
       }
@@ -240,7 +250,8 @@ export default function HumanCustomerPlayground() {
           </> : <div className="report-loading"><Loader2 className="human-spin" size={17} />正在封存 Episode 并执行离线 Replay…</div>}
         </section>}
       </>}
-      <footer className="human-footer"><span>Usami 2.0 · Human Customer Playground</span><span>本地研究工具 · 不自动训练、不回流正式评测</span></footer>
+      {finished && researchRunId && <a className="return-to-research" href={`/?mode=research&run_id=${encodeURIComponent(researchRunId)}&episode_session_id=${encodeURIComponent(session.session_id)}&arm=${comparisonArm || 'S0'}`}><ArrowLeft size={15} />返回 Research Studio 并执行 Replay 关联</a>}
+      <footer className="human-footer"><span>Usami 2.0 · Human Customer Playground</span><span>本地研究工具 · 不自动训练、不回流正式评测</span><a href="/?mode=research">Research Studio</a></footer>
     </main>
   </div>;
 }

@@ -20,7 +20,10 @@ from .schema import Attribute
 REMEDY_REQUEST_PATTERNS = {
     "refund": (
         r"\b(?:please\s+)?refund\s+(?:my|this|the|me|it)\b",
-        r"\b(?:i\s+(?:want|need|request|would\s+like))\s+(?:a\s+)?(?:refund|reimbursement)\b",
+        r"\b(?:i\s+(?:want|need|request|would\s+like)|i['’]d\s+like)\s+"
+        r"(?:a\s+)?(?:full\s+)?(?:refund|reimbursement)\b",
+        r"\b[a-z][a-z -]{1,64}\s+(?:needs?|requires?)\s+"
+        r"(?:a\s+)?(?:full\s+)?(?:refund|reimbursement)\b",
         r"\b(?:give|send)\s+me\s+(?:a\s+)?refund\b",
         r"\b(?:i\s+(?:want|need))\s+my\s+money\s+back\b",
         r"(?:给我退款|请.{0,8}退款|我(?:要|想|需要|要求|希望).{0,4}退款|退钱给我)",
@@ -198,12 +201,16 @@ def _positive_remedy_request(text, remedy):
     negative_suffix = re.compile(r"^\s*(?:not|isn't|is\s+not|not\s+wanted|not\s+needed|not\s+accepted)\b", re.I)
     negative_cjk_prefix = re.compile(r"(?:不接受|不同意|不要|不想|不需要|无需|拒绝|不愿|不希望|别|禁止|请勿).{0,10}$")
     negative_cjk_suffix = re.compile(r"^.{0,8}(?:不接受|不同意|不要|不想|不需要|无需|拒绝|别|禁止|请勿)")
+    negative_inside = re.compile(
+        r"\b(?:no|not|never|don't|do\s+not|doesn't|does\s+not|didn't|did\s+not|"
+        r"cannot|can't|will\s+not|won't|wouldn't|would\s+not|shouldn't|should\s+not)\b", re.I)
     text = " ".join(text.casefold().split())
     for pattern in REMEDY_REQUEST_PATTERNS[remedy]:
         for match in re.finditer(pattern, text, re.I):
             prefix = text[max(0, match.start() - 48):match.start()]
             suffix = text[match.end():match.end() + 18]
-            if negative_prefix.search(prefix) or negative_suffix.search(suffix):
+            if (negative_prefix.search(prefix) or negative_suffix.search(suffix)
+                    or negative_inside.search(match.group(0))):
                 continue
             if (negative_cjk_prefix.search(prefix) or negative_cjk_suffix.search(suffix)
                     or negative_cjk_prefix.search(match.group(0))

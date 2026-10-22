@@ -499,3 +499,27 @@ def test_natural_replacement_and_wrong_item_requests_name_supported_remedies(req
 
     assert request_names_remedy(request_text, remedies)
     assert not request_names_remedy("I don't want a replacement for the damaged laptop.", ("exchange",))
+
+
+def test_natural_full_refund_request_and_negation_are_grounded_correctly():
+    from usami_v2.scenarios.tasks import request_names_remedy
+
+    request = ("The damaged lighting lamp I received needs a full refund. Also, the wrong-item furniture "
+               "chair that was sent instead of what I ordered - I want to exchange it for the correct one, "
+               "and I need it within 5 days.")
+    draft = TaskDraft(task_id="natural-full-refund", customer_alias="alice", customer_request=request,
+        remedy_goals=(
+            {"goal_id": "lamp-refund", "line_alias": "lamp_line",
+             "public_request_span": "The damaged lighting lamp I received needs a full refund",
+             "subject_mention": "damaged lighting lamp", "quantity": 1, "allowed_remedies": ["refund"]},
+            {"goal_id": "chair-exchange", "line_alias": "chair_line",
+             "public_request_span": "wrong-item furniture chair that was sent instead of what I ordered - "
+                                    "I want to exchange it for the correct one, and I need it within 5 days",
+             "subject_mention": "wrong-item furniture chair", "quantity": 1,
+             "allowed_remedies": ["exchange"], "latest_arrival_within_days": 5},
+        ))
+    assert len(draft.remedy_goals) == 2
+    assert request_names_remedy("The damaged lamp needs a full refund.", ("refund",))
+    assert request_names_remedy("I'd like a full refund for my damaged lamp.", ("refund",))
+    assert not request_names_remedy("The damaged lamp does not need a full refund.", ("refund",))
+    assert not request_names_remedy("I don't want a refund for the damaged lamp.", ("refund",))

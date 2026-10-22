@@ -3,6 +3,7 @@ import json
 from datetime import timedelta
 
 from usami_v2.runtime.agents import AgentCall
+from usami.service.models import ServiceError
 from usami_v2.scenarios.distribution import (
     BusinessSource, BusinessStratum, DistributionSpec, sample_schedule,
 )
@@ -76,6 +77,21 @@ class CorrectingDesigner:
         raw = {"phase": phase, "attempt": len(self.contexts)}
         return output, AgentCall(role="designer", request=raw,
             response={"choices": [{"message": {"role": "assistant", "content": "offline correction fixture"}}]})
+
+
+class TimeoutDesigner:
+    def __init__(self):
+        self.calls = 0
+        self.last_call = None
+
+    def submit(self, phase, messages, model):
+        self.calls += 1
+        request = {"phase": phase, "messages": messages}
+        self.last_call = AgentCall(role="designer", request=request,
+            response={"error": {"code": "PROVIDER_TIMEOUT",
+                                "provider_response": {"timeout_phase": "ReadTimeout"}}})
+        raise ServiceError("PROVIDER_TIMEOUT", "LLM request timed out; no retry performed",
+                           {"timeout_phase": "ReadTimeout"})
 
 
 def proof_customer(world, task):
@@ -154,6 +170,21 @@ def test_task_compiler_feedback_is_bounded_and_does_not_rebuild_frozen_world():
     assert [row.status for row in run.task_attempts] == ["REJECTED", "CERTIFIED"]
     correction = json.loads(provider.contexts[2][1][1]["content"])
     assert any("unknown order-line alias" in row for row in correction["validator_feedback"])
+
+
+def test_provider_timeout_blocks_without_spending_proposal_correction_attempts():
+    provider = TimeoutDesigner()
+    distribution, slot = distribution_and_slot(64)
+    run = design_and_certify(provider, distribution, slot,
+        customer_scenario_factory=proof_customer, max_attempts=3)
+
+    assert run.status == "BLOCKED"
+    assert provider.calls == 1
+    assert len(run.calls) == len(run.world_attempts) == 1
+    assert run.world_attempts[0].status == "ERROR"
+    assert "world provider failed: PROVIDER_TIMEOUT" in run.validation_errors[0]
+    assert "proposal rejected" not in run.validation_errors[0]
+    assert run.calls[0].validation_feedback == ""
 
 
 def test_post_run_quality_is_separate_diagnostic_not_a_selection_rule():

@@ -416,6 +416,8 @@ def test_transport_timeout_and_invalid_http_success_body_are_replayable(fault):
         client.close()
     assert len(attempts) == 1 and execution.metrics["engine_operations"] == 0
     assert execution.status == ("provider_error" if fault == "timeout" else "model_output_error")
+    if fault == "timeout":
+        assert execution.llm_records[0].response == {"timeout_phase": "ReadTimeout"}
     assert "sensitive-provider-detail" not in execution.model_dump_json()
     assert replay_execution(execution) == execution
 

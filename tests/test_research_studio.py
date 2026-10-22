@@ -14,7 +14,8 @@ from vast_coevo.skills.library import LibrarySnapshot, empty_snapshot
 from vast_coevo.skills.models import DecisionSkill, Scope, Trigger
 from web.backend.human_customer import HumanSessionManager
 from web.backend.research_studio import (
-    ResearchRunManager, _distribution, install_research_studio_routes,
+    ResearchRunCreate, ResearchRunManager, _designer_settings, _distribution,
+    install_research_studio_routes,
 )
 
 
@@ -38,6 +39,18 @@ def test_research_distribution_reseals_difficulty_strata_and_samples():
         assert checked.record_hash == spec.record_hash
         assert all("small number of prerequisites" in row.contexts[-1] for row in spec.strata)
         assert len(sample_schedule(spec, seed=42, count=1)) == 1
+
+
+def test_research_designer_uses_frozen_long_timeout_without_output_token_cap():
+    settings = ModelSettings(model="fixed-test-model", base_url="http://127.0.0.1/v1",
+                             timeout_seconds=60, options={"max_tokens": 2048, "temperature": 0})
+    configured = _designer_settings(settings, 180)
+
+    assert configured.timeout_seconds == 180
+    assert configured.options == {"temperature": 0}
+    assert ResearchRunCreate().designer_timeout_seconds == 180
+    with pytest.raises(ValueError):
+        ResearchRunCreate(designer_timeout_seconds=601)
 
 
 def test_designer_failure_record_keeps_only_redacted_provider_diagnostics():

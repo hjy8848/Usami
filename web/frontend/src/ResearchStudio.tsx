@@ -18,7 +18,7 @@ const stageDetails = [
   '保留请求、响应、证书、Episode、Skill Snapshot 和导出审计包。',
 ];
 const code = (value: unknown) => typeof value === 'string' ? value : JSON.stringify(value, null, 2);
-const stateLabel: Record<string, string> = { QUEUED: '排队中', RUNNING: '进行中', SUBMITTED: '已提交', COMPLETED: '完成', CERTIFIED: '已认证', READY: '可开始', READY_FOR_CUSTOMER: '等待真人 Episode', READY_FOR_SKILL_TEST: '候选可测试', REFLECTION_COMPLETE: '反思结束', INCONCLUSIVE: '证据不足', REJECTED: '拒绝', UNKNOWN: '未知', FAILED: '失败', NOT_STARTED: '未开始', NOT_AVAILABLE: '不可用', WAITING_FOR_EPISODE: '等待 Episode' };
+const stateLabel: Record<string, string> = { QUEUED: '排队中', RUNNING: '进行中', SUBMITTED: '已提交', COMPLETED: '完成', CERTIFIED: '已认证', READY: '可开始', READY_FOR_CUSTOMER: '等待真人 Episode', READY_FOR_SKILL_TEST: '候选可测试', REFLECTION_COMPLETE: '反思结束', INCONCLUSIVE: '证据不足', REJECTED: '拒绝', UNKNOWN: '未知', FAILED: '失败', BLOCKED: '已阻塞', BLOCKED_PROVIDER_TIMEOUT: '模型请求超时', BLOCKED_PROVIDER_ERROR: '模型服务错误', PROVIDER_TIMEOUT: '模型请求超时', PROVIDER_HTTP_ERROR: '模型接口错误', PROVIDER_CONNECTION_ERROR: '模型连接错误', ERROR: '系统错误', NOT_STARTED: '未开始', NOT_AVAILABLE: '不可用', WAITING_FOR_EPISODE: '等待 Episode' };
 const humanState = (v?: string) => !v ? '未开始' : stateLabel[v] ?? v;
 function behaviorExplanation(stage: number, run: Run | null, config: Config | null) {
   if (!run) return stageDetails[stage] + (config?.model ? ` 当前后端模型：${config.model}。` : ' 当前还没有模型配置。');
@@ -47,6 +47,7 @@ export default function ResearchStudio() {
   const [difficulty, setDifficulty] = useState('multi_objective');
   const [model, setModel] = useState('');
   const [attempts, setAttempts] = useState(2);
+  const [designerTimeout, setDesignerTimeout] = useState(180);
   const [builderNodes, setBuilderNodes] = useState(512);
   const [proofCandidates, setProofCandidates] = useState(512);
   const [proofSteps, setProofSteps] = useState(64);
@@ -62,6 +63,7 @@ export default function ResearchStudio() {
       const current = await api<Run>(`/research/runs/${id}`);
       setRun(current);
       setModel(current.model?.model || '');
+      setDesignerTimeout(current.input?.designer_timeout_seconds || 180);
       return current;
     }
     return null;
@@ -76,7 +78,7 @@ export default function ResearchStudio() {
         const id = params.get('run_id');
         if (id) {
           const current = await api<Run>(`/research/runs/${id}`);
-          if (alive) { setRun(current); setModel(current.model?.model || ''); }
+          if (alive) { setRun(current); setModel(current.model?.model || ''); setDesignerTimeout(current.input?.designer_timeout_seconds || 180); }
         }
         if (alive) setLoaded(true);
       }).catch(cause => alive && setError(String(cause)));
@@ -108,7 +110,7 @@ export default function ResearchStudio() {
     event.preventDefault(); setBusy(true); setError('');
     try {
       const created = await api<Run>('/research/runs', { seed, distribution, split, difficulty_preference: difficulty,
-        designer_model: model.trim() || null, max_attempts: attempts, build_nodes: builderNodes,
+        designer_model: model.trim() || null, designer_timeout_seconds: designerTimeout, max_attempts: attempts, build_nodes: builderNodes,
         proof_candidates: proofCandidates, proof_steps: proofSteps });
       setRun(created); setStage(0); setRuns(await api<{ runs: Run[] }>('/research/runs').then(x => x.runs));
       const url = new URL(location.href); url.searchParams.set('run_id', created.run_id); history.replaceState(null, '', url);
@@ -188,7 +190,8 @@ export default function ResearchStudio() {
             <label>研究分布<select value={distribution} onChange={e => setDistribution(e.target.value)}><option value="mixed_after_sales">混合售后边界</option><option value="multi_line">多商品组合</option><option value="inventory_and_deadline">库存与时限权衡</option></select></label>
             <div className="research-field-row"><label>冻结 Seed<input type="number" value={seed} onChange={e => setSeed(Number(e.target.value))} /></label><label>数据分区<select value={split} onChange={e => setSplit(e.target.value)}><option value="train">train（人工探索，不自动训练）</option><option value="validation">validation</option><option value="heldout">held-out（不输入反思）</option></select></label></div>
             <div className="research-field-row"><label>生成方向<select value={difficulty} onChange={e => setDifficulty(e.target.value)}><option value="basic">基础</option><option value="complex">复杂</option><option value="multi_objective">多目标</option></select><small>仅为提示偏好，不是经验证的难度分数。</small></label><label>Designer 模型<input value={model || config?.model || ''} onChange={e => setModel(e.target.value)} placeholder="使用后端当前模型" /></label></div>
-            <div className="research-field-row research-budget-fields"><label>提案尝试<input type="number" min={1} max={3} value={attempts} onChange={e => setAttempts(Number(e.target.value))} /><small>每个模型阶段最多 3 次，保留每次反馈。</small></label><label>Builder 节点预算<input type="number" min={1} max={100000} value={builderNodes} onChange={e => setBuilderNodes(Number(e.target.value))} /></label></div>
+            <div className="research-field-row research-budget-fields"><label>提案尝试<input type="number" min={1} max={3} value={attempts} onChange={e => setAttempts(Number(e.target.value))} /><small>用于提案或验证纠错；网络错误会立即停止，不会当成纠错重试。</small></label><label>Builder 节点预算<input type="number" min={1} max={100000} value={builderNodes} onChange={e => setBuilderNodes(Number(e.target.value))} /></label></div>
+            <div className="research-field-row research-budget-fields"><label>Designer 单次请求超时（秒）<input type="number" min={1} max={600} value={designerTimeout} onChange={e => setDesignerTimeout(Number(e.target.value))} /><small>默认 180 秒；记录到本次运行。Designer 不设输出 Token 上限。</small></label><div className="research-field-note">请求超时会阻塞当前阶段，不会再被当作提案校验错误重试。</div></div>
             <div className="research-field-row research-budget-fields"><label>Reference 候选预算<input type="number" min={1} max={10000} value={proofCandidates} onChange={e => setProofCandidates(Number(e.target.value))} /></label><label>Reference 最大操作步数<input type="number" min={1} max={2000} value={proofSteps} onChange={e => setProofSteps(Number(e.target.value))} /></label></div>
             <div className="research-budgets"><span><strong>最多 2</strong> 同时研究运行</span><span><strong>3</strong> 尝试上限</span><span>预算固定后随运行保存</span></div>
             <button className="research-primary" disabled={!config?.configured || busy || active} data-testid="create-designer-run">{busy || active ? <Loader2 className="research-spin" size={16} /> : <Play size={16} />}{active ? 'Designer 正在运行…' : 'Designer 自主生成并认证'}</button>
@@ -218,7 +221,7 @@ function DesignerResult({ run, onRetry, onNext, onCancel, canCancel }: { run: Ru
       <div className="research-result-grid"><Metric label="World" value={designer.build_result?.status || '未生成'} detail={designer.build_result?.reason || '没有 Builder 结果'} /><Metric label="Task" value={designer.status} detail={designer.validation_errors?.slice(-1)[0] || '查看 Native Reference 认证'} /><Metric label="Designer 请求" value={designer.calls?.length ?? 0} detail="实际模型调用，含失败响应" /><Metric label="World Hash" value={designer.build_result?.world_hash?.slice(0, 13) || '—'} detail="完整哈希在记录中" /></div>
       {run.error && <div className="research-warning"><CircleAlert size={15} />{run.error.messages?.join(' · ') || run.error.message}</div>}
       <div className="research-subheading"><h3>生成轨迹</h3><span>真实请求与模型响应</span></div>
-      {(designer.calls || []).map((call: AnyRow, index: number) => <div className="designer-call-row" key={index}><span className="call-phase">{call.phase === 'world' ? '世界' : '任务'} · 第 {call.attempt + 1} 次</span><span>{call.call?.prompt_tokens != null ? `${call.call.prompt_tokens} in / ${call.call.completion_tokens ?? '—'} out` : 'Token 未报告'}</span><StatusPill value={call.validation_feedback ? 'REJECTED' : 'SUBMITTED'} /><JsonDetails title="模型原始请求与回复" value={{ request: call.call?.request, response: call.call?.response, validation_feedback: call.validation_feedback }} /></div>)}
+      {(designer.calls || []).map((call: AnyRow, index: number) => <div className="designer-call-row" key={index}><span className="call-phase">{call.phase === 'world' ? '世界' : '任务'} · 第 {call.attempt + 1} 次</span><span>{call.call?.prompt_tokens != null ? `${call.call.prompt_tokens} in / ${call.call.completion_tokens ?? '—'} out` : 'Token 未报告'}</span><StatusPill value={call.call?.response?.error?.code || (call.validation_feedback ? 'REJECTED' : 'SUBMITTED')} /><JsonDetails title="模型原始请求与回复" value={{ request: call.call?.request, response: call.call?.response, validation_feedback: call.validation_feedback }} /></div>)}
       <div className="research-two-cards"><article><span className="research-eyebrow">BUILDER</span><h3>世界构造</h3><p>{designer.build_result?.status || '未运行'} · {designer.build_result?.reason || '—'}</p>{designer.build_result?.world && <div className="world-facts"><span>{Object.keys(designer.build_result.world.customers || {}).length} 顾客</span><span>{Object.keys(designer.build_result.world.orders || {}).length} 订单</span><span>{Object.keys(designer.build_result.world.lines || {}).length} 商品行</span><span>{Object.keys(designer.build_result.world.skus || {}).length} SKU</span><span>{Object.keys(designer.build_result.world.warehouses || {}).length} 仓库</span></div>}{designer.scenario_spec && <JsonDetails title="ScenarioSpec 与 SAT 约束" value={designer.scenario_spec} />}</article><article><span className="research-eyebrow">TASK DESIGNER</span><h3>任务提交</h3><p>{designer.task_draft?.customer_request || '尚未提交公开请求'}</p>{designer.task_draft && <JsonDetails title="TaskDraft 原始内容" value={designer.task_draft} />}{designer.task_attempts?.map((attempt: AnyRow, i: number) => <div className="attempt-line" key={i}><StatusPill value={attempt.status} /><span>{attempt.reason || '原生任务认证已运行'}</span></div>)}</article></div>
       {designer.build_result?.world && <WorldOverview world={designer.build_result.world} />}
       {designer.status === 'CERTIFIED' ? <button className="research-primary narrow" onClick={onNext}>查看任务目标与证书<ArrowRight size={16} /></button> : <div className="research-notice"><LockKeyhole size={16} />当前没有通过认证的任务，因此不会暴露 Human Episode 启动入口。</div>}

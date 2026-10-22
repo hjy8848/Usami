@@ -132,8 +132,11 @@ class OpenAICompatibleClient:
         try:
             response = self._http.post(self.settings.base_url + "/chat/completions", headers=headers,
                                        json=self._provider_payload(request))
-        except httpx.TimeoutException:
-            raise ServiceError("PROVIDER_TIMEOUT", "LLM request timed out; no retry performed") from None
+        except httpx.TimeoutException as exc:
+            # Preserve only the timeout class, never the request or URL. This
+            # distinguishes connect/read/write/pool timeouts in audited records.
+            raise ServiceError("PROVIDER_TIMEOUT", "LLM request timed out; no retry performed",
+                               {"timeout_phase": type(exc).__name__}) from None
         except httpx.HTTPError:
             raise ServiceError("PROVIDER_CONNECTION_ERROR", "LLM transport failed; no retry performed") from None
         if response.status_code != 200:

@@ -61,6 +61,7 @@ class ResearchRunCreate(BaseModel):
     distribution: Literal["mixed_after_sales", "multi_line", "inventory_and_deadline"] = "mixed_after_sales"
     difficulty_preference: Literal["basic", "complex", "multi_objective"] = "multi_objective"
     designer_model: Optional[str] = Field(default=None, min_length=1, max_length=120)
+    designer_timeout_seconds: float = Field(default=180.0, gt=0, le=600)
     max_attempts: int = Field(default=2, ge=1, le=3, strict=True)
     build_nodes: int = Field(default=512, ge=1, le=100000, strict=True)
     proof_candidates: int = Field(default=512, ge=1, le=10000, strict=True)
@@ -199,6 +200,23 @@ def _certified_scenario(run: DesignerRun) -> CertifiedScenario:
 def _model_spec(settings) -> ModelSpec:
     return ModelSpec(model=settings.model, base_url=settings.base_url, options=settings.options,
                      timeout_seconds=settings.timeout_seconds, trust_env=settings.trust_env)
+
+
+def _designer_settings(settings, timeout_seconds: float):
+    """Use an explicit, frozen Designer timeout and honor the no-output-cap pilot setting."""
+    options = {key: value for key, value in settings.options.items()
+               if key not in {"max_tokens", "max_completion_tokens", "max_output_tokens"}}
+    return settings.model_copy(update={"timeout_seconds": timeout_seconds, "options": options})
+
+
+def _provider_failure(result: DesignerRun):
+    for call in reversed(result.calls):
+        response = call.call.response
+        error = response.get("error") if isinstance(response, dict) else None
+        code = error.get("code") if isinstance(error, dict) else None
+        if isinstance(code, str) and code.startswith("PROVIDER_"):
+            return call.phase, code
+    return None, None
 
 
 def _native_evidence(record, episode_id: str, model_spec: ModelSpec,
@@ -527,10 +545,12 @@ class ResearchRunManager:
             settings = settings_from_env()
             if command.designer_model:
                 settings = settings.model_copy(update={"model": command.designer_model})
+            settings = _designer_settings(settings, command.designer_timeout_seconds)
             model_spec = _model_spec(settings)
             client = OpenAICompatibleClient.from_env()
-            if command.designer_model:
-                client.settings = client.settings.model_copy(update={"model": command.designer_model})
+            client.settings = _designer_settings(
+                client.settings.model_copy(update={"model": settings.model}),
+                command.designer_timeout_seconds)
             with self.lock:
                 row = self.runs[run_id]; row["model"] = model_spec.model_dump(mode="json")
                 self._persist(row, "designer_model_frozen")
@@ -544,10 +564,17 @@ class ResearchRunManager:
             with self.lock:
                 row = self.runs[run_id]
                 row["designer_run"] = result.model_dump(mode="json")
-                row["phases"]["world"] = "COMPLETED" if result.build_result and result.build_result.status == "SAT" else (
-                    result.build_result.status if result.build_result else "REJECTED")
-                row["phases"]["task"] = ("CERTIFIED" if result.status == "CERTIFIED" else
-                                           "UNKNOWN" if result.status == "UNKNOWN" else "REJECTED")
+                failed_phase, provider_code = _provider_failure(result)
+                if provider_code:
+                    blocked_state = "BLOCKED_PROVIDER_TIMEOUT" if provider_code == "PROVIDER_TIMEOUT" else "BLOCKED_PROVIDER_ERROR"
+                    row["phases"][failed_phase] = blocked_state
+                    if failed_phase == "world":
+                        row["phases"]["task"] = "NOT_STARTED"
+                else:
+                    row["phases"]["world"] = "COMPLETED" if result.build_result and result.build_result.status == "SAT" else (
+                        result.build_result.status if result.build_result else "REJECTED")
+                    row["phases"]["task"] = ("CERTIFIED" if result.status == "CERTIFIED" else
+                                               "UNKNOWN" if result.status == "UNKNOWN" else "REJECTED")
                 row["status"] = "CANCELLED" if cancel.is_set() else result.status
                 if result.status == "CERTIFIED" and not cancel.is_set():
                     scenario = _certified_scenario(result)
@@ -574,7 +601,7 @@ class ResearchRunManager:
                     row["phases"]["human_episode"] = "READY"
                     row["phases"]["oracle_replay"] = "WAITING_FOR_EPISODE"
                 elif result.validation_errors:
-                    row["error"] = {"code": result.status, "messages": list(result.validation_errors)}
+                    row["error"] = {"code": provider_code or result.status, "messages": list(result.validation_errors)}
                 self._persist(row, "designer_completed_" + result.status.lower())
         except Exception as exc:
             with self.lock:

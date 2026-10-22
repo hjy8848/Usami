@@ -129,7 +129,7 @@ class TaskDesignAttempt(Sealed):
     draft: TaskDraft
     task_hash: str = ""
     certification_hash: str = ""
-    status: Literal["COMPILED", "CERTIFIED", "REJECTED", "UNKNOWN"]
+    status: Literal["COMPILED", "CERTIFIED", "REJECTED", "UNKNOWN", "ERROR"]
     reason: str = ""
 
 
@@ -224,6 +224,16 @@ def _feedback(exc):
     return "{}: {}".format(type(exc).__name__, str(exc))
 
 
+def _is_provider_failure(exc):
+    """Provider failures are not proposal feedback and must not be retried as corrections."""
+    return isinstance(exc, ServiceError) and exc.code.startswith("PROVIDER_")
+
+
+def _attempt_error(phase, exc):
+    kind = "provider failed" if _is_provider_failure(exc) else "proposal rejected"
+    return "{} {}: {}".format(phase, kind, _feedback(exc))
+
+
 def _submit(provider, phase, messages, model, attempt, calls):
     if hasattr(provider, "last_call"):
         provider.last_call = None
@@ -233,7 +243,8 @@ def _submit(provider, phase, messages, model, attempt, calls):
         call = getattr(exc, "agent_call", None) or getattr(provider, "last_call", None)
         if call is not None:
             calls.append(DesignerCall(phase=phase, attempt=attempt, call=call,
-                                      parsed_output_hash="", validation_feedback=_feedback(exc)))
+                                      parsed_output_hash="",
+                                      validation_feedback="" if _is_provider_failure(exc) else _feedback(exc)))
         raise
 
 
@@ -518,18 +529,20 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
             build = candidate_build
             break
         except Exception as exc:
-            feedback = "world proposal rejected: " + _feedback(exc)
+            feedback = _attempt_error("world", exc)
             errors.append(feedback)
             world_attempts.append(WorldDesignAttempt(attempt=attempt,
                 proposal_hash=draft.record_hash if draft else "",
                 build_result_hash=candidate_build.record_hash if candidate_build else "",
                 status="ERROR", reason=feedback))
-            if calls:
+            if calls and not _is_provider_failure(exc):
                 last = calls[-1]
                 if last.phase == "world" and last.attempt == attempt:
                     calls[-1] = DesignerCall(phase=last.phase, attempt=last.attempt, call=last.call,
                                              parsed_output_hash=last.parsed_output_hash,
                                              validation_feedback=feedback)
+            if _is_provider_failure(exc):
+                break
     if not scenario or not build or build.status != "SAT":
         # Preserve the last available attempt instead of manufacturing a world.
         return DesignerRun(
@@ -608,18 +621,22 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
             raise ValueError("independent Reference returned {}: {}".format(
                 certificate.status, ", ".join(certificate.blockers)))
         except Exception as exc:
-            feedback = "task proposal rejected or uncertified: " + _feedback(exc)
+            provider_failure = _is_provider_failure(exc)
+            feedback = (_attempt_error("task", exc) if provider_failure else
+                        "task proposal rejected or uncertified: " + _feedback(exc))
             errors.append(feedback)
             if draft_task is not None and (not task_attempts or task_attempts[-1].draft.record_hash != draft_task.record_hash):
                 task_attempts.append(TaskDesignAttempt(attempt=attempt, draft=draft_task,
                     task_hash=task.record_hash if task else "", certification_hash=certificate.record_hash if certificate else "",
-                    status="REJECTED", reason=feedback))
-            if calls and calls[-1].phase == "task":
+                    status="ERROR" if provider_failure else "REJECTED", reason=feedback))
+            if calls and calls[-1].phase == "task" and not provider_failure:
                 last = calls[-1]
                 if last.attempt == attempt:
                     calls[-1] = DesignerCall(phase=last.phase, attempt=last.attempt, call=last.call,
                                              parsed_output_hash=last.parsed_output_hash,
                                              validation_feedback=feedback)
+            if provider_failure:
+                break
     if task is None or certificate is None or certificate.status != "CERTIFIED":
         # A pure communication task can be fully proved by the independent
         # interaction Runner even though the bounded transaction certifier marks

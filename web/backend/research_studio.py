@@ -24,7 +24,7 @@ from usami.service.client import OpenAICompatibleClient, key_from_env, settings_
 from usami.service.models import ServiceError
 from usami_harness.models import digest
 from usami_v2.runtime.agents import service_tools
-from usami_v2.runtime.runner import replay_episode
+from usami_v2.runtime.runner import EpisodeRecord, replay_episode
 from usami_v2.scenarios.builder import BuildBudget, verify_build
 from usami_v2.scenarios.certification import verify_world_constraints
 from usami_v2.scenarios.designer import (
@@ -489,6 +489,53 @@ class ResearchRunManager:
                 raise HTTPException(404, detail={"code": "RESEARCH_RUN_NOT_FOUND", "message": "研究运行不存在。"})
             return row
 
+    @staticmethod
+    def _stored_episode(row: dict, link: dict) -> tuple[EpisodeRecord, dict, Any]:
+        """Load an attached Episode from its durable ResearchRun record.
+
+        HumanSession is intentionally short-lived and in-memory; the attached
+        report is the authenticated, content-addressed source used after that
+        browser session expires or the backend restarts.
+        """
+        report = link.get("report")
+        if not isinstance(report, dict) or not isinstance(report.get("episode"), dict):
+            raise HTTPException(409, detail={"code": "EPISODE_ARCHIVE_MISSING",
+                "message": "研究记录中没有完整的 Episode 归档。"})
+        if (report.get("research_run_id") != row.get("run_id")
+                or report.get("customer_source") != "human"
+                or report.get("study_type") != "qualitative_manual_pilot"
+                or report.get("comparison_arm") != link.get("arm")
+                or (report.get("scenario") or {}).get("scenario_id")
+                    != (row.get("scenario") or {}).get("scenario_id")):
+            raise HTTPException(409, detail={"code": "EPISODE_ARCHIVE_BINDING_MISMATCH",
+                "message": "Episode 归档与当前研究运行或实验组不匹配。"})
+        try:
+            record = EpisodeRecord.model_validate(report["episode"])
+        except Exception as exc:
+            raise HTTPException(422, detail={"code": "EPISODE_ARCHIVE_INVALID",
+                "message": "保存的 Episode 记录无法通过原生结构校验。"}) from exc
+        scenario = row.get("scenario") or {}
+        public = scenario.get("public") or {}
+        frozen_task = scenario.get("task") or {}
+        replay_receipt = link.get("replay")
+        expected_skill_hash = (None if link.get("arm") == "S0"
+                               else (row.get("candidate_skill") or {}).get("snapshot_hash"))
+        if (record.record_hash != link.get("episode_hash")
+                or record.initial_world.state_hash != link.get("initial_world_hash")
+                or record.task.record_hash != link.get("task_hash")
+                or record.initial_world.state_hash != public.get("initial_world_hash")
+                or record.task.record_hash != frozen_task.get("record_hash")
+                or not isinstance(replay_receipt, dict) or replay_receipt.get("verified") is not True
+                or report.get("service_skill_snapshot_hash") != expected_skill_hash
+                or (report.get("outcome") != record.outcome.model_dump(mode="json"))):
+            raise HTTPException(409, detail={"code": "EPISODE_ARCHIVE_HASH_MISMATCH",
+                "message": "保存的 Episode 与已冻结世界、任务或结果摘要不一致。"})
+        replay = replay_episode(record)
+        if not replay.verified:
+            raise HTTPException(422, detail={"code": "REPLAY_FAILED",
+                "message": "保存的 Episode 未通过重新执行的原生 Replay。"})
+        return record, report, replay
+
     def create(self, owner_id: str, command: ResearchRunCreate):
         with self.lock:
             active = sum(row["status"] in {"DESIGNER_QUEUED", "DESIGNER_RUNNING", "REFLECTOR_RUNNING"}
@@ -703,6 +750,24 @@ class ResearchRunManager:
         row = self.get(owner_id, run_id)
         if row["status"] not in {"READY_FOR_CUSTOMER", "READY_FOR_SKILL_TEST", "REFLECTION_COMPLETE"}:
             raise HTTPException(409, detail={"code": "TASK_NOT_READY", "message": "任务尚未完成独立认证。"})
+        with self.lock:
+            existing = next((item for item in row["episodes"] if item["session_id"] == session_id), None)
+        if existing is not None:
+            if existing.get("arm") != arm:
+                raise HTTPException(409, detail={"code": "SERVICE_ARM_MISMATCH",
+                    "message": "已关联 Episode 的实验组不能更改。"})
+            record, _, _ = self._stored_episode(row, existing)
+            if use_for_reflection:
+                if arm != "S0":
+                    raise HTTPException(422, detail={"code": "REFLECTION_BASELINE_ONLY",
+                        "message": "本版 Reflector 仅消费用户明确选择的 S0 训练 Episode。"})
+                if record.task.partition != "train":
+                    raise HTTPException(422, detail={"code": "NON_TRAIN_EVIDENCE_FORBIDDEN",
+                        "message": "只有 train Episode 可被明确选择进入本次 Reflection；validation / held-out 保持隔离。"})
+                with self.lock:
+                    existing["explicitly_selected_for_reflection"] = True
+                    self._persist(row, "human_episode_explicitly_selected_for_reflection")
+            return self._view(row)
         session = self.human.owned(owner_id, session_id)
         if session.research_run_id != run_id or session.scenario.scenario_id != row["scenario"]["scenario_id"]:
             raise HTTPException(409, detail={"code": "EPISODE_NOT_BOUND", "message": "Episode 与当前冻结研究任务不匹配。"})
@@ -726,15 +791,6 @@ class ResearchRunManager:
             raise HTTPException(422, detail={"code": "NON_TRAIN_EVIDENCE_FORBIDDEN",
                 "message": "只有 train Episode 可被明确选择进入本次 Reflection；validation / held-out 保持隔离。"})
         with self.lock:
-            existing = next((item for item in row["episodes"] if item["session_id"] == session_id), None)
-            if existing is not None:
-                if use_for_reflection:
-                    if arm != "S0":
-                        raise HTTPException(422, detail={"code": "REFLECTION_BASELINE_ONLY",
-                            "message": "本版 Reflector 仅消费用户明确选择的 S0 训练 Episode。"})
-                    existing["explicitly_selected_for_reflection"] = True
-                    self._persist(row, "human_episode_explicitly_selected_for_reflection")
-                return self._view(row)
             report = self.human.report(session)
             link = {"session_id": session_id, "arm": arm,
                 "customer_source": "human", "study_type": "qualitative_manual_pilot",
@@ -784,18 +840,22 @@ class ResearchRunManager:
                 "message": "请先明确选择一条 Replay 验证的 S0 真人 Episode 作为本次反思证据。"})
         if row.get("reflection") and row["reflection"].get("status") != "FAILED":
             raise HTTPException(409, detail={"code": "REFLECTION_ALREADY_RUN", "message": "此研究运行只允许一次 Reflection。"})
-        session = self.human.owned(owner_id, session_id)
-        if session.record is None:
-            raise HTTPException(409, detail={"code": "EPISODE_NOT_FOUND", "message": "Episode 记录不存在。"})
+        if link.get("arm") != "S0":
+            raise HTTPException(422, detail={"code": "REFLECTION_BASELINE_ONLY",
+                "message": "本版 Reflector 仅消费用户明确选择的 S0 训练 Episode。"})
+        record, report, _ = self._stored_episode(row, link)
         settings = settings_from_env()
         model_spec = _model_spec(settings)
-        if session.record.task.partition != "train":
+        if record.task.partition != "train":
             raise HTTPException(422, detail={"code": "NON_TRAIN_EVIDENCE_FORBIDDEN",
                 "message": "只有 train Episode 可被明确选择进入本次 Reflection；validation / held-out 保持隔离。"})
-        evidence_model = (ModelSpec.model_validate(session.service_model_spec)
-                          if session.service_model_spec else model_spec)
+        stored_model_spec = report.get("service_model_spec")
+        if not isinstance(stored_model_spec, dict):
+            raise HTTPException(409, detail={"code": "EPISODE_MODEL_SPEC_MISSING",
+                "message": "保存的 Episode 缺少原始 Service 模型配置，不能准确归因反思证据。"})
+        evidence_model = ModelSpec.model_validate(stored_model_spec)
         evidence, interaction_view = _native_evidence(
-            session.record, session_id, evidence_model, service_snapshot=session.service_skill_snapshot)
+            record, session_id, evidence_model, service_snapshot=empty_snapshot("service"))
         parent = empty_snapshot("service")
         reflection_input = ReflectionInput(
             generation=0, role="service", library=parent, evidence=(evidence,),
@@ -809,12 +869,12 @@ class ResearchRunManager:
             row["phases"]["reflection"] = "RUNNING"
             self._persist(row, "service_reflection_started")
         thread = threading.Thread(target=self._reflection_worker,
-            args=(run_id, reflection_input, settings, session), name="usami-research-reflector-" + run_id[-8:], daemon=True)
+            args=(run_id, reflection_input, settings, session_id), name="usami-research-reflector-" + run_id[-8:], daemon=True)
         self.threads[run_id + ":reflection"] = thread
         thread.start()
         return self._view(row)
 
-    def _reflection_worker(self, run_id, reflection_input, settings, session):
+    def _reflection_worker(self, run_id, reflection_input, settings, episode_id):
         client = None
         try:
             client = OpenAICompatibleClient.from_env()
@@ -841,7 +901,7 @@ class ResearchRunManager:
                 reflection["static_validation"] = validation.model_dump(mode="json")
                 if validation.passed:
                     candidate = apply_patch(empty_snapshot("service"), record.patch,
-                                            "human_episode:" + session.session_id)
+                                            "human_episode:" + episode_id)
                     self.library_store.save(candidate, publish=False)
                     self.human.register_skill_snapshot(candidate)
                     reflection["status"] = "STATIC_VALID"
@@ -850,7 +910,7 @@ class ResearchRunManager:
                                       "snapshot": candidate.model_dump(mode="json"),
                                       "skill": record.patch.skill.model_dump(mode="json") if record.patch.skill else None,
                                       "patch_hash": record.patch.record_hash,
-                                      "source_episode_id": session.session_id,
+                                      "source_episode_id": episode_id,
                                       "evidence_ids": list(record.patch.evidence_ids),
                                       "durable_candidate_only": True}
                 else:

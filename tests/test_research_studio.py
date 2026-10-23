@@ -172,6 +172,83 @@ def test_research_routes_bootstrap_shared_local_owner_cookie(tmp_path):
         assert "credential" not in json.dumps(config.json()).lower()
 
 
+def test_reflector_can_use_attached_episode_after_human_session_expires(tmp_path, monkeypatch):
+    """The durable ResearchRun Episode, not the RAM session, is reflection input."""
+    from test_usami_v2_runtime import (
+        ScriptedCustomer, ScriptedRefundService, frozen, refund_profile, refund_task,
+    )
+    from usami_v2.runtime.runner import EpisodeBudget, replay_episode, run_episode
+    from vast_coevo.models import ModelSpec
+    import web.backend.research_studio as research_studio
+
+    world, aliases = frozen(seed=912)
+    record = run_episode(world, refund_task(world, aliases), refund_profile(aliases),
+        ScriptedCustomer(), ScriptedRefundService(world, aliases),
+        budget=EpisodeBudget(max_model_calls=0))
+    assert replay_episode(record).verified
+    run_id, session_id, owner_id = "rs-reflection-recovery", "session-expired-123456", "owner-test"
+    scenario_id = "research-recovery-test"
+    service_model = ModelSpec(model="historical-service-model", base_url="http://localhost/v1")
+    report = {
+        "customer_source": "human", "study_type": "qualitative_manual_pilot",
+        "research_run_id": run_id, "comparison_arm": "S0",
+        "service_skill_snapshot_hash": None,
+        "scenario": {"scenario_id": scenario_id},
+        "episode": record.model_dump(mode="json"),
+        "outcome": record.outcome.model_dump(mode="json"),
+        "service_model_spec": service_model.model_dump(mode="json"),
+    }
+    link = {
+        "session_id": session_id, "arm": "S0", "customer_source": "human",
+        "study_type": "qualitative_manual_pilot", "initial_world_hash": record.initial_world.state_hash,
+        "task_hash": record.task.record_hash, "episode_hash": record.record_hash,
+        "replay": replay_episode(record).model_dump(mode="json"),
+        "explicitly_selected_for_reflection": False, "report": report,
+    }
+    root = tmp_path / "research"
+    manager = ResearchRunManager(HumanSessionManager(output_dir=tmp_path / "human"), output_dir=root)
+    row = {
+        "protocol": "usami-research-studio-v1", "run_id": run_id,
+        "owner_hash": digest(owner_id), "status": "READY_FOR_CUSTOMER",
+        "created_at": "2026-10-23T00:00:00+00:00", "updated_at": "2026-10-23T00:00:00+00:00",
+        "input": {"split": "train"},
+        "scenario": {"scenario_id": scenario_id,
+            "public": {"initial_world_hash": record.initial_world.state_hash},
+            "task": {"record_hash": record.task.record_hash}},
+        "episodes": [link], "reflection": None,
+        "phases": {"reflection": "NOT_STARTED"}, "journal": [],
+    }
+    manager.runs[run_id] = row
+    manager._persist(row, "episode_archived")
+
+    # A newly constructed manager models a server restart: its HumanSession map is empty.
+    restarted = ResearchRunManager(HumanSessionManager(output_dir=tmp_path / "human"), output_dir=root)
+    assert not restarted.human.sessions
+    selected = restarted.attach_episode(owner_id, run_id, session_id, "S0", use_for_reflection=True)
+    assert selected["episodes"][0]["explicitly_selected_for_reflection"] is True
+
+    monkeypatch.setattr(research_studio, "settings_from_env", lambda: ModelSettings(
+        model="reflector-test-model", base_url="http://localhost/v1", options={}))
+    captured = {}
+    import threading
+    done = threading.Event()
+
+    def capture_worker(run_id, reflection_input, settings, episode_id):
+        captured.update(run_id=run_id, reflection_input=reflection_input, settings=settings,
+                        episode_id=episode_id)
+        done.set()
+
+    restarted._reflection_worker = capture_worker
+    started = restarted.reflect(owner_id, run_id, session_id)
+    assert started["status"] == "REFLECTOR_RUNNING"
+    assert done.wait(2)
+    assert captured["episode_id"] == session_id
+    evidence = captured["reflection_input"].evidence[0]
+    assert evidence.native_trace_hash == record.record_hash
+    assert evidence.config.service_model.model == "historical-service-model"
+    assert evidence.consumption.tool_calls == len(record.tool_executions)
+
+
 def test_saved_task_revalidation_preserves_raw_calls_and_runs_native_return_flow(tmp_path):
     from test_usami_v2_designer import distribution_and_slot, scenario_draft, task_draft, replace_sealed
     from usami_v2.scenarios.builder import build_world

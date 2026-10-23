@@ -622,3 +622,40 @@ def test_legacy_noop_requires_explicit_revision_and_preserves_history(
     saved = json.loads((manager.root / run_id / "current.json").read_text())
     assert saved["reflection_history"] == [legacy]
     assert manager._verify_persisted_row(saved, manager.root / run_id / "journal.jsonl")
+
+
+@pytest.mark.parametrize('model_name,structured', [
+    ('dashscope/qwen3.7-plus', True), ('another-model', True),
+    ('dashscope/qwen3.7-plus', False),
+])
+def test_research_reflector_worker_respects_qwen_tool_choice_and_validates_output(
+        tmp_path, monkeypatch, model_name, structured):
+    from test_vast_reflection import Client, completion, reflection_input, noop
+    import web.backend.research_studio as studio
+
+    value = reflection_input(tmp_path, 'service')
+    response = (completion(noop(value).model_dump_json()) if structured else
+                {'choices': [{'message': {'content': 'No structured patch submitted.'}}]})
+    client = Client(response)
+    client.closed = False
+    client.close = lambda: setattr(client, 'closed', True)
+    monkeypatch.setattr(studio.OpenAICompatibleClient, 'from_env', lambda: client)
+    settings = ModelSettings(model=model_name, base_url='http://localhost/v1', options={})
+    manager = ResearchRunManager(HumanSessionManager(output_dir=tmp_path / 'human'),
+                                 output_dir=tmp_path / 'research')
+    row = {'run_id': 'rs-qwen-reflector-worker', 'status': 'REFLECTOR_RUNNING',
+           'phases': {'reflection': 'RUNNING'}, 'journal': []}
+    manager.runs[row['run_id']] = row
+    manager._reflection_worker(row['run_id'], value, settings, 'source-episode')
+    assert len(client.requests) == 1 and client.closed
+    expected = 'auto' if 'qwen3' in model_name else {
+        'type': 'function', 'function': {'name': 'submit_skill_patch'}}
+    assert client.requests[0]['tool_choice'] == expected
+    result = row['reflection']
+    assert result['calls'] == 1
+    if structured:
+        assert result['status'] == 'NOOP' and result['patch']['action'] == 'NOOP'
+    else:
+        assert result['status'] == 'FAILED' and result['patch'] is None
+        assert result['error'].startswith('invalid_reflection:')
+    assert result['raw_call']['request'] == client.requests[0]

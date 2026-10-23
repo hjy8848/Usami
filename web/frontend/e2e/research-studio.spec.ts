@@ -1,5 +1,30 @@
 import { expect, test } from '@playwright/test';
 
+test('failed reflection displays the provider error and waits for an explicit retry', async ({ page }) => {
+  const failure = { status: 'FAILED', error: 'reflection_client_error',
+    raw_call: { error: { code: 'PROVIDER_HTTP_ERROR', message: 'LLM endpoint returned HTTP 400; no retry performed' } } };
+  const run = { run_id: 'rs-failed-ui-test', status: 'REFLECTION_COMPLETE', input: { split: 'train' },
+    phases: { reflection: 'FAILED' }, model: { model: 'fixture' }, created_at: '2026-10-23T00:00:00Z',
+    episodes: [{ session_id: 'saved-completed-episode', episode_hash: 'c'.repeat(64), arm: 'S0',
+      replay: { verified: true }, costs: { service_calls: 28 }, outcome: { business_goal_success: true,
+        process_errors: { status: 'FAIL' }, interaction_reliability: { status: 'PASS' } } }],
+    reflection: failure, comparisons: [] };
+  const submissions: any[] = [];
+  await page.route('**/api/research/runs**', async route => {
+    const request = route.request();
+    if (request.method() === 'POST') submissions.push(request.postDataJSON());
+    await route.fulfill({ json: new URL(request.url()).pathname === '/api/research/runs' ? { runs: [run] } : run });
+  });
+  await page.goto('/?mode=research&run_id=rs-failed-ui-test');
+  await page.getByRole('navigation', { name: '研究阶段' }).getByRole('button', { name: /Reflector 提炼 Skill/ }).click();
+  await expect(page.getByText('LLM endpoint returned HTTP 400; no retry performed', { exact: true })).toBeVisible();
+  expect(submissions).toHaveLength(0);
+  await page.getByRole('button', { name: '选择此证据，重新运行 Reflector' }).click();
+  await expect.poll(() => submissions.length).toBe(2);
+  expect(submissions[1]).toEqual({ session_id: 'saved-completed-episode',
+    explicit_human_evidence_selection: true, replace_legacy_evidence: false });
+});
+
 test('Research Studio exposes the seven real workflow stages without running a model by itself', async ({ page }) => {
   await page.goto('/?mode=research');
 

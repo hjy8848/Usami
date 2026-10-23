@@ -360,14 +360,16 @@ function ReflectionView({ run, busy, onSelectReflection }: { run: Run | null; bu
       <div><strong>S0 Episode · {ep.episode_hash.slice(0, 18)}…</strong>
         <span>业务目标 {ep.outcome?.business_goal_success === true ? '完成' : ep.outcome?.business_goal_success === false ? '未完成' : '未知'} · 过程 {ep.outcome?.process_errors?.status || 'UNKNOWN'} · 交互 {ep.outcome?.interaction_reliability?.status || 'UNKNOWN'} · {ep.costs?.service_calls} Service calls</span></div>
       <button className="research-secondary" disabled={busy || running} onClick={() => onSelectReflection(ep.session_id, replaceLegacyEvidence)}><Sparkles size={15} />
-        {busy || running ? 'Reflector 运行中…' : replaceLegacyEvidence ? '选择此证据，用修正后的映射反思一次' : '明确选作证据并运行 Reflector'}
+        {busy || running ? 'Reflector 运行中…' : replaceLegacyEvidence ? '选择此证据，用修正后的映射反思一次' : run.reflection?.status === 'FAILED' ? '选择此证据，重新运行 Reflector' : '明确选作证据并运行 Reflector'}
       </button>
     </div>);
   if (!run.reflection) return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">STAGE 05 · SERVICE REFLECTOR</span><h2>选择真实、可回放的 S0 证据进行一次反思</h2><p>人工 Episode 默认不参与训练；点击按钮将选择这条证据并调用一次模型。</p></div><Sparkles size={20} /></div>{choices()}{!run.episodes.some((ep: AnyRow) => ep.arm === 'S0' && ep.replay?.verified) && <EmptyStage title="没有可用于反思的 S0 Episode" text="先完成一条 S0 人工 Episode 并通过 Replay。" />}</div>;
   const reflection = run.reflection; const patch = reflection.patch; const candidate = run.candidate_skill;
   const legacyNoop = reflection.status === 'NOOP' && !reflection.evidence_protocol;
+  const errorMessage = typeof reflection.error === 'string' ? (reflection.raw_call?.error?.message || reflection.error) : reflection.error?.message;
   return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">REAL REFLECTION OUTPUT</span><h2>Service Reflector · {reflection.status}</h2><p>候选 Skill 不会修改默认 Library。静态合法也不代表能力提升。</p></div><StatusPill value={reflection.status} /></div>
-    {reflection.error?.message && <div className="research-warning"><CircleAlert size={15} />{reflection.error.message}</div>}
+    {errorMessage && <div className="research-warning"><CircleAlert size={15} />{errorMessage}</div>}
+    {reflection.status === 'FAILED' && <section><p>本次未生成有效 SkillPatch。原始失败记录将保留；明确选择证据后可重新调用一次模型，不会自动重试。</p>{choices()}</section>}
     {candidate?.skill && <SkillCard skill={candidate.skill} candidate={candidate} />}
     {patch?.action === 'NOOP' && <div className="research-notice"><ShieldCheck size={16} />Reflector 选择 NOOP，保留原 Skill。此判断的依据见下方模型理由与实际证据。</div>}
     {patch?.rationale && <p>{patch.rationale}</p>}

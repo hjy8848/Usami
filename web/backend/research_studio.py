@@ -967,7 +967,10 @@ class ResearchRunManager:
         try:
             client = OpenAICompatibleClient.from_env()
             model = _model_spec(settings)
-            record = ServiceReflector(client, model).reflect(reflection_input)
+            # Match the existing Designer compatibility policy: Qwen3 thinking
+            # endpoints reject forced function-name tool_choice before inference.
+            choice = "auto" if "qwen3" in model.model.casefold() else None
+            record = ServiceReflector(client, model, tool_choice=choice).reflect(reflection_input)
             reflection = {"record": record.model_dump(mode="json"),
                           "evidence_protocol": NATIVE_REFLECTION_PROTOCOL,
                           "source_episode_id": episode_id,

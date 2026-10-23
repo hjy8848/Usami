@@ -29,7 +29,7 @@ usami-stayops = "usami_stayops.__main__:main"
 usami-coevo = "integrations.usami.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["usami*", "web", "web.backend*", "vast_coevo*", "integrations*"]
+include = ["usami*", "web", "web.backend*", "vast_coevo*", "integrations*", "rsi_core*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

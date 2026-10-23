@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "usami-rsi-core"
+version = "0.1.0"
+description = "Environment-independent executable research-program evolution"
+requires-python = ">=3.9"
+dependencies = ["jsonschema>=4,<5"]
+
+[tool.setuptools]
+packages = ["rsi_core"]
+package-dir = {rsi_core = "."}

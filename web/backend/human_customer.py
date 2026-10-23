@@ -7,6 +7,7 @@ import os
 import secrets
 import threading
 import time
+from datetime import timedelta
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Dict, Literal, Optional
@@ -35,6 +36,7 @@ from usami_v2.scenarios.task_certification import (
     CustomerScenario, ProofBudget, certify_task, verify_task_certificate,
 )
 from usami_v2.scenarios.tasks import GroundedRemedyGoal, TaskSpecV2
+from usami_v2.commerce.models import ExternalEvent, case_id
 
 HUMAN_COOKIE = "usami_human_client"
 HUMAN_TTL_SECONDS = 30 * 60
@@ -76,6 +78,24 @@ class CertifiedScenario:
     @property
     def world(self):
         return self.build.world
+
+
+def _return_events(scenario: CertifiedScenario):
+    """Freeze native return receipts before execution; Runner waits for a scheduled return."""
+    days = scenario.proof_customer.return_received_after_days
+    if days is None:
+        return ()
+    events = []
+    for goal in scenario.task.remedy_goals:
+        line = scenario.world.lines[goal.line_id]
+        if not scenario.world.skus[line.sku_id].return_required:
+            continue
+        target = case_id(line.id, tuple(range(goal.quantity)))
+        events.append(ExternalEvent(
+            id="return_" + digest([scenario.proof_customer.record_hash, target])[:20],
+            kind="return_received", target_id=target,
+            at=scenario.world.clock + timedelta(days=days)))
+    return tuple(events)
 
 
 def _fixed(value: int) -> IntegerRange:
@@ -428,7 +448,8 @@ class HumanSessionManager:
                     budget=EpisodeBudget(max_customer_turns=8, max_service_decisions=MAX_SERVICE_MODEL_CALLS,
                                          max_service_tool_calls=MAX_SERVICE_MODEL_CALLS,
                                          max_model_calls=MAX_SERVICE_MODEL_CALLS),
-                    mode="reference", on_progress=progress, cancel_check=cancelled)
+                    mode="reference", external_events=_return_events(scenario),
+                    on_progress=progress, cancel_check=cancelled)
                 replay = replay_episode(record)
                 skill_audit = self._skill_audit(record, service_agent, skill_snapshot)
                 output_path = self._persist(session, record, replay.model_dump(mode="json"), skill_audit)

@@ -301,7 +301,7 @@ class DesignerRun(Sealed):
     build_attempts: Tuple[BuildResult, ...] = ()
     world_attempts: Tuple[WorldDesignAttempt, ...] = ()
     task_draft: Optional[TaskDraft] = None
-    task: Optional[TaskSpec] = None
+    task: Optional[Union[TaskSpecV2, TaskSpec]] = None
     certification: Optional[TaskCertification] = None
     task_attempts: Tuple[TaskDesignAttempt, ...] = ()
     pre_run_quality: Optional[Union[ChallengeQualityVectorV1, ChallengeQualityVector]] = None

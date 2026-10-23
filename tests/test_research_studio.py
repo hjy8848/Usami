@@ -170,3 +170,101 @@ def test_research_routes_bootstrap_shared_local_owner_cookie(tmp_path):
         config = client.get("/api/research/config")
         assert config.status_code == 200
         assert "credential" not in json.dumps(config.json()).lower()
+
+
+def test_saved_task_revalidation_preserves_raw_calls_and_runs_native_return_flow(tmp_path):
+    from test_usami_v2_designer import distribution_and_slot, scenario_draft, task_draft, replace_sealed
+    from usami_v2.scenarios.builder import build_world
+    from usami_v2.scenarios.designer import DesignerCall, DesignerRun
+    from usami_v2.runtime.agents import AgentCall, ServiceAction
+    from usami_v2.runtime.customer import CustomerDecision
+    from usami_v2.runtime.runner import EpisodeBudget, replay_episode, run_episode
+    from usami_v2.commerce.models import Operation
+    from web.backend.human_customer import _return_events
+
+    distribution, slot = distribution_and_slot(42)
+    world_draft = scenario_draft()
+    world_draft = replace_sealed(world_draft, skus=tuple(
+        replace_sealed(sku, return_required=True) if sku.alias == "original" else sku
+        for sku in world_draft.skus))
+    spec = world_draft.compile(distribution)
+    build = build_world(spec, slot.seed)
+    draft = task_draft()
+    call = AgentCall(role="designer", request={"messages": []}, response={"choices": [{
+        "finish_reason": "tool_calls", "message": {"role": "assistant", "tool_calls": [{
+            "id": "saved-submission", "type": "function", "function": {
+                "name": "submit_customer_task", "arguments": draft.model_dump_json()}}]}}]})
+    source = DesignerRun(run_id="designer-saved-test", status="BLOCKED", sampling_slot=slot,
+        distribution=distribution, scenario_spec=spec, build_result=build,
+        calls=(DesignerCall(phase="task", attempt=1, call=call, parsed_output_hash="",
+                            validation_feedback="original compiler rejected the proposal"),))
+    manager = ResearchRunManager(HumanSessionManager(output_dir=tmp_path / "human"),
+                                 output_dir=tmp_path / "research")
+    row = {"run_id": "rs-saved-test", "owner_hash": digest("test-owner"), "status": "BLOCKED",
+        "input": ResearchRunCreate().model_dump(mode="json"), "episodes": [], "journal": [],
+        "phases": {"world": "COMPLETED", "task": "REJECTED"}, "designer_run": source.model_dump(mode="json")}
+    manager.runs[row["run_id"]] = row
+    manager._persist(row, "original_failed_generation")
+    original = json.loads(json.dumps(row))
+
+    restored = manager.revalidate_saved_task(row["run_id"])
+    assert restored["status"] == "READY_FOR_CUSTOMER"
+    assert restored["designer_run"]["calls"] == original["designer_run"]["calls"]
+    assert restored["designer_run"]["build_result"] == original["designer_run"]["build_result"]
+    assert restored["designer_run"]["task_draft"] == draft.model_dump(mode="json")
+    report = restored["task_revalidations"][-1]
+    assert report["model_calls"] == 0 and report["replay"]["verified"]
+    archived = json.loads((manager.root / row["run_id"] / report["original_record_file"]).read_text())
+    assert archived == original
+    assert manager._verify_persisted_row(row, manager.root / row["run_id"] / "journal.jsonl")
+    reloaded = ResearchRunManager(HumanSessionManager(output_dir=tmp_path / "human"), output_dir=manager.root)
+    assert reloaded.runs[row["run_id"]]["status"] == "READY_FOR_CUSTOMER"
+    scenario = reloaded.human.scenarios[restored["scenario"]["scenario_id"]]
+    assert scenario.task.protocol == "commerce-task-v2"
+
+    # Test-only actors follow the real Reference witness; authority, return
+    # receipt, settlement, Oracle and Replay still run through the native Runner.
+    actions = []
+    witness = next(a for a in scenario.task_certificate.attempts if a.status == "WITNESS")
+    for step in witness.steps:
+        if step.kind == "customer_consent":
+            consent = step.evidence["consent"]
+            actions.append(ServiceAction(kind="reply", message="Please accept this exact replacement quote.",
+                present_quote_id=consent["quote_id"], present_for=consent["operation"]))
+        elif step.kind == "operation":
+            actions.append(ServiceAction(kind="operation",
+                operation=Operation.model_validate(step.evidence["request"]["operation"])))
+    actions.append(ServiceAction(kind="reply", message="The replacement has been shipped."))
+
+    class WitnessService:
+        uses_model = False
+        def __init__(self): self.actions = iter(actions)
+        def decide(self, prompt): return next(self.actions)
+
+    class AcceptingCustomer:
+        uses_model = False
+        def decide(self, prompt, profile):
+            if prompt.offer:
+                return CustomerDecision(message="I accept this quote.", accept_quote_id=prompt.offer.quote_id,
+                                        accept_operation=prompt.offer.operation)
+            return CustomerDecision(message="Thank you.", finish=True)
+
+    events = _return_events(scenario)
+    assert len(events) == 1
+    unrelated_profile = replace_sealed(scenario.profile,
+        delegation_request_spans={scenario.task.remedy_goals[0].line_id: "unrequested product"})
+    with pytest.raises(ValueError, match="public request span or subject wording"):
+        run_episode(scenario.world, scenario.task, unrelated_profile, AcceptingCustomer(), WitnessService())
+    without_receipt = run_episode(scenario.world, scenario.task, scenario.profile,
+        AcceptingCustomer(), WitnessService(), budget=EpisodeBudget(max_model_calls=0))
+    assert without_receipt.outcome.business_goal_success is False
+    assert replay_episode(without_receipt).verified
+    record = run_episode(scenario.world, scenario.task, scenario.profile, AcceptingCustomer(), WitnessService(),
+        budget=EpisodeBudget(max_customer_turns=3, max_service_decisions=20, max_service_tool_calls=16,
+                             max_model_calls=0), external_events=events)
+    assert record.outcome.business_goal_success is True
+    assert any(event.kind == "external_event" for event in record.events)
+    assert record.replay_verified and replay_episode(record).verified
+    assert not record.model_calls
+    with pytest.raises(ValueError, match="only a blocked run"):
+        manager.revalidate_saved_task(row["run_id"])

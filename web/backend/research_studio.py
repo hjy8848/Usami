@@ -27,7 +27,11 @@ from usami_v2.runtime.agents import service_tools
 from usami_v2.runtime.runner import replay_episode
 from usami_v2.scenarios.builder import BuildBudget, verify_build
 from usami_v2.scenarios.certification import verify_world_constraints
-from usami_v2.scenarios.designer import DesignerRun, OpenAIDesignerProvider, design_and_certify
+from usami_v2.scenarios.designer import (
+    DesignerRun, OpenAIDesignerProvider, TaskDraft, compile_task, design_and_certify,
+    task_design_capabilities,
+)
+from usami_v2.runtime.agents import _json_arguments, _one_tool_call
 from usami_v2.scenarios.distribution import (
     BusinessSource, BusinessStratum, DistributionSpec, sample_schedule,
 )
@@ -154,6 +158,8 @@ def _proof_customer(world, task: TaskSpecV2) -> CustomerScenario:
         accepted_remedies=remedies or ("refund",), maximum_extra_charge_cents=100_000_000,
         latest_arrival=None,
         return_pickup_slot="research-return-pickup" if any(
+            world.skus[world.lines[line_id].sku_id].return_required for line_id in lines) else None,
+        return_received_after_days=1 if any(
             world.skus[world.lines[line_id].sku_id].return_required for line_id in lines) else None,
     )
 
@@ -565,7 +571,8 @@ class ResearchRunManager:
                 build_budget=BuildBudget(max_nodes=command.build_nodes),
                 proof_budget=ProofBudget(max_plan_candidates=command.proof_candidates,
                                          max_operation_steps=command.proof_steps, max_witnesses=1),
-                customer_scenario_factory=_proof_customer, max_attempts=command.max_attempts)
+                customer_scenario_factory=_proof_customer, return_receipt_event_configured=True,
+                max_attempts=command.max_attempts)
             with self.lock:
                 row = self.runs[run_id]
                 row["designer_run"] = result.model_dump(mode="json")
@@ -582,29 +589,7 @@ class ResearchRunManager:
                                                "UNKNOWN" if result.status == "UNKNOWN" else "REJECTED")
                 row["status"] = "CANCELLED" if cancel.is_set() else result.status
                 if result.status == "CERTIFIED" and not cancel.is_set():
-                    scenario = _certified_scenario(result)
-                    self.human.register_scenario(scenario)
-                    row["scenario"] = {
-                        "scenario_id": scenario.scenario_id,
-                        "public": __import__("web.backend.human_customer", fromlist=["_public_scenario"])._public_scenario(scenario),
-                        "scenario_spec": scenario.spec.model_dump(mode="json"),
-                        "build_result": scenario.build.model_dump(mode="json"),
-                        "world_certificate": scenario.world_certificate.model_dump(mode="json"),
-                        "task": scenario.task.model_dump(mode="json"),
-                        "proof_customer": scenario.proof_customer.model_dump(mode="json"),
-                        "task_certificate": scenario.task_certificate.model_dump(mode="json"),
-                        "profile_hash": scenario.profile.record_hash,
-                        "researcher_hidden_goal_view": [goal.model_dump(mode="json") for goal in scenario.task.remedy_goals]
-                            + [goal.model_dump(mode="json") for goal in scenario.task.information_goals],
-                        "reference_witness_summary": {"witness_count": len(scenario.task_certificate.witness_hashes),
-                            "witness_hashes": list(scenario.task_certificate.witness_hashes),
-                            "business_reachability_certified": scenario.task_certificate.business_reachability_certified,
-                            "full_task_reachability_certified": scenario.task_certificate.full_task_reachability_certified,
-                            "interaction_certified": scenario.task_certificate.interaction_certified},
-                    }
-                    row["status"] = "READY_FOR_CUSTOMER"
-                    row["phases"]["human_episode"] = "READY"
-                    row["phases"]["oracle_replay"] = "WAITING_FOR_EPISODE"
+                    self._activate_certified(row, result)
                 elif result.validation_errors:
                     row["error"] = {"code": provider_code or result.status, "messages": list(result.validation_errors)}
                 self._persist(row, "designer_completed_" + result.status.lower())
@@ -621,6 +606,88 @@ class ResearchRunManager:
             if client is not None:
                 close = getattr(client, "close", None)
                 if callable(close): close()
+
+    def _activate_certified(self, row, result):
+        scenario = _certified_scenario(result)
+        self.human.register_scenario(scenario)
+        row["scenario"] = {
+            "scenario_id": scenario.scenario_id,
+            "public": __import__("web.backend.human_customer", fromlist=["_public_scenario"])._public_scenario(scenario),
+            "scenario_spec": scenario.spec.model_dump(mode="json"),
+            "build_result": scenario.build.model_dump(mode="json"),
+            "world_certificate": scenario.world_certificate.model_dump(mode="json"),
+            "task": scenario.task.model_dump(mode="json"),
+            "proof_customer": scenario.proof_customer.model_dump(mode="json"),
+            "task_certificate": scenario.task_certificate.model_dump(mode="json"),
+            "profile_hash": scenario.profile.record_hash,
+            "researcher_hidden_goal_view": [goal.model_dump(mode="json") for goal in scenario.task.remedy_goals]
+                + [goal.model_dump(mode="json") for goal in scenario.task.information_goals],
+            "reference_witness_summary": {"witness_count": len(scenario.task_certificate.witness_hashes),
+                "witness_hashes": list(scenario.task_certificate.witness_hashes),
+                "business_reachability_certified": scenario.task_certificate.business_reachability_certified,
+                "full_task_reachability_certified": scenario.task_certificate.full_task_reachability_certified,
+                "interaction_certified": scenario.task_certificate.interaction_certified},
+        }
+        row["status"] = "READY_FOR_CUSTOMER"
+        row["phases"]["human_episode"] = "READY"
+        row["phases"]["oracle_replay"] = "WAITING_FOR_EPISODE"
+
+    def revalidate_saved_task(self, run_id):
+        """Offline recovery of the last raw Task proposal, with zero provider calls.
+
+        Call with the server stopped. Keep the original sealed record beside
+        the new journal entry; never rewrite the original model responses.
+        """
+        with self.lock:
+            row = self.runs[run_id]
+            if row["status"] != "BLOCKED" or row["episodes"]:
+                raise ValueError("only a blocked run without Episodes can be revalidated")
+            if not self._verify_persisted_row(row, self._run_dir(run_id) / "journal.jsonl"):
+                raise ValueError("research record integrity check failed")
+            source = DesignerRun.model_validate(row["designer_run"])
+            call = next(item for item in reversed(source.calls) if item.phase == "task")
+            function = _one_tool_call(call.call.response)["tool_calls"][0]["function"]
+            if function["name"] != "submit_customer_task":
+                raise ValueError("saved Task response called the wrong tool")
+            draft = TaskDraft.model_validate(_json_arguments(function["arguments"]))
+            spec, build = source.scenario_spec, source.build_result
+            if not verify_build(spec, build)["verified"]:
+                raise ValueError("saved world failed native Builder verification")
+            capabilities = task_design_capabilities(spec, build, return_receipt_event_configured=True)
+            task = compile_task(draft, spec, build, source.distribution, capabilities=capabilities)
+            proof = _proof_customer(build.world, task)
+            command = ResearchRunCreate.model_validate({
+                key: value for key, value in row["input"].items() if key in ResearchRunCreate.model_fields})
+            budget = ProofBudget(max_plan_candidates=command.proof_candidates,
+                max_operation_steps=command.proof_steps, max_witnesses=1)
+            certificate = certify_task(build.world, task, proof, budget, minimum_witnesses=1)
+            if certificate.status != "CERTIFIED":
+                raise ValueError("saved task remains uncertified: " + ", ".join(certificate.blockers))
+            verified = verify_task_certificate(build.world, task, proof, certificate)
+            if not verified["verified"]:
+                raise ValueError("revalidated task certificate failed native Replay")
+            result = DesignerRun.model_validate({
+                **source.model_dump(mode="json", exclude={"record_hash"}),
+                "status": "CERTIFIED", "task_draft": draft.model_dump(mode="json"),
+                "task": task.model_dump(mode="json"),
+                "certification": certificate.model_dump(mode="json"), "pre_run_quality": None})
+            archive = self._run_dir(run_id) / ("before-revalidation-" + row["record_hash"] + ".json")
+            atomic_json(archive, row)
+            os.chmod(archive, 0o600)
+            report = {"protocol": "research-saved-task-revalidation-v1",
+                "original_record_hash": row["record_hash"], "original_record_file": archive.name,
+                "source_call_hash": call.call.record_hash, "source_attempt": call.attempt,
+                "world_hash": build.world_hash, "model_calls": 0,
+                "capabilities": capabilities.model_dump(mode="json"),
+                "return_received_after_days": proof.return_received_after_days,
+                "certificate_hash": certificate.record_hash, "replay": verified}
+            self._activate_certified(row, result)
+            row["designer_run"] = result.model_dump(mode="json")
+            row["task_revalidations"] = [*row.get("task_revalidations", []), report]
+            row["phases"]["task"] = "CERTIFIED"
+            row["error"] = None
+            self._persist(row, "saved_task_revalidated_without_model_calls")
+            return self._view(row)
 
     def cancel(self, owner_id, run_id):
         row = self.get(owner_id, run_id)

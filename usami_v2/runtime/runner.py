@@ -448,8 +448,8 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
         for goal in task.remedy_goals:
             profile_span = profile.delegation_request_spans.get(goal.line_id)
             if (goal.line_id not in profile.delegated_line_ids
-                    or profile_span != goal.public_request_span):
-                raise ValueError("Customer delegation and transaction goal must share the same public request span")
+                    or profile_span not in (goal.public_request_span, goal.subject_mention)):
+                raise ValueError("Customer delegation must match the goal's public request span or subject wording")
     base_world = initial_world.clone()
     runtime_initial_world = initial_world.clone()
     scheduled_ids = [event.id for event in external_events]

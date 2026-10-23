@@ -491,6 +491,8 @@ def test_grounded_bounds_cannot_exceed_the_customer_request():
 
 
 @pytest.mark.parametrize("request_text,remedies", [
+    ("my desk lamp arrived damaged. I need a replacement delivered within 3 days", ("exchange", "reship")),
+    ("my desk lamp arrived damaged and I need a replacement. I'd like to switch to the brushed nickel version.", ("exchange", "reship")),
     ("I need the laptop replaced within five days.", ("exchange", "reship")),
     ("Please send me the correct black ones for the mouse I ordered black but got something else.", ("reship",)),
 ])
@@ -499,6 +501,8 @@ def test_natural_replacement_and_wrong_item_requests_name_supported_remedies(req
 
     assert request_names_remedy(request_text, remedies)
     assert not request_names_remedy("I don't want a replacement for the damaged laptop.", ("exchange",))
+    assert not request_names_remedy("I don't want a replacement for the damaged laptop.", ("reship",))
+    assert not request_names_remedy("I need a replacement for my damaged lamp.", ("refund",))
 
 
 def test_natural_full_refund_request_and_negation_are_grounded_correctly():

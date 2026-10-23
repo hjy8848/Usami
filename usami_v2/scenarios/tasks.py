@@ -35,6 +35,7 @@ REMEDY_REQUEST_PATTERNS = {
         r"(?:给我换货|请.{0,8}(?:换货|更换)|我(?:要|想|需要|要求|希望).{0,4}(?:换货|更换))",
     ),
     "reship": (
+        r"\b(?:i\s+(?:want|need|request|would\s+like))\s+(?:an?\s+)?replacement\b",
         r"\b(?:please\s+)?(?:reship|send|ship)\s+(?:it|this|the|my|another|a\s+replacement)\b",
         r"\b(?:please\s+)?(?:send|ship)\s+me\s+(?:the\s+)?(?:correct|right|replacement)\b",
         r"\b(?:please\s+)?replace\s+(?:my|this|the|it)\b",

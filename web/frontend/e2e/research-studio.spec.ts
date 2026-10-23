@@ -17,3 +17,42 @@ test('Research Studio exposes the seven real workflow stages without running a m
   await page.getByRole('navigation', { name: '研究阶段' }).getByRole('button', { name: /Reflector 提炼 Skill/ }).click();
   await expect(page.getByText(/先运行 Designer 并完成一条 train 分区的真人 S0 Episode/)).toBeVisible();
 });
+
+test('legacy NOOP offers an explicit evidence revision without silently calling a model', async ({ page }) => {
+  const legacy = { status: 'NOOP', patch: { action: 'NOOP', rationale: 'Original recorded response.' } };
+  const episode = (sessionId: string, hash: string, success: boolean) => ({
+    session_id: sessionId, episode_hash: hash.repeat(64), arm: 'S0', replay: { verified: true },
+    costs: { service_calls: success ? 28 : 23 }, outcome: { business_goal_success: success,
+      process_errors: { status: 'FAIL' }, interaction_reliability: { status: success ? 'PASS' : 'FAIL' } },
+  });
+  let run: Record<string, any> = { run_id: 'rs-legacy-ui-test', status: 'REFLECTION_COMPLETE',
+    input: { split: 'train' }, phases: { reflection: 'NOOP' }, model: { model: 'fixture' },
+    created_at: '2026-10-23T00:00:00Z', episodes: [episode('session-incomplete', 'a', false),
+      episode('session-completed', 'b', true)], reflection: legacy, comparisons: [] };
+  const submissions: Array<{ path: string; body: any }> = [];
+  await page.route('**/api/research/runs**', async route => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'POST') {
+      submissions.push({ path, body: request.postDataJSON() });
+      if (path.endsWith('/reflect')) {
+        run = { ...run, reflection: null, reflection_history: [legacy], status: 'REFLECTOR_RUNNING',
+          phases: { reflection: 'RUNNING' } };
+      }
+    }
+    await route.fulfill({ json: path === '/api/research/runs' ? { runs: [run] } : run });
+  });
+  await page.goto('/?mode=research&run_id=rs-legacy-ui-test');
+  await page.getByRole('navigation', { name: '研究阶段' }).getByRole('button', { name: /Reflector 提炼 Skill/ }).click();
+  await expect(page.getByRole('heading', { name: 'Service Reflector · NOOP' })).toBeVisible();
+  await expect(page.getByText(/这次 NOOP 使用旧版证据映射/)).toBeVisible();
+  const success = page.locator('.reflection-choice').filter({ hasText: 'bbbbbbbbbbbbbbbbbb' });
+  await expect(success).toContainText('业务目标 完成 · 过程 FAIL · 交互 PASS');
+  expect(submissions).toHaveLength(0);
+  await success.getByRole('button', { name: '选择此证据，用修正后的映射反思一次' }).click();
+  await expect.poll(() => submissions.length).toBe(2);
+  expect(submissions[1].body).toEqual({ session_id: 'session-completed',
+    explicit_human_evidence_selection: true, replace_legacy_evidence: true });
+  expect(run.reflection_history).toEqual([legacy]);
+  await expect(page.locator('.reflection-choice').first().getByRole('button')).toBeDisabled();
+});

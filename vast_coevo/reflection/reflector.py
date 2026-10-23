@@ -81,8 +81,13 @@ class ReflectionInput(FrozenModel):
                 if any((tool.call_id, tool.name, tool.arguments_raw) not in selected for tool in view.service_tools):
                     raise ValueError("interaction view changed Service-selected tool arguments")
                 events = {event.event_id: event for event in row.events}
+                if row.native_assessment is not None and len(events) != len(row.events):
+                    raise ValueError("native assessment requires unique Oracle event references")
                 for tool in view.service_tools:
                     event = events.get(tool.event_id)
+                    if (row.native_assessment is not None and tool.event_id is not None
+                            and (event is None or event.operation != tool.name)):
+                        raise ValueError("interaction view changed a tool's Oracle linkage")
                     if (tool.oracle_classification, tool.oracle_operation_correct) != (
                         event.classification if event else None, event.operation_correct if event else None
                     ):
@@ -169,6 +174,8 @@ class Reflector:
                                                    response=c.response, error=c.error) for c in e.model_calls]) for e in value.evidence]
         for row,e in zip(payload['evidence'],value.evidence):
             if e.task_decisions is not None:row['task_decisions']=[d.model_dump(mode='json') for d in e.task_decisions]
+            if e.native_assessment is not None:
+                row['native_assessment'] = e.native_assessment
         if self.role == "customer":
             views = value.interaction_views if value.interaction_views is not None else tuple(wire_view(row) for row in value.evidence)
             record_fields.update(customer_goal_version="service-examination-v1", prepared_interaction_views=views,
@@ -211,6 +218,21 @@ class Reflector:
             "Repair verified decision failures while preserving legal completion and correct refusal. "
             "When evidence offers no justified change, emit NOOP. Never invent a verified failure."
         )
+        if self.role == "service" and any(e.native_assessment is not None for e in value.evidence):
+            objective += (
+                " Native assessments separate business goal completion, process errors, safety and interaction reliability. "
+                "For customer_visible_context entries encoded as previous-request-prefix-v1, reconstruct the exact "
+                "Service request by retaining unchanged_prefix_messages messages from the preceding reconstructed "
+                "request, then appending request_messages. Source pointers identify the full original requests. "
+                "Their evidence_sources point to the replay-verified native records. An empty failures array means no "
+                "confirmed business violation in that field; it does not mean the process was error-free. "
+                "Oracle operation_correct evaluates Engine enforcement, not Service decision quality: a correctly "
+                "blocked invalid attempt may still reveal an avoidable Service error. Recovery does not erase an "
+                "earlier error. Examine the exact arguments, preceding Service-visible observations and public tool "
+                "contracts before attributing a mistake. An unmet goal or missing Customer runtime consent does not "
+                "by itself prove Service fault. Keep uncertain attribution explicit. Propose a reusable Skill only "
+                "when the actual evidence justifies it; otherwise NOOP remains valid."
+            )
         if self.role == "customer" and value.interaction_views and any(
                 isinstance(context, dict) and context.get("examiner_protocol") == "usami-examiner-v1"
                 for view in value.interaction_views for context in view.customer_visible_context):

@@ -212,6 +212,9 @@ class EpisodeEvidence(FrozenModel):
     injections: Tuple[InjectionRecord, ...] = ()
     events: Tuple[VerifiedEvent, ...] = ()
     failures: Tuple[VerifiedFailure, ...] = ()
+    # Replay-verified native assessments remain separate from confirmed business
+    # violations. Omission preserves historical evidence hashes.
+    native_assessment: Optional[Dict[str, JsonValue]] = Field(default=None, exclude_if=lambda value: value is None)
     task_decisions: Optional[Tuple[TaskDecision,...]] = Field(default=None, exclude_if=lambda v: v is None)
     consumption: Consumption
     termination: str

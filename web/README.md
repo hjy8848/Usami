@@ -63,6 +63,14 @@ uvicorn web.backend.app:app --host 127.0.0.1 --port 8001
 
 此时打开 <http://127.0.0.1:8001>。页面内部导航不依赖 URL 路由。停止再启动后端会清空所有内存会话。
 
+### Research Studio 的反思证据
+
+`?mode=research` 的 Stage 05 只消费人工明确选择、通过原生 Replay 的 train / S0 Episode。`usami-v2-reflection-evidence-v2` 为每次工具执行分配独立 Oracle 引用，并向 Reflector 提供原始业务结果、过程错误、安全和交互可靠性，以及过程/安全证据在 Episode 中的来源路径。`failures` 仍表示该字段中的已确认业务失败，不将所有工具拒绝改写成业务违规。实际展示给 Service 的工具 Schema 也从原始请求中提取。
+
+反思视图用 `previous-request-prefix-v1` 对不断增长的 Service 请求去重：每条上下文保留前一条已还原请求的 `unchanged_prefix_messages` 条消息，再追加本条 `request_messages`，可精确还原每轮所见内容。完整请求与模型回复继续保存在原始 Episode 中。
+
+旧版、未标记证据协议的 NOOP 可以在页面显式选择一条归档 Episode，用修正后的证据重新反思一次。该动作会调用模型；浏览页面不会自动调用。旧结果完整保存至 `reflection_history`，新版结果不能借此入口反复抽样。NOOP 始终是合法输出，静态通过不表示能力提高。
+
 ## v0.2 对齐
 
 网页默认创建 v0.2 世界；已有会话保留原版本。Advanced settings 可切换 v0.1 / v0.2，并选择 22 种业务 workflow。v0.2 至少需要 8 名目录用户。API 不带 config 的默认会话仍为 v0.1，兼容原调用方。

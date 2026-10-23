@@ -401,3 +401,224 @@ def test_saved_task_revalidation_preserves_raw_calls_and_runs_native_return_flow
     assert replay_episode(reloaded_episode).verified
     with pytest.raises(ValueError, match="only a blocked run"):
         manager.revalidate_saved_task(row["run_id"])
+
+
+@pytest.fixture
+def native_process_error_episode():
+    """A genuine blocked attempt, followed by a legal refund; no provider calls."""
+    from test_usami_v2_runtime import (
+        ScriptedCustomer, ScriptedRefundService, frozen, refund_profile, refund_task,
+    )
+    from usami_v2.commerce.models import Operation
+    from usami_v2.runtime.agents import AgentCall, ServiceAction, service_tools
+    from usami_v2.runtime.runner import EpisodeBudget, run_episode
+
+    class RecoveringService(ScriptedRefundService):
+        tried_early_quote = False
+
+        def decide(self, prompt):
+            if self.index == 1 and not self.tried_early_quote:
+                self.tried_early_quote = True
+                action = ServiceAction(kind="operation", operation=Operation(
+                    name="prepare_remedy_quote", scope_id=next(iter(self.world.merchants)),
+                    resource_id=self.case, params={"remedy": "refund", "target_sku_id": None,
+                                                   "warehouse_id": None, "pickup_slot": None}))
+            else:
+                action = super().decide(prompt)
+            if action.operation is None:
+                return action
+            operation = action.operation.model_dump(mode="json", exclude={"record_hash"})
+            name = operation.pop("name")
+            call_id = "fixture-tool-" + str(self.index) + "-" + name
+            call = AgentCall(role="service", request={
+                "messages": [{"role": "user", "content": prompt.customer_request}],
+                "tools": service_tools()}, response={"choices": [{"message": {
+                    "role": "assistant", "tool_calls": [{"id": call_id, "type": "function",
+                    "function": {"name": name, "arguments": json.dumps(operation)}}]}}]})
+            return ServiceAction.model_validate({
+                **action.model_dump(mode="json", exclude={"record_hash"}),
+                "call": call.model_dump(mode="json"), "call_id": call_id})
+
+    world, aliases = frozen(seed=913)
+    return run_episode(world, refund_task(world, aliases), refund_profile(aliases),
+                       ScriptedCustomer(), RecoveringService(world, aliases),
+                       budget=EpisodeBudget(max_model_calls=16))
+
+
+def test_native_reflection_links_restarted_oracle_ids_to_exact_tool_execution(native_process_error_episode):
+    from vast_coevo.models import ModelSpec
+    from web.backend.research_studio import _native_evidence
+
+    record = native_process_error_episode
+    native_rows = [row for execution in record.tool_executions
+                   for row in execution.oracle["operations"]]
+    assert len({row["event_id"] for row in native_rows}) == 1
+    evidence, view = _native_evidence(record, "session-collision-test", ModelSpec(
+        model="fixture", base_url="http://localhost/v1"))
+    assert len({event.event_id for event in evidence.events}) == len(native_rows)
+    assert len(view.service_tools) == len(record.tool_executions)
+    for index, (event, tool, native) in enumerate(zip(evidence.events, view.service_tools, native_rows)):
+        assert event.event_id == tool.event_id
+        assert event.classification == tool.oracle_classification == native["classification"]
+        assert event.operation_correct == tool.oracle_operation_correct == native["operation_correct"]
+        assert event.operation == tool.name == native["operation"]
+        assert tool.source_refs == (f"/tool_executions/{index}",)
+        assert tool.result == record.tool_executions[index].result
+    assert evidence.failures == ()  # No fabricated business violation.
+    assert view.confirmed_business_failures == ()
+
+
+def test_reflector_receives_native_outcome_sources_and_can_still_choose_noop(native_process_error_episode):
+    from test_vast_reflection import Client, completion
+    from vast_coevo.models import ModelSpec
+    from vast_coevo.reflection.reflector import ReflectionInput, ServiceReflector
+    from vast_coevo.skills.models import SkillPatch
+    from web.backend.research_studio import _native_evidence, NATIVE_REFLECTION_PROTOCOL
+
+    record = native_process_error_episode
+    model = ModelSpec(model="fixture", base_url="http://localhost/v1")
+    evidence, view = _native_evidence(record, "session-assessment-test", model)
+    assessment = evidence.native_assessment
+    assert assessment["protocol"] == NATIVE_REFLECTION_PROTOCOL
+    assert assessment["native_trace_hash"] == record.record_hash
+    assert assessment["outcome"] == record.outcome.model_dump(mode="json")
+    assert assessment["outcome"]["business_goal_success"] is True
+    assert assessment["outcome"]["process_errors"]["status"] == "FAIL"
+    assert assessment["outcome"]["safety_violations"]["status"] == "PASS"
+    assert assessment["outcome"]["interaction_reliability"]["status"] == "PASS"
+    assert {s["evidence_ref"] for s in assessment["evidence_sources"]} == set(
+        record.outcome.process_errors.evidence_refs)
+    raw_record = record.model_dump(mode="json")
+    for source in assessment["evidence_sources"]:
+        value = raw_record
+        for part in source["source_ref"].strip("/").split("/"):
+            value = value[int(part)] if isinstance(value, list) else value[part]
+        assert value == source["native_value"]
+        assert digest(value) == source["evidence_ref"]
+    assert len(assessment["service_tool_contracts"]) == 1
+    assert assessment["service_tool_contracts"][0]["tools"] == record.model_calls[0].request["tools"]
+    previous = []
+    raw_calls = [call for call in record.model_calls if call.role == "service"]
+    for context, call in zip(view.customer_visible_context, raw_calls):
+        assert context["encoding"] == "previous-request-prefix-v1"
+        previous = previous[:context["unchanged_prefix_messages"]] + context["request_messages"]
+        assert previous == call.request["messages"]
+    assert len(view.customer_visible_context) == len(raw_calls)
+    value = ReflectionInput(generation=0, role="service", library=empty_snapshot("service"),
+                            evidence=(evidence,), interaction_views=(view,))
+    patch = SkillPatch(action="NOOP", role="service", base_snapshot_hash=value.library.snapshot_hash,
+                      evidence_ids=(evidence.episode_id,), rationale="No justified change in this fixture.")
+    client = Client(completion(patch.model_dump_json()))
+    result = ServiceReflector(client, model).reflect(value)
+    assert result.patch == patch and result.calls == len(client.requests) == 1
+    payload = json.loads(client.requests[0]["messages"][-1]["content"])
+    assert payload["evidence"][0]["native_assessment"] == assessment
+    assert payload["evidence"][0]["failures"] == []
+    assert "Recovery does not erase" in client.requests[0]["messages"][0]["content"]
+    assert "NOOP remains valid" in client.requests[0]["messages"][0]["content"]
+
+
+def test_native_assessment_tampering_breaks_evidence_hash(native_process_error_episode):
+    from vast_coevo.models import EpisodeEvidence, ModelSpec
+    from web.backend.research_studio import _native_evidence
+
+    evidence, _ = _native_evidence(native_process_error_episode, "session-tamper-test",
+                                  ModelSpec(model="fixture", base_url="http://localhost/v1"))
+    raw = evidence.model_dump(mode="json")
+    raw["native_assessment"]["outcome"]["process_errors"]["status"] = "PASS"
+    with pytest.raises(ValueError, match="evidence content hash mismatch"):
+        EpisodeEvidence.model_validate(raw)
+
+
+def test_old_evidence_hashes_do_not_gain_an_empty_native_assessment(tmp_path):
+    from test_vast_reflection import evidence
+    from vast_coevo.models import EpisodeEvidence
+
+    original = evidence(tmp_path)
+    raw = original.model_dump(mode="json")
+    assert "native_assessment" not in raw
+    assert original.evidence_hash == digest({k: v for k, v in raw.items() if k != "evidence_hash"})
+    assert EpisodeEvidence.model_validate(raw).model_dump(mode="json") == raw
+
+
+def test_native_tool_cannot_be_linked_to_another_legal_operation(native_process_error_episode):
+    from vast_coevo.models import ModelSpec
+    from vast_coevo.reflection.evidence import InteractionEvidenceView
+    from vast_coevo.reflection.reflector import ReflectionInput
+    from web.backend.research_studio import _native_evidence
+
+    evidence, view = _native_evidence(native_process_error_episode, "session-wrong-link",
+                                    ModelSpec(model="fixture", base_url="http://localhost/v1"))
+    raw = view.model_dump(mode="json")
+    # Both operations are legal. Classification checks alone would miss this swap.
+    legal = [event for event in evidence.events if event.classification == "legal_execution"]
+    assert legal[0].operation != legal[1].operation
+    raw["service_tools"][0]["event_id"] = legal[1].event_id
+    with pytest.raises(ValueError, match="Oracle linkage"):
+        ReflectionInput(generation=0, role="service", library=empty_snapshot("service"),
+                        evidence=(evidence,), interaction_views=(InteractionEvidenceView.model_validate(raw),))
+
+
+def test_legacy_noop_requires_explicit_revision_and_preserves_history(
+        native_process_error_episode, tmp_path, monkeypatch):
+    import copy
+    import threading
+    from fastapi import HTTPException
+    from vast_coevo.models import ModelSpec
+    import web.backend.research_studio as studio
+
+    record = native_process_error_episode
+    model = ModelSpec(model="fixture", base_url="http://localhost/v1")
+    manager = ResearchRunManager(HumanSessionManager(output_dir=tmp_path / "human"),
+                                 output_dir=tmp_path / "research")
+    run_id, session_id, owner = "rs-legacy-noop-test", "session-noop-123456", "owner-test"
+    legacy = {"status": "NOOP", "input_hash": "legacy-input", "raw_call": {"response": "original"},
+              "patch": {"action": "NOOP", "rationale": "original model decision"}}
+    row = {"run_id": run_id, "owner_hash": digest(owner), "status": "REFLECTION_COMPLETE",
+           "input": {"split": "train"}, "phases": {"reflection": "NOOP"}, "journal": [],
+           "scenario": {"scenario_id": "frozen", "public": {"initial_world_hash": record.initial_world.state_hash},
+                        "task": {"record_hash": record.task.record_hash}},
+           "reflection": copy.deepcopy(legacy), "candidate_skill": None,
+           "episodes": [{"session_id": session_id, "arm": "S0", "explicitly_selected_for_reflection": True,
+               "episode_hash": record.record_hash, "initial_world_hash": record.initial_world.state_hash,
+               "task_hash": record.task.record_hash, "replay": {"verified": True},
+               "report": {"research_run_id": run_id, "customer_source": "human",
+                   "study_type": "qualitative_manual_pilot", "comparison_arm": "S0",
+                   "scenario": {"scenario_id": "frozen"}, "service_skill_snapshot_hash": None,
+                   "episode": record.model_dump(mode="json"), "outcome": record.outcome.model_dump(mode="json"),
+                   "service_model_spec": model.model_dump(mode="json")}}]}
+    manager.runs[run_id] = row
+    manager._persist(row, "original_noop_saved")
+    monkeypatch.setattr(studio, "settings_from_env", lambda: ModelSettings(
+        model="fixture", base_url="http://localhost/v1", options={}))
+    done = threading.Event()
+    captured = []
+
+    def worker(run_id, reflection_input, settings, episode_id):
+        captured.append(reflection_input)
+        done.set()
+
+    monkeypatch.setattr(manager, "_reflection_worker", worker)
+    with pytest.raises(HTTPException) as blocked:
+        manager.reflect(owner, run_id, session_id)
+    assert blocked.value.detail["code"] == "REFLECTION_ALREADY_RUN"
+    assert not captured and row["reflection"] == legacy
+    started = manager.reflect(owner, run_id, session_id, replace_legacy_evidence=True)
+    assert done.wait(2)
+    assert started["reflection_history"] == [legacy]
+    assert started["status"] == "REFLECTOR_RUNNING"
+    assert len(captured) == 1
+    assert captured[0].evidence[0].native_assessment["outcome"] == record.outcome.model_dump(mode="json")
+    with pytest.raises(HTTPException) as running:
+        manager.reflect(owner, run_id, session_id, replace_legacy_evidence=True)
+    assert running.value.detail["code"] == "REFLECTION_RUNNING"
+    row["reflection"] = {"status": "NOOP", "evidence_protocol": studio.NATIVE_REFLECTION_PROTOCOL}
+    row["status"] = "REFLECTION_COMPLETE"
+    manager._persist(row, "new_noop_saved")
+    with pytest.raises(HTTPException) as blocked:
+        manager.reflect(owner, run_id, session_id, replace_legacy_evidence=True)
+    assert blocked.value.detail["code"] == "LEGACY_REFLECTION_REQUIRED"
+    assert len(captured) == 1 and row["reflection_history"] == [legacy]
+    saved = json.loads((manager.root / run_id / "current.json").read_text())
+    assert saved["reflection_history"] == [legacy]
+    assert manager._verify_persisted_row(saved, manager.root / run_id / "journal.jsonl")

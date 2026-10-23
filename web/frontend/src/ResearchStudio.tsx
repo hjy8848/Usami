@@ -146,13 +146,13 @@ export default function ResearchStudio() {
     finally { setBusy(false); }
   }
   async function selectRun(id: string) { setError(''); try { const selected = await refreshRuns(id); setStage(0); if (selected) { const url = new URL(location.href); url.searchParams.set('run_id', id); history.replaceState(null, '', url); } } catch (cause) { setError(String(cause)); } }
-  async function chooseReflectionEvidence(sessionId: string) {
+  async function chooseReflectionEvidence(sessionId: string, replaceLegacyEvidence = false) {
     if (!run) return;
     setBusy(true); setError('');
     try {
       const attached = await api<Run>(`/research/runs/${run.run_id}/attach-episode`, { session_id: sessionId, arm: 'S0', use_for_reflection: true });
       setRun(attached);
-      const next = await api<Run>(`/research/runs/${run.run_id}/reflect`, { session_id: sessionId, explicit_human_evidence_selection: true });
+      const next = await api<Run>(`/research/runs/${run.run_id}/reflect`, { session_id: sessionId, explicit_human_evidence_selection: true, replace_legacy_evidence: replaceLegacyEvidence });
       setRun(next); setStage(4);
     } catch (cause) { setError(String(cause)); }
     finally { setBusy(false); }
@@ -351,19 +351,32 @@ function findModelCall(calls: AnyRow[], tool: AnyRow): AnyRow | undefined {
   }
   return undefined;
 }
-function ReflectionView({ run, busy, onSelectReflection, selectedEpisode }: { run: Run | null; busy: boolean; onSelectReflection: (id: string) => void; selectedEpisode: (id: string) => AnyRow | undefined }) {
+function ReflectionView({ run, busy, onSelectReflection }: { run: Run | null; busy: boolean; onSelectReflection: (id: string, replaceLegacyEvidence?: boolean) => void; selectedEpisode: (id: string) => AnyRow | undefined }) {
   if (!run) return <EmptyStage title="还没有研究运行" text="先运行 Designer 并完成一条 train 分区的真人 S0 Episode。" />;
-  if (run && run.input?.split !== 'train') return <EmptyStage title="此分区不能进入 Reflection" text="Validation 与 held-out 运行仍可用于查看和保存，但本工作台禁止将其证据发送给 Reflector。请创建 train 分区的人工探索运行。" />;
-  if (!run?.reflection) return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">STAGE 05 · SERVICE REFLECTOR</span><h2>选择真实、可回放的 S0 证据进行一次反思</h2><p>人工 Episode 默认不参与训练；点击按钮是明确的单次证据选择。</p></div><Sparkles size={20} /></div>{run.episodes?.filter((ep: AnyRow) => ep.arm === 'S0' && ep.replay?.verified).map((ep: AnyRow) => <div className="reflection-choice" key={ep.session_id}><div><strong>S0 Episode · {ep.episode_hash.slice(0, 18)}…</strong><span>{ep.outcome?.process_errors?.status || 'UNKNOWN'} · {ep.costs?.service_calls} Service calls</span></div><button className="research-secondary" disabled={busy || !!selectedEpisode(ep.session_id)?.explicitly_selected_for_reflection} onClick={() => onSelectReflection(ep.session_id)}><Sparkles size={15} />{busy ? 'Reflector 运行中…' : selectedEpisode(ep.session_id)?.explicitly_selected_for_reflection ? '已提交反思' : '明确选作证据并运行 Reflector'}</button></div>)}{!run.episodes?.some((ep: AnyRow) => ep.arm === 'S0' && ep.replay?.verified) && <EmptyStage title="没有可用于反思的 S0 Episode" text="先完成一条 S0 人工 Episode 并通过 Replay。" />}</div>;
+  if (run.input?.split !== 'train') return <EmptyStage title="此分区不能进入 Reflection" text="Validation 与 held-out 运行仍可用于查看和保存，但本工作台禁止将其证据发送给 Reflector。请创建 train 分区的人工探索运行。" />;
+  const running = run.phases.reflection === 'RUNNING';
+  const choices = (replaceLegacyEvidence = false) => run.episodes.filter((ep: AnyRow) => ep.arm === 'S0' && ep.replay?.verified).map((ep: AnyRow) =>
+    <div className="reflection-choice" key={ep.session_id}>
+      <div><strong>S0 Episode · {ep.episode_hash.slice(0, 18)}…</strong>
+        <span>业务目标 {ep.outcome?.business_goal_success === true ? '完成' : ep.outcome?.business_goal_success === false ? '未完成' : '未知'} · 过程 {ep.outcome?.process_errors?.status || 'UNKNOWN'} · 交互 {ep.outcome?.interaction_reliability?.status || 'UNKNOWN'} · {ep.costs?.service_calls} Service calls</span></div>
+      <button className="research-secondary" disabled={busy || running} onClick={() => onSelectReflection(ep.session_id, replaceLegacyEvidence)}><Sparkles size={15} />
+        {busy || running ? 'Reflector 运行中…' : replaceLegacyEvidence ? '选择此证据，用修正后的映射反思一次' : '明确选作证据并运行 Reflector'}
+      </button>
+    </div>);
+  if (!run.reflection) return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">STAGE 05 · SERVICE REFLECTOR</span><h2>选择真实、可回放的 S0 证据进行一次反思</h2><p>人工 Episode 默认不参与训练；点击按钮将选择这条证据并调用一次模型。</p></div><Sparkles size={20} /></div>{choices()}{!run.episodes.some((ep: AnyRow) => ep.arm === 'S0' && ep.replay?.verified) && <EmptyStage title="没有可用于反思的 S0 Episode" text="先完成一条 S0 人工 Episode 并通过 Replay。" />}</div>;
   const reflection = run.reflection; const patch = reflection.patch; const candidate = run.candidate_skill;
+  const legacyNoop = reflection.status === 'NOOP' && !reflection.evidence_protocol;
   return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">REAL REFLECTION OUTPUT</span><h2>Service Reflector · {reflection.status}</h2><p>候选 Skill 不会修改默认 Library。静态合法也不代表能力提升。</p></div><StatusPill value={reflection.status} /></div>
     {reflection.error?.message && <div className="research-warning"><CircleAlert size={15} />{reflection.error.message}</div>}
     {candidate?.skill && <SkillCard skill={candidate.skill} candidate={candidate} />}
-    {patch?.action === 'NOOP' && <div className="research-notice"><ShieldCheck size={16} />Reflector 返回 NOOP：本次证据没有支持一个可迁移的 Skill 更新。</div>}
+    {patch?.action === 'NOOP' && <div className="research-notice"><ShieldCheck size={16} />Reflector 选择 NOOP，保留原 Skill。此判断的依据见下方模型理由与实际证据。</div>}
+    {patch?.rationale && <p>{patch.rationale}</p>}
+    {legacyNoop && <section><div className="research-warning"><CircleAlert size={15} />这次 NOOP 使用旧版证据映射。现已修正事件关联并补齐业务评价；可明确选择一条旧 Episode 重新反思一次。原始 NOOP 将完整保留，此操作会调用模型。</div>{choices(true)}</section>}
     {reflection.static_validation && <div className={`static-result ${reflection.static_validation.passed ? 'pass' : 'fail'}`}><ShieldCheck size={17} /><div><strong>静态校验 {reflection.static_validation.passed ? '通过' : '拒绝'}</strong><span>{reflection.static_validation.checks?.join(' · ')}</span>{reflection.static_validation.reasons?.map((reason: string) => <small key={reason}>{reason}</small>)}</div></div>}
     <details className="research-json"><summary>1 · Reflector 实际收到的 Replay 验证证据</summary><pre>{code(reflection.input)}</pre></details>
     <details className="research-json"><summary>2 · 真实模型的原始请求与输出</summary><pre>{code(reflection.raw_call)}</pre></details>
-    <details className="research-json"><summary>3 · 完整 SkillPatch / 校验记录 / Snapshot 哈希</summary><pre>{code({ patch, input_hash: reflection.input_hash, candidate })}</pre></details>
+    <details className="research-json"><summary>3 · 完整 SkillPatch / 校验记录 / Snapshot 哈希</summary><pre>{code({ patch, input_hash: reflection.input_hash, evidence_protocol: reflection.evidence_protocol, source_episode_id: reflection.source_episode_id, candidate })}</pre></details>
+    {!!run.reflection_history?.length && <details className="research-json"><summary>此前反思的原始记录（{run.reflection_history.length} 次，完整保留）</summary><pre>{code(run.reflection_history)}</pre></details>}
   </div>;
 }
 function SkillCard({ skill, candidate }: { skill: AnyRow; candidate: AnyRow }) { return <article className="skill-candidate"><div className="skill-heading"><div><span className="skill-badge">{candidate.status}</span><h3>{skill.id} <small>v{skill.version}</small></h3></div><code>snapshot {candidate.snapshot_hash?.slice(0, 18)}…</code></div><p>{skill.description}</p><div className="skill-meta"><span>触发：{skill.trigger?.keywords?.join(' / ') || skill.trigger?.intents?.join(' / ')}</span><span>作用域：{skill.scope?.domains?.join(', ')}</span><span>证据：{candidate.evidence_ids?.join(', ')}</span></div><div className="skill-steps"><div><strong>前置判断</strong>{(skill.preconditions || []).map((item: string, i: number) => <p key={i}>{item}</p>)}</div><div><strong>决策流程</strong>{(skill.procedure || []).map((item: string, i: number) => <p key={i}>{item}</p>)}</div><div><strong>后置检查 / 恢复</strong>{[...(skill.postconditions || []), ...(skill.recovery || [])].map((item: string, i: number) => <p key={i}>{item}</p>)}</div></div><div className="snapshot-line">父 Snapshot：<code>{candidate.parent_snapshot_hash}</code> · Patch：<code>{candidate.patch_hash}</code></div></article>; }
@@ -383,9 +396,9 @@ function SkillComparison({ run, runUrl }: { run: Run | null; runUrl: (arm: 'S0' 
 function HistoryView({ runs, run, onSelect, onExport }: { runs: Run[]; run: Run | null; onSelect: (id: string) => void; onExport: () => void }) {
   return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">STAGE 07 · AUDIT ARCHIVE</span><h2>运行历史与当前结论</h2><p>完整 JSON 包含生成请求、构建与证明、人工参与标签、反思和候选 Snapshot。</p></div>{run && <button className="research-button" onClick={onExport}><Download size={15} />导出完整研究包</button>}</div>
     {run && <div className="research-lineage"><div><span>Designer Run</span><strong>{run.run_id}</strong><small>世界 {run.scenario?.public?.initial_world_hash?.slice(0, 16) || '未认证'}</small></div><ArrowRight size={15} /><div><span>冻结 Task</span><strong>{run.scenario?.task?.record_hash?.slice(0, 16) || '—'}</strong><small>{run.scenario?.task?.customer_request || '无任务'}</small></div><ArrowRight size={15} /><div><span>Human Episode</span><strong>{run.episodes?.length || 0} 条</strong><small>human · qualitative_manual_pilot</small></div><ArrowRight size={15} /><div><span>Skill Proposal</span><strong>{run.candidate_skill?.status || run.reflection?.status || '未运行'}</strong><small>{run.candidate_skill?.snapshot_hash?.slice(0, 16) || '无候选'}</small></div></div>}
-    {run && <div className="research-conclusion"><ShieldCheck size={17} /><div><strong>本次可以得出的结论</strong><span>{run.candidate_skill?.status === 'INJECTED_FOR_TEST' ? '候选 Skill 已进入真实 Service 请求；需要多个独立任务和预先冻结的动态验收政策，才能判断能力改善。' : run.candidate_skill?.status === 'STATIC_VALID' ? '候选仅通过静态检查；尚未证明实际注入，也没有能力效果结论。' : run.reflection?.status === 'NOOP' ? 'Reflector 选择 NOOP，本次证据不支持 Skill 更新。' : run.status === 'READY_FOR_CUSTOMER' ? 'Designer 任务已通过业务 Reference 认证；尚未验证自然对话可达性。' : '当前记录未完成所有阶段。未知或未运行的结果不会解释为通过。'}</span><small>该研究记录是人工探索，不适合作为论文中的 Benchmark 泛化或 RSI 能力提升证据。</small></div></div>}
+    {run && <div className="research-conclusion"><ShieldCheck size={17} /><div><strong>本次可以得出的结论</strong><span>{run.candidate_skill?.status === 'INJECTED_FOR_TEST' ? '候选 Skill 已进入真实 Service 请求；需要多个独立任务和预先冻结的动态验收政策，才能判断能力改善。' : run.candidate_skill?.status === 'STATIC_VALID' ? '候选仅通过静态检查；尚未证明实际注入，也没有能力效果结论。' : run.reflection?.status === 'NOOP' ? 'Reflector 选择 NOOP，未生成候选 Skill；判断依据见反思记录。' : run.status === 'READY_FOR_CUSTOMER' ? 'Designer 任务已通过业务 Reference 认证；尚未验证自然对话可达性。' : '当前记录未完成所有阶段。未知或未运行的结果不会解释为通过。'}</span><small>该研究记录是人工探索，不适合作为论文中的 Benchmark 泛化或 RSI 能力提升证据。</small></div></div>}
     <div className="history-list"><h3>研究运行</h3>{runs.length ? runs.map(row => <button key={row.run_id} className={run?.run_id === row.run_id ? 'selected' : ''} onClick={() => onSelect(row.run_id)}><span><strong>{row.run_id}</strong><small>{row.input?.distribution} · seed {row.input?.seed} · {new Date(row.created_at).toLocaleString()}</small></span><StatusPill value={row.status} /><span>{row.episodes?.length || 0} Episodes</span><ArrowRight size={14} /></button>) : <p>还没有保存的研究运行。</p>}</div>
-    {run && <details className="research-json"><summary>整份不可变研究导出中的关键原始数据</summary><pre>{code({ designer_run: run.designer_run, scenario: run.scenario, episodes: run.episodes?.map((ep: AnyRow) => ({ ...ep, report: '[完整 Episode 记录随导出保存]' })), reflection: run.reflection, candidate_skill: run.candidate_skill, comparisons: run.comparisons, journal: run.journal })}</pre></details>}
+    {run && <details className="research-json"><summary>整份不可变研究导出中的关键原始数据</summary><pre>{code({ designer_run: run.designer_run, scenario: run.scenario, episodes: run.episodes?.map((ep: AnyRow) => ({ ...ep, report: '[完整 Episode 记录随导出保存]' })), reflection: run.reflection, reflection_history: run.reflection_history, candidate_skill: run.candidate_skill, comparisons: run.comparisons, journal: run.journal })}</pre></details>}
   </div>;
 }
 function EmptyStage({ title, text }: { title: string; text: string }) { return <div className="research-panel empty-stage"><div className="empty-stage-icon"><Wrench size={20} /></div><h2>{title}</h2><p>{text}</p></div>; }

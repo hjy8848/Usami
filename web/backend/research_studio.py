@@ -81,6 +81,10 @@ class AttachEpisodeCommand(BaseModel):
 class ReflectionCommand(BaseModel):
     session_id: str = Field(min_length=16, max_length=128)
     explicit_human_evidence_selection: bool = False
+    replace_legacy_evidence: bool = False
+
+
+NATIVE_REFLECTION_PROTOCOL = "usami-v2-reflection-evidence-v2"
 
 
 class HumanAnnotationCommand(BaseModel):
@@ -230,6 +234,49 @@ def _provider_failure(result: DesignerRun):
     return None, None
 
 
+def _native_assessment(record):
+    """Expose native scoring and resolve process/safety refs, without assigning blame."""
+    outcome = record.outcome.model_dump(mode="json")
+    required = set()
+    for dimension in ("process_errors", "safety_violations"):
+        if dimension in outcome:
+            required.update(outcome[dimension]["evidence_refs"])
+    sources = []
+
+    def add(value, source_ref):
+        fingerprint = digest(value)
+        if fingerprint in required:
+            sources.append({"evidence_ref": fingerprint, "source_ref": source_ref,
+                            "native_value": value})
+
+    for index, goal in enumerate(outcome["state_goals"]):
+        add(goal, f"/outcome/state_goals/{index}")
+    communication = record.communication.model_dump(mode="json")
+    for field in ("claims", "obligations"):
+        for index, value in enumerate(communication[field]):
+            add(value, f"/communication/{field}/{index}")
+    add({"communication_hash": record.communication.record_hash}, "/communication/record_hash")
+    for index, execution in enumerate(record.tool_executions):
+        for row_index, operation in enumerate(execution.oracle.get("operations", ())):
+            add(operation, f"/tool_executions/{index}/oracle/operations/{row_index}")
+    add({"episode_status": record.status}, "/status")
+    if required != {source["evidence_ref"] for source in sources}:
+        raise ValueError("native assessment contains unresolved process/safety evidence references")
+    tool_contracts = []
+    seen_contracts = set()
+    for index, call in enumerate(record.model_calls):
+        if call.role == "service" and "tools" in call.request:
+            tools = call.request["tools"]
+            fingerprint = digest(tools)
+            if fingerprint not in seen_contracts:
+                seen_contracts.add(fingerprint)
+                tool_contracts.append({"source_ref": f"/model_calls/{index}/request/tools", "tools": tools})
+    return {"protocol": NATIVE_REFLECTION_PROTOCOL, "native_trace_hash": record.record_hash,
+            "outcome": outcome, "episode_status": record.status,
+            "terminal_reason": record.terminal_reason, "evidence_sources": sources,
+            "service_tool_contracts": tool_contracts}
+
+
 def _native_evidence(record, episode_id: str, model_spec: ModelSpec,
                      service_snapshot=None) -> tuple[EpisodeEvidence, InteractionEvidenceView]:
     """Project actual V2 calls and Oracle rows without manufacturing failures."""
@@ -261,13 +308,19 @@ def _native_evidence(record, episode_id: str, model_spec: ModelSpec,
                 context_hash=digest(context), hits=retrieval.hits, rendered=rendered,
                 request_hash=model_call.request_hash))
     events = []
+    event_ids_by_execution = []
     event_classes = {"successful_business_violation", "rejected_invalid_attempt",
                      "authorization_only", "false_rejection", "legal_execution", "unscored"}
     for index, execution in enumerate(record.tool_executions):
         oracle = execution.oracle if isinstance(execution.oracle, dict) else {}
+        event_ids = []
         for row_index, row in enumerate(oracle.get("operations", ())):
+            # Native per-tool traces restart their local numbering. Scope it to
+            # this Episode and execution before using it as a dictionary key.
+            event_id = f"{episode_id}:tool:{index}:oracle:{row_index}:{row.get('event_id', '')}"
+            event_ids.append(event_id)
             events.append(VerifiedEvent(
-                event_id=str(row.get("event_id") or f"{record.record_hash[:16]}-tool-{index}-{row_index}"),
+                event_id=event_id,
                 operation=str(row.get("operation") or execution.operation.get("name", "unknown")),
                 classification=(row.get("classification") if row.get("classification") in event_classes
                                else "unscored"),
@@ -278,6 +331,7 @@ def _native_evidence(record, episode_id: str, model_spec: ModelSpec,
                 operation_correct=row.get("operation_correct") if isinstance(row.get("operation_correct"), bool) else None,
                 before_hash=execution.before_state_hash, after_hash=execution.after_state_hash,
             ))
+        event_ids_by_execution.append(event_ids)
     artifact_hash = digest(record.model_dump(mode="json"))
     service_hash = service_snapshot.snapshot_hash
     customer_hash = empty_snapshot("customer").snapshot_hash
@@ -302,6 +356,7 @@ def _native_evidence(record, episode_id: str, model_spec: ModelSpec,
         episode_id=episode_id, config=cfg, track="service_task", task_ref=record.task.record_hash,
         customer_snapshot_hash=customer_hash, service_snapshot_hash=service_hash,
         model_calls=tuple(calls), injections=tuple(injections), events=tuple(events), failures=(),
+        native_assessment=_native_assessment(record),
         consumption=Consumption(customer_llm_calls=0, service_llm_calls=len(calls),
                                 reflection_calls=0, tool_calls=len(record.tool_executions)),
         termination=record.status,
@@ -323,7 +378,6 @@ def _native_evidence(record, episode_id: str, model_spec: ModelSpec,
         "source_refs": ("/task/customer_request",),
     }]
     tool_records = []
-    oracle_events = {event.event_id: event for event in events}
     service_calls = [call for call in record.model_calls if call.role == "service"]
     tool_cursor = 0
     for event_index, event in enumerate(record.events):
@@ -340,11 +394,7 @@ def _native_evidence(record, episode_id: str, model_spec: ModelSpec,
                 "source_refs": (f"/events/{event_index}/payload/customer_event",),
             })
     for execution_index, execution in enumerate(record.tool_executions):
-        oracle_rows = (execution.oracle or {}).get("operations", ())
-        event_ids = []
-        for oracle_index, oracle_row in enumerate(oracle_rows):
-            event_id = str(oracle_row.get("event_id") or f"{record.record_hash[:16]}-tool-{execution_index}-{oracle_index}")
-            event_ids.append(event_id)
+        event_ids = event_ids_by_execution[execution_index]
         # The native runner issues one Service operation per ToolExecution.
         matching = None
         raw_args = None
@@ -370,15 +420,30 @@ def _native_evidence(record, episode_id: str, model_spec: ModelSpec,
             "turn_id": None, "event_id": event_id,
             "source_refs": (f"/tool_executions/{execution_index}",),
         })
-    service_context = tuple({
-        "model_call_id": f"{record.record_hash[:12]}-service-{index}",
-        "request_messages": copy.deepcopy(call.request.get("messages", [])),
-        "source_ref": f"/model_calls/{index}/request/messages",
-    } for index, call in enumerate(service_calls))
+    # Every growing request remains in the immutable Episode. Losslessly reuse
+    # the preceding request's identical prefix instead of resending it N times.
+    service_context = []
+    previous_messages = []
+    for native_index, call in enumerate(record.model_calls):
+        if call.role != "service":
+            continue
+        messages = call.request.get("messages", [])
+        shared = 0
+        for before, current in zip(previous_messages, messages):
+            if before != current:
+                break
+            shared += 1
+        service_context.append({
+            "model_call_id": f"{record.record_hash[:12]}-service-{native_index}",
+            "encoding": "previous-request-prefix-v1", "unchanged_prefix_messages": shared,
+            "request_messages": copy.deepcopy(messages[shared:]),
+            "source_ref": f"/model_calls/{native_index}/request/messages",
+        })
+        previous_messages = messages
     replies = tuple({"model_call_index": index, "content": message.text,
                      "source_ref": f"/service_messages/{index}"}
                     for index, message in enumerate(record.service_messages))
-    view = native_view(evidence, customer_requests, tool_records, replies, service_context)
+    view = native_view(evidence, customer_requests, tool_records, replies, tuple(service_context))
     return evidence, view
 
 
@@ -843,14 +908,12 @@ class ResearchRunManager:
             self._persist(row, "human_episode_attached_and_replayed_" + arm)
         return self._view(row)
 
-    def reflect(self, owner_id, run_id, session_id):
+    def reflect(self, owner_id, run_id, session_id, replace_legacy_evidence=False):
         row = self.get(owner_id, run_id)
         link = next((item for item in row["episodes"] if item["session_id"] == session_id), None)
         if not link or not link["explicitly_selected_for_reflection"]:
             raise HTTPException(409, detail={"code": "HUMAN_EVIDENCE_NOT_SELECTED",
                 "message": "请先明确选择一条 Replay 验证的 S0 真人 Episode 作为本次反思证据。"})
-        if row.get("reflection") and row["reflection"].get("status") != "FAILED":
-            raise HTTPException(409, detail={"code": "REFLECTION_ALREADY_RUN", "message": "此研究运行只允许一次 Reflection。"})
         if link.get("arm") != "S0":
             raise HTTPException(422, detail={"code": "REFLECTION_BASELINE_ONLY",
                 "message": "本版 Reflector 仅消费用户明确选择的 S0 训练 Episode。"})
@@ -876,6 +939,20 @@ class ResearchRunManager:
             public_policy="Use native After-sales operations only. Manual human pilots are qualitative evidence; do not infer hidden goals or claim a formal performance result.",
             boundaries="The Service may only act through existing tools and exact Customer authorization; do not alter Engine, Reference, Oracle, policy or permissions.")
         with self.lock:
+            previous = row.get("reflection")
+            if row["status"] == "REFLECTOR_RUNNING":
+                raise HTTPException(409, detail={"code": "REFLECTION_RUNNING", "message": "本次反思仍在运行，请等待结果。"})
+            legacy_noop = (previous is not None and previous.get("status") == "NOOP"
+                           and previous.get("evidence_protocol") is None)
+            if replace_legacy_evidence and not legacy_noop:
+                raise HTTPException(409, detail={"code": "LEGACY_REFLECTION_REQUIRED",
+                    "message": "仅旧版证据映射产生的 NOOP 可显式重做；新版结果不能重复抽样。"})
+            if previous and previous.get("status") != "FAILED" and not (replace_legacy_evidence and legacy_noop):
+                raise HTTPException(409, detail={"code": "REFLECTION_ALREADY_RUN",
+                    "message": "此研究运行已完成 Reflection；旧版 NOOP 需明确选择使用修正后的证据再反思。"})
+            if previous:
+                row.setdefault("reflection_history", []).append(copy.deepcopy(previous))
+            row["reflection"] = None
             row["status"] = "REFLECTOR_RUNNING"
             row["phases"]["reflection"] = "RUNNING"
             self._persist(row, "service_reflection_started")
@@ -892,6 +969,8 @@ class ResearchRunManager:
             model = _model_spec(settings)
             record = ServiceReflector(client, model).reflect(reflection_input)
             reflection = {"record": record.model_dump(mode="json"),
+                          "evidence_protocol": NATIVE_REFLECTION_PROTOCOL,
+                          "source_episode_id": episode_id,
                           "input_hash": record.input_hash,
                           "input": reflection_input.model_dump(mode="json"),
                           "raw_call": record.call.model_dump(mode="json") if record.call else None,
@@ -943,7 +1022,8 @@ class ResearchRunManager:
                 row["phases"]["reflection"] = "FAILED"
                 row["reflection"] = {"status": "FAILED", "error": {
                     "code": getattr(exc, "code", "REFLECTION_FAILED"), "type": type(exc).__name__,
-                    "message": "Reflector 未能完成；原始请求或可用响应保留在本次运行记录中。"}}
+                    "message": "Reflector 未能完成；原始请求或可用响应保留在本次运行记录中。"},
+                    "evidence_protocol": NATIVE_REFLECTION_PROTOCOL, "source_episode_id": episode_id}
                 self._persist(row, "service_reflection_failed")
         finally:
             if client is not None:
@@ -1070,7 +1150,7 @@ def install_research_studio_routes(app: FastAPI, human_manager: HumanSessionMana
         if command.explicit_human_evidence_selection is not True:
             raise HTTPException(422, detail={"code": "EXPLICIT_SELECTION_REQUIRED",
                 "message": "人工 Episode 默认不进入反思；必须显式选择这条证据。"})
-        return manager.reflect(_owner(request), run_id, command.session_id)
+        return manager.reflect(_owner(request), run_id, command.session_id, command.replace_legacy_evidence)
 
     @app.get("/api/research/runs/{run_id}/export")
     def export_research_run(run_id: str, request: Request, response: Response):

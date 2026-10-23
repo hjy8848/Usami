@@ -19,7 +19,7 @@ class CollectedGroup:
 def collect_self_edit_group(host, evaluator, editor, target, probe_packages,
                             select_packages, reward_packages, *, seeds,
                             phase_budgets, public_view=None, margin=0.0,
-                            max_regression=0.0):
+                            max_regression=0.0, sampling_ref=None):
     """Collect all roots before selecting or revealing any terminal reward.
 
     Each root has independent state and a separate, identical allocation.
@@ -40,6 +40,21 @@ def collect_self_edit_group(host, evaluator, editor, target, probe_packages,
     if not all((probe_packages, select_packages, reward_packages)):
         raise ValueError("SELF_EDIT groups require probe, selection and reward packages")
     assert_context_partitions(probe_packages, select_packages, reward_packages)
+    if sampling_ref is not None:
+        sampled = host.archive.load(sampling_ref)
+        if sampled["kind"] != "sampled_training_packages_v1":
+            raise ValueError("sampling provenance is not a registered training context")
+        for purpose, packages in (("C_probe", probe_packages), ("C_select", select_packages),
+                                  ("C_reward", reward_packages)):
+            draw = host.archive.load(sampled["draw_refs"][purpose])
+            if (draw["manifest_ref"] != sampled["manifest_ref"] or draw["partition"] != "meta-train"
+                    or draw["purpose"] != purpose or draw["package_ids"] != [p.package_id for p in packages]):
+                raise ValueError("executed packages differ from their registered draw")
+        bank = host.archive.load(sampled["manifest_ref"])
+        registered = {row["package"]["package_id"]: row["package"] for row in bank["registrations"]}
+        for p in probe_packages + select_packages + reward_packages:
+            if digest(asdict(p)) != digest(registered[p.package_id]):
+                raise ValueError("executed package contents differ from the frozen bank")
     package_index = {p.package_id: p for p in probe_packages}
     if len(package_index) != len(probe_packages):
         raise ValueError("duplicate public experiment handles")
@@ -49,6 +64,7 @@ def collect_self_edit_group(host, evaluator, editor, target, probe_packages,
                "target_ref": target.ref, "models": models, "seeds": seeds,
                "limits": asdict(host.ledger.limits), "phase_budgets": phase_budgets,
                "public_view": public,
+               "sampling_ref": sampling_ref,
                "packages": {"C_probe": [asdict(p) for p in probe_packages],
                             "C_select": [asdict(p) for p in select_packages],
                             "C_reward": [asdict(p) for p in reward_packages]},
@@ -139,6 +155,15 @@ def collect_self_edit_group(host, evaluator, editor, target, probe_packages,
     ref = host.archive.save(record)
     return CollectedGroup(context_ref, ref, record["status"], record["selected_ref"],
                           tuple(roots), reward_refs)
+
+
+def collect_sampled_self_edit_group(host, evaluator, editor, target, provider, *,
+                                    package_seed, package_counts, **options):
+    """Sample private packages through the Host registry and archive the link."""
+    sampled = provider.sample_training_context(package_seed, counts=package_counts)
+    return collect_self_edit_group(host, evaluator, editor, target, sampled.probe,
+                                   sampled.selection, sampled.reward,
+                                   sampling_ref=sampled.archive_ref, **options)
 
 
 def training_records(host, group):

@@ -25,7 +25,16 @@ phase allocations, reserves the entire group before sampling, selects on
 It retains all root trajectories, deduplicates candidate evaluation, and excludes
 the whole group from training after infrastructure failure or unusable reward
 evaluation. `collection.training_records` checks archived reward provenance
-before exporting all roots. Packages are supplied by the trusted caller; an
-audited, continuously sampled task distribution is still required.
+before exporting all roots.
+
+`packages.PackageProvider` freezes a certified package manifest and samples
+without replacement. It checks declared family/lineage boundaries, original
+support/probe/query source roles, and distinct private query sources. Draws and
+resume state are archived and recomputable. Exhaustion is explicit: there is no
+automatic wraparound of a tiny reward bank. `collect_sampled_self_edit_group`
+binds executed packages to the recorded draw. Usami's native certificate adapter
+is in `integrations/rsi_usami/packages.py`; no Usami import enters the Core.
+Independent source-label auditing and a sufficiently large real task bank are
+still required. Metadata consistency checks do not establish structural novelty.
 The full original objective and remaining P0–P6 acceptance work are tracked in
 `experiments/rsi/reports/IMPLEMENTATION_STATUS.zh.md`.

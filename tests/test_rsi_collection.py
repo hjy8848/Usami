@@ -4,7 +4,8 @@ import json
 
 import pytest
 
-from rsi_core.collection import collect_self_edit_group, training_records
+from rsi_core.collection import collect_sampled_self_edit_group, collect_self_edit_group, training_records
+from rsi_core.packages import PackageProvider, PackageRegistration, TaskProof
 from rsi_core.protocol import Completion, InfrastructureError
 from rsi_core.training import group_advantages, root_training_record
 from test_rsi_core import host, researcher
@@ -145,6 +146,31 @@ def test_duplicate_candidates_share_evaluation_but_not_training_roots(host):
     assert host.ledger.used["episodes"] == 6
     saved = host.archive.load(group.archive_ref)
     assert len(saved["selections"]) == len(saved["reward_comparisons"]) == 1
+
+
+def test_sampled_package_provenance_is_bound_to_actual_group_execution(host):
+    evaluator, packages = fixture(host)
+    registrations = []
+    for p in packages.values():
+        proofs = tuple(TaskProof(ref, "fixture-origin-" + ref, "explicit-fixture-proof")
+                       for ref in p.probe_refs + p.query_refs)
+        registrations.append(PackageRegistration(p, (), proofs))
+    # Core protocol fixture; native proof verification has separate real tests.
+    provider = PackageProvider(registrations, host.archive, lambda domain, proof: True)
+    host.model = GroupModel()
+    editor = editing()
+    group = collect_sampled_self_edit_group(host, evaluator, editor, editor, provider,
+        package_seed=7, package_counts={"C_probe": 1, "C_select": 1, "C_reward": 1},
+        seeds=(0, 1, 2, 3), phase_budgets=BUDGETS)
+    assert group.status == "USABLE" and len(training_records(host, group)) == 4
+    context = host.archive.load(group.context_ref)
+    sampled = host.archive.load(context["sampling_ref"])
+    assert sampled["manifest_ref"] == provider.manifest_ref
+    with pytest.raises(ValueError, match="contents differ"):
+        collect_self_edit_group(host, evaluator, editor, editor,
+            (packages["C_probe"],), (packages["C_select"],),
+            (replace(packages["C_reward"], query_refs=("swapped-private-query",)),),
+            seeds=(4, 5, 6, 7), phase_budgets=BUDGETS, sampling_ref=context["sampling_ref"])
 
 
 def test_unknown_reward_invalidates_all_exports_without_rewriting_native_status(host):

@@ -27,7 +27,8 @@ from usami_v2.runtime.agents import (
     AgentCall, AgentMessage, CustomerPrompt, ServiceAction, ServicePrompt,
 )
 from usami_v2.runtime.customer import (
-    CustomerDecision, CustomerProfile, CustomerProfileV2, CustomerRuntime, OfferPresentation, render_offer,
+    CustomerDecision, CustomerProfile, CustomerProfileV2, HumanCustomerProfileV2,
+    CustomerRuntime, OfferPresentation, render_offer,
 )
 from usami_v2.scenarios.tasks import (
     TaskSpec, TaskSpecV2, check_task_scope, evaluate_state_goals, evaluate_task_compliance,
@@ -65,7 +66,7 @@ class ToolExecution(Sealed):
 class EpisodeRecord(Sealed):
     protocol: Literal["commerce-episode-v1"] = "commerce-episode-v1"
     task: Union[TaskSpec, TaskSpecV2]
-    profile: Union[CustomerProfile, CustomerProfileV2]
+    profile: Union[HumanCustomerProfileV2, CustomerProfile, CustomerProfileV2]
     budget: EpisodeBudget
     mode: Literal["reference", "sandbox"]
     initial_world: World

@@ -21,7 +21,7 @@ from vast_coevo.schema import digest
 from usami.service.client import OpenAICompatibleClient
 from usami_v2.runtime.agents import CustomerPrompt, OpenAIServiceAgent, ServicePrompt
 from usami_v2.runtime.customer import (
-    CustomerDecision, CustomerProfile, CustomerProfileV2, OfferPresentation,
+    CustomerDecision, CustomerProfile, CustomerProfileV2, HumanCustomerProfileV2, OfferPresentation,
 )
 from usami_v2.runtime.runner import (
     EpisodeBudget, EpisodeCancelled, EpisodeRecord, replay_episode, run_episode, save_episode,
@@ -444,7 +444,10 @@ class HumanSessionManager:
                                                 "text": scenario.task.customer_request})
                 record = run_episode(
                     scenario.world.clone(), scenario.task.model_copy(deep=True),
-                    scenario.profile.model_copy(deep=True), human_agent, service_agent,
+                    HumanCustomerProfileV2.model_validate({
+                        **scenario.profile.model_dump(mode="json", exclude={"record_hash"}),
+                        "return_pickup_policy": "accept_presented_quote"}),
+                    human_agent, service_agent,
                     budget=EpisodeBudget(max_customer_turns=8, max_service_decisions=MAX_SERVICE_MODEL_CALLS,
                                          max_service_tool_calls=MAX_SERVICE_MODEL_CALLS,
                                          max_model_calls=MAX_SERVICE_MODEL_CALLS),
@@ -530,7 +533,7 @@ class HumanSessionManager:
             "world_certificate_hash": session.scenario.world_certificate.record_hash,
             "task_hash": session.scenario.task.record_hash,
             "task_certificate": session.scenario.task_certificate.model_dump(mode="json"),
-            "profile_hash": session.scenario.profile.record_hash,
+            "profile_hash": record.profile.record_hash,
             "service_model": session.model_name,
             "service_model_spec": session.service_model_spec,
             "service_skill_snapshot_hash": session.service_skill_snapshot_hash,

@@ -73,6 +73,17 @@ class CustomerProfileV2(CustomerProfile):
         return self
 
 
+class HumanCustomerProfileV2(CustomerProfileV2):
+    """A person's explicit acceptance also confirms the displayed return slot.
+
+    Only the authenticated Human Playground creates this profile. Simulator
+    profiles keep their fixed pickup preference. The required field preserves
+    the hashes and meaning of existing v1/v2 profiles and archived Episodes.
+    """
+
+    return_pickup_policy: Literal["accept_presented_quote"]
+
+
 class PrivateCustomerFact(Sealed):
     fact_id: str
     subject_id: str
@@ -83,6 +94,7 @@ class PrivateCustomerFact(Sealed):
 
 CustomerProfile.model_rebuild()
 CustomerProfileV2.model_rebuild()
+HumanCustomerProfileV2.model_rebuild()
 
 
 class CustomerDecision(Sealed):
@@ -328,7 +340,8 @@ class CustomerRuntime:
                 if profile.latest_arrival_days is not None and quote.promised_arrival is not None:
                     if quote.promised_arrival > world.clock + timedelta(days=profile.latest_arrival_days):
                         raise ValueError("quote exceeds private Customer arrival limit")
-                if quote.return_required and quote.pickup_slot != profile.return_pickup_slot:
+                if (quote.return_required and not isinstance(profile, HumanCustomerProfileV2)
+                        and quote.pickup_slot != profile.return_pickup_slot):
                     raise ValueError("quote requires a return the Customer has not agreed to")
 
         before, new = world, world.clone()

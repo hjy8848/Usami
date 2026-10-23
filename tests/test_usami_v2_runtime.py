@@ -49,6 +49,52 @@ def refund_profile(aliases):
                              delegation_request_spans={line_id: request})
 
 
+def test_human_accepts_actual_return_slot_while_simulator_keeps_fixed_preference():
+    from usami_v2.runtime.customer import HumanCustomerProfileV2
+
+    world, aliases = frozen()
+    original = world.skus[world.lines[aliases["damaged"]].sku_id]
+    original.return_required = True
+    profile = CustomerProfileV2.model_validate({
+        **refund_profile(aliases).model_dump(mode="json", exclude={"record_hash"}),
+        "return_pickup_slot": "research-return-pickup"})
+    automated = CustomerRuntime(profile)
+    world = automated.initialize(world, "Please refund my damaged device.").world
+    service = ScriptedRefundService(world, aliases)
+    slot = "2026-01-15T09:00:00Z/2026-01-15T17:00:00Z"
+    for index in range(3):
+        operation = service.decide(None).operation
+        if operation.name == "prepare_remedy_quote":
+            operation = operation.model_copy(update={"params": {**operation.params, "pickup_slot": slot}})
+        world, _ = _execution(world, aliases["customer"], operation, f"human_slot_{index}", "reference")
+    offer = render_offer(world, service.quote, "commit_accepted_quote", "slot-offer", 10,
+                         "Please accept this refund and its return pickup.",
+                         expected_customer_id=profile.customer_id)
+    decision = CustomerDecision(message="I accept this quote.", accept_quote_id=offer.quote_id,
+                                accept_operation=offer.operation)
+    with pytest.raises(ValueError, match="return the Customer has not agreed to"):
+        automated.apply(world, decision, presentation=offer, event_index=11)
+    human_profile = HumanCustomerProfileV2.model_validate({
+        **profile.model_dump(mode="json", exclude={"record_hash"}),
+        "return_pickup_policy": "accept_presented_quote"})
+    human = CustomerRuntime(human_profile)
+    with pytest.raises(ValueError, match="actually presented quote"):
+        human.apply(world, decision, presentation=None, event_index=11)
+    forged = OfferPresentation.model_validate({
+        **offer.model_dump(mode="json", exclude={"record_hash"}), "rendered_terms": "A different pickup slot"})
+    with pytest.raises(ValueError, match="terms differ from the actual business quote"):
+        human.apply(world, decision, presentation=forged, event_index=11)
+    accepted = human.apply(world, decision, presentation=offer, event_index=11)
+    quote = accepted.world.quotes[service.quote]
+    consent = next(iter(accepted.world.consents.values()))
+    assert quote.pickup_slot == slot and consent.terms_hash == quote.terms_hash
+    final, execution = _execution(accepted.world, aliases["customer"], Operation(
+        name="commit_accepted_quote", scope_id=next(iter(world.merchants)),
+        resource_id=quote.id, params={}), "commit_human_slot", "reference")
+    assert execution.result["success"] is True
+    assert final.cases[service.case].status == "awaiting_return"
+
+
 class ScriptedRefundService:
     last_call = None
     uses_model = False

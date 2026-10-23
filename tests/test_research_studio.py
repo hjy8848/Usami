@@ -266,5 +266,24 @@ def test_saved_task_revalidation_preserves_raw_calls_and_runs_native_return_flow
     assert any(event.kind == "external_event" for event in record.events)
     assert record.replay_verified and replay_episode(record).verified
     assert not record.model_calls
+    from usami_v2.runtime.customer import HumanCustomerProfileV2
+    from usami_v2.runtime.runner import EpisodeRecord
+    for index, action in enumerate(actions):
+        if action.operation and action.operation.name == "prepare_remedy_quote":
+            operation = action.operation.model_copy(update={"params": {
+                **action.operation.params, "pickup_slot": "2026-01-15T09:00:00Z/2026-01-15T17:00:00Z"}})
+            actions[index] = ServiceAction(kind="operation", operation=operation)
+    automated = run_episode(scenario.world, scenario.task, scenario.profile,
+        AcceptingCustomer(), WitnessService(), external_events=events)
+    assert automated.status == "customer_protocol_error"
+    human_profile = HumanCustomerProfileV2.model_validate({
+        **scenario.profile.model_dump(mode="json", exclude={"record_hash"}),
+        "return_pickup_policy": "accept_presented_quote"})
+    human = run_episode(scenario.world, scenario.task, human_profile,
+        AcceptingCustomer(), WitnessService(), external_events=events)
+    assert human.status == "customer_finished" and human.outcome.business_goal_success is True
+    reloaded_episode = EpisodeRecord.model_validate(human.model_dump(mode="json"))
+    assert reloaded_episode.profile.return_pickup_policy == "accept_presented_quote"
+    assert replay_episode(reloaded_episode).verified
     with pytest.raises(ValueError, match="only a blocked run"):
         manager.revalidate_saved_task(row["run_id"])

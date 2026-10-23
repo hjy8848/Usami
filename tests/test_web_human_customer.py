@@ -130,6 +130,7 @@ def test_human_reply_and_explicit_offer_accept_flow_through_runtime_engine_oracl
         assert report.status_code == 200, report.text
         data = report.json()
         episode = data["episode"]
+        assert episode["profile"]["return_pickup_policy"] == "accept_presented_quote"
         assert episode["status"] == "customer_finished"
         assert episode["tool_executions"][-1]["operation"]["name"] == "commit_accepted_quote"
         assert episode["final_world"]["settlements"]

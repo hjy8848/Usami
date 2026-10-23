@@ -19,10 +19,11 @@ test('failed reflection displays the provider error and waits for an explicit re
   await page.getByRole('navigation', { name: '研究阶段' }).getByRole('button', { name: /Reflector 提炼 Skill/ }).click();
   await expect(page.getByText('LLM endpoint returned HTTP 400; no retry performed', { exact: true })).toBeVisible();
   expect(submissions).toHaveLength(0);
+  await page.getByRole('spinbutton', { name: 'Reflector 单次等待（秒）' }).fill('300');
   await page.getByRole('button', { name: '选择此证据，重新运行 Reflector' }).click();
   await expect.poll(() => submissions.length).toBe(2);
   expect(submissions[1]).toEqual({ session_id: 'saved-completed-episode',
-    explicit_human_evidence_selection: true, replace_legacy_evidence: false });
+    explicit_human_evidence_selection: true, replace_legacy_evidence: false, timeout_seconds: 300 });
 });
 
 test('Research Studio exposes the seven real workflow stages without running a model by itself', async ({ page }) => {
@@ -77,7 +78,7 @@ test('legacy NOOP offers an explicit evidence revision without silently calling 
   await success.getByRole('button', { name: '选择此证据，用修正后的映射反思一次' }).click();
   await expect.poll(() => submissions.length).toBe(2);
   expect(submissions[1].body).toEqual({ session_id: 'session-completed',
-    explicit_human_evidence_selection: true, replace_legacy_evidence: true });
+    explicit_human_evidence_selection: true, replace_legacy_evidence: true, timeout_seconds: 180 });
   expect(run.reflection_history).toEqual([legacy]);
   await expect(page.locator('.reflection-choice').first().getByRole('button')).toBeDisabled();
 });

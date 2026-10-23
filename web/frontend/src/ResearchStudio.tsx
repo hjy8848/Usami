@@ -146,13 +146,13 @@ export default function ResearchStudio() {
     finally { setBusy(false); }
   }
   async function selectRun(id: string) { setError(''); try { const selected = await refreshRuns(id); setStage(0); if (selected) { const url = new URL(location.href); url.searchParams.set('run_id', id); history.replaceState(null, '', url); } } catch (cause) { setError(String(cause)); } }
-  async function chooseReflectionEvidence(sessionId: string, replaceLegacyEvidence = false) {
+  async function chooseReflectionEvidence(sessionId: string, replaceLegacyEvidence = false, timeoutSeconds = 180) {
     if (!run) return;
     setBusy(true); setError('');
     try {
       const attached = await api<Run>(`/research/runs/${run.run_id}/attach-episode`, { session_id: sessionId, arm: 'S0', use_for_reflection: true });
       setRun(attached);
-      const next = await api<Run>(`/research/runs/${run.run_id}/reflect`, { session_id: sessionId, explicit_human_evidence_selection: true, replace_legacy_evidence: replaceLegacyEvidence });
+      const next = await api<Run>(`/research/runs/${run.run_id}/reflect`, { session_id: sessionId, explicit_human_evidence_selection: true, replace_legacy_evidence: replaceLegacyEvidence, timeout_seconds: timeoutSeconds });
       setRun(next); setStage(4);
     } catch (cause) { setError(String(cause)); }
     finally { setBusy(false); }
@@ -351,24 +351,27 @@ function findModelCall(calls: AnyRow[], tool: AnyRow): AnyRow | undefined {
   }
   return undefined;
 }
-function ReflectionView({ run, busy, onSelectReflection }: { run: Run | null; busy: boolean; onSelectReflection: (id: string, replaceLegacyEvidence?: boolean) => void; selectedEpisode: (id: string) => AnyRow | undefined }) {
+function ReflectionView({ run, busy, onSelectReflection }: { run: Run | null; busy: boolean; onSelectReflection: (id: string, replaceLegacyEvidence?: boolean, timeoutSeconds?: number) => void; selectedEpisode: (id: string) => AnyRow | undefined }) {
+  const [timeoutSeconds, setTimeoutSeconds] = useState(180);
   if (!run) return <EmptyStage title="还没有研究运行" text="先运行 Designer 并完成一条 train 分区的真人 S0 Episode。" />;
   if (run.input?.split !== 'train') return <EmptyStage title="此分区不能进入 Reflection" text="Validation 与 held-out 运行仍可用于查看和保存，但本工作台禁止将其证据发送给 Reflector。请创建 train 分区的人工探索运行。" />;
   const running = run.phases.reflection === 'RUNNING';
+  const timeoutControl = <div className="research-field-row research-budget-fields"><label>Reflector 单次等待（秒）<input type="number" min={1} max={600} value={timeoutSeconds} disabled={busy || running} onChange={e => setTimeoutSeconds(Number(e.target.value))} /><small>默认 180 秒，最多 600 秒；只影响本次反思，不改变 Service 的超时设置。</small></label></div>;
   const choices = (replaceLegacyEvidence = false) => run.episodes.filter((ep: AnyRow) => ep.arm === 'S0' && ep.replay?.verified).map((ep: AnyRow) =>
     <div className="reflection-choice" key={ep.session_id}>
       <div><strong>S0 Episode · {ep.episode_hash.slice(0, 18)}…</strong>
         <span>业务目标 {ep.outcome?.business_goal_success === true ? '完成' : ep.outcome?.business_goal_success === false ? '未完成' : '未知'} · 过程 {ep.outcome?.process_errors?.status || 'UNKNOWN'} · 交互 {ep.outcome?.interaction_reliability?.status || 'UNKNOWN'} · {ep.costs?.service_calls} Service calls</span></div>
-      <button className="research-secondary" disabled={busy || running} onClick={() => onSelectReflection(ep.session_id, replaceLegacyEvidence)}><Sparkles size={15} />
+      <button className="research-secondary" disabled={busy || running} onClick={() => onSelectReflection(ep.session_id, replaceLegacyEvidence, timeoutSeconds)}><Sparkles size={15} />
         {busy || running ? 'Reflector 运行中…' : replaceLegacyEvidence ? '选择此证据，用修正后的映射反思一次' : run.reflection?.status === 'FAILED' ? '选择此证据，重新运行 Reflector' : '明确选作证据并运行 Reflector'}
       </button>
     </div>);
-  if (!run.reflection) return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">STAGE 05 · SERVICE REFLECTOR</span><h2>选择真实、可回放的 S0 证据进行一次反思</h2><p>人工 Episode 默认不参与训练；点击按钮将选择这条证据并调用一次模型。</p></div><Sparkles size={20} /></div>{choices()}{!run.episodes.some((ep: AnyRow) => ep.arm === 'S0' && ep.replay?.verified) && <EmptyStage title="没有可用于反思的 S0 Episode" text="先完成一条 S0 人工 Episode 并通过 Replay。" />}</div>;
+  if (!run.reflection) return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">STAGE 05 · SERVICE REFLECTOR</span><h2>选择真实、可回放的 S0 证据进行一次反思</h2><p>人工 Episode 默认不参与训练；点击按钮将选择这条证据并调用一次模型。</p></div><Sparkles size={20} /></div>{timeoutControl}{choices()}{!run.episodes.some((ep: AnyRow) => ep.arm === 'S0' && ep.replay?.verified) && <EmptyStage title="没有可用于反思的 S0 Episode" text="先完成一条 S0 人工 Episode 并通过 Replay。" />}</div>;
   const reflection = run.reflection; const patch = reflection.patch; const candidate = run.candidate_skill;
   const legacyNoop = reflection.status === 'NOOP' && !reflection.evidence_protocol;
   const errorMessage = typeof reflection.error === 'string' ? (reflection.raw_call?.error?.message || reflection.error) : reflection.error?.message;
   return <div className="research-panel result-panel"><div className="research-panel-heading"><div><span className="research-eyebrow">REAL REFLECTION OUTPUT</span><h2>Service Reflector · {reflection.status}</h2><p>候选 Skill 不会修改默认 Library。静态合法也不代表能力提升。</p></div><StatusPill value={reflection.status} /></div>
     {errorMessage && <div className="research-warning"><CircleAlert size={15} />{errorMessage}</div>}
+    {(reflection.status === 'FAILED' || legacyNoop) && timeoutControl}
     {reflection.status === 'FAILED' && <section><p>本次未生成有效 SkillPatch。原始失败记录将保留；明确选择证据后可重新调用一次模型，不会自动重试。</p>{choices()}</section>}
     {candidate?.skill && <SkillCard skill={candidate.skill} candidate={candidate} />}
     {patch?.action === 'NOOP' && <div className="research-notice"><ShieldCheck size={16} />Reflector 选择 NOOP，保留原 Skill。此判断的依据见下方模型理由与实际证据。</div>}

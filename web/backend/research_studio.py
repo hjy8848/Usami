@@ -82,6 +82,7 @@ class ReflectionCommand(BaseModel):
     session_id: str = Field(min_length=16, max_length=128)
     explicit_human_evidence_selection: bool = False
     replace_legacy_evidence: bool = False
+    timeout_seconds: float = Field(default=180.0, gt=0, le=600)
 
 
 NATIVE_REFLECTION_PROTOCOL = "usami-v2-reflection-evidence-v2"
@@ -908,7 +909,7 @@ class ResearchRunManager:
             self._persist(row, "human_episode_attached_and_replayed_" + arm)
         return self._view(row)
 
-    def reflect(self, owner_id, run_id, session_id, replace_legacy_evidence=False):
+    def reflect(self, owner_id, run_id, session_id, replace_legacy_evidence=False, timeout_seconds=180.0):
         row = self.get(owner_id, run_id)
         link = next((item for item in row["episodes"] if item["session_id"] == session_id), None)
         if not link or not link["explicitly_selected_for_reflection"]:
@@ -918,7 +919,7 @@ class ResearchRunManager:
             raise HTTPException(422, detail={"code": "REFLECTION_BASELINE_ONLY",
                 "message": "本版 Reflector 仅消费用户明确选择的 S0 训练 Episode。"})
         record, report, _ = self._stored_episode(row, link)
-        settings = settings_from_env()
+        settings = settings_from_env().model_copy(update={"timeout_seconds": timeout_seconds})
         model_spec = _model_spec(settings)
         if record.task.partition != "train":
             raise HTTPException(422, detail={"code": "NON_TRAIN_EVIDENCE_FORBIDDEN",
@@ -965,7 +966,9 @@ class ResearchRunManager:
     def _reflection_worker(self, run_id, reflection_input, settings, episode_id):
         client = None
         try:
-            client = OpenAICompatibleClient.from_env()
+            # The transport must use this attempt's frozen Reflection settings,
+            # rather than silently re-reading the Service's shorter timeout.
+            client = OpenAICompatibleClient(settings, key_from_env())
             model = _model_spec(settings)
             # Match the existing Designer compatibility policy: Qwen3 thinking
             # endpoints reject forced function-name tool_choice before inference.
@@ -1153,7 +1156,8 @@ def install_research_studio_routes(app: FastAPI, human_manager: HumanSessionMana
         if command.explicit_human_evidence_selection is not True:
             raise HTTPException(422, detail={"code": "EXPLICIT_SELECTION_REQUIRED",
                 "message": "人工 Episode 默认不进入反思；必须显式选择这条证据。"})
-        return manager.reflect(_owner(request), run_id, command.session_id, command.replace_legacy_evidence)
+        return manager.reflect(_owner(request), run_id, command.session_id,
+                               command.replace_legacy_evidence, command.timeout_seconds)
 
     @app.get("/api/research/runs/{run_id}/export")
     def export_research_run(run_id: str, request: Request, response: Response):

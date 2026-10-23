@@ -283,6 +283,8 @@ def test_reflector_can_use_attached_episode_after_human_session_expires(tmp_path
     evidence = captured["reflection_input"].evidence[0]
     assert evidence.native_trace_hash == record.record_hash
     assert evidence.config.service_model.model == "historical-service-model"
+    assert evidence.config.service_model.timeout_seconds == 60
+    assert captured["settings"].timeout_seconds == 180
     assert evidence.consumption.tool_calls == len(record.tool_executions)
 
 
@@ -630,32 +632,55 @@ def test_legacy_noop_requires_explicit_revision_and_preserves_history(
 ])
 def test_research_reflector_worker_respects_qwen_tool_choice_and_validates_output(
         tmp_path, monkeypatch, model_name, structured):
-    from test_vast_reflection import Client, completion, reflection_input, noop
+    import httpx
+    from test_vast_reflection import completion, reflection_input, noop
     import web.backend.research_studio as studio
 
     value = reflection_input(tmp_path, 'service')
     response = (completion(noop(value).model_dump_json()) if structured else
                 {'choices': [{'message': {'content': 'No structured patch submitted.'}}]})
-    client = Client(response)
-    client.closed = False
-    client.close = lambda: setattr(client, 'closed', True)
-    monkeypatch.setattr(studio.OpenAICompatibleClient, 'from_env', lambda: client)
-    settings = ModelSettings(model=model_name, base_url='http://localhost/v1', options={})
+    settings = ModelSettings(model=model_name, base_url='http://localhost/v1', options={}, timeout_seconds=240)
+    requests = []
+
+    def mock_provider(request):
+        requests.append(json.loads(request.content))
+        return httpx.Response(200, json=response)
+
+    client = studio.OpenAICompatibleClient(settings, 'fixture-key', transport=httpx.MockTransport(mock_provider))
+
+    def configured_client(actual_settings, key):
+        assert actual_settings == settings and key == 'fixture-key'
+        assert client._http.timeout.read == actual_settings.timeout_seconds == 240
+        return client
+
+    monkeypatch.setattr(studio, 'OpenAICompatibleClient', configured_client)
+    monkeypatch.setattr(studio, 'key_from_env', lambda: 'fixture-key')
     manager = ResearchRunManager(HumanSessionManager(output_dir=tmp_path / 'human'),
                                  output_dir=tmp_path / 'research')
     row = {'run_id': 'rs-qwen-reflector-worker', 'status': 'REFLECTOR_RUNNING',
            'phases': {'reflection': 'RUNNING'}, 'journal': []}
     manager.runs[row['run_id']] = row
     manager._reflection_worker(row['run_id'], value, settings, 'source-episode')
-    assert len(client.requests) == 1 and client.closed
+    assert len(requests) == 1 and client._http.is_closed
     expected = 'auto' if 'qwen3' in model_name else {
         'type': 'function', 'function': {'name': 'submit_skill_patch'}}
-    assert client.requests[0]['tool_choice'] == expected
+    assert requests[0]['tool_choice'] == expected
     result = row['reflection']
     assert result['calls'] == 1
+    assert result['model']['timeout_seconds'] == 240
     if structured:
         assert result['status'] == 'NOOP' and result['patch']['action'] == 'NOOP'
     else:
         assert result['status'] == 'FAILED' and result['patch'] is None
         assert result['error'].startswith('invalid_reflection:')
-    assert result['raw_call']['request'] == client.requests[0]
+    assert result['raw_call']['request'] == requests[0]
+
+
+def test_reflection_timeout_default_and_bounds():
+    from web.backend.research_studio import ReflectionCommand
+
+    assert ReflectionCommand(session_id='saved-session-123456').timeout_seconds == 180
+    assert ReflectionCommand(session_id='saved-session-123456', timeout_seconds=300).timeout_seconds == 300
+    for invalid in (0, 601):
+        with pytest.raises(ValueError):
+            ReflectionCommand(session_id='saved-session-123456', timeout_seconds=invalid)

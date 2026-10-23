@@ -1,6 +1,7 @@
 """Adapt/F, independent paired selection, and native UNKNOWN denominators."""
 from dataclasses import asdict, dataclass
 from statistics import mean
+import math
 
 from .protocol import CandidateError, InfrastructureError, digest, validate_partitions
 
@@ -122,7 +123,7 @@ class Evaluator:
 
 
 def select(parent, candidate, comparison, *, margin=0.0, max_regression=0.0):
-    if margin < 0 or max_regression < 0:
+    if any(not math.isfinite(v) or v < 0 for v in (margin, max_regression)):
         raise ValueError("selection tolerances must be preregistered nonnegative values")
     if (comparison.parent_ref, comparison.candidate_ref, comparison.purpose) != (parent.ref, candidate.ref, "C_select"):
         raise ValueError("selection cannot consume reward/audit comparisons")

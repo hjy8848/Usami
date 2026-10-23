@@ -31,6 +31,46 @@ def root_training_record(host, result, reward, reward_source_ref, group_id):
         raise ValueError("reward provenance and sampling group are required")
     saved = host.archive.load(result.archive_ref)
     verify_chain(saved["events"])
+    for key in ("editor_ref", "target_ref", "mode", "scope", "status", "submitted_ref"):
+        if saved[key] != getattr(result, key):
+            raise ValueError("root result differs from its archived execution")
+    receipt = host.archive.load(reward_source_ref)
+    if (receipt.get("kind") != "root_reward_v1" or receipt.get("context_ref") != group_id
+            or receipt.get("root_trace_ref") != result.archive_ref or receipt.get("reward") != reward
+            or receipt.get("models") != saved["models"] or saved["models"] != asdict(host.models)):
+        raise ValueError("reward receipt does not bind this root, context and frozen models")
+    context = host.archive.load(group_id)
+    if (context["editor_ref"] != result.editor_ref or context["target_ref"] != result.target_ref
+            or context["models"] != saved["models"] or saved["seed"] not in context["seeds"]):
+        raise ValueError("root differs from the registered sampling context")
+    if result.status in {"FAILED", "NOOP"}:
+        outcome = "ROOT_FAILED" if result.status == "FAILED" else "NOOP"
+        if receipt["outcome"] != outcome or receipt["comparison_ref"]:
+            raise ValueError("failure/NOOP receipt has an inconsistent outcome")
+    else:
+        comparison = host.archive.load(receipt["comparison_ref"])
+        if (comparison["purpose"] != "C_reward" or not comparison["usable"]
+                or comparison["parent_ref"] != result.target_ref
+                or comparison["candidate_ref"] != result.submitted_ref):
+            raise ValueError("reward cannot consume selection or unrelated comparisons")
+        pairs = comparison["pairs"]
+        packages = context["packages"]["C_reward"]
+        if len(pairs) != len(packages):
+            raise ValueError("reward comparison differs from registered reward packages")
+        for (old, new), package in zip(pairs, packages):
+            binding = digest({"package": package, "models": context["models"],
+                              "limits": context["limits"], "p0": package["p0_ref"]})
+            for evaluated in (old, new):
+                archived = host.archive.load(evaluated["archive_ref"])
+                if (archived != {k: v for k, v in evaluated.items() if k != "archive_ref"}
+                        or evaluated["pair_binding"] != binding or not evaluated["usable"]):
+                    raise ValueError("reward adaptation is unavailable or paired to a different context")
+        expected = sum(new["score"] - old["score"] for old, new in pairs) / len(pairs)
+        safe = not any(new["forbidden_behavior"] for _, new in pairs)
+        if comparison["mean_delta"] != expected or comparison["safe"] != safe:
+            raise ValueError("reward summary differs from executed paired results")
+        if reward != (expected if safe else -1.0):
+            raise ValueError("root reward differs from its executed comparison")
     turns = []
     for row in saved["events"]:
         event = row["event"]

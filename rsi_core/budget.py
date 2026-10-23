@@ -14,10 +14,18 @@ class Ledger:
     def __init__(self, limits: Limits):
         self.limits = limits
         self.used = dict.fromkeys(RESOURCES, 0)
-        self.reserved = dict.fromkeys(RESOURCES, 0)
+        self.allocations = []
         self.started = time.monotonic()
         self.events = []
         self.active = []
+
+    @property
+    def reserved(self):
+        # Derive reservations from live owners instead of accumulating float
+        # add/subtract roundoff as CPU allocations are entered and released.
+        return {key: sum(max(0, row.remaining[key]) for row in self.allocations
+                         if not row.spending)
+                for key in RESOURCES}
 
     def charge(self, scope, **usage):
         if set(usage) - set(RESOURCES):
@@ -57,14 +65,12 @@ class Ledger:
         for key, value in maximum.items():
             if value > self.remaining(key):
                 raise BudgetExceeded("cannot reserve complete evaluation group: " + key)
-        for key, value in maximum.items():
-            self.reserved[key] += value
         reservation = Reservation(self, maximum)
+        self.allocations.append(reservation)
         try:
             yield reservation
         finally:
-            for key, value in reservation.remaining.items():
-                self.reserved[key] -= max(0, value)
+            self.allocations.remove(reservation)
             reservation.closed = True
 
     @contextmanager
@@ -104,8 +110,6 @@ class Reservation:
         if any(value < 0 for value in self.remaining.values()):
             raise BudgetExceeded("reserved evaluation allocation already exceeded")
         self.ledger.check()
-        for key, value in self.remaining.items():
-            self.ledger.reserved[key] -= value
         self.spending = True
         self.ledger.active.append(self)
         try:
@@ -113,5 +117,3 @@ class Reservation:
         finally:
             self.ledger.active.pop()
             self.spending = False
-            for key, value in self.remaining.items():
-                self.ledger.reserved[key] += max(0, value)

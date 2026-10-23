@@ -1,6 +1,6 @@
 import { Activity, ArrowDownToLine, ArrowLeft, ArrowRight, CheckCircle2, CircleAlert, Clock3, Download, ExternalLink, FlaskConical, Loader2, LockKeyhole, Play, RefreshCw, ShieldCheck, Sparkles, Wrench } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { api } from './api';
+import { ApiError, api } from './api';
 import './ResearchStudio.css';
 
 type AnyRow = Record<string, any>;
@@ -53,6 +53,7 @@ export default function ResearchStudio() {
   const [proofSteps, setProofSteps] = useState(64);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [recoverableRunId, setRecoverableRunId] = useState('');
   const attachedRef = useRef('');
 
   const refreshRuns = useCallback(async (selectedId?: string) => {
@@ -81,7 +82,15 @@ export default function ResearchStudio() {
           if (alive) { setRun(current); setModel(current.model?.model || ''); setDesignerTimeout(current.input?.designer_timeout_seconds || 180); }
         }
         if (alive) setLoaded(true);
-      }).catch(cause => alive && setError(String(cause)));
+      }).catch(cause => {
+        if (!alive) return;
+        const id = params.get('run_id');
+        if (id && cause instanceof ApiError && cause.status === 404) {
+          setRecoverableRunId(id);
+          setError('本机研究记录的浏览器身份已失效。记录仍由随机运行 ID 保护，可恢复此运行的本地访问权。');
+        } else setError(String(cause));
+        setLoaded(true);
+      });
     return () => { alive = false; };
   }, [params]);
 
@@ -114,6 +123,18 @@ export default function ResearchStudio() {
         proof_candidates: proofCandidates, proof_steps: proofSteps });
       setRun(created); setStage(0); setRuns(await api<{ runs: Run[] }>('/research/runs').then(x => x.runs));
       const url = new URL(location.href); url.searchParams.set('run_id', created.run_id); history.replaceState(null, '', url);
+    } catch (cause) { setError(String(cause)); }
+    finally { setBusy(false); }
+  }
+  async function recoverRun() {
+    if (!recoverableRunId) return;
+    setBusy(true); setError('');
+    try {
+      const restored = await api<Run>(`/research/runs/${recoverableRunId}/claim`, {});
+      setRun(restored);
+      setRuns(await api<{ runs: Run[] }>('/research/runs').then(x => x.runs));
+      setRecoverableRunId('');
+      setStage(4);
     } catch (cause) { setError(String(cause)); }
     finally { setBusy(false); }
   }
@@ -180,7 +201,7 @@ export default function ResearchStudio() {
 
       <main className="research-main">
         <div className="research-heading"><div><span className="research-eyebrow">USAMI 2.0 · RESEARCH WORKSPACE</span><h1>从业务世界到可审计的 Skill 实验</h1><p>每一步都调用真实 Usami 代码；未完成或未验证的环节会保持明确状态。</p></div>{run && <div className="research-run-id"><span>当前运行</span><code>{run.run_id}</code><button title="重新载入" onClick={() => void refreshRuns(run.run_id)}><RefreshCw size={14} /></button></div>}</div>
-        {error && <div className="research-error" role="alert"><CircleAlert size={17} /><span>{error}</span><button onClick={() => setError('')}>关闭</button></div>}
+        {recoverableRunId ? <div className="research-error" role="alert"><CircleAlert size={17} /><span>{error || '此运行需要恢复本地访问权。'}</span><button className="research-recovery-button" disabled={busy} onClick={() => void recoverRun()}>{busy ? '恢复中…' : '恢复此运行'}</button></div> : error && <div className="research-error" role="alert"><CircleAlert size={17} /><span>{error}</span><button onClick={() => setError('')}>关闭</button></div>}
         <div className="research-stage-strip">{stageNames.map((name, i) => <button key={name} onClick={() => setStage(i)} className={stage === i ? 'selected' : ''}><span>{String(i + 1).padStart(2, '0')}</span>{name}{i < 6 && <ArrowRight size={13} />}</button>)}</div>
         <section className="research-current-note"><div className="note-symbol"><Activity size={18} /></div><div><strong>当前系统行为说明</strong><p>{behaviorExplanation(stage, run, config)}</p><small>{run ? `当前运行：${humanState(run.status)}。所有人工交互仅标记为 human / qualitative_manual_pilot，不会默认进入 Benchmark 或训练证据。` : '尚未创建运行；配置在本地 Python 后端检查，浏览器不会接触模型密钥。'}</small></div></section>
 

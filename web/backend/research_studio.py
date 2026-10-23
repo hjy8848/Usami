@@ -55,7 +55,7 @@ from vast_coevo.skills.renderer import render_skills
 from vast_coevo.skills.validation import StaticSkillGate
 
 from .human_customer import (
-    HUMAN_COOKIE, CertifiedScenario, HumanSessionManager, _allowed_origins,
+    HUMAN_COOKIE, OWNER_COOKIE_TTL_SECONDS, CertifiedScenario, HumanSessionManager, _allowed_origins,
 )
 
 
@@ -488,6 +488,17 @@ class ResearchRunManager:
             if row is None or row.get("owner_hash") != digest(owner_id):
                 raise HTTPException(404, detail={"code": "RESEARCH_RUN_NOT_FOUND", "message": "研究运行不存在。"})
             return row
+
+    def claim(self, owner_id: str, run_id: str):
+        """Restore local access using the unguessable run ID in the saved URL."""
+        with self.lock:
+            row = self.runs.get(run_id)
+            if row is None:
+                raise HTTPException(404, detail={"code": "RESEARCH_RUN_NOT_FOUND", "message": "研究运行不存在。"})
+            if row.get("owner_hash") != digest(owner_id):
+                row["owner_hash"] = digest(owner_id)
+                self._persist(row, "local_run_access_recovered_by_run_id")
+            return self._view(row)
 
     @staticmethod
     def _stored_episode(row: dict, link: dict) -> tuple[EpisodeRecord, dict, Any]:
@@ -968,12 +979,16 @@ def _is_local_request(request: Request, mutation: bool):
 def _owner(request: Request, response: Optional[Response] = None):
     value = request.cookies.get(HUMAN_COOKIE)
     if value and len(value) >= 32:
+        if response is not None:
+            response.set_cookie(HUMAN_COOKIE, value, httponly=True, samesite="strict",
+                                secure=request.url.scheme == "https", max_age=OWNER_COOKIE_TTL_SECONDS,
+                                path="/api")
         return value
     if response is None:
         raise HTTPException(401, detail={"code": "RESEARCH_COOKIE_REQUIRED", "message": "请重新打开本地 Research Studio。"})
     value = secrets.token_urlsafe(32)
     response.set_cookie(HUMAN_COOKIE, value, httponly=True, samesite="strict",
-                        secure=request.url.scheme == "https", max_age=30 * 60, path="/api")
+                        secure=request.url.scheme == "https", max_age=OWNER_COOKIE_TTL_SECONDS, path="/api")
     return value
 
 
@@ -1010,6 +1025,11 @@ def install_research_studio_routes(app: FastAPI, human_manager: HumanSessionMana
     def get_research_run(run_id: str, request: Request, response: Response):
         _is_local_request(request, False)
         return manager._view(manager.get(_owner(request, response), run_id))
+
+    @app.post("/api/research/runs/{run_id}/claim")
+    def claim_research_run(run_id: str, request: Request, response: Response):
+        _is_local_request(request, True)
+        return manager.claim(_owner(request, response), run_id)
 
     @app.post("/api/research/runs/{run_id}/cancel")
     def cancel_research_run(run_id: str, request: Request):

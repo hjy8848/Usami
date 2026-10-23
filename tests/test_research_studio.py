@@ -12,7 +12,7 @@ from usami_v2.scenarios.designer import OpenAIDesignerProvider, ScenarioDraft
 from vast_coevo.schema import digest
 from vast_coevo.skills.library import LibrarySnapshot, empty_snapshot
 from vast_coevo.skills.models import DecisionSkill, Scope, Trigger
-from web.backend.human_customer import HumanSessionManager
+from web.backend.human_customer import HUMAN_COOKIE, HumanSessionManager
 from web.backend.research_studio import (
     ResearchRunCreate, ResearchRunManager, _designer_client, _designer_settings, _distribution,
     install_research_studio_routes,
@@ -162,14 +162,51 @@ def test_research_routes_bootstrap_shared_local_owner_cookie(tmp_path):
     app = FastAPI()
     human = HumanSessionManager(output_dir=tmp_path / "human")
     install_research_studio_routes(app, human, output_dir=tmp_path / "research")
-    with TestClient(app) as client:
+    with TestClient(app, base_url="http://127.0.0.1:5173") as client:
         history = client.get("/api/research/runs")
         assert history.status_code == 200
         cookie = history.headers.get("set-cookie", "").lower()
         assert "httponly" in cookie and "samesite=strict" in cookie and "path=/api" in cookie
+        assert "max-age=2592000" in cookie
         config = client.get("/api/research/config")
         assert config.status_code == 200
         assert "credential" not in json.dumps(config.json()).lower()
+
+
+def test_local_run_can_be_recovered_after_owner_cookie_expires(tmp_path):
+    app = FastAPI()
+    human = HumanSessionManager(output_dir=tmp_path / "human")
+    install_research_studio_routes(app, human, output_dir=tmp_path / "research")
+    manager = app.state.research_runs
+    run_id = "rs-expired-owner-recovery"
+    row = {
+        "run_id": run_id, "owner_hash": digest("previous-browser-owner"),
+        "status": "READY_FOR_CUSTOMER", "created_at": "2026-10-23T00:00:00+00:00",
+        "updated_at": "2026-10-23T00:00:00+00:00", "phases": {"human_episode": "COMPLETED"},
+        "episodes": [{"session_id": "saved-episode-id", "arm": "S0"}], "journal": [],
+    }
+    manager.runs[run_id] = row
+    manager._persist(row, "episode_archived")
+
+    with TestClient(app, base_url="http://127.0.0.1:5173") as client:
+        history = client.get("/api/research/runs")
+        assert history.status_code == 200
+        assert history.json()["runs"] == []
+        new_owner = client.cookies.get(HUMAN_COOKIE)
+        assert new_owner
+
+        claim = client.post(f"/api/research/runs/{run_id}/claim", json={},
+                            headers={"Origin": "http://127.0.0.1:5173"})
+        assert claim.status_code == 200
+        assert claim.json()["episodes"][0]["session_id"] == "saved-episode-id"
+        assert manager.get(new_owner, run_id)["episodes"][0]["arm"] == "S0"
+
+    restarted = ResearchRunManager(HumanSessionManager(output_dir=tmp_path / "human"),
+                                   output_dir=tmp_path / "research")
+    assert restarted.get(new_owner, run_id)["episodes"][0]["session_id"] == "saved-episode-id"
+    saved = json.loads((tmp_path / "research" / run_id / "current.json").read_text())
+    assert ResearchRunManager._verify_persisted_row(
+        saved, tmp_path / "research" / run_id / "journal.jsonl")
 
 
 def test_reflector_can_use_attached_episode_after_human_session_expires(tmp_path, monkeypatch):

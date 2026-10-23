@@ -40,6 +40,7 @@ from usami_v2.commerce.models import ExternalEvent, case_id
 
 HUMAN_COOKIE = "usami_human_client"
 HUMAN_TTL_SECONDS = 30 * 60
+OWNER_COOKIE_TTL_SECONDS = 30 * 24 * 60 * 60
 MAX_ACTIVE_EPISODES = 2
 MAX_RETAINED_SESSIONS = 32
 MAX_HUMAN_MESSAGE = 2000
@@ -641,7 +642,7 @@ def install_human_customer_routes(app: FastAPI):
         if response is not None:
             value = secrets.token_urlsafe(32)
             response.set_cookie(HUMAN_COOKIE, value, httponly=True, samesite="strict",
-                                secure=request.url.scheme == "https", max_age=HUMAN_TTL_SECONDS,
+                                secure=request.url.scheme == "https", max_age=OWNER_COOKIE_TTL_SECONDS,
                                 path="/api")
             return value
         raise HTTPException(401, detail={"code": "HUMAN_COOKIE_REQUIRED", "message": "请重新打开本地实验台。"})
@@ -676,7 +677,7 @@ def install_human_customer_routes(app: FastAPI):
         # If an existing cookie was used, keep its remaining local lifetime fresh.
         if request.cookies.get(HUMAN_COOKIE):
             response.set_cookie(HUMAN_COOKIE, owner_id, httponly=True, samesite="strict",
-                                secure=request.url.scheme == "https", max_age=HUMAN_TTL_SECONDS,
+                                secure=request.url.scheme == "https", max_age=OWNER_COOKIE_TTL_SECONDS,
                                 path="/api")
         return manager.public_session(session)
 

@@ -73,6 +73,8 @@ uvicorn web.backend.app:app --host 127.0.0.1 --port 8001
 
 Reflector 单次等待默认 180 秒，页面可设置 1–600 秒；本次设置同时用于真实 HTTP 客户端和归档的模型配置，不改变原始 Service 的配置。超时会保存失败，不自动重试。
 
+`evidence_ids` 引用整条 Episode，不引用其内部 Oracle 事件或内容哈希。原生反思请求通过 `allowed_evidence_ids` 和提交 Schema 的枚举提供精确白名单；事件级依据可写入 `rationale`。运行时仍拒绝错误引用，原始模型输出不会被自动替换。
+
 ## v0.2 对齐
 
 网页默认创建 v0.2 世界；已有会话保留原版本。Advanced settings 可切换 v0.1 / v0.2，并选择 22 种业务 workflow。v0.2 至少需要 8 名目录用户。API 不带 config 的默认会话仍为 v0.1，兼容原调用方。

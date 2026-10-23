@@ -162,6 +162,10 @@ class Reflector:
         input_hash = digest(value.model_dump(mode="json"))
         record_fields = dict(input=value, input_hash=input_hash, proposal_protocol_version=2)
         payload = value.model_dump(mode="json")
+        native_assessment = any(e.native_assessment is not None for e in value.evidence)
+        allowed_evidence_ids = [e.episode_id for e in value.evidence]
+        if native_assessment:
+            payload["allowed_evidence_ids"] = allowed_evidence_ids
         # Keep complete input in the record, but send compact actual messages and
         # verifier facts rather than duplicating every previous growing request.
         payload["evidence"] = [dict(episode_id=e.episode_id, config=e.config.model_dump(mode="json"),
@@ -218,7 +222,7 @@ class Reflector:
             "Repair verified decision failures while preserving legal completion and correct refusal. "
             "When evidence offers no justified change, emit NOOP. Never invent a verified failure."
         )
-        if self.role == "service" and any(e.native_assessment is not None for e in value.evidence):
+        if self.role == "service" and native_assessment:
             objective += (
                 " Native assessments separate business goal completion, process errors, safety and interaction reliability. "
                 "For customer_visible_context entries encoded as previous-request-prefix-v1, reconstruct the exact "
@@ -257,10 +261,24 @@ class Reflector:
             "contains them. Do not rely on a future tool result to activate a skill. "
             "Cite only supplied episode IDs in evidence_ids. No retries or multiple alternatives."
         )
+        parameters = proposal_json_schema(self.role)
+        if native_assessment:
+            citations = parameters["properties"]["evidence_ids"]
+            citations["description"] = (
+                "Cite whole Episode IDs from allowed_evidence_ids only. Copy an exact enum value; "
+                "Oracle event IDs, source paths and content hashes are not Episode IDs. "
+                "Describe event-level support in rationale."
+            )
+            citations["items"]["enum"] = allowed_evidence_ids
+            instruction += (
+                " evidence_ids must use exact values from allowed_evidence_ids and the tool schema enum. "
+                "An Oracle event reference identifies a step inside an Episode; put it in rationale, "
+                "not evidence_ids. Do not append tool/event suffixes to an Episode ID."
+            )
         request = {"model": self.model.model, **copy.deepcopy(self.model.options),
                    "messages": [{"role": "system", "content": instruction}, {"role": "user", "content": content}],
                    "tools": [{"type": "function", "function": {"name": "submit_skill_patch", "description": "Propose exactly one declarative Skill modification.",
-                               "parameters": proposal_json_schema(self.role)}}],
+                               "parameters": parameters}}],
                    "tool_choice": self.tool_choice or {"type": "function", "function": {"name": "submit_skill_patch"}}}
         pending = dict(id="g" + str(value.generation) + "." + self.role + ".reflection", role=self.role + "_reflector",
                        model=self.model, base_request=copy.deepcopy(request), request=copy.deepcopy(request))
@@ -276,7 +294,10 @@ class Reflector:
             patch, resolution = _parse(response, value)
             if patch.role != self.role or patch.base_snapshot_hash != value.library.snapshot_hash:
                 raise ValueError("patch targets a different role or parent snapshot")
-            if set(patch.evidence_ids) - {e.episode_id for e in value.evidence}:
+            unavailable = set(patch.evidence_ids) - set(allowed_evidence_ids)
+            if unavailable:
+                if native_assessment and unavailable.issubset({event.event_id for e in value.evidence for event in e.events}):
+                    raise ValueError("evidence_ids requires supplied Episode IDs; Oracle event IDs were supplied instead. Use allowed_evidence_ids")
                 raise ValueError("patch cites unavailable or heldout evidence")
         except (ValueError, TypeError, KeyError) as exc:
             return ReflectionRecord(**record_fields, call=call, error="invalid_reflection: " + str(exc), calls=1)

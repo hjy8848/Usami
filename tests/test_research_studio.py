@@ -684,3 +684,42 @@ def test_reflection_timeout_default_and_bounds():
     for invalid in (0, 601):
         with pytest.raises(ValueError):
             ReflectionCommand(session_id='saved-session-123456', timeout_seconds=invalid)
+
+
+@pytest.mark.parametrize('citation_kind', ['episode', 'oracle_event', 'unavailable'])
+def test_native_reflection_schema_enumerates_only_episode_citations(
+        native_process_error_episode, citation_kind):
+    from test_vast_reflection import Client, completion
+    from vast_coevo.models import ModelSpec
+    from vast_coevo.reflection.reflector import ReflectionInput, ServiceReflector
+    from vast_coevo.skills.models import SkillPatch
+    from web.backend.research_studio import _native_evidence
+
+    model = ModelSpec(model='fixture', base_url='http://localhost/v1')
+    evidence, view = _native_evidence(native_process_error_episode, 'session-citation-test', model)
+    value = ReflectionInput(generation=0, role='service', library=empty_snapshot('service'),
+                            evidence=(evidence,), interaction_views=(view,))
+    reference = {'episode': evidence.episode_id, 'oracle_event': evidence.events[0].event_id,
+                 'unavailable': 'not-a-supplied-training-episode'}[citation_kind]
+    proposal = SkillPatch(action='NOOP', role='service', base_snapshot_hash=value.library.snapshot_hash,
+                         evidence_ids=(reference,), rationale='Exact observed reference; never rewrite it.')
+    response = completion(proposal.model_dump_json())
+    client = Client(response)
+    result = ServiceReflector(client, model).reflect(value)
+    assert result.calls == len(client.requests) == 1
+    request = client.requests[0]
+    payload = json.loads(request['messages'][-1]['content'])
+    assert payload['allowed_evidence_ids'] == [evidence.episode_id]
+    citation_schema = request['tools'][0]['function']['parameters']['properties']['evidence_ids']
+    assert citation_schema['items']['enum'] == [evidence.episode_id]
+    assert 'Oracle event IDs' in citation_schema['description']
+    assert result.call.response == response
+    if citation_kind == 'episode':
+        assert result.patch == proposal and result.error is None
+    else:
+        assert result.patch is None
+        expected = 'Oracle event IDs were supplied instead' if citation_kind == 'oracle_event' else 'unavailable or heldout'
+        assert expected in result.error
+        # The event reference is never silently replaced by its parent Episode.
+        raw = json.loads(result.call.response['choices'][0]['message']['tool_calls'][0]['function']['arguments'])
+        assert raw['evidence_ids'] == [reference]

@@ -1,4 +1,5 @@
 """One v0.2 cycle: Service roots, M self-edit roots, then one φ update hook."""
+from collections import Counter
 from dataclasses import asdict, replace
 
 from .collection import (collect_self_edit_group, collect_service_improvement_group,
@@ -6,6 +7,61 @@ from .collection import (collect_self_edit_group, collect_service_improvement_gr
 from .programs import DesignerSnapshot, ServiceSnapshot
 from .protocol import FrozenModels, ModelSnapshot, digest
 from .training import group_advantages
+
+
+def _public_service_research_history(groups):
+    """Summarize only root-visible Service research feedback for M self-editing."""
+    def summarize_feedback(feedback):
+        outcomes = []
+        for row in feedback.get("operations", []):
+            result = row["result"]
+            outcome = result.get("error_code") or ("SUCCESS" if result.get("success") is True else "FAILED")
+            outcomes.append((row["operation"], outcome))
+        counts = Counter(outcomes)
+        return {"status": feedback.get("status", ""),
+                "terminal_status": feedback.get("terminal_status", ""),
+                "safety_violation": feedback.get("safety_violation", False),
+                "operation_results": [{"operation": operation, "result": result, "count": count}
+                                      for (operation, result), count in sorted(counts.items())]}
+
+    history = []
+    for group in groups:
+        group_row = {"status": group.status, "roots": []}
+        for root in group.roots:
+            root_row = {"status": root.status, "error": root.error,
+                        "challenge_attempts": [], "baseline_runs": [], "candidate_feedback": []}
+            for wrapped in root.events:
+                event = wrapped.get("event", wrapped)
+                if event.get("kind") == "challenge_certification":
+                    receipt = event["receipt"]
+                    root_row["challenge_attempts"].append({
+                        "proposal": event["proposal"], "status": receipt["status"],
+                        "reason_code": receipt.get("reason_code", ""),
+                    })
+                elif event.get("kind") == "baseline_execution":
+                    result = event["result"]
+                    root_row["baseline_runs"].append({
+                        "task_ref": event["task_ref"], "status": result["status"],
+                        "score": result["score"], "replay_verified": result["replay_verified"],
+                        "feedback": summarize_feedback(result["feedback"]),
+                    })
+                elif event.get("kind") == "observation":
+                    value = event["value"]
+                    if value.get("kind") == "STAGE":
+                        root_row["candidate_feedback"].append({key: value[key] for key in (
+                            "kind", "status", "reason", "candidate_ref") if key in value})
+                    elif value.get("kind") == "PROBE":
+                        result = value["result"]
+                        summary = {key: result[key] for key in (
+                            "score", "status", "usable", "unknown_fraction", "run_ref") if key in result}
+                        if isinstance(result.get("feedback"), dict):
+                            summary["feedback"] = summarize_feedback(result["feedback"])
+                        root_row["candidate_feedback"].append({
+                            "kind": "PROBE", "candidate_ref": value["candidate_ref"],
+                            "probe_ref": value["probe_ref"], "result": summary})
+            group_row["roots"].append(root_row)
+        history.append(group_row)
+    return history
 
 
 def run_period(host, service_evaluator, adaptation_evaluator, designer, service,
@@ -92,6 +148,7 @@ def run_period(host, service_evaluator, adaptation_evaluator, designer, service,
     if "service_start_ref" in public:
         raise ValueError("self-edit public view cannot override the frozen S_ref")
     public["service_start_ref"] = current_service.ref
+    public["prior_service_research"] = _public_service_research_history(service_groups)
     self_group = collect_self_edit_group(
         host, adaptation_evaluator, editor, current_designer.research_program,
         context["probe_packages"], context["select_packages"], context["reward_packages"],

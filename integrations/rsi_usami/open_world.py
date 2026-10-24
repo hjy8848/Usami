@@ -3,6 +3,7 @@
 World generation is independent of Service results. A period publishes a
 catalogue, while native IDs, bindings and proof witnesses stay on the Host.
 """
+from copy import deepcopy
 from pathlib import Path
 import json
 
@@ -13,7 +14,8 @@ from rsi_core.period import run_period
 from rsi_core.protocol import digest
 from usami_v2.scenarios.builder import verify_build
 from usami_v2.scenarios.designer import (
-    TaskCapabilityUnsupported, WorldDesignRun, design_world_slot, task_design_capabilities, _tool_schema,
+    OpenAIDesignerProvider, TaskCapabilityUnsupported, WorldDesignRun, design_world_slot,
+    task_design_capabilities, _tool_schema,
 )
 from usami_v2.scenarios.distribution import DistributionSpec, sample_schedule
 from usami_v2.scenarios.grounding import AbstractChallenge, GroundingBudget, ground_challenge, compile_grounded
@@ -43,6 +45,23 @@ def _challenge_failure_receipt(grounding, attempts):
                   "REFERENCE_INCOMPLETE")
         return {"status": "UNVERIFIED", "reason_code": reason}
     return {"status": "UNVERIFIED", "reason_code": "CHALLENGE_NOT_CERTIFIED"}
+
+
+def _abstract_challenge_schema(capabilities):
+    """Use the native Challenge schema, narrowed to this run's certifier."""
+    schema = deepcopy(_tool_schema("submit_customer_task", AbstractChallenge)["function"]["parameters"])
+    supported_remedies = list(capabilities["supported_remedies"])
+    if not supported_remedies:
+        raise ValueError("the active certifier supports no remedy goals")
+    supported_target_stages = list(capabilities["supported_target_stages"])
+    if not supported_target_stages:
+        raise ValueError("the active certifier supports no target stages")
+    remedy = schema["$defs"]["RemedyDraft"]["properties"]
+    remedy["allowed_remedies"]["items"]["enum"] = supported_remedies
+    remedy["target_stage"]["enum"] = supported_target_stages
+    if not capabilities["information_goals_certifiable"]:
+        schema["properties"]["information_goals"]["maxItems"] = 0
+    return schema
 
 
 def world_structure(spec, build):
@@ -157,30 +176,62 @@ class WorldPopulation:
         pending.replace(self.state_path)
         return ref
 
-    def catalogue(self, period_ref):
+    def catalogue(self, period_ref, *, challenge_schema=None):
         worlds = self.worlds(period_ref)
-        # Aggregate business vocabulary; no per-World entity IDs, aliases or answers.
+        # Publish aggregate vocabulary plus anonymous topology; native IDs stay private.
         families, issues, attributes, line_kinds = set(), set(), set(), set()
-        for _, spec, build in worlds:
+        topologies = []
+        for world_index, (_, spec, build) in enumerate(worlds):
             families.update(row.family for row in spec.skus)
             issues.update(line.issue for order in spec.orders for line in order.lines)
             attributes.update((a.name, a.value) for sku in spec.skus for a in sku.attributes)
             aliases = dict(build.private_aliases)
-            for order in spec.orders:
-                for line in order.lines:
-                    sku = next(row for row in spec.skus if row.alias == line.original_sku)
-                    line_kinds.add((sku.family, line.issue, build.world.lines[aliases[line.alias]].quantity,
-                                    sku.return_required))
+            sku_by_alias = {row.alias: row for row in spec.skus}
+            customer_rows = []
+            customer_aliases = {alias: f"customer_{index + 1}"
+                                for index, alias in enumerate(spec.customer_aliases)}
+            order_index = 0
+            line_index = 0
+            for customer in spec.customer_aliases:
+                customer_orders = []
+                for order in spec.orders:
+                    if order.customer_alias != customer:
+                        continue
+                    order_index += 1
+                    lines = []
+                    for line in order.lines:
+                        line_index += 1
+                        sku = sku_by_alias[line.original_sku]
+                        native_line = build.world.lines[aliases[line.alias]]
+                        age_days = (build.world.clock -
+                                    build.world.orders[aliases[order.alias]].delivered_at).days
+                        lines.append({
+                            "alias": f"line_{line_index}",
+                            "family": sku.family,
+                            "issue": line.issue,
+                            "attributes": [{"name": item.name, "value": item.value}
+                                           for item in sku.attributes],
+                            "quantity": native_line.quantity,
+                            "age_days": age_days,
+                            "return_required": sku.return_required,
+                        })
+                        line_kinds.add((sku.family, line.issue, native_line.quantity,
+                                        sku.return_required))
+                    customer_orders.append({"alias": f"order_{order_index}", "lines": lines})
+                customer_rows.append({"alias": customer_aliases[customer], "orders": customer_orders})
+            topologies.append({"alias": f"world_{world_index + 1}", "customers": customer_rows})
         return {"protocol": "commerce-open-world-catalogue-v1", "world_count": len(worlds),
                 "distinct_structures": len(set(self.load_period(period_ref)["structural_signatures"])),
                 "families": sorted(families), "issues": sorted(issues),
                 "observed_line_kinds": [{"family": f, "issue": i, "quantity": q, "return_required": r}
                                         for f, i, q, r in sorted(line_kinds)],
+                "world_topologies": topologies,
                 "attributes": [{"name": k, "value": v} for k, v in sorted(attributes)],
                 "request_contract": "Challenges contain structured Customer intents. The Host binds each intent "
                                     "to owned frozen objects and renders the public request from the same intent. "
                                     "No keyword or substring matching is used to authorize scored goals.",
-                "challenge_schema": _tool_schema("submit_customer_task", AbstractChallenge)["function"]["parameters"]}
+                "challenge_schema": challenge_schema if challenge_schema is not None else
+                    _tool_schema("submit_customer_task", AbstractChallenge)["function"]["parameters"]}
 
 
 class OpenChallengeBridge:
@@ -212,9 +263,13 @@ class OpenChallengeBridge:
             for _, spec, build in self.worlds]
         if manifests and any(row != manifests[0] for row in manifests[1:]):
             raise ValueError("one open challenge catalogue requires a consistent native certifier contract")
+        capability_manifest = manifests[0] if manifests else None
         return {"domain": self.adapter.domain_id,
-                "open_world_catalogue": self.population.catalogue(self.period_ref),
-                "task_certification_capabilities": manifests[0] if manifests else None}
+                "open_world_catalogue": self.population.catalogue(
+                    self.period_ref,
+                    challenge_schema=_abstract_challenge_schema(capability_manifest)
+                    if capability_manifest else None),
+                "task_certification_capabilities": capability_manifest}
 
     def certify(self, proposal):
         record = {"kind": "rsi-open-challenge-attempt-v1", "period_ref": self.period_ref,
@@ -387,9 +442,15 @@ def propose_open_challenge(provider, bridge, *, previous_attempt_ref=None):
     This tests autonomous proposal generation separately from scripted period
     integration. The model receives only this training population's catalogue.
     """
+    public_view = bridge.public_view()
+    catalogue_context = {key: value for key, value in public_view["open_world_catalogue"].items()
+                         if key != "challenge_schema"}
+    designer_context = {**public_view, "open_world_catalogue": catalogue_context}
     messages = [{"role": "system", "content":
         "You are the Usami RSI Challenge Designer. Propose one abstract business challenge using the supplied "
-        "native schema and authorized population catalogue. Choose the business objective, constraints and "
+        "native schema and authorized training population. Inspect its anonymous world_topologies before choosing "
+        "customer/order relations; use only combinations shown by the topology. Choose the business objective, "
+        "constraints and "
         "number of related items yourself. line_selectors declare symbolic variables; remedy_goals.line_alias "
         "references those variables. customer_alias is a symbolic Customer variable, not a World entity. "
         "A Grounder will enumerate customer-owned bindings. Submit only structured remedy/information intent "
@@ -397,7 +458,7 @@ def propose_open_challenge(provider, bridge, *, previous_attempt_ref=None):
         "will render the Customer text from those same structured goals, so the scored goals are authorized by "
         "construction, not by matching prose. Use only published supported capabilities. Submit the challenge with "
         "the registered tool; do not supply IDs, proof witnesses, answers or World changes."},
-        {"role": "user", "content": json.dumps(bridge.public_view(), ensure_ascii=False, sort_keys=True)}]
+        {"role": "user", "content": json.dumps(designer_context, ensure_ascii=False, sort_keys=True)}]
     if previous_attempt_ref is not None:
         previous = bridge.archive.load(previous_attempt_ref)
         if previous["period_ref"] != bridge.period_ref:
@@ -437,7 +498,12 @@ def propose_open_challenge(provider, bridge, *, previous_attempt_ref=None):
               "parent_attempt_ref": previous_attempt_ref,
               "validation_scope": "Designer proposal/grounding/certification; no online Service or training"}
     try:
-        challenge, call = provider.submit("task", messages, AbstractChallenge)
+        if isinstance(provider, OpenAIDesignerProvider):
+            challenge, call = provider.submit(
+                "task", messages, AbstractChallenge,
+                schema_override=public_view["open_world_catalogue"]["challenge_schema"])
+        else:
+            challenge, call = provider.submit("task", messages, AbstractChallenge)
     except Exception as exc:
         call = getattr(provider, "last_call", None)
         record.update(status="FAILED", error_code=getattr(exc, "code", type(exc).__name__),

@@ -120,13 +120,57 @@ class ResearchHost:
                     snapshot = self.models.behavior if scope == "root" else self.models.evaluator
                     self.ledger.charge(scope, model_calls=1)
                     completion = self.model.complete(snapshot, request, max_tokens=allowance, seed=seed + step)
+                    model_event = {"kind": "model", "scope": scope, "model_ref": snapshot.ref,
+                                   "request": request, "completion": asdict(completion)}
+                    events.append(model_event)
                     self.ledger.charge(scope, model_tokens=completion.prompt_tokens + completion.completion_tokens)
-                    events.append({"kind": "model", "scope": scope, "model_ref": snapshot.ref,
-                                   "request": request, "completion": asdict(completion)})
                     problems = list(Draft202012Validator(output["response_schema"]).iter_errors(completion.output))
+                    format_corrected = False
                     if problems:
-                        raise CandidateError("model output violates candidate response schema: " + problems[0].message)
+                        schema_error = problems[0].message
+                        model_event["schema_validation_error"] = schema_error
+                        if self.ledger.remaining("model_calls") < 1:
+                            raise CandidateError("model output violates candidate response schema and no model-call "
+                                                 "budget remains for one format correction: " + schema_error)
+                        correction_allowance = min(
+                            self.max_output_tokens, int(self.ledger.remaining("model_tokens")))
+                        if correction_allowance < 1:
+                            raise CandidateError("model output violates candidate response schema and no model-token "
+                                                 "budget remains for one format correction: " + schema_error)
+                        correction_request = {
+                            "request": {
+                                "instruction": "The previous response failed the declared JSON Schema. Preserve its "
+                                "semantic choices and correct only the JSON structure, types, or required fields needed "
+                                "to satisfy that schema. Do not change the task objective, business intent, or strategy.",
+                                "original_request": request["request"],
+                                "invalid_output": completion.output,
+                                "schema_error": schema_error,
+                            },
+                            "response_schema": output["response_schema"],
+                        }
+                        self.ledger.charge(scope, model_calls=1)
+                        correction_event = {"kind": "model_format_correction", "scope": scope,
+                                            "model_ref": snapshot.ref, "request": correction_request,
+                                            "status": "REQUESTED"}
+                        events.append(correction_event)
+                        corrected = self.model.complete(
+                            snapshot, correction_request, max_tokens=correction_allowance,
+                            seed=seed + self.max_steps + step)
+                        correction_event["completion"] = asdict(corrected)
+                        self.ledger.charge(
+                            scope, model_tokens=corrected.prompt_tokens + corrected.completion_tokens)
+                        problems = list(Draft202012Validator(output["response_schema"]).iter_errors(corrected.output))
+                        if problems:
+                            correction_error = problems[0].message
+                            correction_event.update(status="INVALID", schema_validation_error=correction_error)
+                            raise CandidateError("model output still violates candidate response schema after one "
+                                                 "format correction: " + correction_error)
+                        correction_event["status"] = "VALID"
+                        completion = corrected
+                        format_corrected = True
                     feedback = {"kind": "MODEL", "output": completion.output}
+                    if format_corrected:
+                        feedback["format_corrected"] = True
                 elif action == "STAGE":
                     fields = (("action", "state", "kind", "policy_source", "experience", "parent_ref")
                               if isinstance(target, ServiceSnapshot) else

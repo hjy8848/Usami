@@ -383,10 +383,12 @@ class OpenAIDesignerProvider:
         self.settings: ModelSettings = client.settings.model_copy(deep=True)
         self.last_call: Optional[AgentCall] = None
 
-    def submit(self, phase, messages, model):
+    def submit(self, phase, messages, model, *, schema_override=None):
         self.last_call = None
         name = "submit_world_constraints" if phase == "world" else "submit_customer_task"
         tool = _tool_schema(name, model)
+        if schema_override is not None:
+            tool["function"]["parameters"] = schema_override
         request = self.settings.request(messages, [tool])
         # Qwen3 thinking-mode endpoints reject both `required` and forced
         # function objects with HTTP 400. `auto` remains usable there; the

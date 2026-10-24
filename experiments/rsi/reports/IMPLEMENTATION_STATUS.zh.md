@@ -126,3 +126,18 @@ Service 根轨迹现在使用独立、经证书登记的 `service_probe / servic
 实际检查：新增 `tests/test_rsi_v02.py`，并与 Core、包注册、整组采集、评价、训练记录、Usami Adapter、预算测试合计 **48 项通过，24.56 秒**。覆盖版本谱系、挑战必须先跑父版、周期调用顺序、两类 advantage 隔离、直接任务 UNKNOWN/安全门槛、verl 周期数据权重及 rollout manifest、Usami 反馈不向 Designer 暴露 Oracle。另运行了三代离线算术协议 smoke：`ACCEPT / KEEP_PARENT / KEEP_PARENT`，0 模型调用、0 参数更新；`py_compile` 与 `git diff --check` 通过。
 
 限制：周期编排测试用替身验证顺序，不是完整自然任务周期；动态 Usami challenge 提案认证尚未接成可直接启动的完整入口。verl 未安装，AgentLoop / weighted-loss hook / checkpoint 权重身份没有实际验证。未调用真实模型、未启动 RL、未改变任何训练参数；48 项测试和离线 smoke 只能证明工程协议，不是能力提升或 RSI 效果。
+
+## v0.2 周期集成 Smoke（2026-10-24）
+
+新增 `experiments/rsi/examples/smoke_v02_period.py`，用真实 `run_period()`、Service/SELF_EDIT 整组采集器、配对选择器、可信任务包注册、Docker 隔离 Worker 和内容寻址归档，执行一个确定性完整周期。Service 根提出挑战，固定算术 Reference 认证并先执行父版基线；无增益候选被 Service Gate 拒绝。随后两个 SELF_EDIT 根生成同一候选 M，候选在独立选择包上通过夹具评价并写入 Designer 快照。周期末 identity hook 收到分开的 `r_service`、`r_self` 轨迹并调用一次。
+
+可重复命令：
+
+```sh
+python -m experiments.rsi.examples.smoke_v02_period \
+  --output outputs/rsi-v02-period-smoke-NEW
+```
+
+输出包含周期摘要、快照、候选、认证记录、根轨迹、选择/奖励比较和 Replay 证据。本机运行结果保存在 `outputs/rsi-v02-period-smoke-20261024-final/`：Service 2/2 根提交、Gate 保留 S0；SELF_EDIT 2/2 根提交、Gate 选择并发布 M1；18 次算术任务 Replay、4 条研究事件链复核通过；周期状态 `COMPLETED`。
+
+这是零 API 的协议集成夹具。候选代码由固定脚本模型响应提供，token ID / logprob 是满足轨迹结构的合成值；identity hook 没有启动 verl、优化参数或更新 φ。算术 Adapter 也不等同于 Usami 电商业务、原生 Oracle 或自然任务分布。它证明 v0.2 周期各阶段能在同一入口下运行并归档，不证明模型学习或 RSI 能力提升。

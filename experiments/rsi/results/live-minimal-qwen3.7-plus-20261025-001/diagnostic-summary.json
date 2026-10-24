@@ -1,0 +1,123 @@
+{
+  "kind": "one-off-live-rsi-diagnostic-v1",
+  "model": "dashscope/qwen3.7-plus",
+  "training": "NOT_RUN",
+  "automatic_provider_retries": 0,
+  "output": "/Users/spring/RSI/Usami-rsi-core/experiments/rsi/results/live-minimal-qwen3.7-plus-20261025-001",
+  "world_distribution": {
+    "record_hash": "8e83f2ca5b5c0eae738bc86c90ca2f0cf66c9c13f10b1534edfd4d45f4534112",
+    "protocol": "commerce-distribution-v1",
+    "distribution_id": "usami-live-minimal-diagnostic",
+    "version": 1,
+    "population_scope": "synthetic multi-stratum commerce worlds",
+    "claim": "synthetic_business_reference",
+    "sources": [
+      {
+        "record_hash": "3845ce0d083175baa489d27ea01458369a4c51378f0e16c2f4090b55312f60a8",
+        "source_id": "synthetic-live-diagnostic",
+        "kind": "synthetic_assumption",
+        "reference": "One-off live RSI diagnostic; synthetic design strata, not an empirical population",
+        "version": "2026-10-25",
+        "supported_claims": [
+          "live interface diagnostic only"
+        ],
+        "restrictions": [],
+        "empirical_sample_count": null
+      }
+    ],
+    "strata": [
+      {
+        "record_hash": "b0557f9bf645382388808f12049898b290a7c37848187f4a5eb9eaee913e04fd",
+        "stratum_id": "multi-line-mixed-issues",
+        "weight": 1,
+        "weight_basis_source_id": "synthetic-live-diagnostic",
+        "contexts": [
+          "One customer owns an order with multiple product families and distinct issues."
+        ],
+        "dependencies": []
+      },
+      {
+        "record_hash": "5c610959ec87feebfcc1c4c0c0132238de1edc3785593450b8753e3f72871bd1",
+        "stratum_id": "multiple-orders-one-customer",
+        "weight": 1,
+        "weight_basis_source_id": "synthetic-live-diagnostic",
+        "contexts": [
+          "One customer owns multiple orders with distinct item conditions."
+        ],
+        "dependencies": []
+      },
+      {
+        "record_hash": "3761d4c84c25c9d3369370b2d8ec643fc0fb5de62d9c886215e479f7dc166538",
+        "stratum_id": "inventory-and-delivery-choice",
+        "weight": 1,
+        "weight_basis_source_id": "synthetic-live-diagnostic",
+        "contexts": [
+          "A remedy decision has meaningful stock or delivery differences across warehouses."
+        ],
+        "dependencies": []
+      }
+    ],
+    "exclusions": [],
+    "max_generation_attempts": 100,
+    "split": "train"
+  },
+  "status": "STOPPED_AFTER_PROVIDER_TIMEOUT",
+  "error_type": "ServiceError",
+  "error": "LLM request timed out; no retry performed",
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/spring/RSI/Usami-rsi-core/experiments/rsi/results/live-minimal-qwen3.7-plus-20261025-001/run_minimal.py\", line 234, in main\n    run = run_open_period(world_count=3, **{k: v for k, v in ctx.items() if not k.startswith(\"_\")})\n  File \"/Users/spring/RSI/Usami-rsi-core/integrations/rsi_usami/open_world.py\", line 419, in run_open_period\n    period_ref = population.next_period(world_count)\n  File \"/Users/spring/RSI/Usami-rsi-core/integrations/rsi_usami/open_world.py\", line 156, in next_period\n    runs = [design_world_slot(self.provider, self.distribution, slot,\n  File \"/Users/spring/RSI/Usami-rsi-core/integrations/rsi_usami/open_world.py\", line 156, in <listcomp>\n    runs = [design_world_slot(self.provider, self.distribution, slot,\n  File \"/Users/spring/RSI/Usami-rsi-core/usami_v2/scenarios/designer.py\", line 796, in design_world_slot\n    draft, call = _submit(provider, \"world\", _chat(\"world\", content, distribution, slot, errors),\n  File \"/Users/spring/RSI/Usami-rsi-core/usami_v2/scenarios/designer.py\", line 367, in _submit\n    return provider.submit(phase, messages, model)\n  File \"/Users/spring/RSI/Usami-rsi-core/usami_v2/scenarios/designer.py\", line 404, in submit\n    raw = self.client.complete(request)\n  File \"/Users/spring/RSI/Usami-rsi-core/experiments/rsi/results/live-minimal-qwen3.7-plus-20261025-001/run_minimal.py\", line 61, in complete\n    raw = self.inner.complete(request)\n  File \"/Users/spring/RSI/Usami-rsi-core/usami/service/client.py\", line 133, in complete\n    response = self._http.post(self.settings.base_url + \"/chat/completions\", headers=headers,\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 1144, in post\n    return self.request(\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 825, in request\n    return self.send(request, auth=auth, follow_redirects=follow_redirects)\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 914, in send\n    response = self._send_handling_auth(\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 942, in _send_handling_auth\n    response = self._send_handling_redirects(\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 979, in _send_handling_redirects\n    response = self._send_single_request(request)\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpx/_client.py\", line 1014, in _send_single_request\n    response = transport.handle_request(request)\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpx/_transports/default.py\", line 250, in handle_request\n    resp = self._pool.handle_request(req)\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpcore/_sync/connection_pool.py\", line 256, in handle_request\n    raise exc from None\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpcore/_sync/connection_pool.py\", line 236, in handle_request\n    response = connection.handle_request(\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpcore/_sync/connection.py\", line 103, in handle_request\n    return self._connection.handle_request(request)\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpcore/_sync/http11.py\", line 136, in handle_request\n    raise exc\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpcore/_sync/http11.py\", line 106, in handle_request\n    ) = self._receive_response_headers(**kwargs)\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpcore/_sync/http11.py\", line 177, in _receive_response_headers\n    event = self._receive_event(timeout=timeout)\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpcore/_sync/http11.py\", line 217, in _receive_event\n    data = self._network_stream.read(\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/httpcore/_backends/sync.py\", line 128, in read\n    return self._sock.recv(max_bytes)\nKeyboardInterrupt\n",
+  "world_period_refs": [],
+  "world_population_state": "/Users/spring/RSI/Usami-rsi-core/experiments/rsi/results/live-minimal-qwen3.7-plus-20261025-001/worlds/state.json",
+  "ledger": {
+    "limits": {
+      "model_calls": 512,
+      "model_tokens": 2000000,
+      "episodes": 256,
+      "tool_steps": 20000,
+      "research_steps": 20000,
+      "cpu_seconds": 20000,
+      "wall_seconds": 7200,
+      "memory_bytes": 134217728,
+      "source_bytes": 65536,
+      "response_bytes": 1048576
+    },
+    "used": {
+      "model_calls": 0,
+      "model_tokens": 0,
+      "episodes": 0,
+      "tool_steps": 0,
+      "research_steps": 0,
+      "cpu_seconds": 0
+    },
+    "reserved": {
+      "model_calls": 0,
+      "model_tokens": 0,
+      "episodes": 0,
+      "tool_steps": 0,
+      "research_steps": 0,
+      "cpu_seconds": 0
+    },
+    "wall_seconds": 134.505752625,
+    "cpu_accounting": "Host wall-time upper bound for one-vCPU workers; not measured utilization",
+    "events": []
+  },
+  "model_call_count": 2,
+  "error_code": "PROVIDER_TIMEOUT",
+  "stop_reason": "The first live World Designer request timed out. The user required stopping on error; the process was interrupted after a second, different sampling-slot request had already returned.",
+  "world_period_ref": null,
+  "challenge_attempt_refs": [],
+  "period_reached": false,
+  "world_slots_planned": 3,
+  "completed_world_periods": 0,
+  "service_episodes": 0,
+  "oracle_replay_executions": 0,
+  "pk_update": false,
+  "m_self_edit": false,
+  "connectivity_smoke_calls_outside_period": 1,
+  "known_period_call_records": 2,
+  "known_token_usage_outside_period": {
+    "prompt_tokens": 15,
+    "completion_tokens": 123
+  },
+  "unknown_usage": "The first timed-out request has no provider usage; an interrupted in-flight request, if any, is not recorded because this one-off transcript appends after a response.",
+  "world_population_state_saved": false
+}

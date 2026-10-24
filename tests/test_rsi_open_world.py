@@ -160,30 +160,93 @@ def test_m0_rejected_challenge_retries_three_times_then_keeps_parent():
     spec = importlib.util.spec_from_file_location("rsi_m0_seed", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    view = {"observations": [], "target": {"ref": "parent-service"}, "mode": "IMPROVE_SERVICE"}
+    challenge_schema = {"type": "object", "properties": {"task_id": {"type": "string"},
+                        "line_selectors": {"type": "array"}}}
+    view = {"observations": [], "target": {"ref": "parent-service"}, "mode": "IMPROVE_SERVICE",
+            "domain": "aftersales", "open_world_catalogue": {"challenge_schema": challenge_schema,
+                "world_topologies": []}, "task_certification_capabilities": {}}
     first = module.next_step(view, {})
     assert first["action"] == "MODEL" and first["state"]["attempt"] == 1
+    assert first["response_schema"] == challenge_schema
+    assert "world_topologies" in first["request"]["instruction"]
     state = first["state"]
     model_calls = 1
     for expected_attempt in (1, 2):
-        view["observations"] = [{"output": {"proposal": {"task_id": "candidate"}}}]
+        challenge = proposal(name="candidate")
+        view["observations"] = [{"kind": "MODEL", "output": challenge}]
         submitted = module.next_step(view, state)
         assert submitted["action"] == "PROPOSE_CHALLENGE"
+        assert submitted["proposal"] == challenge
         state = submitted["state"]
-        view["observations"] = [{"status": "NO_MATCH", "reason_code": "NO_MATCH"}]
+        view["observations"].append({"kind": "PROPOSE_CHALLENGE", "status": "NO_MATCH",
+                                     "reason_code": "NO_MATCH"})
         correction = module.next_step(view, state)
         assert correction["action"] == "MODEL"
         assert correction["state"]["attempt"] == expected_attempt + 1
         model_calls += 1
         state = correction["state"]
-    view["observations"] = [{"output": {"proposal": {"task_id": "candidate-3"}}}]
+    view["observations"] = [{"kind": "MODEL", "output": proposal(name="candidate-3")}]
     submitted = module.next_step(view, state)
     assert submitted["action"] == "PROPOSE_CHALLENGE"
     state = submitted["state"]
-    view["observations"] = [{"status": "NO_MATCH", "reason_code": "NO_MATCH"}]
+    view["observations"].append({"kind": "PROPOSE_CHALLENGE", "status": "NO_MATCH",
+                                 "reason_code": "NO_MATCH"})
     final = module.next_step(view, state)
     assert model_calls == 3
     assert final["action"] == "SUBMIT" and final["candidate_ref"] == "parent-service"
+
+
+def test_m0_uses_the_run_baseline_observation_for_p_k_revision():
+    import importlib.util
+
+    path = Path(__file__).parents[1] / "experiments/rsi/seeds/M0.py"
+    spec = importlib.util.spec_from_file_location("rsi_m0_baseline_seed", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    baseline = {"kind": "RUN_BASELINE", "task_ref": "certified-task",
+                "result": {"status": "VERIFIED", "replay_verified": True}}
+    candidate = {"policy_source": "def step(view, state): return {}", "experience": {"proposal": 1}}
+    view = {"observations": [{"kind": "MODEL", "output": proposal()},
+                             {"kind": "PROPOSE_CHALLENGE", "status": "CERTIFIED",
+                              "task_ref": "certified-task"}, baseline],
+            "target": {"ref": "parent-service", "policy": {"source": "parent source"},
+                       "experience": {"parent": True}}, "mode": "IMPROVE_SERVICE"}
+    action = module.next_step(view, {"phase": "patch_model", "task_ref": "certified-task"})
+    assert action["action"] == "MODEL"
+    assert action["request"]["baseline_evidence"] == baseline
+
+    view["observations"].extend([{"kind": "MODEL", "output": candidate},
+                                 {"kind": "STAGE", "status": "INVALID", "reason": "syntax"}])
+    correction = module.next_step(view, {"phase": "patch_stage", "task_ref": "certified-task",
+                                         "stage_attempts": 0})
+    assert correction["action"] == "MODEL"
+    assert correction["request"]["previous_candidate"] == candidate
+    assert correction["request"]["baseline_evidence"] == baseline
+    assert correction["request"]["baseline_evidence"] != correction["request"]["previous_candidate"]
+
+
+def test_m0_self_edit_uses_one_candidate_and_adapt_task_needs_no_self_edit_history():
+    import importlib.util
+
+    path = Path(__file__).parents[1] / "experiments/rsi/seeds/M0.py"
+    spec = importlib.util.spec_from_file_location("rsi_m0_self_edit_seed", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    target = {"ref": "target", "kind": "P", "source": "def step(view, state): return {}"}
+    view = {"observations": [], "target": target, "mode": "ADAPT_TASK",
+            "capabilities": {"probe_refs": []}}
+    adapt = module.next_step(view, {})
+    assert adapt["action"] == "MODEL"
+    assert adapt["response_schema"]["properties"]["sources"]["maxItems"] == 1
+    assert "prior_service_research" not in adapt["request"]
+
+    self_edit_target = {"ref": "designer", "kind": "M",
+                        "source": "def next_step(research_view, state): return {}"}
+    self_edit_view = {**view, "mode": "SELF_EDIT", "target": self_edit_target,
+                      "prior_service_research": {"training_roots": []}}
+    self_edit = module.next_step(self_edit_view, {})
+    assert self_edit["request"]["prior_service_research"] == {"training_roots": []}
+    assert "instruction_on_prior_research" in self_edit["request"]
 
 
 def test_open_world_adapter_accepts_native_plain_text_service_reply():

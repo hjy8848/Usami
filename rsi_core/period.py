@@ -16,7 +16,7 @@ def _public_service_research_history(groups):
         for row in feedback.get("operations", []):
             result = row["result"]
             outcome = result.get("error_code") or ("SUCCESS" if result.get("success") is True else "FAILED")
-            outcomes.append((row["operation"], outcome))
+            outcomes.append((row["operation"]["name"], outcome))
         counts = Counter(outcomes)
         return {"status": feedback.get("status", ""),
                 "terminal_status": feedback.get("terminal_status", ""),

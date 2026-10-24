@@ -78,6 +78,11 @@ def _research_observation_summaries(observations):
     return rows
 
 
+def _baseline_evidence(observations, task_ref):
+    return next(row for row in reversed(observations)
+                if row.get("kind") == "RUN_BASELINE" and row.get("task_ref") == task_ref)
+
+
 def _challenge_context(research_view):
     catalogue = research_view["open_world_catalogue"]
     public_catalogue = {key: value for key, value in catalogue.items() if key != "challenge_schema"}
@@ -136,7 +141,7 @@ def next_step(research_view, state):
                        "parent_K": target["experience"],
                        "parent_service_ref": target["ref"],
                        "challenge_ref": state["task_ref"],
-                       "baseline_evidence": observations[-1]}
+                       "baseline_evidence": _baseline_evidence(observations, state["task_ref"])}
             schema = {"type": "object", "properties": {
                 "policy_source": {"type": "string"}, "experience": {"type": "object"}},
                 "required": ["policy_source", "experience"], "additionalProperties": False}
@@ -164,7 +169,7 @@ def next_step(research_view, state):
                                     "parent_K": target["experience"],
                                     "previous_candidate": prior_candidate,
                                     "rejection": previous,
-                                    "baseline_evidence": observations[-2]},
+                                    "baseline_evidence": _baseline_evidence(observations, state["task_ref"])},
                         "response_schema": {"type": "object", "properties": {
                             "policy_source": {"type": "string"}, "experience": {"type": "object"}},
                             "required": ["policy_source", "experience"], "additionalProperties": False}}
@@ -228,32 +233,33 @@ def next_step(research_view, state):
         if phase == "generate":
             source_key = "sources"
             schema = {"type": "object", "properties": {
-                source_key: {"type": "array", "maxItems": 2, "items": {"type": "string"}}},
+                source_key: {"type": "array", "maxItems": 1, "items": {"type": "string"}}},
                 "required": [source_key], "additionalProperties": False}
             target_role = target["kind"]
             role_contract = P_INTERFACE_CONTRACT if target_role == "P" else M_ACTION_CONTRACT
             entrypoint = "step(view, state)" if target_role == "P" else "next_step(research_view, state)"
+            request = {"instruction": "Return one complete executable source string for the target role. It must "
+                       "define exactly one synchronous " + entrypoint + " with exactly two arguments and obey the "
+                       "contract below. Host STAGE will validate syntax and the fixed entrypoint; only independently "
+                       "probed candidates can be selected. Preserve the Host, fixed model snapshots, permissions, "
+                       "business rules, reward and evaluation protocol. Use the exact target role and preserve its "
+                       "purpose.",
+                       "role_contract": role_contract,
+                       "target_ref": target["ref"],
+                       "target_role": target_role,
+                       "current_program_source": target["source"],
+                       "public_research_context": _public_research_context(research_view),
+                       "research_observations": _research_observation_summaries(observations),
+                       "instruction_on_observations": "Use only these Host-produced public observations to identify "
+                       "what failed. Do not infer hidden Reference answers, held-out labels, or unrecorded model actions."}
+            if mode == "SELF_EDIT":
+                request["prior_service_research"] = research_view["prior_service_research"]
+                request["instruction_on_prior_research"] = (
+                    "Use these root-visible challenge, baseline and candidate "
+                    "results to identify recurring failures and revise M's research procedure. Do not infer private "
+                    "Reference answers or independent evaluation labels.")
             return {"action": "MODEL", "state": {"phase": "stage", "index": 0, "refs": []},
-                    "request": {"instruction": "Return up to two complete executable source strings for the "
-                                "target role. Each source must define exactly one synchronous " + entrypoint +
-                                " with exactly two arguments and obey the contract below. Host STAGE will validate "
-                                "syntax and the fixed entrypoint; only independently probed candidates can be "
-                                "selected. Preserve the Host, fixed model snapshots, permissions, business rules, "
-                                "reward and evaluation protocol. Use the exact target role and preserve its purpose.",
-                                "role_contract": role_contract,
-                                "target_ref": target["ref"],
-                                "target_role": target_role,
-                                "current_program_source": target["source"],
-                                "public_research_context": _public_research_context(research_view),
-                                "prior_service_research": research_view["prior_service_research"],
-                                "research_observations": _research_observation_summaries(observations),
-                                "instruction_on_prior_research": "Use these root-visible challenge, baseline and "
-                                "candidate results to identify recurring failures and revise M's research procedure. "
-                                "Do not infer private Reference answers or independent evaluation labels.",
-                                "instruction_on_observations": "Use only these Host-produced public observations to "
-                                "identify what failed. Do not infer hidden Reference answers, held-out labels, or "
-                                "unrecorded model actions."},
-                    "response_schema": schema}
+                    "request": request, "response_schema": schema}
         if phase == "stage":
             if "sources" not in state:
                 state["sources"] = observations[-1]["output"]["sources"]

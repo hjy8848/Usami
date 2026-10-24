@@ -112,19 +112,17 @@ class FixtureResearchModel:
         self.policy_source, self.proposals = policy_source, 0
 
     def complete(self, snapshot, request, *, max_tokens, seed):
-        instruction = request["request"].get("instruction", "")
-        if "propose one frozen-world Service challenge" in instruction or "Revise the challenge" in instruction:
+        properties = set(request["response_schema"].get("properties", {}))
+        if "line_selectors" in properties:
             self.proposals += 1
-            output = {"proposal": proposal(self.proposals % 2 == 0, "proposal-" + str(self.proposals))}
-        elif "complete (P,K) improvement" in instruction:
+            output = proposal(self.proposals % 2 == 0, "proposal-" + str(self.proposals))
+        elif {"policy_source", "experience"} <= properties:
             output = {"policy_source": self.policy_source,
                       "experience": {"fixture": "observed public training evidence", "proposal": self.proposals}}
-        elif "Propose up to two executable candidates" in instruction:
+        elif "sources" in properties:
             output = {"sources": []}
-        elif "Adapt the complete Service copy" in instruction:
-            output = {"policy_source": self.policy_source, "experience": {}}
         else:
-            raise ValueError("unexpected deterministic model phase: " + instruction)
+            raise ValueError("unexpected deterministic model schema: " + repr(sorted(properties)))
         return Completion(output, 1, 1)
 
 

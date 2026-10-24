@@ -20,7 +20,6 @@ def _public_service_research_history(groups):
         counts = Counter(outcomes)
         return {"status": feedback.get("status", ""),
                 "terminal_status": feedback.get("terminal_status", ""),
-                "safety_violation": feedback.get("safety_violation", False),
                 "operation_results": [{"operation": operation, "result": result, "count": count}
                                       for (operation, result), count in sorted(counts.items())]}
 

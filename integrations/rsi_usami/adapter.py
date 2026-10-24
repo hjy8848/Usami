@@ -150,7 +150,7 @@ class UsamiAdapter:
 
     def capabilities(self):
         return {"domain_id": self.domain_id, "tools": service_tools(),
-                "feedback_protocol": "rsi-native-commerce-baseline-v0.2",
+                "feedback_protocol": "rsi-native-commerce-baseline-v0.3",
                 "score": "native strict_task_success confirmed true; UNKNOWN stays unresolved",
                 "observations": "authenticated identity, public Customer messages and native tool results"}
 
@@ -169,7 +169,7 @@ class UsamiAdapter:
         """Return only baseline evidence visible to the research Agent.
 
         The native episode and Oracle remain in the adapter's trusted replay
-        artifact. In particular, Oracle classifications and hidden outcome
+        artifact. Oracle classifications, safety labels and hidden outcome
         fields must never be copied into a root Designer observation.
         """
         if not isinstance(result.feedback, dict):
@@ -184,9 +184,9 @@ class UsamiAdapter:
             public_operations.append({"operation": row["operation"], "result": row["result"]})
         # These are the public tool calls and their returned results. Do not
         # include outcome, Oracle, reference, or task-certificate objects.
-        return {"protocol": "rsi-native-commerce-baseline-v0.2",
+        return {"protocol": "rsi-native-commerce-baseline-v0.3",
                 "run_ref": result.run_ref, "status": result.status,
-                "score": result.score, "safety_violation": result.forbidden_behavior,
+                "score": result.score,
                 "operations": public_operations,
                 "terminal_status": result.feedback.get("terminal_status", "")}
 

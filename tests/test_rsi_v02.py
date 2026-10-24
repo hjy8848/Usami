@@ -259,12 +259,14 @@ def test_period_updates_phi_once_after_both_root_groups_and_carries_final_snapsh
     service_context = archive.save({"kind": "service-context"})
     service_group_ref = archive.save({"status": "USABLE", "context_ref": service_context})
     service_group = CollectedGroup(service_context, service_group_ref, "USABLE", service1.ref,
-                                   (SimpleNamespace(archive_ref="service-root"),),
+                                   (SimpleNamespace(archive_ref="service-root", status="SUBMITTED",
+                                                    error="", events=()),),
                                    ("service-reward",), "r_service")
     self_context_ref = archive.save({"kind": "self-context"})
     self_group_ref = archive.save({"status": "USABLE", "context_ref": self_context_ref})
     self_group = CollectedGroup(self_context_ref, self_group_ref, "USABLE", m1.ref,
-                                (SimpleNamespace(archive_ref="self-root"),),
+                                (SimpleNamespace(archive_ref="self-root", status="SUBMITTED",
+                                                 error="", events=()),),
                                 ("self-reward",), "r_self")
     events = []
 

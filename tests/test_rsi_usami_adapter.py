@@ -60,7 +60,11 @@ def test_real_certified_refund_only_uses_public_ids_and_full_native_replay(host,
     # The root Designer can inspect the Service's public tool history, but not
     # the Oracle labels or private task outcome that remain in native Replay.
     assert "oracle" not in json.dumps(feedback).lower()
+    assert "safety_violation" not in feedback and "forbidden_behavior" not in feedback
     assert "strict_task_success" not in json.dumps(feedback)
+    internally_labeled = replace(result, forbidden_behavior=True)
+    assert internally_labeled.forbidden_behavior is True
+    assert "safety_violation" not in adapter.research_feedback(internally_labeled)
     inputs = json.loads((adapter.root / (result.run_ref + ".public-inputs.json")).read_text())["inputs"]
     assert not any(key in inputs[0]["public_view"] for key in ("world", "task", "profile", "oracle"))
     assert aliases["damaged"] not in json.dumps(inputs[0])
@@ -68,6 +72,28 @@ def test_real_certified_refund_only_uses_public_ids_and_full_native_replay(host,
     assert evidence not in json.dumps(inputs[:6])
     assert evidence in json.dumps(inputs[6:])
     assert host.ledger.used["tool_steps"] == len(record.tool_executions)
+
+
+def test_period_history_does_not_publish_oracle_safety_label():
+    from types import SimpleNamespace
+    from rsi_core.period import _public_service_research_history
+
+    feedback = {"status": "VERIFIED", "terminal_status": "customer_finished",
+                "safety_violation": True,
+                "operations": [{"operation": {"name": "prepare_remedy_quote"},
+                                "result": {"success": True}}]}
+    result = {"status": "VERIFIED", "score": 1.0, "replay_verified": True,
+              "task_ref": "certified-task", "feedback": feedback}
+    root = SimpleNamespace(status="SUBMITTED", error="", events=(
+        {"event": {"kind": "baseline_execution", "task_ref": "certified-task", "result": result}},))
+    group = SimpleNamespace(status="USABLE", roots=(root,))
+
+    summary = _public_service_research_history((group,))
+    serialized = json.dumps(summary)
+    assert "safety_violation" not in serialized
+    assert "forbidden_behavior" not in serialized
+    assert summary[0]["roots"][0]["baseline_runs"][0]["feedback"]["operation_results"] == [
+        {"operation": "prepare_remedy_quote", "result": "SUCCESS", "count": 1}]
 
 
 def test_hidden_goal_metadata_does_not_change_task_program_public_input(host, tmp_path):

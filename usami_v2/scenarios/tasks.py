@@ -297,7 +297,7 @@ class RemedyGoal(Sealed):
 
 
 class GroundedRemedyGoal(RemedyGoal):
-    """A new-protocol business goal linked to an exact public request span."""
+    """Legacy v2 business goal linked to an exact public request span."""
 
     public_request_span: str = Field(min_length=1)
     subject_mention: str = Field(min_length=1)
@@ -352,10 +352,11 @@ class TaskSpec(Sealed):
         if not rows or len({row.goal_id for row in rows}) != len(rows):
             raise ValueError("task needs unique business/information objectives")
         normalized_request = " ".join(self.customer_request.casefold().split())
-        for goal in self.information_goals:
-            span = " ".join(goal.public_request.casefold().split())
-            if span not in normalized_request:
-                raise ValueError("information objective must be grounded in the public Customer request")
+        if self.protocol == "commerce-task-v1":
+            for goal in self.information_goals:
+                span = " ".join(goal.public_request.casefold().split())
+                if span not in normalized_request:
+                    raise ValueError("information objective must be grounded in the public Customer request")
         if len({row.line_id for row in self.remedy_goals}) != len(self.remedy_goals):
             raise ValueError("combine acceptable remedies for one line rather than ambiguous duplicated goals")
         if self.partition == "heldout" and self.parent_training_evidence_hashes:
@@ -366,8 +367,8 @@ class TaskSpec(Sealed):
 class TaskSpecV2(TaskSpec):
     """Versioned task with public-source binding for every remedy objective.
 
-    The v1 TaskSpec remains readable for historical certificates and Episodes.
-    New Designer output uses v2 so hidden transaction goals cannot be scored.
+    The v1/v2 TaskSpec records remain readable for historical certificates and
+    Episodes. New Designer output uses v3 structured request provenance.
     """
 
     protocol: Literal["commerce-task-v2"] = "commerce-task-v2"
@@ -391,6 +392,153 @@ class TaskSpecV2(TaskSpec):
         return self
 
 
+class StructuredInformationObjective(Sealed):
+    """Machine-bound information intent; public wording is rendered by the Host."""
+
+    goal_id: str
+    subject_id: str
+    fact_kind: FactKind
+
+
+class CustomerRequestBundle(Sealed):
+    """Provenance binding between structured Customer intent and rendered text."""
+
+    protocol: Literal["commerce-request-bundle-v1"] = "commerce-request-bundle-v1"
+    customer_id: str
+    goal_ids: Tuple[str, ...]
+    renderer_version: Literal["commerce-request-renderer-v1"] = "commerce-request-renderer-v1"
+    intent_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    request_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def unique_goals(self):
+        if not self.goal_ids or len(set(self.goal_ids)) != len(self.goal_ids):
+            raise ValueError("request bundle requires unique structured goal references")
+        return self
+
+
+def _display_name(value):
+    return " ".join(str(value).replace("_", " ").split()) or "item"
+
+
+def _line_description(world, line_id):
+    line = world.lines[line_id]
+    sku = world.skus[line.sku_id]
+    issues = sorted({row.issue for row in world.evidence.values() if row.line_id == line_id})
+    issue_text = {"damaged": "damaged", "wrong_item": "incorrect", "missing_parts": "missing parts"}
+    parts = [issue_text.get(issue, _display_name(issue)) for issue in issues]
+    parts.extend(_display_name(sku.attributes[name]) for name in sorted(sku.attributes)
+                 if name != "variant" and sku.attributes[name])
+    parts.append(_display_name(sku.product_family))
+    return " ".join(dict.fromkeys(parts))
+
+
+def render_customer_request(world, customer_id, remedy_goals, information_goals):
+    """Render a public request from the exact structured goals; never infer goals from prose."""
+    remedy_goals, information_goals = tuple(remedy_goals), tuple(information_goals)
+    clauses = []
+    for index, goal in enumerate(remedy_goals, 1):
+        if goal.line_id not in world.lines:
+            raise ValueError("request renderer received a line outside the frozen world")
+        line = world.lines[goal.line_id]
+        order = world.orders[line.order_id]
+        if order.customer_id != customer_id:
+            raise ValueError("request renderer cannot describe another Customer's line")
+        remedies = set(goal.allowed_remedies)
+        labels = []
+        if "refund" in remedies:
+            labels.append("a refund")
+        if remedies & {"exchange", "reship"}:
+            labels.append("a replacement")
+        if len(labels) == 1:
+            action = labels[0]
+        else:
+            action = " or ".join(labels)
+        subject = _line_description(world, goal.line_id)
+        quantity = "" if goal.quantity == 1 else " for {} items".format(goal.quantity)
+        sentence = "{}. Please arrange {}{} for the {} item in my order".format(
+            index, action, quantity, subject)
+        if goal.required_attributes:
+            terms = ", ".join("{} {}".format(_display_name(row.value), _display_name(row.name))
+                               for row in goal.required_attributes)
+            sentence += " with " + terms
+        if goal.latest_arrival is not None:
+            days = (goal.latest_arrival - world.clock).total_seconds() / 86400
+            if days < 0 or days != int(days):
+                raise ValueError("structured arrival deadline must be a nonnegative whole number of days")
+            sentence += " within {} days".format(int(days))
+        if goal.maximum_extra_charge_cents is not None:
+            amount = goal.maximum_extra_charge_cents / 100
+            sentence += " with no more than CNY {:.2f} in extra charges".format(amount)
+        clauses.append(sentence + ".")
+    fact_labels = {
+        "refund_amount": "refund amount", "extra_charge": "additional charge",
+        "arrival_date": "arrival date", "refund_status": "refund status",
+        "shipment_status": "shipment status", "quantity": "quantity", "currency": "currency",
+    }
+    for index, goal in enumerate(information_goals, len(clauses) + 1):
+        if goal.subject_id in world.lines:
+            subject = _line_description(world, goal.subject_id)
+        elif goal.subject_id in world.orders:
+            subject = "order"
+        else:
+            raise ValueError("request renderer received an information subject outside the frozen world")
+        if goal.subject_id in world.lines:
+            line = world.lines[goal.subject_id]
+            if world.orders[line.order_id].customer_id != customer_id:
+                raise ValueError("request renderer cannot describe another Customer's line")
+        elif world.orders[goal.subject_id].customer_id != customer_id:
+            raise ValueError("request renderer cannot describe another Customer's order")
+        clauses.append("{}. Please tell me the {} for my {}.".format(
+            index, fact_labels[goal.fact_kind], subject))
+    if not clauses:
+        raise ValueError("cannot render an empty Customer request")
+    return "Please help me with the following request(s):\n" + "\n".join(clauses)
+
+
+def request_intent_hash(customer_id, remedy_goals, information_goals):
+    return digest({"customer_id": customer_id,
+                   "remedy_goals": [row.model_dump(mode="json", exclude={"record_hash"})
+                                    for row in remedy_goals],
+                   "information_goals": [row.model_dump(mode="json", exclude={"record_hash"})
+                                         for row in information_goals]})
+
+
+class TaskSpecV3(TaskSpec):
+    """Structured-intent task. Customer-facing text is rendered from its goals."""
+
+    protocol: Literal["commerce-task-v3"] = "commerce-task-v3"
+    remedy_goals: Tuple[RemedyGoal, ...] = ()
+    information_goals: Tuple[StructuredInformationObjective, ...] = ()
+    request_bundle: CustomerRequestBundle
+
+    @model_validator(mode="after")
+    def request_bundle_matches_intent(self):
+        bundle = self.request_bundle
+        goals = self.remedy_goals + self.information_goals
+        if (bundle.customer_id != self.customer_id
+                or bundle.goal_ids != tuple(row.goal_id for row in goals)
+                or bundle.intent_hash != request_intent_hash(self.customer_id, self.remedy_goals,
+                                                             self.information_goals)
+                or bundle.request_hash != digest(self.customer_request)):
+            raise ValueError("Customer request provenance differs from structured task intent")
+        return self
+
+
+def parse_task_spec(value):
+    """Parse a saved task by its immutable protocol version."""
+    protocol = value.get("protocol") if isinstance(value, dict) else None
+    models = {
+        "commerce-task-v1": TaskSpec,
+        "commerce-task-v2": TaskSpecV2,
+        "commerce-task-v3": TaskSpecV3,
+    }
+    model = models.get(protocol)
+    if model is None:
+        raise ValueError("unsupported commerce task protocol: {}".format(protocol))
+    return model.model_validate(value)
+
+
 def check_task_scope(world, task: TaskSpec):
     task = task.checked()
     if world.state_hash != task.world_hash or invariants(world):
@@ -401,12 +549,22 @@ def check_task_scope(world, task: TaskSpec):
     owned_orders = {row.id for row in world.orders.values() if row.customer_id == task.customer_id}
     owned_lines = {row.id for row in world.lines.values() if row.order_id in owned_orders}
 
+    if task.protocol == "commerce-task-v3":
+        if not isinstance(task, TaskSpecV3):
+            raise ValueError("commerce-task-v3 requires its structured task contract")
+        expected_request = render_customer_request(
+            world, task.customer_id, task.remedy_goals, task.information_goals)
+        if task.customer_request != expected_request:
+            raise ValueError("public Customer request was not rendered from its registered structured intent")
+        if task.request_bundle.request_hash != digest(expected_request):
+            raise ValueError("structured request bundle does not bind the rendered public request")
+
     for goal in task.remedy_goals:
         line = world.lines.get(goal.line_id)
         order = world.orders.get(line.order_id) if line else None
         if not order or order.customer_id != task.customer_id:
             raise ValueError("task crosses the frozen Customer identity")
-        if isinstance(goal, GroundedRemedyGoal):
+        if task.protocol == "commerce-task-v2" and isinstance(goal, GroundedRemedyGoal):
             if public_line_match_ids(world, task.customer_id, goal.subject_mention,
                                      goal.public_request_span) != (line.id,):
                 raise ValueError("public product mention and issue description must uniquely identify one owned frozen line")
@@ -428,6 +586,9 @@ def check_task_scope(world, task: TaskSpec):
                     raise ValueError("public information mention must uniquely identify one owned frozen line")
             elif goal.subject_id in owned_orders and len(owned_orders) != 1:
                 raise ValueError("order-level information target is ambiguous for this Customer")
+        elif task.protocol == "commerce-task-v3" and goal.subject_id in owned_lines:
+            if goal.subject_id not in owned_lines:
+                raise ValueError("structured information target is outside the authenticated Customer scope")
     return task
 
 
@@ -535,15 +696,21 @@ def evaluate_task_communication(initial, task: TaskSpec, *, facts=(), messages=(
             end_event_index = max((row.event_index for row in messages), default=0)
         obligations = []
         for goal in task.information_goals:
+            if task.protocol == "commerce-task-v3":
+                public_text = task.customer_request
+                request_hash = task.request_bundle.record_hash
+            else:
+                public_text = goal.public_request
+                request_hash = digest({"customer_request": task.customer_request,
+                                       "request_span": goal.public_request})
             source = SourceRef(
                 source_id="customer-request-" + goal.goal_id,
                 source_kind="customer_message",
-                source_hash=digest({"customer_request": task.customer_request,
-                                   "request_span": goal.public_request}),
+                source_hash=request_hash,
                 event_index=0)
             request = PublicRequest(
                 request_id=goal.goal_id, subject_id=goal.subject_id, fact_kind=goal.fact_kind,
-                source=source, public_text=goal.public_request)
+                source=source, public_text=public_text)
             obligations.append(CommunicationObligation(
                 obligation_id="information-" + goal.goal_id, request=request,
                 due_event_index=end_event_index, required=True))

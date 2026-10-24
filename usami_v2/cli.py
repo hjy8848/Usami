@@ -19,13 +19,17 @@ from usami_v2.scenarios.task_certification import (
     TaskDesignCapabilities,
     TaskCertification, certify_task, verify_task_certificate,
 )
-from usami_v2.scenarios.tasks import InformationObjective, RemedyGoal, TaskSpec
+from usami_v2.scenarios.tasks import (
+    CustomerRequestBundle, InformationObjective, RemedyGoal, StructuredInformationObjective,
+    TaskSpec, TaskSpecV3, parse_task_spec,
+)
 
 
 def contract_schemas():
     from usami_v2.runtime.agents import AgentCall, AgentMessage, CustomerPrompt, ServiceAction, ServicePrompt
     from usami_v2.runtime.customer import (
-        AuthorityProof, CustomerDecision, CustomerEvent, CustomerProfile, CustomerProfileV2, CustomerTransition,
+        AuthorityProof, CustomerDecision, CustomerEvent, CustomerProfile, CustomerProfileV2,
+        CustomerProfileV3, CustomerTransition,
         OfferPresentation, PrivateCustomerFact,
     )
     from usami_v2.runtime.runner import EpisodeBudget, EpisodeEvent, EpisodeRecord, EpisodeReplay, ToolExecution
@@ -47,7 +51,8 @@ def contract_schemas():
               ProofBudget, ProofStep, PlanCandidate, ProofAttempt, TaskCertification,
               CustomerTaskScope, TaskDesignCapabilities,
               CustomerDecision, CustomerProfile, PrivateCustomerFact, OfferPresentation,
-              CustomerProfileV2, GroundedRemedyGoal, TaskSpecV2, OutcomeV2,
+              CustomerProfileV2, CustomerProfileV3, GroundedRemedyGoal, TaskSpecV2, TaskSpecV3,
+              CustomerRequestBundle, StructuredInformationObjective, OutcomeV2,
               AuthorityProof, CustomerEvent, CustomerTransition,
               AgentMessage, AgentCall, CustomerPrompt, ServicePrompt, ServiceAction,
               EpisodeBudget, EpisodeEvent, EpisodeRecord, EpisodeReplay, ToolExecution,
@@ -159,7 +164,7 @@ def certify_task_artifact(world_directory, task_path, customer_scenario_path, ou
     build = BuildResult.model_validate(json.loads((world_directory / "build.json").read_text(encoding="utf-8")))
     if build.status != "SAT" or build.world is None:
         raise ValueError("task certification requires a previously verified SAT world artifact")
-    task = TaskSpec.model_validate(json.loads(Path(task_path).read_text(encoding="utf-8")))
+    task = parse_task_spec(json.loads(Path(task_path).read_text(encoding="utf-8")))
     customer_scenario = CustomerScenario.model_validate(
         json.loads(Path(customer_scenario_path).read_text(encoding="utf-8")))
     budget = ProofBudget(max_plan_candidates=max_plan_candidates,
@@ -205,7 +210,7 @@ def verify_task_certificate_artifact(world_directory, certificate_directory):
             or manifest.get("artifact_files") != ["task.json", "customer-scenario.private.json", "certificate.json"]):
         raise ValueError("task certificate artifact protocol differs")
     build = BuildResult.model_validate(json.loads((world_directory / "build.json").read_text(encoding="utf-8")))
-    task = TaskSpec.model_validate(json.loads((certificate_directory / "task.json").read_text(encoding="utf-8")))
+    task = parse_task_spec(json.loads((certificate_directory / "task.json").read_text(encoding="utf-8")))
     customer_scenario = CustomerScenario.model_validate(
         json.loads((certificate_directory / "customer-scenario.private.json").read_text(encoding="utf-8")))
     certificate = TaskCertification.model_validate(

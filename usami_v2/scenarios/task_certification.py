@@ -91,7 +91,9 @@ class TaskDesignCapabilities(Sealed):
     return_receipt_event_configured: bool = False
     policy_review_event_configured: bool = False
     customer_scopes: Tuple[CustomerTaskScope, ...] = ()
-    grounding_protocol: Literal["public-intent-grounding-v1"] = "public-intent-grounding-v1"
+    grounding_protocol: Literal[
+        "public-intent-grounding-v1", "structured-intent-grounding-v2"
+    ] = "structured-intent-grounding-v2"
 
     @model_validator(mode="after")
     def capability_consistency(self):

@@ -505,7 +505,7 @@ def test_unbound_hidden_transaction_goal_is_rejected_before_agent_execution():
         remedy_goals=(RemedyGoal(goal_id="hidden", line_id=aliases["damaged"], quantity=1,
                                  allowed_remedies=("refund",)),),
         partition="train", source_distribution_hash=digest("hidden task"))
-    with pytest.raises(ValueError, match="public-request-grounded TaskSpecV2"):
+    with pytest.raises(ValueError, match="public-request-grounded TaskSpecV2 or structured TaskSpecV3"):
         run_episode(world, hidden, CustomerProfile(customer_id=aliases["customer"]),
                     FinishCustomer(), ReadOnlyService(world, aliases["damaged"]),
                     budget=EpisodeBudget(max_model_calls=0))

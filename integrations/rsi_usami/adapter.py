@@ -34,6 +34,23 @@ def baseline_request(prompt, snapshot):
             "tool_choice": "auto", "stream": False, "n": 1, "parallel_tool_calls": False}
 
 
+def _parse_service_action(raw, customer_id, observed_subject_ids, call):
+    """Match native auto-tool semantics while keeping side effects tool-only."""
+    try:
+        choices = raw["choices"]
+        message = choices[0]["message"] if isinstance(choices, list) and len(choices) == 1 else {}
+        content = message.get("content")
+        if (message.get("role") == "assistant" and not message.get("tool_calls")
+                and choices[0].get("finish_reason") == "stop"
+                and isinstance(content, str) and content.strip()):
+            return ServiceAction(kind="reply", message=content, call=call)
+    except (KeyError, TypeError, IndexError, AttributeError):
+        pass
+    action = ServiceAction.from_tool_message(raw, customer_id, observed_subject_ids)
+    return ServiceAction.model_validate({**action.model_dump(mode="json", exclude={"record_hash"}),
+                                         "call": call.model_dump(mode="json")})
+
+
 class ProgramServiceAgent:
     uses_model = False  # Some P steps use no model; actual calls still carry AgentCall.
     last_call = None
@@ -96,8 +113,8 @@ class ProgramServiceAgent:
                     self.last_call = AgentCall(role="service", request=request, response=response.output,
                                                prompt_tokens=response.prompt_tokens,
                                                completion_tokens=response.completion_tokens)
-                    action = ServiceAction.from_tool_message(response.output, prompt.customer_id,
-                                                             prompt.observed_subject_ids)
+                    action = _parse_service_action(response.output, prompt.customer_id,
+                                                   prompt.observed_subject_ids, self.last_call)
                     view = {**view, "model_observation": action.model_dump(mode="json", exclude={"record_hash", "call", "call_id"})}
                 elif decision.get("kind") == "ACTION":
                     if set(decision) != {"kind", "state", "action"} or not isinstance(decision["action"], dict):

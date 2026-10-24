@@ -30,8 +30,9 @@ from usami_v2.scenarios.task_certification import (
     verify_task_certificate,
 )
 from usami_v2.scenarios.tasks import (
-    GroundedRemedyGoal, InformationObjective, TaskSpec, TaskSpecV2, _validate_public_remedy_bounds,
-    check_task_scope, request_names_fact, request_names_remedy,
+    CustomerRequestBundle, InformationObjective, RemedyGoal, StructuredInformationObjective,
+    TaskSpec, TaskSpecV2, TaskSpecV3, check_task_scope, render_customer_request,
+    request_intent_hash,
 )
 
 
@@ -60,32 +61,20 @@ class ScenarioDraft(Sealed):
 class RemedyDraft(Sealed):
     goal_id: str
     line_alias: str
-    public_request_span: str = Field(
-        min_length=1,
-        description=("Copy one exact, contiguous substring from customer_request. Do not paraphrase, summarize, "
-                     "or combine separated phrases. The quote must include subject_mention and explicitly "
-                     "support the requested outcome. A public 'replace'/'replacement' request supports the "
-                     "engine methods exchange or reship; refund still requires explicit refund language."),
-    )
-    subject_mention: str = Field(
-        min_length=1,
-        description="Exact product/object wording that appears inside public_request_span.",
-    )
     quantity: int = Field(ge=1, strict=True,
-                          description="Use 1 for the default single item; use a larger number only when the request states it.")
+                          description="Number of purchased units covered by this structured Customer intent.")
     allowed_remedies: Tuple[Literal["refund", "exchange", "reship"], ...] = Field(
         min_length=1,
-        description=("List engine methods supported by the public intent. 'Replace'/'replacement' supports "
-                     "exchange or reship; only explicit refund language supports refund."),
+        description="Customer-authorized outcomes. The Host renders these structured outcomes into the request.",
     )
     required_attributes: Tuple[Attribute, ...] = Field(
-        default=(), description="Only score attributes explicitly named in the quoted request; use the frozen SKU values.")
+        default=(), description="Required outcome attributes, checked against frozen SKU facts.")
     maximum_extra_charge_cents: Optional[int] = Field(
         default=None, ge=0, strict=True,
-        description="Only set when the quoted request states an explicit extra/additional charge limit; value is cents.")
+        description="Maximum authorized extra charge in cents; the Host renders the exact amount.")
     latest_arrival_within_days: Optional[int] = Field(
         default=None, ge=0, strict=True,
-        description="Only set for an explicit 'within/in N days' request, using the exact public N.")
+        description="Latest permitted arrival in whole days from frozen world time; rendered by the Host.")
     target_stage: Literal["settled", "delivered"] = Field(
         default="settled",
         description=("Use 'settled' for the currently supported Reference proof. 'delivered' means actual receipt, "
@@ -99,24 +88,15 @@ class InformationDraft(Sealed):
         description=("Alias of an existing order or order line owned by the selected Customer, exactly as listed "
                      "in that Customer's scope. Never use a Customer, SKU, or another Customer's object."),
     )
-    subject_mention: str = Field(
-        min_length=1,
-        description="Natural subject wording that appears in the quoted public question and uniquely identifies the owned order/line.",
-    )
     fact_kind: Literal["refund_amount", "extra_charge", "arrival_date", "refund_status",
                        "shipment_status", "quantity", "currency"] = Field(
-        description="The business fact the Customer explicitly asks for; do not infer a different question.",
-    )
-    public_request: str = Field(
-        min_length=1,
-        description="An exact contiguous quote from customer_request that contains both the subject and requested fact.",
+        description="The structured business fact requested; the Host renders its public question.",
     )
 
 
 class TaskDraft(Sealed):
     task_id: str
     customer_alias: str
-    customer_request: str = Field(min_length=1)
     remedy_goals: Tuple[RemedyDraft, ...] = ()
     information_goals: Tuple[InformationDraft, ...] = Field(
         default=(),
@@ -133,37 +113,15 @@ class TaskDraft(Sealed):
         if any(len(value) != 64 or any(ch not in "0123456789abcdef" for ch in value)
                for value in self.parent_training_evidence_hashes):
             raise ValueError("training evidence references must be SHA-256 hashes")
-        normalized_request = " ".join(self.customer_request.casefold().split())
-        for goal in self.remedy_goals:
-            span = " ".join(goal.public_request_span.casefold().split())
-            if not span or span not in normalized_request:
-                raise ValueError(
-                    "each remedy goal's public_request_span must be copied verbatim as a contiguous quote "
-                    "from its supporting public request; do not paraphrase or combine phrases"
-                )
-            mention = " ".join(goal.subject_mention.casefold().split())
-            if not mention or mention not in span:
-                raise ValueError(
-                    "each remedy goal's subject_mention must appear in its verbatim public_request_span"
-                )
-            if not request_names_remedy(span, goal.allowed_remedies):
-                raise ValueError(
-                    "public_request_span must support every listed remedy; replacement wording supports exchange "
-                    "or reship, but refund still requires explicit refund language"
-                )
-        for goal in self.information_goals:
-            span = " ".join(goal.public_request.casefold().split())
-            mention = " ".join(goal.subject_mention.casefold().split())
-            if not span or span not in normalized_request:
-                raise ValueError(
-                    "each information goal's public_request must be copied verbatim as a contiguous quote "
-                    "from customer_request"
-                )
-            if not mention or mention not in span:
-                raise ValueError("information goal subject_mention must appear in its verbatim public question")
-            if not request_names_fact(span, goal.fact_kind):
-                raise ValueError("information fact_kind must match the explicitly quoted public question")
         return self
+
+
+class TaskCapabilityUnsupported(ValueError):
+    """The native proof contract cannot certify a structurally valid goal."""
+
+    def __init__(self, code, message):
+        super().__init__(message)
+        self.code = code
 
 
 class DesignerTrainingEvidence(Sealed):
@@ -301,7 +259,7 @@ class DesignerRun(Sealed):
     build_attempts: Tuple[BuildResult, ...] = ()
     world_attempts: Tuple[WorldDesignAttempt, ...] = ()
     task_draft: Optional[TaskDraft] = None
-    task: Optional[Union[TaskSpecV2, TaskSpec]] = None
+    task: Optional[Union[TaskSpecV3, TaskSpecV2, TaskSpec]] = None
     certification: Optional[TaskCertification] = None
     task_attempts: Tuple[TaskDesignAttempt, ...] = ()
     pre_run_quality: Optional[Union[ChallengeQualityVectorV1, ChallengeQualityVector]] = None
@@ -554,21 +512,24 @@ def compile_task(draft: TaskDraft, spec: ScenarioSpec, build: BuildResult,
     if not set(draft.parent_training_evidence_hashes).issubset(set(allowed_training_hashes)):
         raise ValueError("TaskDraft references training evidence outside the authorized input set")
     if draft.information_goals and not capabilities.information_goals_certifiable:
-        raise ValueError(
+        raise TaskCapabilityUnsupported("INFORMATION_CERTIFIER_UNAVAILABLE",
             "information goals require an explicitly enabled natural-runtime interaction certification capability"
         )
     if draft.remedy_goals and not capabilities.native_reference_certifies and not capabilities.interaction_certifier_available:
-        raise ValueError("this run has no configured certifier for remedy goals")
+        raise TaskCapabilityUnsupported("TASK_CERTIFIER_UNAVAILABLE",
+                                        "this run has no configured certifier for remedy goals")
     remedies, information = [], []
     for row in draft.remedy_goals:
         unsupported_remedies = set(row.allowed_remedies) - set(capabilities.supported_remedies)
         if unsupported_remedies:
-            raise ValueError("unsupported remedy method(s): {}".format(", ".join(sorted(unsupported_remedies))))
+            raise TaskCapabilityUnsupported(
+                "REMEDY_UNSUPPORTED", "unsupported remedy method(s): {}".format(
+                    ", ".join(sorted(unsupported_remedies))))
         if row.line_alias not in customer_scope.line_aliases:
             raise ValueError("TaskDraft references an unknown order-line alias")
         original_id = aliases[row.line_alias]
         if row.target_stage not in capabilities.supported_target_stages:
-            raise ValueError(
+            raise TaskCapabilityUnsupported("TARGET_STAGE_UNSUPPORTED",
                 "target_stage '{}' is outside this run's certified capabilities; supported stages are {}".format(
                     row.target_stage, ", ".join(capabilities.supported_target_stages))
             )
@@ -577,22 +538,24 @@ def compile_task(draft: TaskDraft, spec: ScenarioSpec, build: BuildResult,
         if row.quantity > line.quantity:
             raise ValueError("TaskDraft quantity exceeds the purchased line quantity")
         if (original_sku.return_required and not capabilities.return_receipt_event_configured):
-            raise ValueError("this task requires a return-receipt event that is not configured for certification")
+            raise TaskCapabilityUnsupported(
+                "RETURN_RECEIPT_UNAVAILABLE",
+                "this task requires a return-receipt event that is not configured for certification")
         if "refund" in row.allowed_remedies:
             credit = unit_credit(line, tuple(range(row.quantity)))
             merchant_id = build.world.orders[line.order_id].merchant_id
             approval_limit = build.world.merchants[merchant_id].refund_approval_limit_cents
             if credit > approval_limit and not capabilities.policy_review_event_configured:
-                raise ValueError("this refund requires a policy-review event that is not configured for certification")
+                raise TaskCapabilityUnsupported(
+                    "POLICY_REVIEW_UNAVAILABLE",
+                    "this refund requires a policy-review event that is not configured for certification")
         arrival = (build.world.clock + timedelta(days=row.latest_arrival_within_days)
                    if row.latest_arrival_within_days is not None else None)
-        compiled_goal = GroundedRemedyGoal(
+        compiled_goal = RemedyGoal(
             goal_id=row.goal_id, line_id=original_id, quantity=row.quantity,
             allowed_remedies=row.allowed_remedies, required_attributes=row.required_attributes,
             maximum_extra_charge_cents=row.maximum_extra_charge_cents,
-            latest_arrival=arrival, target_stage=row.target_stage,
-            public_request_span=row.public_request_span, subject_mention=row.subject_mention)
-        _validate_public_remedy_bounds(compiled_goal, build.world.clock)
+            latest_arrival=arrival, target_stage=row.target_stage)
         remedies.append(compiled_goal)
     for row in draft.information_goals:
         if row.subject_alias not in aliases:
@@ -601,18 +564,25 @@ def compile_task(draft: TaskDraft, spec: ScenarioSpec, build: BuildResult,
             raise ValueError(
                 "information subject must be the selected Customer's owned order or order-line alias"
             )
-        information.append(InformationObjective(
-            goal_id=row.goal_id, subject_id=aliases[row.subject_alias], subject_mention=row.subject_mention,
-            fact_kind=row.fact_kind, public_request=row.public_request))
+        information.append(StructuredInformationObjective(
+            goal_id=row.goal_id, subject_id=aliases[row.subject_alias], fact_kind=row.fact_kind))
     if any(len(value) != 64 or any(ch not in "0123456789abcdef" for ch in value)
            for value in draft.parent_training_evidence_hashes):
         raise ValueError("invalid training evidence hash")
-    task = TaskSpecV2(
+    customer_id = aliases[draft.customer_alias]
+    customer_request = render_customer_request(build.world, customer_id, tuple(remedies), tuple(information))
+    request_bundle = CustomerRequestBundle(
+        customer_id=customer_id,
+        goal_ids=tuple(row.goal_id for row in tuple(remedies) + tuple(information)),
+        intent_hash=request_intent_hash(customer_id, tuple(remedies), tuple(information)),
+        request_hash=digest(customer_request))
+    task = TaskSpecV3(
         task_id=draft.task_id, world_hash=build.world_hash, customer_id=aliases[draft.customer_alias],
-        customer_request=draft.customer_request, remedy_goals=tuple(remedies),
+        customer_request=customer_request, remedy_goals=tuple(remedies),
         information_goals=tuple(information), partition=distribution.split,
         source_distribution_hash=distribution.record_hash,
-        parent_training_evidence_hashes=draft.parent_training_evidence_hashes)
+        parent_training_evidence_hashes=draft.parent_training_evidence_hashes,
+        request_bundle=request_bundle)
     return check_task_scope(build.world, task)
 
 
@@ -754,19 +724,14 @@ def _chat(phase, content, distribution, slot, errors=()):
     if phase == "task":
         system = (
             "You are the Usami Commerce Task Designer. The business world is already frozen; do not edit it. "
-            "Choose the Customer, product references, natural request, objectives and constraints yourself from "
-            "the supplied frozen facts. Produce one realistic request and one complete TaskDraft certifiable "
-            "under the supplied TaskDesignCapabilities. Follow the active stratum's focus without inventing "
-            "unsupported events or hidden goals. Use only aliases listed under the selected Customer's scope. "
-            "For every remedy goal, copy public_request_span as an exact contiguous substring from customer_request; "
-            "never paraphrase or join separated phrases. subject_mention must be a natural product phrase in that "
-            "quote; do not require internal SKU-family or issue codes. The compiler resolves it uniquely to a "
-            "Customer-owned frozen line and rejects ambiguity. 'Replace'/'replacement' supports exchange or reship, "
-            "not refund. Include quantity, attributes, arrival deadlines and charge caps only when explicitly "
-            "requested; one item is the default. Information goals, delivery, return receipts and policy-review "
-            "events are allowed only when the capability manifest enables them. For information goals, use an "
-            "owned order/order-line alias and quote the actual public question. On correction, fix only the cited "
-            "proposal issue; never alter the frozen world. Submit exactly one complete TaskDraft using the registered tool."
+            "Choose a Customer and define one or more structured business intents over aliases in that Customer's "
+            "published scope. Submit only aliases, outcome types and numeric/business constraints in TaskDraft; "
+            "do not write customer_request, natural-language evidence spans, product mentions, internal IDs, "
+            "answers or proof witnesses. The trusted Host renders the Customer request from these same structured "
+            "intents and binds that text to the task record. Thus every scored goal is authorized by construction, "
+            "without matching keywords or substrings. Follow the active stratum's focus, use only supported "
+            "capabilities, and do not invent unavailable events. Information goals must reference an owned order or "
+            "line alias. On correction, fix only the cited schema/contract issue. Submit one complete TaskDraft."
         )
     elif phase == "world":
         system = (

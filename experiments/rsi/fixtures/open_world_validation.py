@@ -21,7 +21,7 @@ from integrations.rsi_usami.adapter import UsamiAdapter
 from integrations.rsi_usami.packages import NativePackageVerifier
 from integrations.rsi_usami.open_world import OpenChallengeBridge, WorldPopulation
 from usami_v2.runtime.agents import AgentCall
-from usami_v2.runtime.customer import CustomerDecision, CustomerProfileV2
+from usami_v2.runtime.customer import CustomerDecision, CustomerProfile
 from usami_v2.runtime.runner import EpisodeBudget
 from usami_v2.scenarios.designer import ScenarioDraft
 from usami_v2.scenarios.distribution import BusinessSource, BusinessStratum, DistributionSpec
@@ -75,17 +75,14 @@ class ProceduralWorldProvider:
 
 
 def proposal(multi=False, name="challenge"):
-    first = "Please refund my damaged device."
-    request = first + (" Please replace my cable with missing parts within 3 days." if multi else "")
     goals = [{"goal_id": "device-remedy", "line_alias": "item", "quantity": 1,
-              "public_request_span": first, "subject_mention": "damaged device", "allowed_remedies": ["refund"]}]
+              "allowed_remedies": ["refund"]}]
     selectors = [{"alias": "item", "family": "device", "issue": "damaged"}]
     if multi:
         goals.append({"goal_id": "cable-remedy", "line_alias": "other", "quantity": 1,
-            "public_request_span": "Please replace my cable with missing parts within 3 days.",
-            "subject_mention": "cable", "allowed_remedies": ["reship"], "latest_arrival_within_days": 3})
+            "allowed_remedies": ["reship"], "latest_arrival_within_days": 3})
         selectors.append({"alias": "other", "family": "cable", "issue": "missing_parts"})
-    return {"task_id": name, "customer_alias": "shopper", "customer_request": request,
+    return {"task_id": name, "customer_alias": "shopper",
             "remedy_goals": goals, "hypothesis": "Test independent remedies across customer-owned items.",
             "line_selectors": selectors}
 
@@ -104,8 +101,7 @@ class AcceptingCustomer:
 
 def customer_binding(world, task):
     lines = tuple(goal.line_id for goal in task.remedy_goals)
-    profile = CustomerProfileV2(customer_id=task.customer_id, delegated_line_ids=lines,
-        delegation_request_spans={goal.line_id: goal.subject_mention for goal in task.remedy_goals},
+    profile = CustomerProfile(customer_id=task.customer_id, delegated_line_ids=lines,
         maximum_extra_charge_cents=100000000)
     scenario = CustomerScenario(customer_id=task.customer_id, delegated_line_ids=lines)
     return profile, scenario, AcceptingCustomer

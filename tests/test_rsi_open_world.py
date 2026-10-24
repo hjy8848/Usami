@@ -70,13 +70,14 @@ def test_abstract_challenge_reuses_native_goal_contract_and_multiple_binding_sel
         owners = {o.customer_alias for o in spec.orders if any(l.alias in selected.values() for l in o.lines)}
         assert owners == {candidate.customer_alias}
         assert all(goal.line_alias in selected.values() for goal in candidate.draft.remedy_goals)
+    task_schema = AbstractChallenge.model_json_schema()
+    schema_text = json.dumps(task_schema)
+    assert "customer_request" not in task_schema["properties"]
+    assert "public_request_span" not in schema_text
+    assert "subject_mention" not in schema_text
     bad = proposal()
-    bad["remedy_goals"][0]["public_request_span"] = "An invented refund request."
-    with pytest.raises(ValueError, match="verbatim"):
-        AbstractChallenge.model_validate(bad)
-    bad = proposal()
-    bad["customer_request"] += " line_123456789abc"
-    with pytest.raises(ValueError, match="concrete"):
+    bad["customer_request"] = "An invented refund request."
+    with pytest.raises(ValueError, match="Extra inputs are not permitted"):
         AbstractChallenge.model_validate(bad)
 
 
@@ -106,6 +107,10 @@ def test_reference_registration_replay_and_scope_failures(tmp_path):
     assert "world_hash" not in manifest and "customer_scopes" not in manifest
     receipt = integration.certify(proposal(True))
     assert receipt["status"] == "CERTIFIED"
+    native = integration.adapter.tasks[receipt["task_ref"]]
+    assert native.task.protocol == "commerce-task-v3"
+    assert native.customer_profile.protocol == "commerce-customer-profile-v3"
+    assert native.customer_profile.intent_bundle_hash == native.task.request_bundle.record_hash
     assert integration.verify_attempt(integration.attempt_refs[-1])["verified"]
     record = integration.archive.load(integration.attempt_refs[-1])
     assert len(record["grounding"]["candidates"]) > 1
@@ -115,11 +120,10 @@ def test_reference_registration_replay_and_scope_failures(tmp_path):
     assert integration.certify(proposal(True)) == receipt
     assert len(integration.adapter.tasks) == len(integration.verifier.tasks) == 1
     impossible = proposal(True, "impossible")
-    impossible["customer_request"] = impossible["customer_request"].replace("3 days", "0 days")
-    impossible["remedy_goals"][1]["public_request_span"] = impossible["remedy_goals"][1]["public_request_span"].replace("3 days", "0 days")
     impossible["remedy_goals"][1]["latest_arrival_within_days"] = 0
     rejected = integration.certify(impossible)
-    assert rejected == {"status": "UNVERIFIED", "reason_code": "REFERENCE_UNPROVEN"}
+    assert rejected["status"] == "UNVERIFIED"
+    assert rejected["reason_code"] in {"REFERENCE_UNSAT", "REFERENCE_UNKNOWN", "REFERENCE_INCOMPLETE"}
     assert integration.verify_attempt(integration.attempt_refs[-1])["verified"]
     unknown = proposal(True, "unsupported")
     unknown["remedy_goals"][1]["target_stage"] = "delivered"
@@ -149,6 +153,51 @@ def test_catalogue_has_no_native_ids_private_bindings_or_answers(tmp_path):
         assert key not in value
 
 
+def test_m0_rejected_challenge_retries_three_times_then_keeps_parent():
+    import importlib.util
+
+    path = Path(__file__).parents[1] / "experiments/rsi/seeds/M0.py"
+    spec = importlib.util.spec_from_file_location("rsi_m0_seed", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    view = {"observations": [], "target": {"ref": "parent-service"}, "mode": "IMPROVE_SERVICE"}
+    first = module.next_step(view, {})
+    assert first["action"] == "MODEL" and first["state"]["attempt"] == 1
+    state = first["state"]
+    model_calls = 1
+    for expected_attempt in (1, 2):
+        view["observations"] = [{"output": {"proposal": {"task_id": "candidate"}}}]
+        submitted = module.next_step(view, state)
+        assert submitted["action"] == "PROPOSE_CHALLENGE"
+        state = submitted["state"]
+        view["observations"] = [{"status": "NO_MATCH", "reason_code": "NO_MATCH"}]
+        correction = module.next_step(view, state)
+        assert correction["action"] == "MODEL"
+        assert correction["state"]["attempt"] == expected_attempt + 1
+        model_calls += 1
+        state = correction["state"]
+    view["observations"] = [{"output": {"proposal": {"task_id": "candidate-3"}}}]
+    submitted = module.next_step(view, state)
+    assert submitted["action"] == "PROPOSE_CHALLENGE"
+    state = submitted["state"]
+    view["observations"] = [{"status": "NO_MATCH", "reason_code": "NO_MATCH"}]
+    final = module.next_step(view, state)
+    assert model_calls == 3
+    assert final["action"] == "SUBMIT" and final["candidate_ref"] == "parent-service"
+
+
+def test_open_world_adapter_accepts_native_plain_text_service_reply():
+    from integrations.rsi_usami.adapter import _parse_service_action
+    from usami_v2.runtime.agents import AgentCall
+
+    raw = {"choices": [{"message": {"role": "assistant", "content": "I can help with that."},
+                        "finish_reason": "stop"}]}
+    call = AgentCall(role="service", request={"messages": []}, response=raw)
+    action = _parse_service_action(raw, "customer-1", (), call)
+    assert action.kind == "reply" and action.message == "I can help with that."
+    assert action.call == call
+
+
 def test_two_formal_rsi_periods_use_multiple_worlds_native_runtime_and_probe(tmp_path):
     config = context(tmp_path)
     first = run_open_period(world_count=3, **config)
@@ -175,11 +224,16 @@ def test_two_formal_rsi_periods_use_multiple_worlds_native_runtime_and_probe(tmp
         for attempt_ref in execution["challenge_attempt_refs"]:
             record = host.archive.load(attempt_ref)
             assert record["receipt"]["status"] == "CERTIFIED"
+            selected_attempt = next(row for row in record["proof_attempts"]
+                                    if row["candidate_hash"] == record["selected"])
+            assert selected_attempt["task"]["protocol"] == "commerce-task-v3"
             goal_shapes.add(tuple(tuple(g["allowed_remedies"]) for g in record["proposal"]["remedy_goals"]))
     from usami_v2.runtime.runner import EpisodeRecord
     adapter = config["service_evaluator"].adapter
     for ref, path in adapter.runs.items():
         episode = EpisodeRecord.model_validate_json(path.read_text())
+        assert episode.task.protocol == "commerce-task-v3"
+        assert episode.profile.protocol == "commerce-customer-profile-v3"
         assert adapter.replay(ref)["verified"]
         assert episode.outcome.final_goal_reached is True, episode.terminal_reason
         assert episode.outcome.safety_violations.status == "PASS"
@@ -192,7 +246,7 @@ def test_two_formal_rsi_periods_use_multiple_worlds_native_runtime_and_probe(tmp
 def test_native_return_receipt_capability_remains_available(tmp_path):
     from usami_v2.scenarios.designer import ScenarioDraft
     from usami_v2.scenarios.task_certification import CustomerScenario
-    from usami_v2.runtime.customer import CustomerProfileV2
+    from usami_v2.runtime.customer import CustomerProfile
 
     class ReturnWorlds(ProceduralWorldProvider):
         def submit(self, phase, messages, model):
@@ -207,7 +261,7 @@ def test_native_return_receipt_capability_remains_available(tmp_path):
         profile, original, factory = customer_binding(world, task)
         data = profile.model_dump(mode="json", exclude={"record_hash"})
         data["return_pickup_slot"] = "weekday-evening"
-        return CustomerProfileV2.model_validate(data), CustomerScenario(
+        return CustomerProfile.model_validate(data), CustomerScenario(
             customer_id=original.customer_id, delegated_line_ids=original.delegated_line_ids,
             return_pickup_slot="weekday-evening", return_received_after_days=2), factory
 
@@ -225,8 +279,7 @@ def test_native_return_receipt_capability_remains_available(tmp_path):
                                                               response={"fixture": True})
     capture = CaptureRevision()
     propose_open_challenge(capture, integration, previous_attempt_ref=integration.attempt_refs[-1])
-    assert capture.feedback["compiler_feedback"] == [
-        "this task requires a return-receipt event that is not configured for certification"]
+    assert capture.feedback["capability_feedback"] == ["RETURN_RECEIPT_UNAVAILABLE"]
     configured = OpenChallengeBridge(population, ref, integration.adapter, integration.verifier, binding,
         capability_options={"return_receipt_event_configured": True})
     assert configured.certify(proposal())["status"] == "CERTIFIED"

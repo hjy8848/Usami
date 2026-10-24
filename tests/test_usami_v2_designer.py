@@ -61,14 +61,10 @@ def scenario_draft(name="scenario", natural_product_names=False):
 
 
 def task_draft(evidence_hashes=()):
-    request = "Please replace the damaged device with a USB-C option within three days and with no more than $20 extra."
     return TaskDraft(
         task_id="designer-exchange", customer_alias="customer",
-        customer_request=request,
         remedy_goals=({
             "goal_id": "replace-device", "line_alias": "damaged", "quantity": 1,
-            "public_request_span": request,
-            "subject_mention": "damaged device",
             "allowed_remedies": ["exchange"],
             "required_attributes": [{"name": "interface", "value": "USB_C"}],
             "maximum_extra_charge_cents": 2000,
@@ -165,8 +161,9 @@ def test_two_stage_designer_builds_frozen_world_and_certified_task_with_provenan
     assert len(run.world_attempts) == len(run.build_attempts) == 1
     assert run.world_attempts[0].status == "SAT"
     assert run.task.partition == "train"
-    assert run.task.protocol == "commerce-task-v2"
-    assert run.task.remedy_goals[0].public_request_span in run.task.customer_request
+    assert run.task.protocol == "commerce-task-v3"
+    assert "replacement" in run.task.customer_request
+    assert run.task.request_bundle.request_hash == digest(run.task.customer_request)
     assert run.task.source_distribution_hash == run.distribution.record_hash
     assert run.task.parent_training_evidence_hashes == (evidence.source_record_hash,)
     assert run.certification.business_reachability_certified
@@ -225,7 +222,7 @@ def test_task_compiler_feedback_is_bounded_and_does_not_rebuild_frozen_world():
     goal_data = valid_template.remedy_goals[0].model_dump(mode="json", exclude={"record_hash"})
     goal_data["line_alias"] = "unknown-line"
     invalid = TaskDraft(task_id=valid_template.task_id, customer_alias=valid_template.customer_alias,
-        customer_request=valid_template.customer_request, remedy_goals=(RemedyDraft.model_validate(goal_data),),
+        remedy_goals=(RemedyDraft.model_validate(goal_data),),
         parent_training_evidence_hashes=valid_template.parent_training_evidence_hashes)
     provider = CorrectingDesigner(scenario_draft(), invalid,
                                   task_draft((evidence.source_record_hash,)))
@@ -292,37 +289,47 @@ def test_post_run_quality_is_separate_diagnostic_not_a_selection_rule():
     assert vector.strict_task_success is False and vector.model_calls == 0
 
 
-def test_designer_cannot_attach_unmentioned_transaction_goal():
-    import pytest
-    with pytest.raises(ValueError, match="copied verbatim"):
-        TaskDraft(task_id="hidden-goal", customer_alias="customer",
-            customer_request="Please refund the damaged item.",
-            remedy_goals=({"goal_id": "exchange", "line_alias": "damaged", "quantity": 1,
-                           "public_request_span": "Please exchange my laptop instead.",
-                           "subject_mention": "laptop",
-                           "allowed_remedies": ["exchange"]},))
+def test_task_intent_is_structured_and_the_host_renders_the_public_request():
+    evidence = DesignerTrainingEvidence(source_record_hash="f" * 64, partition="train",
+                                        summary="Training evidence.")
+    draft = task_draft((evidence.source_record_hash,))
+    schema = TaskDraft.model_json_schema()
+    assert "customer_request" not in schema["properties"]
+    remedy_schema = schema["$defs"]["RemedyDraft"]["properties"]
+    assert "public_request_span" not in remedy_schema
+    assert "subject_mention" not in remedy_schema
+    assert "allowed_remedies" in remedy_schema
+    distribution, slot = distribution_and_slot(65)
+    scenario = scenario_draft("structured-intent").compile(distribution)
+    built = build_world(scenario, slot.seed)
+    task = compile_task(draft, scenario, built, distribution,
+                        allowed_training_hashes=(evidence.source_record_hash,))
+    assert task.protocol == "commerce-task-v3"
+    assert "replacement" in task.customer_request
+    assert task.request_bundle.intent_hash
+    assert task.request_bundle.request_hash == digest(task.customer_request)
+    from usami_v2.scenarios.tasks import check_task_scope
+    check_task_scope(built.world, task)
 
 
-def test_information_goal_requires_exact_public_question_quote():
-    with pytest.raises(ValueError, match="information goal's public_request.*copied verbatim"):
-        TaskDraft(task_id="paraphrased-info", customer_alias="customer",
-            customer_request="What is the refund status of my damaged device?", information_goals=({
-                "goal_id": "status", "subject_alias": "purchase", "subject_mention": "my damaged device",
-                "fact_kind": "refund_status", "public_request": "Tell me whether the damaged device was refunded.",
-            },))
-    with pytest.raises(ValueError, match="information fact_kind must match"):
-        TaskDraft(task_id="wrong-info-kind", customer_alias="customer",
-            customer_request="What is the shipment status of my damaged device?", information_goals=({
-                "goal_id": "status", "subject_alias": "purchase", "subject_mention": "my damaged device",
-                "fact_kind": "refund_status", "public_request": "What is the shipment status of my damaged device?",
-            },))
+def test_structured_information_objective_does_not_need_a_quoted_question():
+    draft = TaskDraft(task_id="owned-line-info", customer_alias="customer", information_goals=({
+        "goal_id": "status", "subject_alias": "damaged", "fact_kind": "refund_status",
+    },))
+    distribution, slot = distribution_and_slot(66)
+    scenario = scenario_draft("structured-information").compile(distribution)
+    built = build_world(scenario, slot.seed)
+    task = compile_task(draft, scenario, built, distribution,
+                        interaction_certifier_available=True, information_goals_certifiable=True)
+    assert task.information_goals[0].subject_id == dict(built.private_aliases)["damaged"]
+    assert "refund status" in task.customer_request
 
 
-def test_task_proposal_schema_and_feedback_explain_verbatim_public_quote():
+def test_task_schema_and_prompt_do_not_ask_for_natural_language_matching():
     schema = TaskDraft.model_json_schema()["$defs"]["RemedyDraft"]["properties"]
-    assert "exact, contiguous substring" in schema["public_request_span"]["description"]
-    assert "appears inside public_request_span" in schema["subject_mention"]["description"]
-    assert "exchange or reship" in schema["allowed_remedies"]["description"]
+    assert "public_request_span" not in schema
+    assert "subject_mention" not in schema
+    assert "structured" in schema["allowed_remedies"]["description"]
     assert "actual receipt" in schema["target_stage"]["description"]
 
     from usami_v2.scenarios.designer import _tool_schema
@@ -332,19 +339,16 @@ def test_task_proposal_schema_and_feedback_explain_verbatim_public_quote():
 
     distribution, slot = distribution_and_slot(65)
     messages = _chat("task", {"world_hash": "a" * 64}, distribution, slot,
-                     errors=("public_request_span must be copied verbatim",))
+                     errors=("unknown order-line alias",))
     instruction = messages[0]["content"]
-    assert "never paraphrase" in instruction
-    assert "exact contiguous substring from customer_request" in instruction
+    assert "do not write customer_request" in instruction
+    assert "without matching keywords or substrings" in instruction
 
 
 def test_natural_product_names_and_replacement_intent_compile_against_frozen_world():
-    request = ("I need my damaged TechPro laptop replaced with a USB-C option within three days "
-               "and with no more than $20 extra.")
     draft = TaskDraft(task_id="natural-laptop-replacement", customer_alias="customer",
-        customer_request=request, remedy_goals=({
+        remedy_goals=({
             "goal_id": "replace-laptop", "line_alias": "damaged", "quantity": 1,
-            "public_request_span": request, "subject_mention": "TechPro laptop",
             "allowed_remedies": ["exchange", "reship"],
             "required_attributes": [{"name": "interface", "value": "USB_C"}],
             "maximum_extra_charge_cents": 2000, "latest_arrival_within_days": 3,
@@ -392,10 +396,8 @@ def test_broad_electronics_category_does_not_make_laptop_and_mouse_compatible():
     built = build_world(spec, slot.seed)
     assert built.status == "SAT"
     world, aliases = built.world, dict(built.private_aliases)
-    request = "Please replace my damaged TechPro laptop."
-    draft_task = TaskDraft(task_id="laptop-only", customer_alias="customer", customer_request=request,
+    draft_task = TaskDraft(task_id="laptop-only", customer_alias="customer",
         remedy_goals=({"goal_id": "replace", "line_alias": "damaged", "quantity": 1,
-                       "public_request_span": request, "subject_mention": "TechPro laptop",
                        "allowed_remedies": ["exchange"]},))
     task = compile_task(draft_task, spec, built, distribution)
     proof = CustomerScenario(customer_id=aliases["customer"], delegated_line_ids=(aliases["damaged"],),
@@ -419,20 +421,15 @@ def test_task_compiler_gives_actionable_feedback_for_uncertifiable_targets_and_b
         compile_task(delivered, scenario, built, distribution)
 
     information = TaskDraft(task_id="customer-alias-info", customer_alias="customer",
-        customer_request="Please tell me the refund status for my order.", information_goals=({
-            "goal_id": "status", "subject_alias": "customer", "subject_mention": "my order",
-            "fact_kind": "refund_status", "public_request": "Please tell me the refund status for my order.",
-        },))
+        information_goals=({"goal_id": "status", "subject_alias": "customer",
+                            "fact_kind": "refund_status"},))
     with pytest.raises(ValueError, match="selected Customer's owned order or order-line alias"):
         compile_task(information, scenario, built, distribution, interaction_certifier_available=True,
                      information_goals_certifiable=True)
 
-    line_request = "Please tell me the refund status for my damaged device."
     line_information = TaskDraft(task_id="owned-line-info", customer_alias="customer",
-        customer_request=line_request, information_goals=({
-            "goal_id": "status", "subject_alias": "damaged", "subject_mention": "damaged device",
-            "fact_kind": "refund_status", "public_request": line_request,
-        },))
+        information_goals=({"goal_id": "status", "subject_alias": "damaged",
+                            "fact_kind": "refund_status"},))
     compiled_information = compile_task(
         line_information, scenario, built, distribution, interaction_certifier_available=True,
         information_goals_certifiable=True)
@@ -464,11 +461,9 @@ def test_capability_manifest_blocks_unconfigured_return_and_policy_review_events
     review_spec = review_draft.compile(distribution)
     review_build = build_world(review_spec, slot.seed)
     assert review_build.status == "SAT"
-    review_request = "Please refund my damaged device."
     refund = TaskDraft(task_id="needs-policy-review", customer_alias="customer",
-        customer_request=review_request, remedy_goals=({
+        remedy_goals=({
             "goal_id": "refund", "line_alias": "damaged", "quantity": 1,
-            "public_request_span": review_request, "subject_mention": "damaged device",
             "allowed_remedies": ["refund"], "maximum_extra_charge_cents": 0,
         },))
     review_capabilities = task_design_capabilities(review_spec, review_build)
@@ -479,51 +474,14 @@ def test_capability_manifest_blocks_unconfigured_return_and_policy_review_events
         compile_task(refund, review_spec, review_build, distribution, capabilities=no_refund)
 
 
-def test_grounded_bounds_cannot_exceed_the_customer_request():
+def test_host_renders_all_scored_bounds_from_structured_intent():
     distribution, slot = distribution_and_slot(69)
     scenario = scenario_draft().compile(distribution)
     built = build_world(scenario, slot.seed)
     draft = task_draft()
-    goal = replace_sealed(draft.remedy_goals[0], maximum_extra_charge_cents=None)
-    draft = replace_sealed(draft, remedy_goals=(goal,))
-    with pytest.raises(ValueError, match="public extra-charge limit must be included"):
-        compile_task(draft, scenario, built, distribution)
-
-
-@pytest.mark.parametrize("request_text,remedies", [
-    ("my desk lamp arrived damaged. I need a replacement delivered within 3 days", ("exchange", "reship")),
-    ("my desk lamp arrived damaged and I need a replacement. I'd like to switch to the brushed nickel version.", ("exchange", "reship")),
-    ("I need the laptop replaced within five days.", ("exchange", "reship")),
-    ("Please send me the correct black ones for the mouse I ordered black but got something else.", ("reship",)),
-])
-def test_natural_replacement_and_wrong_item_requests_name_supported_remedies(request_text, remedies):
-    from usami_v2.scenarios.tasks import request_names_remedy
-
-    assert request_names_remedy(request_text, remedies)
-    assert not request_names_remedy("I don't want a replacement for the damaged laptop.", ("exchange",))
-    assert not request_names_remedy("I don't want a replacement for the damaged laptop.", ("reship",))
-    assert not request_names_remedy("I need a replacement for my damaged lamp.", ("refund",))
-
-
-def test_natural_full_refund_request_and_negation_are_grounded_correctly():
-    from usami_v2.scenarios.tasks import request_names_remedy
-
-    request = ("The damaged lighting lamp I received needs a full refund. Also, the wrong-item furniture "
-               "chair that was sent instead of what I ordered - I want to exchange it for the correct one, "
-               "and I need it within 5 days.")
-    draft = TaskDraft(task_id="natural-full-refund", customer_alias="alice", customer_request=request,
-        remedy_goals=(
-            {"goal_id": "lamp-refund", "line_alias": "lamp_line",
-             "public_request_span": "The damaged lighting lamp I received needs a full refund",
-             "subject_mention": "damaged lighting lamp", "quantity": 1, "allowed_remedies": ["refund"]},
-            {"goal_id": "chair-exchange", "line_alias": "chair_line",
-             "public_request_span": "wrong-item furniture chair that was sent instead of what I ordered - "
-                                    "I want to exchange it for the correct one, and I need it within 5 days",
-             "subject_mention": "wrong-item furniture chair", "quantity": 1,
-             "allowed_remedies": ["exchange"], "latest_arrival_within_days": 5},
-        ))
-    assert len(draft.remedy_goals) == 2
-    assert request_names_remedy("The damaged lamp needs a full refund.", ("refund",))
-    assert request_names_remedy("I'd like a full refund for my damaged lamp.", ("refund",))
-    assert not request_names_remedy("The damaged lamp does not need a full refund.", ("refund",))
-    assert not request_names_remedy("I don't want a refund for the damaged lamp.", ("refund",))
+    task = compile_task(draft, scenario, built, distribution)
+    assert task.protocol == "commerce-task-v3"
+    assert "CNY 20.00" in task.customer_request
+    assert "within 3 days" in task.customer_request
+    assert task.request_bundle.intent_hash
+    assert task.request_bundle.request_hash == digest(task.customer_request)

@@ -5,8 +5,6 @@ bindings are valid; their deterministic order and proof attempts are recorded.
 The legacy benchmark Grounder remains the implementation for legacy Worlds.
 """
 from itertools import product
-import json
-import re
 from typing import Literal, Optional, Tuple
 
 from pydantic import Field, model_validator
@@ -45,12 +43,12 @@ class LineRelation(Sealed):
 
 
 class AbstractChallenge(TaskDraft):
-    """Reuse all TaskDraft/RemedyDraft goals and public-request validation.
+    """Reuse the native structured-intent TaskDraft contract.
 
     customer_alias and line_alias are symbolic variables here. Only Grounder
     supplies the real ScenarioSpec aliases to the native compiler.
     """
-    challenge_protocol: Literal["commerce-abstract-challenge-v1"] = "commerce-abstract-challenge-v1"
+    challenge_protocol: Literal["commerce-abstract-challenge-v2"] = "commerce-abstract-challenge-v2"
     hypothesis: str = Field(min_length=1)
     line_selectors: Tuple[LineSelector, ...] = Field(min_length=1, max_length=8)
     line_relations: Tuple[LineRelation, ...] = ()
@@ -67,10 +65,6 @@ class AbstractChallenge(TaskDraft):
         if any(row.left not in names or row.right not in names or row.left == row.right
                for row in self.line_relations):
             raise ValueError("line relation references unavailable variables")
-        # Builder IDs are private, while arbitrary symbolic variable names remain legal.
-        if re.search(r"\b(?:customer|merchant|order|line|sku|warehouse|evidence|case|quote)_[0-9a-f]{8,}\b",
-                     json.dumps(self.model_dump(mode="json"))):
-            raise ValueError("abstract challenge contains a concrete native object ID")
         return self
 
 

@@ -27,11 +27,11 @@ from usami_v2.runtime.agents import (
     AgentCall, AgentMessage, CustomerPrompt, ServiceAction, ServicePrompt,
 )
 from usami_v2.runtime.customer import (
-    CustomerDecision, CustomerProfile, CustomerProfileV2, HumanCustomerProfileV2,
+    CustomerDecision, CustomerProfile, CustomerProfileV2, CustomerProfileV3, HumanCustomerProfileV2,
     CustomerRuntime, OfferPresentation, render_offer,
 )
 from usami_v2.scenarios.tasks import (
-    TaskSpec, TaskSpecV2, check_task_scope, evaluate_state_goals, evaluate_task_compliance,
+    TaskSpec, TaskSpecV2, TaskSpecV3, check_task_scope, evaluate_state_goals, evaluate_task_compliance,
     evaluate_task_communication,
 )
 
@@ -65,8 +65,8 @@ class ToolExecution(Sealed):
 
 class EpisodeRecord(Sealed):
     protocol: Literal["commerce-episode-v1"] = "commerce-episode-v1"
-    task: Union[TaskSpec, TaskSpecV2]
-    profile: Union[HumanCustomerProfileV2, CustomerProfile, CustomerProfileV2]
+    task: Union[TaskSpecV3, TaskSpecV2, TaskSpec]
+    profile: Union[HumanCustomerProfileV2, CustomerProfileV3, CustomerProfileV2, CustomerProfile]
     budget: EpisodeBudget
     mode: Literal["reference", "sandbox"]
     initial_world: World
@@ -235,7 +235,8 @@ def _event_replay(initial_world, task, profile, record):
         errors.append("Replay input differs from the Episode's frozen initial world")
     if task.record_hash != record.task.record_hash or profile.record_hash != record.profile.record_hash:
         errors.append("Replay task or Customer profile differs from the Episode")
-    customer = CustomerRuntime(profile, allow_legacy=record.task.protocol == "commerce-task-v1")
+    customer = CustomerRuntime(profile, allow_legacy=record.task.protocol == "commerce-task-v1",
+                               task=record.task)
     tool_iter = iter(record.tool_executions)
     reconstructed_facts, reconstructed_messages, reconstructed_calls = [], [], []
     scheduled_ids = {row.id for row in record.scheduled_external_events} | set(initial_world.external_events)
@@ -421,7 +422,8 @@ def replay_episode(record: EpisodeRecord):
                          errors=tuple(errors), outcome_hash=record.outcome.record_hash)
 
 
-def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
+def run_episode(initial_world: World, task: Union[TaskSpecV3, TaskSpecV2, TaskSpec],
+                profile: Union[CustomerProfileV3, CustomerProfileV2, HumanCustomerProfileV2, CustomerProfile],
                 customer_agent: CustomerAgent, service_agent: ServiceAgent, *,
                 budget: Optional[EpisodeBudget] = None, mode: Literal["reference", "sandbox"] = "reference",
                 external_events: Tuple[ExternalEvent, ...] = (),
@@ -433,16 +435,18 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
     if mode not in ("reference", "sandbox"):
         raise ValueError("unknown episode mode")
     check_task_scope(initial_world, task)
+    if task.protocol == "commerce-task-v1" and task.remedy_goals:
+        raise ValueError(
+            "fresh transaction Episodes require a public-request-grounded TaskSpecV2 or structured TaskSpecV3"
+        )
     if profile.customer_id != task.customer_id:
         raise ValueError("Customer identity differs from the fixed TaskSpec identity")
-    if profile.delegated_line_ids and profile.protocol != "commerce-customer-profile-v2":
-        raise ValueError("new Episodes require public-request-bound CustomerProfileV2 delegations")
-    if task.remedy_goals:
-        if task.protocol != "commerce-task-v2":
-            raise ValueError("new transaction Episodes require public-request-grounded TaskSpecV2 goals")
-        if profile.protocol != "commerce-customer-profile-v2":
-            raise ValueError("new transaction Episodes require CustomerProfileV2 public-intent bindings")
+    if profile.delegated_line_ids and profile.protocol not in (
+            "commerce-customer-profile-v2", "commerce-customer-profile-v3"):
+        raise ValueError("new Episodes require a versioned Customer intent binding")
     if task.protocol == "commerce-task-v2":
+        if profile.protocol != "commerce-customer-profile-v2":
+            raise ValueError("TaskSpecV2 requires its historical CustomerProfileV2 binding")
         expected_delegations = {goal.line_id for goal in task.remedy_goals}
         if set(profile.delegated_line_ids) != expected_delegations:
             raise ValueError("Customer delegations must match exactly the publicly requested transaction targets")
@@ -451,6 +455,14 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
             if (goal.line_id not in profile.delegated_line_ids
                     or profile_span not in (goal.public_request_span, goal.subject_mention)):
                 raise ValueError("Customer delegation must match the goal's public request span or subject wording")
+    elif task.protocol == "commerce-task-v3":
+        if profile.protocol != "commerce-customer-profile-v3":
+            raise ValueError("TaskSpecV3 requires a structured CustomerProfileV3 binding")
+        expected_delegations = tuple(goal.line_id for goal in task.remedy_goals)
+        if profile.delegated_line_ids != expected_delegations:
+            raise ValueError("CustomerProfileV3 scope differs from structured remedy goals")
+        if profile.intent_bundle_hash != task.request_bundle.record_hash:
+            raise ValueError("CustomerProfileV3 is not bound to the task request bundle")
     base_world = initial_world.clone()
     runtime_initial_world = initial_world.clone()
     scheduled_ids = [event.id for event in external_events]
@@ -468,7 +480,7 @@ def run_episode(initial_world: World, task: TaskSpec, profile: CustomerProfile,
     conversation = [AgentMessage(role="user", content=task.customer_request)]
     events = _append(events, "customer_request", {"request": task.customer_request,
                          "customer_id": task.customer_id}, world, world)
-    customer_runtime = CustomerRuntime(profile, allow_legacy=task.protocol == "commerce-task-v1")
+    customer_runtime = CustomerRuntime(profile, allow_legacy=task.protocol == "commerce-task-v1", task=task)
     initialized = customer_runtime.initialize(world, task.customer_request, event_index=len(events))
     before = world
     world = initialized.world

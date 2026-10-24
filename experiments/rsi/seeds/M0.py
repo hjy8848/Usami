@@ -26,8 +26,11 @@ def next_step(research_view, state):
         if phase == "challenge_result":
             last = observations[-1]
             if last["status"] != "CERTIFIED":
+                attempt = state["attempt"]
+                if attempt >= 3:
+                    return {"action": "SUBMIT", "state": {}, "candidate_ref": target["ref"]}
                 return {"action": "MODEL", "state": {"phase": "challenge_submit",
-                        "attempt": state["attempt"]},
+                        "attempt": attempt + 1},
                         "request": {"instruction": "Revise the challenge using the Host rejection. "
                                     "Only use public facts and currently certifiable task types.",
                                     "rejection": last, "research_view": research_view},

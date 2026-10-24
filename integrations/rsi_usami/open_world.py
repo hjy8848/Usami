@@ -12,13 +12,37 @@ from rsi_core.archive import Archive
 from rsi_core.period import run_period
 from rsi_core.protocol import digest
 from usami_v2.scenarios.builder import verify_build
-from usami_v2.scenarios.designer import WorldDesignRun, design_world_slot, task_design_capabilities, _tool_schema
+from usami_v2.scenarios.designer import (
+    TaskCapabilityUnsupported, WorldDesignRun, design_world_slot, task_design_capabilities, _tool_schema,
+)
 from usami_v2.scenarios.distribution import DistributionSpec, sample_schedule
 from usami_v2.scenarios.grounding import AbstractChallenge, GroundingBudget, ground_challenge, compile_grounded
 from usami_v2.scenarios.task_certification import certify_task, verify_task_certificate
 from usami_v2.runtime.runner import EpisodeBudget
+from usami_v2.runtime.customer import bind_customer_profile
+from usami_v2.scenarios.tasks import TaskSpecV3
 
 from .adapter import NativeTask
+
+
+def _challenge_failure_receipt(grounding, attempts):
+    """Keep grounding, capability, compile, UNSAT and UNKNOWN outcomes distinct."""
+    if not grounding.candidates:
+        return {"status": "UNVERIFIED", "reason_code": grounding.status}
+    statuses = [row["status"] for row in attempts]
+    if statuses and all(status == "CAPABILITY_UNSUPPORTED" for status in statuses):
+        codes = sorted({row["capability_code"] for row in attempts})
+        return {"status": "UNVERIFIED", "reason_code": "CAPABILITY_UNSUPPORTED",
+                "capability_codes": codes}
+    if statuses and all(status in ("COMPILE_REJECTED", "CAPABILITY_UNSUPPORTED") for status in statuses):
+        return {"status": "UNVERIFIED", "reason_code": "COMPILE_REJECTED"}
+    proof_statuses = [status for status in statuses if status in ("UNSAT", "UNKNOWN")]
+    if proof_statuses and len(proof_statuses) == len(statuses):
+        reason = ("REFERENCE_UNSAT" if set(proof_statuses) == {"UNSAT"} else
+                  "REFERENCE_UNKNOWN" if set(proof_statuses) == {"UNKNOWN"} else
+                  "REFERENCE_INCOMPLETE")
+        return {"status": "UNVERIFIED", "reason_code": reason}
+    return {"status": "UNVERIFIED", "reason_code": "CHALLENGE_NOT_CERTIFIED"}
 
 
 def world_structure(spec, build):
@@ -153,8 +177,9 @@ class WorldPopulation:
                 "observed_line_kinds": [{"family": f, "issue": i, "quantity": q, "return_required": r}
                                         for f, i, q, r in sorted(line_kinds)],
                 "attributes": [{"name": k, "value": v} for k, v in sorted(attributes)],
-                "request_contract": "All goal bounds must be explicitly supported by public request spans. "
-                                    "Selectors identify purchased lines; they never prescribe a solution SKU.",
+                "request_contract": "Challenges contain structured Customer intents. The Host binds each intent "
+                                    "to owned frozen objects and renders the public request from the same intent. "
+                                    "No keyword or substring matching is used to authorize scored goals.",
                 "challenge_schema": _tool_schema("submit_customer_task", AbstractChallenge)["function"]["parameters"]}
 
 
@@ -210,11 +235,17 @@ class OpenChallengeBridge:
             try:
                 task = compile_grounded(candidate, spec, build, self.population.distribution,
                                         self.allowed_training_hashes, capability_options=self.capability_options)
+            except TaskCapabilityUnsupported as exc:
+                record["proof_attempts"].append({"candidate_hash": candidate.record_hash,
+                    "status": "CAPABILITY_UNSUPPORTED", "capability_code": exc.code, "reason": str(exc)})
+                continue
             except ValueError as exc:
                 record["proof_attempts"].append({"candidate_hash": candidate.record_hash,
                     "status": "COMPILE_REJECTED", "reason": str(exc)})
                 continue
             profile, scenario, customer_factory = self.customer_binding(build.world, task)
+            if isinstance(task, TaskSpecV3):
+                profile = bind_customer_profile(profile, task)
             certificate = certify_task(build.world, task, scenario, self.proof_budget)
             attempt = {"candidate_hash": candidate.record_hash, "status": certificate.status,
                        "task": task.model_dump(mode="json"), "scenario": scenario.model_dump(mode="json"),
@@ -243,8 +274,7 @@ class OpenChallengeBridge:
                 "certificate_ref": proof.certificate_ref,
                 "certification_scope": "usami_v2.native_reference_task_certification", "frozen": True}
             return self._save(record)
-        code = grounding.status if not grounding.candidates else "REFERENCE_UNPROVEN"
-        record["receipt"] = {"status": "UNVERIFIED", "reason_code": code}
+        record["receipt"] = _challenge_failure_receipt(grounding, record["proof_attempts"])
         return self._save(record)
 
     def _save(self, record):
@@ -276,10 +306,16 @@ class OpenChallengeBridge:
             try:
                 task = compile_grounded(candidate, spec, build, self.population.distribution, self.allowed_training_hashes,
                                         capability_options=self.capability_options)
+            except TaskCapabilityUnsupported as exc:
+                attempts.append({"candidate_hash": candidate.record_hash,
+                    "status": "CAPABILITY_UNSUPPORTED", "capability_code": exc.code, "reason": str(exc)})
+                continue
             except ValueError as exc:
                 attempts.append({"candidate_hash": candidate.record_hash, "status": "COMPILE_REJECTED", "reason": str(exc)})
                 continue
             profile, scenario, factory = self.customer_binding(build.world, task)
+            if isinstance(task, TaskSpecV3):
+                profile = bind_customer_profile(profile, task)
             certificate = certify_task(build.world, task, scenario, self.proof_budget)
             verify_task_certificate(build.world, task, scenario, certificate)
             attempts.append({"candidate_hash": candidate.record_hash, "status": certificate.status,
@@ -307,7 +343,7 @@ class OpenChallengeBridge:
                     or saved["certificate"] != attempts[-1]["certificate"]):
                 raise ValueError("certified task registration differs from replayed native binding")
         else:
-            expected = {"status": "UNVERIFIED", "reason_code": rebuilt.status if not rebuilt.candidates else "REFERENCE_UNPROVEN"}
+            expected = _challenge_failure_receipt(rebuilt, attempts)
             if record["receipt"] != expected:
                 raise ValueError("uncertified challenge receipt differs")
         return {"verified": True, "status": record["receipt"]["status"]}
@@ -356,10 +392,10 @@ def propose_open_challenge(provider, bridge, *, previous_attempt_ref=None):
         "native schema and authorized population catalogue. Choose the business objective, constraints and "
         "number of related items yourself. line_selectors declare symbolic variables; remedy_goals.line_alias "
         "references those variables. customer_alias is a symbolic Customer variable, not a World entity. "
-        "A Grounder will enumerate customer-owned bindings, the existing compiler will check public intent, "
-        "and independent Reference will certify the task. All goals and bounds must be explicitly requested "
-        "in customer_request. Copy each supporting public_request_span verbatim and use a natural product "
-        "subject_mention inside it. Use only published supported capabilities. Submit the challenge with "
+        "A Grounder will enumerate customer-owned bindings. Submit only structured remedy/information intent "
+        "fields and constraints; do not write customer_request, public_request_span or subject_mention. The Host "
+        "will render the Customer text from those same structured goals, so the scored goals are authorized by "
+        "construction, not by matching prose. Use only published supported capabilities. Submit the challenge with "
         "the registered tool; do not supply IDs, proof witnesses, answers or World changes."},
         {"role": "user", "content": json.dumps(bridge.public_view(), ensure_ascii=False, sort_keys=True)}]
     if previous_attempt_ref is not None:
@@ -374,14 +410,10 @@ def propose_open_challenge(provider, bridge, *, previous_attempt_ref=None):
             # The native Task Designer already returns public compilation
             # errors. Publish these two contract diagnostics, never a private
             # Reference blocker, witness, object binding or Oracle judgment.
-            public_contract_errors = {
-                "public product mention and issue description must uniquely identify one owned frozen line",
-                "this task requires a return-receipt event that is not configured for certification",
-            }
-            diagnostics = sorted({row["reason"] for row in previous["proof_attempts"]
-                                  if row["status"] == "COMPILE_REJECTED" and row["reason"] in public_contract_errors})
-            if diagnostics:
-                rejection["compiler_feedback"] = diagnostics
+            capability_codes = sorted({row["capability_code"] for row in previous["proof_attempts"]
+                                       if row["status"] == "CAPABILITY_UNSUPPORTED"})
+            if capability_codes:
+                rejection["capability_feedback"] = capability_codes
         elif (previous["kind"] == "rsi-autonomous-challenge-validation-v1"
               and previous.get("error_code") == "DESIGNER_SCHEMA_INVALID"):
             from usami_v2.runtime.agents import _one_tool_call, _json_arguments

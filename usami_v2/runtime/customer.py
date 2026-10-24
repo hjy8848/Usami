@@ -13,7 +13,7 @@ from usami_harness.models import digest
 from usami_v2.contracts import FactEvidence, FactKind, Scalar, Sealed, SourceRef
 from usami_v2.commerce.invariants import invariants
 from usami_v2.commerce.models import Consent, Delegation, PREPARATIONS, World
-from usami_v2.scenarios.tasks import public_line_match_ids
+from usami_v2.scenarios.tasks import TaskSpecV3
 
 
 class CustomerProfile(Sealed):
@@ -73,6 +73,32 @@ class CustomerProfileV2(CustomerProfile):
         return self
 
 
+class CustomerProfileV3(CustomerProfile):
+    """Customer authority bound to the compiler-generated structured intent."""
+
+    protocol: Literal["commerce-customer-profile-v3"] = "commerce-customer-profile-v3"
+    intent_bundle_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+def bind_customer_profile(profile: CustomerProfile, task: TaskSpecV3):
+    """Bind an existing fixed Customer policy to the compiler-issued task intent."""
+    profile, task = profile.checked(), task.checked()
+    if profile.customer_id != task.customer_id:
+        raise ValueError("Customer policy identity differs from structured task intent")
+    expected_lines = tuple(goal.line_id for goal in task.remedy_goals)
+    if profile.delegated_line_ids and profile.delegated_line_ids != expected_lines:
+        raise ValueError("Customer policy line scope differs from structured task intent")
+    return CustomerProfileV3(
+        customer_id=profile.customer_id, delegated_line_ids=expected_lines,
+        allowed_preparations=profile.allowed_preparations, accepted_remedies=profile.accepted_remedies,
+        maximum_extra_charge_cents=profile.maximum_extra_charge_cents,
+        latest_arrival_days=profile.latest_arrival_days, return_pickup_slot=profile.return_pickup_slot,
+        disclose_fact_ids=profile.disclose_fact_ids, private_facts=profile.private_facts,
+        delegation_lifetime_hours=profile.delegation_lifetime_hours,
+        consent_lifetime_hours=profile.consent_lifetime_hours,
+        intent_bundle_hash=task.request_bundle.record_hash)
+
+
 class HumanCustomerProfileV2(CustomerProfileV2):
     """A person's explicit acceptance also confirms the displayed return slot.
 
@@ -94,6 +120,7 @@ class PrivateCustomerFact(Sealed):
 
 CustomerProfile.model_rebuild()
 CustomerProfileV2.model_rebuild()
+CustomerProfileV3.model_rebuild()
 HumanCustomerProfileV2.model_rebuild()
 
 
@@ -226,9 +253,18 @@ def _explicit_consent_intent(message: str) -> Optional[bool]:
 class CustomerRuntime:
     """Apply Customer-originated business events; never trusts Service requests as consent."""
 
-    def __init__(self, profile: CustomerProfile, *, allow_legacy: bool = False):
+    def __init__(self, profile: CustomerProfile, *, allow_legacy: bool = False, task=None):
         self.profile = profile.checked()
         self.allow_legacy = allow_legacy
+        self.task = task.checked() if task is not None else None
+        if self.profile.protocol == "commerce-customer-profile-v3":
+            if not isinstance(self.task, TaskSpecV3):
+                raise ValueError("CustomerProfileV3 requires its structured TaskSpecV3")
+            if self.profile.intent_bundle_hash != self.task.request_bundle.record_hash:
+                raise ValueError("Customer profile is not bound to this task's structured request bundle")
+            expected_lines = tuple(goal.line_id for goal in self.task.remedy_goals)
+            if self.profile.customer_id != self.task.customer_id or self.profile.delegated_line_ids != expected_lines:
+                raise ValueError("Customer profile scope differs from structured task intent")
 
     def initialize(self, world: World, public_request: str, *, event_index: int = 0) -> CustomerTransition:
         if not public_request.strip():
@@ -246,9 +282,10 @@ class CustomerRuntime:
             order = world.orders.get(line.order_id) if line else None
             if not order or order.customer_id != self.profile.customer_id:
                 raise ValueError("Customer profile delegation crosses identity scope")
-        if self.profile.delegated_line_ids and self.profile.protocol != "commerce-customer-profile-v2":
+        if self.profile.delegated_line_ids and self.profile.protocol not in (
+                "commerce-customer-profile-v2", "commerce-customer-profile-v3"):
             if not self.allow_legacy:
-                raise ValueError("new Episodes require public-request-bound CustomerProfileV2 delegations")
+                raise ValueError("new Episodes require a versioned Customer request binding")
         if self.profile.protocol == "commerce-customer-profile-v2":
             normalized_request = " ".join(public_request.casefold().split())
             for line_id, request_span in self.profile.delegation_request_spans.items():
@@ -259,6 +296,8 @@ class CustomerRuntime:
                 # phrase and use the complete public request only as issue
                 # context. The fallback preserves older v2 profiles that
                 # stored the whole quoted request in this field.
+                resolved = ()
+                from usami_v2.scenarios.tasks import public_line_match_ids
                 resolved = public_line_match_ids(world, self.profile.customer_id, span, public_request)
                 if resolved != (line_id,):
                     resolved = public_line_match_ids(world, self.profile.customer_id, span)
@@ -331,6 +370,25 @@ class CustomerRuntime:
                 if decision.reject_quote_id and consent_intent is not False:
                     raise ValueError("structured quote rejection lacks clear negative Customer text")
             if decision.accept_quote_id:
+                if profile.protocol == "commerce-customer-profile-v3":
+                    case = world.cases.get(quote.case_id)
+                    goal = next((row for row in self.task.remedy_goals
+                                 if case is not None and row.line_id == case.line_id), None)
+                    if goal is None:
+                        raise ValueError("quote is outside the Customer's structured task intent")
+                    if quote.quantity != goal.quantity or quote.remedy not in goal.allowed_remedies:
+                        raise ValueError("quote terms differ from the Customer's structured task intent")
+                    if (goal.maximum_extra_charge_cents is not None
+                            and quote.extra_charge_cents > goal.maximum_extra_charge_cents):
+                        raise ValueError("quote exceeds the structured intent's extra-charge limit")
+                    if goal.latest_arrival is not None and quote.promised_arrival is not None:
+                        if quote.promised_arrival > goal.latest_arrival:
+                            raise ValueError("quote exceeds the structured intent's arrival deadline")
+                    if goal.required_attributes:
+                        sku = world.skus.get(quote.target_sku_id or "")
+                        if sku is None or any(sku.attributes.get(row.name) != row.value
+                                              for row in goal.required_attributes):
+                            raise ValueError("quote does not meet the structured intent's required attributes")
                 if decision.accept_operation != presentation.operation:
                     raise ValueError("Customer consent operation differs from the presented request")
                 if quote.remedy not in profile.accepted_remedies:

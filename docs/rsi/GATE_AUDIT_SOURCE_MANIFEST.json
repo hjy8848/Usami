@@ -1,0 +1,400 @@
+{
+  "head": "b0bdf8b7c734f34e06f70b111f9a88cde279ef98",
+  "date": "2026-10-24",
+  "files": [
+    {
+      "file": "integrations/rsi_usami/open_world.py",
+      "sha256": "b969e3b43f86cb6d3490fdf31800698e7f1e0d6c3fc84c146fd5b423034bb69c",
+      "lines": 418,
+      "branches": 42,
+      "blocking_sites": 41,
+      "fields": 0
+    },
+    {
+      "file": "integrations/rsi_usami/adapter.py",
+      "sha256": "3c9e91d235b3789e5ca9b242161343335a148fd7770da557374aafb9c7364725",
+      "lines": 230,
+      "branches": 25,
+      "blocking_sites": 28,
+      "fields": 7
+    },
+    {
+      "file": "integrations/rsi_usami/packages.py",
+      "sha256": "1c17fc02f082e0c2dca38d7b23e3869a1ccb18befa0c4d282a2aa0b5cdba37d6",
+      "lines": 74,
+      "branches": 8,
+      "blocking_sites": 9,
+      "fields": 0
+    },
+    {
+      "file": "usami_v2/scenarios/designer.py",
+      "sha256": "2252758baca2164d4de7f7a08b2cb4944d87b19b3355850a2d49057cdaeadb7d",
+      "lines": 1116,
+      "branches": 81,
+      "blocking_sites": 66,
+      "fields": 149
+    },
+    {
+      "file": "usami_v2/scenarios/grounding.py",
+      "sha256": "dfdb37a50a4cda47989f73f94a6ae096e43fc2c8c416788723382b8cb7171d79",
+      "lines": 171,
+      "branches": 13,
+      "blocking_sites": 13,
+      "fields": 28
+    },
+    {
+      "file": "usami_benchmark/grounder.py",
+      "sha256": "0c4e4eff8370db5dc72143d684152becc5d49c8efc9ee23280b63040556853eb",
+      "lines": 382,
+      "branches": 74,
+      "blocking_sites": 21,
+      "fields": 26
+    },
+    {
+      "file": "usami_v2/scenarios/schema.py",
+      "sha256": "3fec6619f36220ba1bcb6eeaeb316412c705f5052f63669a7c75263d7e4d43e6",
+      "lines": 181,
+      "branches": 17,
+      "blocking_sites": 17,
+      "fields": 50
+    },
+    {
+      "file": "usami_v2/scenarios/distribution.py",
+      "sha256": "e2938e1831712f054c35ac0424d95aa2384c12836bfe16a6d2e2aecdc42a70c4",
+      "lines": 153,
+      "branches": 15,
+      "blocking_sites": 14,
+      "fields": 42
+    },
+    {
+      "file": "usami_v2/scenarios/builder.py",
+      "sha256": "78e56379ce56df0819b36ad1a5213db512e4d4ee6f0103e041659e204a69ed12",
+      "lines": 180,
+      "branches": 10,
+      "blocking_sites": 10,
+      "fields": 20
+    },
+    {
+      "file": "usami_v2/scenarios/solver.py",
+      "sha256": "c9495531f0763c04864d40e1b969d956d04b6223fc16f5ee3b3b6568de1db75b",
+      "lines": 64,
+      "branches": 2,
+      "blocking_sites": 1,
+      "fields": 0
+    },
+    {
+      "file": "usami_v2/scenarios/certification.py",
+      "sha256": "0b0ffa7352a647c45f9959ed384b3c60a43e4eb01a1f3974fd2665173f920f91",
+      "lines": 130,
+      "branches": 22,
+      "blocking_sites": 22,
+      "fields": 8
+    },
+    {
+      "file": "usami_v2/scenarios/task_certification.py",
+      "sha256": "820e1c57db6842aeed918fe915cb02bb21faf802857af53e0b2b6a8eb1a358fe",
+      "lines": 663,
+      "branches": 94,
+      "blocking_sites": 81,
+      "fields": 66
+    },
+    {
+      "file": "usami_v2/scenarios/tasks.py",
+      "sha256": "1190737df45ada83b8792f842f8882d39aa5f6524a5a33c12cd2249002f50d8a",
+      "lines": 555,
+      "branches": 66,
+      "blocking_sites": 40,
+      "fields": 27
+    },
+    {
+      "file": "usami_v2/runtime/agents.py",
+      "sha256": "d76c0eeec79cf5c9a05585989f369fd3b5829ee8b444a4e4717dc15fc5054e71",
+      "lines": 360,
+      "branches": 18,
+      "blocking_sites": 16,
+      "fields": 26
+    },
+    {
+      "file": "usami_v2/runtime/customer.py",
+      "sha256": "97112f094c516ab12116dc8beaeddb0e485f4e029808ce8d9edd7e5d18f50a41",
+      "lines": 422,
+      "branches": 56,
+      "blocking_sites": 40,
+      "fields": 60
+    },
+    {
+      "file": "usami_v2/runtime/runner.py",
+      "sha256": "a3db4bc3c9de15d47d35225f92fab01f23a7bb210d30c78442d2795170fb0c43",
+      "lines": 778,
+      "branches": 112,
+      "blocking_sites": 96,
+      "fields": 46
+    },
+    {
+      "file": "usami_v2/contracts.py",
+      "sha256": "7d79891adb97dc5aa0bc8062ac2348b38949197282307d6d7a49636385de477e",
+      "lines": 129,
+      "branches": 13,
+      "blocking_sites": 11,
+      "fields": 31
+    },
+    {
+      "file": "usami_v2/commerce/models.py",
+      "sha256": "130c8bf02afac2bd1a77f9cdfcd8fc20cac4172fb916f975ade0c9e96df98c2d",
+      "lines": 311,
+      "branches": 4,
+      "blocking_sites": 2,
+      "fields": 155
+    },
+    {
+      "file": "usami_v2/commerce/adapter.py",
+      "sha256": "a8e0e78f95fc202ebde653276b2cd60b7868d98996eb7011e59ebfb6a13fadc0",
+      "lines": 11,
+      "branches": 0,
+      "blocking_sites": 0,
+      "fields": 0
+    },
+    {
+      "file": "usami_v2/commerce/observations.py",
+      "sha256": "af3c8b8e501007cccd3b6750836e67bcfa4212c38f0da255a04d36d295ba49a0",
+      "lines": 50,
+      "branches": 8,
+      "blocking_sites": 1,
+      "fields": 0
+    },
+    {
+      "file": "usami_v2/commerce/reference.py",
+      "sha256": "3026790b60a34e962557548a51b7c9559b665c776b2ec7bfb11c2730707271a0",
+      "lines": 328,
+      "branches": 83,
+      "blocking_sites": 43,
+      "fields": 0
+    },
+    {
+      "file": "usami_v2/commerce/transitions.py",
+      "sha256": "9a6e559d6decc2aabe31564e49c7aa2a05276babb91cfa9d1464e00994b4beb4",
+      "lines": 202,
+      "branches": 37,
+      "blocking_sites": 11,
+      "fields": 0
+    },
+    {
+      "file": "usami_v2/commerce/invariants.py",
+      "sha256": "593e3bb428b179e340cf15ef28c33f91caeb7681a60d5cf1f1ebc8bb78a9e3a4",
+      "lines": 217,
+      "branches": 51,
+      "blocking_sites": 6,
+      "fields": 0
+    },
+    {
+      "file": "usami_v2/commerce/external.py",
+      "sha256": "6819a10807cea42f9f2aea55c7706dd9e0b6420fa69f3bef4185f068279dd999",
+      "lines": 74,
+      "branches": 21,
+      "blocking_sites": 12,
+      "fields": 0
+    },
+    {
+      "file": "usami_v2/evaluation/outcomes.py",
+      "sha256": "519e9f391881e6613d3a79a59f67b1689c5638159915ba76c77ee961a4786e65",
+      "lines": 236,
+      "branches": 37,
+      "blocking_sites": 20,
+      "fields": 25
+    },
+    {
+      "file": "usami_v2/evaluation/communication.py",
+      "sha256": "375c0ef2f6361a83465a156010bff6f40f166aa6e6abf45aa82e01b426b2087e",
+      "lines": 270,
+      "branches": 23,
+      "blocking_sites": 15,
+      "fields": 27
+    },
+    {
+      "file": "usami_harness/engine.py",
+      "sha256": "a799db86ed144b90f05c6d0c522ca0d6552abedba7b2fc56697286ad834f85b7",
+      "lines": 136,
+      "branches": 19,
+      "blocking_sites": 15,
+      "fields": 14
+    },
+    {
+      "file": "usami_harness/models.py",
+      "sha256": "4b573db862bccdb49c01b7e1e2c416bc0ae99bf5ee59ea71a4c00facd5dc35ac",
+      "lines": 106,
+      "branches": 3,
+      "blocking_sites": 2,
+      "fields": 24
+    },
+    {
+      "file": "usami_harness/oracle.py",
+      "sha256": "2c458aa72366dbc75acb342c7834fed829400183dc336f10de540f3aaf128161",
+      "lines": 94,
+      "branches": 26,
+      "blocking_sites": 25,
+      "fields": 0
+    },
+    {
+      "file": "rsi_core/runtime.py",
+      "sha256": "5a934949cec8c8af157690b2638101c926310ed1d56b0d5607eee9af4c4610b9",
+      "lines": 278,
+      "branches": 49,
+      "blocking_sites": 46,
+      "fields": 12
+    },
+    {
+      "file": "rsi_core/period.py",
+      "sha256": "a54b7c9542653ce235bc75bbd548bec7bfe8b95aada9f2e68c95f007d88689db",
+      "lines": 187,
+      "branches": 21,
+      "blocking_sites": 21,
+      "fields": 0
+    },
+    {
+      "file": "rsi_core/collection.py",
+      "sha256": "72fef160db01c7012ed6852b86845763dfe616b2b274f4ad812b878484981758",
+      "lines": 341,
+      "branches": 36,
+      "blocking_sites": 29,
+      "fields": 7
+    },
+    {
+      "file": "rsi_core/evaluation.py",
+      "sha256": "277e21f6adf93e10ec360d99083ea972176c12d931d22f07c0f42401019d6e1c",
+      "lines": 327,
+      "branches": 43,
+      "blocking_sites": 48,
+      "fields": 33
+    },
+    {
+      "file": "rsi_core/packages.py",
+      "sha256": "3846084015b771f06ffe0463edbf6bec25231e7443287eebeb3e5962dd2e22cc",
+      "lines": 333,
+      "branches": 41,
+      "blocking_sites": 38,
+      "fields": 32
+    },
+    {
+      "file": "rsi_core/programs.py",
+      "sha256": "580b0c835a9407705ef7d6723fdd80f1ed527f44b70e9946008cdb389946fd81",
+      "lines": 240,
+      "branches": 42,
+      "blocking_sites": 35,
+      "fields": 17
+    },
+    {
+      "file": "rsi_core/protocol.py",
+      "sha256": "4f8f4fb56379fd2b76826b0d78621c7c936660b839e11708561c53c155ef8a4e",
+      "lines": 194,
+      "branches": 20,
+      "blocking_sites": 20,
+      "fields": 44
+    },
+    {
+      "file": "rsi_core/archive.py",
+      "sha256": "68a5ed6426f071e86191ecf73dc353e3c56975cf4f51a71d1a1c2f597ff63024",
+      "lines": 55,
+      "branches": 5,
+      "blocking_sites": 4,
+      "fields": 0
+    },
+    {
+      "file": "rsi_core/budget.py",
+      "sha256": "6cbf594420ce92d5021a9877ac8c3ff6093a501ecd096e9299c8fe802f622b62",
+      "lines": 119,
+      "branches": 11,
+      "blocking_sites": 11,
+      "fields": 0
+    },
+    {
+      "file": "rsi_core/isolation.py",
+      "sha256": "b2c7e21efa151732f01571878a1f100c009185a34b5bb875c225580b9390f3d4",
+      "lines": 103,
+      "branches": 16,
+      "blocking_sites": 11,
+      "fields": 0
+    },
+    {
+      "file": "rsi_core/worker.py",
+      "sha256": "6d73551ab52408bcd1ef924f7acc66aac6fba348854656fee4e456e55915225c",
+      "lines": 28,
+      "branches": 1,
+      "blocking_sites": 0,
+      "fields": 0
+    },
+    {
+      "file": "rsi_core/training.py",
+      "sha256": "d5abf621182b65be457d7e25e3fec6dbdc6dd7575f2f82bfe15dac732f5a4033",
+      "lines": 167,
+      "branches": 31,
+      "blocking_sites": 27,
+      "fields": 9
+    },
+    {
+      "file": "rsi_core/verl_backend.py",
+      "sha256": "662c60a4f06e87ba2c78a378f36eef47a5ff0591d11e7bf51593f323fb5d6bd3",
+      "lines": 575,
+      "branches": 42,
+      "blocking_sites": 41,
+      "fields": 0
+    },
+    {
+      "file": "experiments/rsi/seeds/M0.py",
+      "sha256": "58f7c403698ad3720c617831070521fdacfefd662b7b1f1aad8ee724b35c24af",
+      "lines": 165,
+      "branches": 31,
+      "blocking_sites": 0,
+      "fields": 0
+    },
+    {
+      "file": "experiments/rsi/seeds/P0.py",
+      "sha256": "648c4c58e2c579b1433addac9385689a28711a28b5c6dd4124404d1ca98725ba",
+      "lines": 7,
+      "branches": 1,
+      "blocking_sites": 0,
+      "fields": 0
+    },
+    {
+      "file": "experiments/rsi/examples/open_world_usami.py",
+      "sha256": "78e8beb01557a02b0cb57a72f838c9b743a3d9a37c47cb6d9ab41eda0c4add02",
+      "lines": 69,
+      "branches": 5,
+      "blocking_sites": 2,
+      "fields": 0
+    },
+    {
+      "file": "usami/service/client.py",
+      "sha256": "47e762bc5dfa2be92a0b86689d252d539eef8ebb9979ea58c51e77ae08f91867",
+      "lines": 150,
+      "branches": 16,
+      "blocking_sites": 14,
+      "fields": 1
+    },
+    {
+      "file": "usami/service/models.py",
+      "sha256": "ac41bd08bab7f7fa3d593fd59bd7e2a89e28632fe27df9701f126832d8637a20",
+      "lines": 139,
+      "branches": 5,
+      "blocking_sites": 6,
+      "fields": 39
+    },
+    {
+      "file": "vast_coevo/schema.py",
+      "sha256": "cbcb77a015bf80772618fe0a489d795e5b07f8513c10f52cb8535c82e99859a1",
+      "lines": 62,
+      "branches": 6,
+      "blocking_sites": 2,
+      "fields": 0
+    }
+  ],
+  "counts": {
+    "blocking_sites": 1033,
+    "schema_fields": 1025,
+    "source_branches": 1402
+  },
+  "gate_classes": {
+    "C": 863,
+    "B": 136,
+    "A": 34
+  }
+}

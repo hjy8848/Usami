@@ -16,6 +16,7 @@ import uuid
 from .archive import Archive
 from .collection import training_records
 from .protocol import InfrastructureError, canonical, digest
+from .training import group_advantages
 
 
 VERL_VERSION = "0.9.1"
@@ -92,6 +93,7 @@ def root_to_verl_rollout(record):
         "model_ref": record.model_ref,
         "evaluator_ref": record.evaluator_ref,
         "business_ref": record.business_ref,
+        "root_type": record.root_type,
         "reward": float(record.reward),
         "prompt_ids": prompt_ids,
         "response_ids": response_ids,
@@ -125,12 +127,18 @@ def export_verl_group(host, group, output_dir):
     if any(row.model_ref != expected_model_ref or row.group_id != group.context_ref for row in records):
         raise ValueError("verl export roots do not share the registered behavior snapshot and group")
 
+    group_ref = group.archive_ref
     rollouts = [root_to_verl_rollout(row) for row in records]
+    advantages = group_advantages(records)
+    for index, rollout in enumerate(rollouts):
+        rollout.update({"group_ref": group_ref,
+                        "root_type": records[index].root_type,
+                        "rsi_advantage": advantages[index],
+                        "rsi_loss_weight": 1.0 / root_count})
     if any(row["group_id"] != group.context_ref for row in rollouts):
         raise ValueError("verl rollout group identity changed during conversion")
     max_prompt = max(len(row["prompt_ids"]) for row in rollouts)
     max_response = max(len(row["response_ids"]) for row in rollouts)
-    group_ref = group.archive_ref
     manifest = {
         "kind": "verl_rsi_root_group_v1",
         "verl_version": VERL_VERSION,
@@ -144,6 +152,7 @@ def export_verl_group(host, group, output_dir):
         "root_refs": [row.trace_ref for row in records],
         "reward_refs": [row.reward_source_ref for row in records],
         "group_size": root_count,
+        "root_type": records[0].root_type,
         "max_prompt_tokens": max_prompt,
         "max_response_tokens": max_response,
         "loss_aggregation": "seq-mean-token-mean",
@@ -168,7 +177,9 @@ def export_verl_group(host, group, output_dir):
             "trace_ref": rollout["trace_ref"],
             "group_ref": group_ref,
             "manifest_ref": manifest_ref,
-            "extra_info": {"index": index},
+            "extra_info": {"index": index, "root_type": rollout["root_type"],
+                           "rsi_advantage": rollout["rsi_advantage"],
+                           "rsi_loss_weight": rollout["rsi_loss_weight"]},
         })
 
     loop_config = [{
@@ -252,6 +263,145 @@ def export_verl_group(host, group, output_dir):
             "verl_version": VERL_VERSION, "training_started": False}
 
 
+def export_verl_period(host, groups, output_dir, *, root_type_weights=None):
+    """Export both v0.2 root types as one period-end verl data bundle.
+
+    GRPO advantages remain grouped by each original sampling context. The
+    manifest also assigns equal total loss mass to r_service and r_self, with
+    equal weighting across groups of the same type. Stock verl does not
+    consume ``rsi_loss_weight`` by itself; a trainer loss hook must do so.
+    """
+    groups = tuple(groups)
+    service_groups = tuple(group for group in groups if group.root_type == "r_service")
+    self_groups = tuple(group for group in groups if group.root_type == "r_self")
+    if not service_groups or len(self_groups) != 1 or len(groups) != len(service_groups) + 1:
+        raise ValueError("a v0.2 period needs one SELF_EDIT group and at least one Service group")
+    weights = {"r_service": 0.5, "r_self": 0.5} if root_type_weights is None else dict(root_type_weights)
+    if set(weights) != {"r_service", "r_self"} or any(
+            not math.isfinite(value) or value <= 0 for value in weights.values()):
+        raise ValueError("period root-type weights must be two positive finite values")
+    total_weight = sum(weights.values())
+    weights = {key: value / total_weight for key, value in weights.items()}
+
+    grouped_records = [(group, training_records(host, group)) for group in groups]
+    references = set()
+    for group, records in grouped_records:
+        context = host.archive.load(group.context_ref)
+        if (not records or len(records) != len(group.roots)
+                or any(record.root_type != group.root_type for record in records)
+                or any(record.group_id != group.context_ref for record in records)):
+            raise ValueError("period group records do not match their archived root type/context")
+        if any(record.trace_ref in references for record in records):
+            raise ValueError("a root trajectory appears in more than one period group")
+        references.update(record.trace_ref for record in records)
+        if not records or any((record.model_ref, record.evaluator_ref, record.business_ref) != (
+                digest(context["models"]["behavior"]), digest(context["models"]["evaluator"]),
+                digest(context["models"]["business"])) for record in records):
+            raise ValueError("period group changed its frozen model snapshots")
+
+    behavior_snapshots = {digest(host.archive.load(group.context_ref)["models"]["behavior"]):
+                          host.archive.load(group.context_ref)["models"]["behavior"] for group in groups}
+    model_keys = {digest(host.archive.load(group.context_ref)["models"]) for group in groups}
+    if len(behavior_snapshots) != 1 or len(model_keys) != 1:
+        raise ValueError("period root groups must share behavior/evaluator/business snapshots")
+
+    rollouts, group_manifest = [], []
+    counts_by_type = {"r_service": len(service_groups), "r_self": 1}
+    for group, records in grouped_records:
+        advantages = group_advantages(records)
+        group_weight = weights[group.root_type] / counts_by_type[group.root_type]
+        row_weight = group_weight / len(records)
+        group_ref = group.archive_ref
+        group_manifest.append({"group_ref": group_ref, "context_ref": group.context_ref,
+                               "root_type": group.root_type, "root_count": len(records),
+                               "root_refs": [row.trace_ref for row in records],
+                               "reward_refs": [row.reward_source_ref for row in records],
+                               "group_weight": group_weight})
+        for record, advantage in zip(records, advantages):
+            rollout = root_to_verl_rollout(record)
+            rollout.update({"group_ref": group_ref, "root_type": group.root_type,
+                            "rsi_advantage": advantage, "rsi_loss_weight": row_weight})
+            rollouts.append(rollout)
+
+    expected_model = next(iter(behavior_snapshots.values()))
+    expected_model_ref = digest(expected_model)
+    max_prompt = max(len(row["prompt_ids"]) for row in rollouts)
+    max_response = max(len(row["response_ids"]) for row in rollouts)
+    total_roots = len(rollouts)
+    manifest = {"kind": "verl_rsi_period_v0.2", "verl_version": VERL_VERSION,
+                "group_refs": [row["group_ref"] for row in group_manifest],
+                "behavior_model": expected_model, "behavior_model_ref": expected_model_ref,
+                "evaluator_model_ref": digest(host.archive.load(groups[0].context_ref)["models"]["evaluator"]),
+                "business_model_ref": digest(host.archive.load(groups[0].context_ref)["models"]["business"]),
+                "root_type_weights": weights, "groups": group_manifest,
+                "root_refs": [row["trace_ref"] for row in rollouts],
+                "reward_refs": [row["reward_source_ref"] for row in rollouts],
+                "rollouts": rollouts,
+                "total_roots": total_roots, "max_prompt_tokens": max_prompt,
+                "max_response_tokens": max_response,
+                "loss_aggregation": "equal-root-type-mean; equal-context-mean-within-type; GRPO-per-context",
+                "weight_field": "extra_info.rsi_loss_weight",
+                "stock_verl_weighting": "not applied without the RSI weighted-loss hook",
+                "advantage_field": "extra_info.rsi_advantage",
+                "training_updates_before_export": 0}
+
+    destination = Path(output_dir).resolve()
+    if destination.exists():
+        raise FileExistsError("verl period export destination must be new: " + str(destination))
+    destination.mkdir(parents=True)
+    manifest_ref = host.archive.save(manifest)
+    archive_root = str(host.archive.root.resolve())
+    rows = [{"data_source": "usami_rsi_archived_root",
+             "prompt": [{"role": "user", "content": "Archived RSI period rollout. Tokens are loaded by the replay AgentLoop."}],
+             "uid": rollout["group_id"], "trace_ref": rollout["trace_ref"],
+             "group_ref": rollout["group_ref"], "manifest_ref": manifest_ref,
+             "extra_info": {"index": index, "root_type": rollout["root_type"],
+                            "rsi_advantage": rollout["rsi_advantage"],
+                            "rsi_loss_weight": rollout["rsi_loss_weight"]}}
+            for index, rollout in enumerate(rollouts)]
+    loop_config = [{"name": VERL_AGENT_LOOP_NAME,
+                    "_target_": "rsi_core.verl_backend.ArchiveReplayAgentLoop",
+                    "archive_root": archive_root, "manifest_ref": manifest_ref}]
+    overlay = {
+        "actor_rollout_ref": {
+            "model": {"path": expected_model["model_id"]},
+            "rollout": {"name": "vllm", "n": 1, "prompt_length": max_prompt,
+                        "response_length": max_response, "calculate_log_probs": True,
+                        "agent": {"default_agent_loop": VERL_AGENT_LOOP_NAME,
+                                  "agent_loop_config_path": str(destination / "agent_loop.yaml")}},
+            "actor": {"ppo_epochs": 1, "ppo_mini_batch_size": total_roots,
+                      "loss_agg_mode": "seq-mean-token-mean", "use_kl_loss": False}},
+        "algorithm": {"adv_estimator": "grpo", "norm_adv_by_std_in_grpo": True,
+                      "use_kl_in_reward": False},
+        "data": {"train_files": [str(destination / "train.jsonl")],
+                 "val_files": [str(destination / "train.jsonl")],
+                 "prompt_key": "prompt", "train_batch_size": total_roots,
+                 "gen_batch_size": total_roots, "max_prompt_length": max_prompt,
+                 "max_response_length": max_response, "train_max_samples": total_roots,
+                 "val_max_samples": total_roots, "dataloader_num_workers": 0},
+        "trainer": {"use_v1": True, "total_epochs": 1, "total_training_steps": 1,
+                    "val_before_train": False, "test_freq": -1, "save_freq": 1,
+                    "resume_mode": "disable", "project_name": "usami-rsi",
+                    "experiment_name": "period-" + manifest_ref[:12],
+                    "default_local_dir": str(destination / "checkpoints"), "logger": ["console"]}}
+    files = {"train.jsonl": "".join(_json_line(row) for row in rows),
+             "agent_loop.yaml": json.dumps(loop_config, ensure_ascii=False, indent=2) + "\n",
+             "verl_overlay.yaml": json.dumps(overlay, ensure_ascii=False, indent=2) + "\n",
+             "manifest-ref.json": json.dumps({"manifest_ref": manifest_ref,
+                                               "archive_root": archive_root,
+                                               "group_refs": [row["group_ref"] for row in group_manifest],
+                                               "behavior_model_ref": expected_model_ref},
+                                              ensure_ascii=False, indent=2) + "\n"}
+    for name, contents in files.items():
+        with (destination / name).open("x", encoding="utf-8", newline="\n") as stream:
+            stream.write(contents)
+    return {"manifest_ref": manifest_ref, "group_refs": tuple(row["group_ref"] for row in group_manifest),
+            "output_dir": str(destination), "root_count": total_roots,
+            "service_group_count": counts_by_type["r_service"], "self_group_count": 1,
+            "root_type_weights": weights, "verl_version": VERL_VERSION,
+            "training_started": False, "requires_weighted_loss_hook": True}
+
+
 def _verl_agent_loop_types():
     try:
         from verl.experimental.agent_loop.agent_loop import (
@@ -283,26 +433,25 @@ class ArchiveReplayAgentLoop(_AgentLoopBase):
         self.archive = Archive(archive_root)
         self.manifest_ref = manifest_ref
         self.manifest = self.archive.load(manifest_ref)
-        if (self.manifest.get("kind") != "verl_rsi_root_group_v1"
+        if (self.manifest.get("kind") not in {"verl_rsi_root_group_v1", "verl_rsi_period_v0.2"}
                 or self.manifest.get("verl_version") != VERL_VERSION):
             raise ValueError("verl replay manifest has an unsupported schema/version")
         self.rollouts = {row["trace_ref"]: row for row in self.manifest["rollouts"]}
-        if len(self.rollouts) != self.manifest["group_size"]:
+        expected_count = self.manifest.get("group_size", self.manifest.get("total_roots"))
+        if len(self.rollouts) != expected_count:
             raise ValueError("verl replay manifest has duplicate or missing roots")
 
     async def run(self, sampling_params, **kwargs):
         del sampling_params  # This replay path deliberately performs no generation.
         if kwargs.get("manifest_ref") != self.manifest_ref:
             raise ValueError("dataset row references a different archived group")
-        if kwargs.get("group_ref") != self.manifest["group_ref"]:
-            raise ValueError("dataset row is not bound to this complete root group")
-        if kwargs.get("uid") != self.manifest["group_id"]:
-            raise ValueError("verl GRPO uid must be the registered sampling group")
         trace_ref = kwargs.get("trace_ref")
         if trace_ref not in self.rollouts:
             raise ValueError("dataset row references a root outside the archived group")
         row = self.rollouts[trace_ref]
-        if row["group_id"] != kwargs["uid"] or row["model_ref"] != self.manifest["behavior_model_ref"]:
+        if (kwargs.get("group_ref") != row["group_ref"]
+                or kwargs.get("uid") != row["group_id"]
+                or row["model_ref"] != self.manifest["behavior_model_ref"]):
             raise ValueError("archived root differs from its frozen group/model reference")
         return _AgentLoopOutput(
             prompt_ids=row["prompt_ids"],
@@ -314,7 +463,10 @@ class ArchiveReplayAgentLoop(_AgentLoopBase):
             metrics=_AgentLoopMetrics(),
             extra_fields={"rsi_trace_ref": row["trace_ref"],
                           "rsi_reward_source_ref": row["reward_source_ref"],
-                          "rsi_group_ref": self.manifest["group_ref"],
+                          "rsi_group_ref": row["group_ref"],
+                          "rsi_root_type": row["root_type"],
+                          "rsi_advantage": row.get("rsi_advantage"),
+                          "rsi_loss_weight": row.get("rsi_loss_weight"),
                           "rsi_behavior_model_ref": row["model_ref"]},
         )
 

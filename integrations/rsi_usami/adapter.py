@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import json
 
 from rsi_core.protocol import CandidateError, InfrastructureError, TaskResult, canonical
+from rsi_core.programs import ServiceSnapshot
 from usami_v2.runtime.agents import AgentCall, OpenAIServiceAgent, ServiceAction, service_tools
 from usami_v2.runtime.runner import EpisodeBudget, replay_episode, run_episode, save_episode, verify_episode_artifact
 
@@ -38,7 +39,19 @@ class ProgramServiceAgent:
     last_call = None
 
     def __init__(self, program, worker, model, models, ledger, seed):
-        self.program, self.worker, self.model = program, worker, model
+        if isinstance(program, ServiceSnapshot):
+            if program.business_model_ref != models.business.ref:
+                raise CandidateError("Service snapshot does not use the fixed business model B")
+            self.program = program.policy
+            self.experience = program.experience.value
+            self.service_ref = program.ref
+            self.experience_ref = program.experience_ref
+        else:
+            self.program = program
+            self.experience = {}
+            self.service_ref = program.ref
+            self.experience_ref = ""
+        self.worker, self.model = worker, model
         self.models, self.ledger, self.seed = models, ledger, seed
         self.memory, self.inputs, self.model_events, self.failure = {}, [], [], None
 
@@ -48,7 +61,9 @@ class ProgramServiceAgent:
                 "conversation": [row.model_dump(mode="json", exclude_none=True) for row in prompt.conversation],
                 "available_merchant_scope_ids": list(prompt.available_merchant_scope_ids),
                 "observed_subject_ids": list(prompt.observed_subject_ids),
-                "baseline_request": baseline_request(prompt, self.models.business)}
+                "baseline_request": baseline_request(prompt, self.models.business),
+                "service_experience": self.experience,
+                "service_experience_ref": self.experience_ref}
         try:
             for _ in range(8):
                 self.ledger.charge("solver", research_steps=1)
@@ -118,9 +133,34 @@ class UsamiAdapter:
 
     def capabilities(self):
         return {"domain_id": self.domain_id, "tools": service_tools(),
-                "feedback_protocol": "rsi-native-commerce-feedback-v1",
+                "feedback_protocol": "rsi-native-commerce-baseline-v0.2",
                 "score": "native strict_task_success confirmed true; UNKNOWN stays unresolved",
                 "observations": "authenticated identity, public Customer messages and native tool results"}
+
+    def research_feedback(self, result):
+        """Return only baseline evidence visible to the research Agent.
+
+        The native episode and Oracle remain in the adapter's trusted replay
+        artifact. In particular, Oracle classifications and hidden outcome
+        fields must never be copied into a root Designer observation.
+        """
+        if not isinstance(result.feedback, dict):
+            raise InfrastructureError("native Service result has no structured feedback record")
+        operations = result.feedback.get("operations")
+        if not isinstance(operations, list):
+            raise InfrastructureError("native Service result has no public operation trace")
+        public_operations = []
+        for row in operations:
+            if not isinstance(row, dict) or not {"operation", "result"} <= set(row):
+                raise InfrastructureError("native Service operation trace is malformed")
+            public_operations.append({"operation": row["operation"], "result": row["result"]})
+        # These are the public tool calls and their returned results. Do not
+        # include outcome, Oracle, reference, or task-certificate objects.
+        return {"protocol": "rsi-native-commerce-baseline-v0.2",
+                "run_ref": result.run_ref, "status": result.status,
+                "score": result.score, "safety_violation": result.forbidden_behavior,
+                "operations": public_operations,
+                "terminal_status": result.feedback.get("terminal_status", "")}
 
     def run_task(self, program, task_ref, models, ledger, worker, *, seed):
         import uuid
@@ -143,7 +183,9 @@ class UsamiAdapter:
         save_episode(record, path)
         self.runs[run_ref] = path
         (self.root / (run_ref + ".public-inputs.json")).write_text(canonical({
-            "program_ref": program.ref, "seed": seed, "inputs": service.inputs,
+            "program_ref": program.ref, "policy_ref": program.policy_ref if isinstance(program, ServiceSnapshot) else program.ref,
+            "experience_ref": program.experience_ref if isinstance(program, ServiceSnapshot) else "",
+            "seed": seed, "inputs": service.inputs,
             "model_events": service.model_events}), encoding="utf-8")
         if isinstance(service.failure, InfrastructureError):
             raise InfrastructureError(str(service.failure) + "; native episode retained at " + str(path))

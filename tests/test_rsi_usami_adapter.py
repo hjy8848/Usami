@@ -53,6 +53,14 @@ def test_real_certified_refund_only_uses_public_ids_and_full_native_replay(host,
     assert record.outcome.strict_task_success is True
     assert record.outcome.safety_violations.status == "PASS"
     assert record.outcome.process_errors.status == "PASS"
+    feedback = adapter.research_feedback(result)
+    assert feedback["protocol"] == adapter.capabilities()["feedback_protocol"]
+    assert feedback["status"] == result.status and feedback["score"] == result.score
+    assert len(feedback["operations"]) == len(record.tool_executions)
+    # The root Designer can inspect the Service's public tool history, but not
+    # the Oracle labels or private task outcome that remain in native Replay.
+    assert "oracle" not in json.dumps(feedback).lower()
+    assert "strict_task_success" not in json.dumps(feedback)
     inputs = json.loads((adapter.root / (result.run_ref + ".public-inputs.json")).read_text())["inputs"]
     assert not any(key in inputs[0]["public_view"] for key in ("world", "task", "profile", "oracle"))
     assert aliases["damaged"] not in json.dumps(inputs[0])

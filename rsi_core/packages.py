@@ -194,3 +194,140 @@ class PackageProvider:
         if len(matches) != 1:
             raise ValueError("unknown registered package")
         return matches[0].public_view()
+
+
+@dataclass(frozen=True)
+class ServiceTaskRegistration:
+    """A direct, independently certified Service task bank for one purpose."""
+
+    set_id: str
+    domain_id: str
+    family_id: str
+    source_lineage: str
+    partition: str
+    purpose: str
+    task_proofs: tuple
+    seed: int = 0
+
+    def __post_init__(self):
+        if not all((self.set_id, self.domain_id, self.family_id, self.source_lineage)):
+            raise ValueError("Service task set identity and provenance are required")
+        if self.partition not in {"meta-train", "meta-validation", "meta-test"}:
+            raise ValueError("invalid Service task partition")
+        if self.purpose not in {"service_probe", "service_select", "service_reward", "audit"}:
+            raise ValueError("invalid direct Service evaluation purpose")
+        refs = [row.task_ref for row in self.task_proofs]
+        if not refs or len(refs) != len(set(refs)):
+            raise ValueError("direct Service evaluation needs unique certified tasks")
+        if type(self.seed) is not int:
+            raise ValueError("Service task set seed must be an integer")
+        if self.partition != "meta-train" and self.purpose != "audit":
+            raise ValueError("validation/test Service tasks cannot provide training feedback")
+
+    @property
+    def task_refs(self):
+        return tuple(row.task_ref for row in self.task_proofs)
+
+    @property
+    def package_id(self):
+        return self.set_id
+
+    @property
+    def probe_refs(self):
+        return self.task_refs
+
+    @property
+    def query_refs(self):
+        return ()
+
+
+@dataclass(frozen=True)
+class ServiceTaskSet:
+    set_id: str
+    domain_id: str
+    family_id: str
+    source_lineage: str
+    partition: str
+    purpose: str
+    task_refs: tuple
+    certificate_refs: tuple
+    seed: int
+    bank_ref: str
+
+    def __post_init__(self):
+        if len(self.task_refs) != len(self.certificate_refs) or not self.task_refs:
+            raise ValueError("Service task set requires one certificate per task")
+        if len(set(self.task_refs)) != len(self.task_refs):
+            raise ValueError("Service task set repeats a task")
+
+    @property
+    def ref(self):
+        return digest(asdict(self))
+
+    def public_view(self):
+        return {"set_id": self.set_id, "domain_id": self.domain_id,
+                "task_refs": list(self.task_refs), "purpose": self.purpose}
+
+
+class ServiceTaskProvider:
+    """Host-only registry for direct service_probe/select/reward tasks."""
+
+    def __init__(self, registrations, archive, verify_task):
+        registrations = tuple(registrations)
+        if not registrations:
+            raise ValueError("a direct Service task registry cannot be empty")
+        sets, identities, origins, tasks = {}, set(), {}, {}
+        for row in registrations:
+            if not isinstance(row, ServiceTaskRegistration):
+                raise TypeError("direct Service task registry requires ServiceTaskRegistration rows")
+            if row.set_id in identities:
+                raise ValueError("duplicate Service task set identity")
+            identities.add(row.set_id)
+            label = (row.partition, row.purpose)
+            sets.setdefault(label, []).append(row)
+            if row.purpose in {"service_select", "service_reward"} and row.partition != "meta-train":
+                raise ValueError("Service selection and reward tasks must use meta-train")
+            for proof in row.task_proofs:
+                reference = (row.domain_id, proof.task_ref)
+                binding = (proof.origin_ref, proof.certificate_ref)
+                if reference in tasks:
+                    raise ValueError("direct Service task is registered more than once")
+                if verify_task(row.domain_id, proof) is not True:
+                    raise ValueError("native Service task certificate was not independently verified")
+                tasks[reference] = binding
+                origin = (row.domain_id, proof.origin_ref)
+                role = (label, "direct-task")
+                if origin in origins and origins[origin] != role:
+                    raise ValueError("Service task source crosses a partition or evaluation purpose")
+                origins[origin] = role
+        validate_partitions({key: tuple(rows) for key, rows in sets.items()})
+        self.archive = archive
+        self.manifest_ref = archive.save({"kind": "certified_service_task_bank_v0.2",
+                                          "registrations": [asdict(row) for row in registrations]})
+        self._registrations = {row.set_id: row for row in registrations}
+
+    def task_set(self, set_id):
+        row = self._registrations[set_id]
+        return ServiceTaskSet(row.set_id, row.domain_id, row.family_id, row.source_lineage,
+                              row.partition, row.purpose, row.task_refs,
+                              tuple(proof.certificate_ref for proof in row.task_proofs),
+                              row.seed, self.manifest_ref)
+
+    def verify_task_set(self, task_set):
+        if not isinstance(task_set, ServiceTaskSet) or task_set.bank_ref != self.manifest_ref:
+            raise ValueError("Service task set is not from this certified registry")
+        row = self._registrations.get(task_set.set_id)
+        expected = self.task_set(task_set.set_id)
+        if row is None or task_set != expected:
+            raise ValueError("Service task set differs from its registered certified contents")
+        manifest = self.archive.load(self.manifest_ref)
+        if (manifest["kind"] != "certified_service_task_bank_v0.2"
+                or self.archive.save(manifest) != self.manifest_ref):
+            raise ValueError("Service task registry manifest failed integrity verification")
+        return True
+
+    def sets(self, purpose):
+        if purpose not in {"service_probe", "service_select", "service_reward", "audit"}:
+            raise ValueError("unknown direct Service task purpose")
+        return tuple(self.task_set(set_id) for set_id, row in self._registrations.items()
+                     if row.purpose == purpose)

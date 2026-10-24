@@ -2,8 +2,10 @@
 from dataclasses import asdict, dataclass
 import math
 
-from .evaluation import assert_context_partitions, select
+from .evaluation import assert_context_partitions, select, select_service
 from .protocol import BudgetExceeded, InfrastructureError, digest
+from .programs import ServiceSnapshot
+from .packages import ServiceTaskSet
 
 
 @dataclass(frozen=True)
@@ -14,6 +16,7 @@ class CollectedGroup:
     selected_ref: str
     roots: tuple
     reward_refs: tuple
+    root_type: str = "r_self"
 
 
 def collect_self_edit_group(host, evaluator, editor, target, probe_packages,
@@ -157,6 +160,161 @@ def collect_self_edit_group(host, evaluator, editor, target, probe_packages,
                           tuple(roots), reward_refs)
 
 
+def collect_service_improvement_group(host, evaluator, editor, target, probe_tasks,
+                                      select_tasks, reward_tasks, *, seeds,
+                                      phase_budgets, certify_challenge,
+                                      public_view=None, margin=0.0, max_regression=0.0):
+    """Collect r_service roots against one immutable Service parent.
+
+    A just-certified challenge is executed by the same native Adapter and
+    Replay path used for registered direct Service evaluation. Task sets are
+    supplied by the separate certificate registry.
+    """
+    seeds = tuple(seeds)
+    if any(not math.isfinite(v) or v < 0 for v in (margin, max_regression)):
+        raise ValueError("selection tolerances must be finite and nonnegative before sampling")
+    if len(seeds) < 2 or len(set(seeds)) != len(seeds) or any(type(s) is not int for s in seeds):
+        raise ValueError("a Service sampling group needs distinct integer root seeds")
+    if editor.kind != "M" or not isinstance(target, ServiceSnapshot) or evaluator.host is not host:
+        raise ValueError("Service collection needs M, a complete (B,P,K) target and the same Host")
+    if target.business_model_ref != host.models.business.ref:
+        raise ValueError("Service collection changed the fixed business model B")
+    if set(phase_budgets) != {"root", "selection", "reward"}:
+        raise ValueError("register all Service root, selection and reward budgets before sampling")
+    task_sets = (probe_tasks, select_tasks, reward_tasks)
+    expected_purposes = ("service_probe", "service_select", "service_reward")
+    for task_set, purpose in zip(task_sets, expected_purposes):
+        if not isinstance(task_set, ServiceTaskSet) or task_set.purpose != purpose:
+            raise ValueError("Service collection requires distinct certified direct task-set purposes")
+        evaluator.task_provider.verify_task_set(task_set)
+        if task_set.partition != "meta-train":
+            raise ValueError("Service training task sets must be registered in meta-train")
+    public = {} if public_view is None else public_view
+    if not isinstance(public, dict):
+        raise ValueError("Service public research view must be an object")
+    public = {**public, "service_task_sets": {
+        "probe": probe_tasks.public_view(), "selection_ref": select_tasks.set_id,
+        "reward_ref": reward_tasks.set_id}}
+    models = asdict(host.models)
+    context = {"kind": "service_improvement_sampling_context_v0.2",
+               "root_type": "r_service", "editor_ref": editor.ref,
+               "target_ref": target.ref, "models": models, "seeds": seeds,
+               "limits": asdict(host.ledger.limits), "phase_budgets": phase_budgets,
+               "public_view": public,
+               "task_sets": {"service_probe": asdict(probe_tasks),
+                             "service_select": asdict(select_tasks),
+                             "service_reward": asdict(reward_tasks)},
+               "margin": margin, "max_regression": max_regression}
+    context_ref = host.archive.save(context)
+    frozen = digest(models)
+    probe_refs = tuple(probe_tasks.task_refs)
+    roots, receipts, selections, rewards = [], [], {}, {}
+    selected_ref, best_delta, error = target.ref, 0.0, ""
+    usable = True
+
+    def check_models():
+        if digest(asdict(host.models)) != frozen:
+            raise InfrastructureError("frozen model snapshots changed within a Service root group")
+
+    allocations = {phase + ":" + str(i): maximum
+                   for phase, maximum in phase_budgets.items() for i in range(len(seeds))}
+    try:
+        with host.ledger.reserve_group(allocations) as reserved:
+            for i, seed in enumerate(seeds):
+                check_models()
+                certified_challenges = set()
+
+                def certify(proposal):
+                    receipt = certify_challenge(proposal)
+                    if isinstance(receipt, dict) and receipt.get("status") == "CERTIFIED":
+                        certified_challenges.add(receipt.get("task_ref"))
+                    return receipt
+
+                def baseline(service, task_ref):
+                    if task_ref not in certified_challenges:
+                        raise InfrastructureError("baseline task was not certified in this root")
+                    result = evaluator.run_task(service, task_ref, seed)
+                    return {"service_ref": service.ref, "task_ref": task_ref,
+                            "run_ref": result.run_ref, "score": result.score,
+                            "status": result.status,
+                            "feedback": evaluator.research_feedback(result),
+                            "replay_verified": result.replay_verified}
+
+                def probe(candidate, task_ref):
+                    if task_ref in certified_challenges:
+                        probe_seed, registered_set = seed, None
+                    else:
+                        probe_seed = probe_tasks.seed + probe_refs.index(task_ref)
+                        registered_set = probe_tasks
+                    result = evaluator.run_task(candidate, task_ref, probe_seed,
+                                                task_set=registered_set)
+                    return {"score": result.score, "status": result.status,
+                            "feedback": evaluator.research_feedback(result),
+                            "run_ref": result.run_ref,
+                            "replay_verified": result.replay_verified}
+
+                with reserved["root:" + str(i)].spend():
+                    run = host.run(editor, target, "IMPROVE_SERVICE", public,
+                                   probe_refs, probe, scope="root", seed=seed,
+                                   certify_challenge=certify, run_baseline=baseline)
+                host.verify(run)
+                roots.append(run)
+                check_models()
+
+            for i, run in enumerate(roots):
+                if run.status != "SUBMITTED" or run.submitted_ref in selections:
+                    continue
+                check_models()
+                candidate = host.store.load(run.submitted_ref)
+                with reserved["selection:" + str(i)].spend():
+                    comparison = evaluator.paired(target, candidate, select_tasks,
+                                                  purpose="service_select")
+                decision = select_service(target, candidate, comparison, margin=margin,
+                                          max_regression=max_regression)
+                selections[candidate.ref] = decision
+                if decision["decision"] == "ACCEPT" and comparison.mean_delta > best_delta:
+                    selected_ref, best_delta = candidate.ref, comparison.mean_delta
+                check_models()
+
+            for i, run in enumerate(roots):
+                check_models()
+                comparison_ref = ""
+                if run.status == "FAILED":
+                    value, outcome = -1.0, "ROOT_FAILED"
+                elif run.status == "NOOP":
+                    value, outcome = 0.0, "NOOP"
+                else:
+                    if run.submitted_ref not in rewards:
+                        candidate = host.store.load(run.submitted_ref)
+                        with reserved["reward:" + str(i)].spend():
+                            rewards[candidate.ref] = evaluator.paired(
+                                target, candidate, reward_tasks, purpose="service_reward")
+                    comparison = rewards[run.submitted_ref]
+                    comparison_ref = comparison.archive_ref
+                    usable = usable and comparison.usable
+                    value = comparison.mean_delta if comparison.safe else -1.0
+                    outcome = "PAIRED_SERVICE_REWARD" if comparison.safe else "FORBIDDEN_CANDIDATE"
+                receipts.append({"kind": "root_reward_service_v0.2", "root_type": "r_service",
+                                 "context_ref": context_ref, "root_trace_ref": run.archive_ref,
+                                 "models": models, "comparison_ref": comparison_ref,
+                                 "reward": value, "outcome": outcome})
+                check_models()
+    except (InfrastructureError, BudgetExceeded) as exc:
+        usable, error = False, str(exc)
+
+    reward_refs = tuple(host.archive.save(row) for row in receipts) if usable else ()
+    record = {"kind": "service_improvement_group_v0.2", "context_ref": context_ref,
+              "root_type": "r_service", "status": "USABLE" if usable else "UNUSABLE",
+              "root_refs": [run.archive_ref for run in roots], "reward_refs": reward_refs,
+              "selected_ref": selected_ref if usable else target.ref,
+              "selections": selections,
+              "reward_comparisons": {ref: row.archive_ref for ref, row in rewards.items()},
+              "error": error, "cost": host.ledger.snapshot(), "training_updates": 0}
+    archive_ref = host.archive.save(record)
+    return CollectedGroup(context_ref, archive_ref, record["status"], record["selected_ref"],
+                          tuple(roots), reward_refs, "r_service")
+
+
 def collect_sampled_self_edit_group(host, evaluator, editor, target, provider, *,
                                     package_seed, package_counts, **options):
     """Sample private packages through the Host registry and archive the link."""
@@ -171,7 +329,8 @@ def training_records(host, group):
     from .training import root_training_record
 
     saved = host.archive.load(group.archive_ref)
-    if saved["status"] != "USABLE" or saved["context_ref"] != group.context_ref:
+    if (saved["status"] != "USABLE" or saved["context_ref"] != group.context_ref
+            or saved.get("root_type", group.root_type) != group.root_type):
         raise ValueError("unusable or mismatched group cannot enter training")
     if saved["root_refs"] != [r.archive_ref for r in group.roots] or list(group.reward_refs) != saved["reward_refs"]:
         raise ValueError("sampling group roots/rewards differ from the archived group")

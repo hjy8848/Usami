@@ -1,6 +1,6 @@
-# RSI v0.1 实施状态
+# RSI v0.2 实施状态
 
-本文件逐项区分已经执行的工程检查与尚未完成的目标。原始范围是用户提供的《进化核心设计与实现规范 v0.1》，不以本阶段代码替代 P0—P6 的完整目标。
+本文件逐项区分已经执行的工程检查与尚未完成的目标。2026-10-24 起按用户提供的 v0.2 规范对齐；下文早期 v0.1 记录作为历史实施日志保留，不自动代表当前版本状态。
 
 ## 基线和本阶段变更
 
@@ -41,10 +41,10 @@ python -m pytest tests/test_rsi_core.py tests/test_rsi_evaluation.py \
 | 阶段 | 已有证据 | 尚未满足的要求 |
 | --- | --- | --- |
 | P0 | 原生公开请求与 S0 请求逐项一致；已认证退款夹具经原生执行与 Replay；可信包注册、原生证书核验、分区抽样与恢复 | 正式来源审核及足量自然任务池、固定 Customer/业务模型实际配置、适配预算完整登记 |
-| P1 | 真实容器、四动作、模式隔离、候选冻结、三代继承、篡改检测、独立安装 smoke；整组采集器接入阶段预算预留 | 冻结递归入口的完整预算登记；研究程序确定性重执行核验；额外资源对抗检查 |
+| P1 | v0.1 容器与递归夹具；v0.2 新增完整 `(B,P,K)` Service / `(φ,M)` Designer 快照、挑战基线顺序、直接任务集和 K+1 周期编排；新增针对性合同测试 | 周期编排测试使用采集器替身；完整 Native Adapter + 动态认证器周期尚未端到端运行；固定预算恢复尚未验收 |
 | P2 | 可执行 probe 与独立 query 路径 | 自然失败固定候选集、随机/难度/分歧/学习选择和反馈遮蔽对照及独立 query 结果 |
 | P3 | 根 token/logprob/mask 数据协议；verl 0.9.1 的可选 AgentLoop、归档轨迹转换与 GRPO 单组导出代码（未运行） | 可训练研究模型、verl 运行时验证、真实参数更新、checkpoint 身份核对和独立开发比较 |
-| P4 | SELF_EDIT、Adapt/F、C_select 选择；G 条根轨迹采集、私有配对 r_meta、整组有效性和奖励来源核验；注册池的持续无放回抽样；verl 单组数据/配置导出代码（未运行） | 完整训练启动器、验证 behavior checkpoint 与本地权重一致、实际参数冻结与训练链推进、自然数据分布 |
+| P4 | SELF_EDIT、Adapt/F、C_select 选择；G 条根轨迹采集、私有配对奖励；新增 `r_service` / `r_self` 分组优势与 verl 周期数据导出代码（未运行） | verl 加权 loss hook、训练启动器、checkpoint 对照、实际参数更新与自然任务数据 |
 | P5 | 三代工程夹具和固定编辑器语义 | 使用经训练 φ 的冻结模型多代运行、固定预算和全部独立审核 |
 | P6 | Core wheel 可独立构建；不导入 Usami | 独立 M* 交叉检验、第二真实环境 Adapter、跨环境/迁移和统计报告 |
 
@@ -59,7 +59,7 @@ CPU 账本当前记录 Host 测得的单 vCPU 容器墙钟上界，并明确标�
 - Core wheel 已构建；另用 `python -I -S` 在无法导入 Usami 的解释器中执行 wheel 内的通用 smoke，检查结果见本地输出目录。
 - 以上计数是阶段执行记录；后续修改后的最终检查以新报告为准，不把旧测试结果默认为当前代码全量证明。
 
-## 下一项实现
+## 历史下一项实现（v0.1 记录）
 
 本节记录在预算、采集和包注册实现之后的原计划。verl 适配代码进展见文末的 2026-10-24 更新；P3/P4 仍未完成。
 
@@ -114,3 +114,15 @@ CPU 账本当前记录 Host 测得的单 vCPU 容器墙钟上界，并明确标�
 多轮轨迹只有在后续 tokenized prompt 精确延续此前 prompt 与模型生成序列时才允许合并；其他轨迹明确拒绝导出，避免把不同条件下的动作伪造成一条序列。配置导出是 verl 配置片段，不是独立训练启动命令。
 
 本次仅写代码和文档：没有安装 verl，没有调用模型，没有启动 Ray / GPU，也没有进行参数更新；没有运行测试或训练。实际 verl API 兼容性、checkpoint 权重与 `ModelSnapshot.parameter_hash` 的对应关系、参数更新后的重新采样和跨组训练流程均未验证。TRL 草稿未保留。P3/P4 因此仍未验收。
+
+## v0.2 规范对齐与周期数据接口（2026-10-24）
+
+将研究状态改为明确的 `(φ,M)` Designer 与 `(B,P,K)` Service 快照，并补上主链继承检查：B 固定，P/K 分别继承已选父版；Designer 可在保持 M 时更新 φ，或由 M 自修改，但模型基座和采样配置不变。evaluation-only Service 副本不能发布到主链。
+
+Service 根轨迹现在使用独立、经证书登记的 `service_probe / service_select / service_reward` 任务集。Host 强制新挑战先冻结认证、再由父 Service 执行基线，最后才允许候选在该挑战上 PROBE。Service 候选是完整 P/K 包。适应任务评价继续使用分开的 C_probe/C_select/C_reward 包。Usami 候选可见反馈经过版本化投影，仅包含公开工具交互、任务分数/状态与聚合安全标记；Oracle 分类和隐藏任务结果留在可信 Episode/Replay 中。
+
+`rsi_core.period.run_period()` 以 K 个 Service 组、一次 M 自修改组为顺序编排；M 自修改的所有包绑定阶段 A 最终接受的同一个 Service 快照。周期末更新钩子只调用一次，并收到原始归档组以及分开的 `r_service` / `r_self` 记录和组内 GRPO 优势，便于在 φ 仍冻结时调用 verl 周期导出。没有训练钩子时记录为 `READY_FOR_TRAINING`；训练回调失败时记录 `TRAINING_FAILED`，不发布新 φ。数据导出会把两个根类型及组内优势写入同一周期 manifest，并显式保存等类型、等上下文的 loss 权重；stock verl 不会自动使用该权重，定制 weighted-loss hook 仍是训练前置条件。
+
+实际检查：新增 `tests/test_rsi_v02.py`，并与 Core、包注册、整组采集、评价、训练记录、Usami Adapter、预算测试合计 **48 项通过，24.56 秒**。覆盖版本谱系、挑战必须先跑父版、周期调用顺序、两类 advantage 隔离、直接任务 UNKNOWN/安全门槛、verl 周期数据权重及 rollout manifest、Usami 反馈不向 Designer 暴露 Oracle。另运行了三代离线算术协议 smoke：`ACCEPT / KEEP_PARENT / KEEP_PARENT`，0 模型调用、0 参数更新；`py_compile` 与 `git diff --check` 通过。
+
+限制：周期编排测试用替身验证顺序，不是完整自然任务周期；动态 Usami challenge 提案认证尚未接成可直接启动的完整入口。verl 未安装，AgentLoop / weighted-loss hook / checkpoint 权重身份没有实际验证。未调用真实模型、未启动 RL、未改变任何训练参数；48 项测试和离线 smoke 只能证明工程协议，不是能力提升或 RSI 效果。

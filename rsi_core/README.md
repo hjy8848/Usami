@@ -17,8 +17,8 @@ the protocol smoke. Fixtures verify execution contracts and are not learned
 policies or scientific results. Usami integration lives separately in
 `integrations/rsi_usami/` and uses the unchanged native runtime and scorer.
 
-`training.py` currently exports validated root token/logprob/mask records and
-group advantages. It does **not** implement or claim completed parameter RL.
+`training.py` exports validated root token/logprob/mask records and group
+advantages. Parameter RL has not been run or validated.
 `collection.collect_self_edit_group` executes independent roots under identical
 phase allocations, reserves the entire group before sampling, selects on
 `C_select`, and computes terminal paired rewards on private `C_reward` packages.
@@ -26,6 +26,22 @@ It retains all root trajectories, deduplicates candidate evaluation, and exclude
 the whole group from training after infrastructure failure or unusable reward
 evaluation. `collection.training_records` checks archived reward provenance
 before exporting all roots.
+
+`verl_backend.py` adds an optional verl `0.9.1` adapter and a one-group GRPO
+bundle exporter. It preserves archived behavior tokens, masks, logprobs, and
+root rewards; GRPO groups roots by the registered context `uid` and uses
+sequence-mean-token-mean loss. Multi-turn export requires every later tokenized
+prompt to continue the exact previous prompt-and-generation stream. Other
+trajectories are rejected because flattening them would change the conditioning
+context. This is implementation code only: verl has not been installed or
+exercised, no parameters have been updated, and checkpoint identity has not
+been checked against local weight files. `verl_overlay.yaml` is a config
+fragment, not a standalone trainer command. There is no recursive multi-group
+training controller yet.
+
+Install the optional pinned dependency in a compatible Python environment
+with `pip install -e '.[verl]'` from `rsi_core/`. Installation does not launch
+Ray, load model weights, call a model, or start training.
 
 `packages.PackageProvider` freezes a certified package manifest and samples
 without replacement. It checks declared family/lineage boundaries, original

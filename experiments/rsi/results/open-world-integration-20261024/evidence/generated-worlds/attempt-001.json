@@ -1,0 +1,474 @@
+{
+  "kind": "rsi-autonomous-challenge-validation-v1",
+  "period_ref": "0bae5db341016da339631a33a3ac694c14ae55c7e5b787cf80e2104989cccb06",
+  "parent_attempt_ref": null,
+  "validation_scope": "Designer proposal/grounding/certification; no online Service or training",
+  "call": {
+    "record_hash": "1227f671aaf203cfa9005151a49caffb3e40f9975fad04755d6af3f7f551952d",
+    "role": "designer",
+    "request": {
+      "temperature": 0,
+      "model": "dashscope/qwen3.7-plus",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the Usami RSI Challenge Designer. Propose one abstract business challenge using the supplied native schema and authorized population catalogue. Choose the business objective, constraints and number of related items yourself. line_selectors declare symbolic variables; remedy_goals.line_alias references those variables. customer_alias is a symbolic Customer variable, not a World entity. A Grounder will enumerate customer-owned bindings, the existing compiler will check public intent, and independent Reference will certify the task. All goals and bounds must be explicitly requested in customer_request. Copy each supporting public_request_span verbatim and use a natural product subject_mention inside it. Use only published supported capabilities. Submit the challenge with the registered tool; do not supply IDs, proof witnesses, answers or World changes."
+        },
+        {
+          "role": "user",
+          "content": "{\"configured_native_certification_features\": {}, \"domain\": \"usami-commerce-v2\", \"open_world_catalogue\": {\"attributes\": [], \"challenge_schema\": {\"$defs\": {\"Attribute\": {\"additionalProperties\": false, \"properties\": {\"name\": {\"minLength\": 1, \"type\": \"string\"}, \"value\": {\"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"name\", \"value\"], \"type\": \"object\"}, \"InformationDraft\": {\"additionalProperties\": false, \"properties\": {\"fact_kind\": {\"description\": \"The business fact the Customer explicitly asks for; do not infer a different question.\", \"enum\": [\"refund_amount\", \"extra_charge\", \"arrival_date\", \"refund_status\", \"shipment_status\", \"quantity\", \"currency\"], \"type\": \"string\"}, \"goal_id\": {\"type\": \"string\"}, \"public_request\": {\"description\": \"An exact contiguous quote from customer_request that contains both the subject and requested fact.\", \"minLength\": 1, \"type\": \"string\"}, \"subject_alias\": {\"description\": \"Alias of an existing order or order line owned by the selected Customer, exactly as listed in that Customer's scope. Never use a Customer, SKU, or another Customer's object.\", \"type\": \"string\"}, \"subject_mention\": {\"description\": \"Natural subject wording that appears in the quoted public question and uniquely identifies the owned order/line.\", \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"goal_id\", \"subject_alias\", \"subject_mention\", \"fact_kind\", \"public_request\"], \"type\": \"object\"}, \"LineRelation\": {\"additionalProperties\": false, \"properties\": {\"kind\": {\"enum\": [\"same_order\", \"different_order\"], \"type\": \"string\"}, \"left\": {\"type\": \"string\"}, \"right\": {\"type\": \"string\"}}, \"required\": [\"left\", \"right\", \"kind\"], \"type\": \"object\"}, \"LineSelector\": {\"additionalProperties\": false, \"properties\": {\"alias\": {\"pattern\": \"^[A-Za-z][A-Za-z0-9_]*$\", \"type\": \"string\"}, \"attributes\": {\"default\": [], \"items\": {\"$ref\": \"#/$defs/Attribute\"}, \"type\": \"array\"}, \"family\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null}, \"issue\": {\"anyOf\": [{\"enum\": [\"damaged\", \"wrong_item\", \"missing_parts\"], \"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null}, \"maximum_age_days\": {\"anyOf\": [{\"minimum\": 0, \"type\": \"integer\"}, {\"type\": \"null\"}], \"default\": null}, \"maximum_quantity\": {\"anyOf\": [{\"minimum\": 1, \"type\": \"integer\"}, {\"type\": \"null\"}], \"default\": null}, \"minimum_age_days\": {\"default\": 0, \"minimum\": 0, \"type\": \"integer\"}, \"minimum_quantity\": {\"default\": 1, \"minimum\": 1, \"type\": \"integer\"}, \"return_required\": {\"anyOf\": [{\"type\": \"boolean\"}, {\"type\": \"null\"}], \"default\": null}}, \"required\": [\"alias\"], \"type\": \"object\"}, \"RemedyDraft\": {\"additionalProperties\": false, \"properties\": {\"allowed_remedies\": {\"description\": \"List engine methods supported by the public intent. 'Replace'/'replacement' supports exchange or reship; only explicit refund language supports refund.\", \"items\": {\"enum\": [\"refund\", \"exchange\", \"reship\"], \"type\": \"string\"}, \"minItems\": 1, \"type\": \"array\"}, \"goal_id\": {\"type\": \"string\"}, \"latest_arrival_within_days\": {\"anyOf\": [{\"minimum\": 0, \"type\": \"integer\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Only set for an explicit 'within/in N days' request, using the exact public N.\"}, \"line_alias\": {\"type\": \"string\"}, \"maximum_extra_charge_cents\": {\"anyOf\": [{\"minimum\": 0, \"type\": \"integer\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Only set when the quoted request states an explicit extra/additional charge limit; value is cents.\"}, \"public_request_span\": {\"description\": \"Copy one exact, contiguous substring from customer_request. Do not paraphrase, summarize, or combine separated phrases. The quote must include subject_mention and explicitly support the requested outcome. A public 'replace'/'replacement' request supports the engine methods exchange or reship; refund still requires explicit refund language.\", \"minLength\": 1, \"type\": \"string\"}, \"quantity\": {\"description\": \"Use 1 for the default single item; use a larger number only when the request states it.\", \"minimum\": 1, \"type\": \"integer\"}, \"required_attributes\": {\"default\": [], \"description\": \"Only score attributes explicitly named in the quoted request; use the frozen SKU values.\", \"items\": {\"$ref\": \"#/$defs/Attribute\"}, \"type\": \"array\"}, \"subject_mention\": {\"description\": \"Exact product/object wording that appears inside public_request_span.\", \"minLength\": 1, \"type\": \"string\"}, \"target_stage\": {\"default\": \"settled\", \"description\": \"Use 'settled' for the currently supported Reference proof. 'delivered' means actual receipt, which this run can certify only when a natural interaction certifier is explicitly available.\", \"enum\": [\"settled\", \"delivered\"], \"type\": \"string\"}}, \"required\": [\"goal_id\", \"line_alias\", \"public_request_span\", \"subject_mention\", \"quantity\", \"allowed_remedies\"], \"type\": \"object\"}}, \"additionalProperties\": false, \"description\": \"Reuse all TaskDraft/RemedyDraft goals and public-request validation.\\n\\ncustomer_alias and line_alias are symbolic variables here. Only Grounder\\nsupplies the real ScenarioSpec aliases to the native compiler.\", \"properties\": {\"challenge_protocol\": {\"const\": \"commerce-abstract-challenge-v1\", \"default\": \"commerce-abstract-challenge-v1\", \"type\": \"string\"}, \"customer_alias\": {\"type\": \"string\"}, \"customer_request\": {\"minLength\": 1, \"type\": \"string\"}, \"hypothesis\": {\"minLength\": 1, \"type\": \"string\"}, \"information_goals\": {\"default\": [], \"description\": \"Only use when task_certification_capabilities says a natural interaction certifier is available; the bounded native Reference proof certifies remedy goals, not communication goals.\", \"items\": {\"$ref\": \"#/$defs/InformationDraft\"}, \"type\": \"array\"}, \"line_relations\": {\"default\": [], \"items\": {\"$ref\": \"#/$defs/LineRelation\"}, \"type\": \"array\"}, \"line_selectors\": {\"items\": {\"$ref\": \"#/$defs/LineSelector\"}, \"maxItems\": 8, \"minItems\": 1, \"type\": \"array\"}, \"parent_training_evidence_hashes\": {\"default\": [], \"items\": {\"type\": \"string\"}, \"type\": \"array\"}, \"remedy_goals\": {\"default\": [], \"items\": {\"$ref\": \"#/$defs/RemedyDraft\"}, \"type\": \"array\"}, \"task_id\": {\"type\": \"string\"}}, \"required\": [\"task_id\", \"customer_alias\", \"customer_request\", \"hypothesis\", \"line_selectors\"], \"type\": \"object\"}, \"distinct_structures\": 2, \"families\": [\"coffee-grinder\", \"dell_u27\", \"espresso-machine\", \"keychron_k2\", \"mx_master\", \"thinkpad_t15\"], \"information_goals_certifiable\": false, \"issues\": [\"damaged\", \"missing_parts\", \"wrong_item\"], \"observed_line_kinds\": [{\"family\": \"coffee-grinder\", \"issue\": \"damaged\", \"quantity\": 1, \"return_required\": false}, {\"family\": \"coffee-grinder\", \"issue\": \"damaged\", \"quantity\": 2, \"return_required\": false}, {\"family\": \"dell_u27\", \"issue\": \"missing_parts\", \"quantity\": 1, \"return_required\": true}, {\"family\": \"espresso-machine\", \"issue\": \"damaged\", \"quantity\": 1, \"return_required\": true}, {\"family\": \"keychron_k2\", \"issue\": \"wrong_item\", \"quantity\": 1, \"return_required\": false}, {\"family\": \"mx_master\", \"issue\": \"wrong_item\", \"quantity\": 2, \"return_required\": false}, {\"family\": \"thinkpad_t15\", \"issue\": \"damaged\", \"quantity\": 1, \"return_required\": true}], \"protocol\": \"commerce-open-world-catalogue-v1\", \"request_contract\": \"All goal bounds must be explicitly supported by public request spans. Selectors identify purchased lines; they never prescribe a solution SKU.\", \"supported_remedies\": [\"refund\", \"exchange\", \"reship\"], \"supported_target_stages\": [\"settled\"], \"world_count\": 2}}"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "submit_customer_task",
+            "description": "Submit exactly one structured proposal for this design stage.",
+            "parameters": {
+              "$defs": {
+                "Attribute": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "name": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "value": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "value"
+                  ],
+                  "type": "object"
+                },
+                "InformationDraft": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "goal_id": {
+                      "type": "string"
+                    },
+                    "subject_alias": {
+                      "description": "Alias of an existing order or order line owned by the selected Customer, exactly as listed in that Customer's scope. Never use a Customer, SKU, or another Customer's object.",
+                      "type": "string"
+                    },
+                    "subject_mention": {
+                      "description": "Natural subject wording that appears in the quoted public question and uniquely identifies the owned order/line.",
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "fact_kind": {
+                      "description": "The business fact the Customer explicitly asks for; do not infer a different question.",
+                      "enum": [
+                        "refund_amount",
+                        "extra_charge",
+                        "arrival_date",
+                        "refund_status",
+                        "shipment_status",
+                        "quantity",
+                        "currency"
+                      ],
+                      "type": "string"
+                    },
+                    "public_request": {
+                      "description": "An exact contiguous quote from customer_request that contains both the subject and requested fact.",
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "goal_id",
+                    "subject_alias",
+                    "subject_mention",
+                    "fact_kind",
+                    "public_request"
+                  ],
+                  "type": "object"
+                },
+                "LineRelation": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "left": {
+                      "type": "string"
+                    },
+                    "right": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "same_order",
+                        "different_order"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "left",
+                    "right",
+                    "kind"
+                  ],
+                  "type": "object"
+                },
+                "LineSelector": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "alias": {
+                      "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+                      "type": "string"
+                    },
+                    "family": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "issue": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "damaged",
+                            "wrong_item",
+                            "missing_parts"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "attributes": {
+                      "default": [],
+                      "items": {
+                        "$ref": "#/$defs/Attribute"
+                      },
+                      "type": "array"
+                    },
+                    "minimum_quantity": {
+                      "default": 1,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "maximum_quantity": {
+                      "anyOf": [
+                        {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "minimum_age_days": {
+                      "default": 0,
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "maximum_age_days": {
+                      "anyOf": [
+                        {
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "return_required": {
+                      "anyOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "alias"
+                  ],
+                  "type": "object"
+                },
+                "RemedyDraft": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "goal_id": {
+                      "type": "string"
+                    },
+                    "line_alias": {
+                      "type": "string"
+                    },
+                    "public_request_span": {
+                      "description": "Copy one exact, contiguous substring from customer_request. Do not paraphrase, summarize, or combine separated phrases. The quote must include subject_mention and explicitly support the requested outcome. A public 'replace'/'replacement' request supports the engine methods exchange or reship; refund still requires explicit refund language.",
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "subject_mention": {
+                      "description": "Exact product/object wording that appears inside public_request_span.",
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "description": "Use 1 for the default single item; use a larger number only when the request states it.",
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "allowed_remedies": {
+                      "description": "List engine methods supported by the public intent. 'Replace'/'replacement' supports exchange or reship; only explicit refund language supports refund.",
+                      "items": {
+                        "enum": [
+                          "refund",
+                          "exchange",
+                          "reship"
+                        ],
+                        "type": "string"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "required_attributes": {
+                      "default": [],
+                      "description": "Only score attributes explicitly named in the quoted request; use the frozen SKU values.",
+                      "items": {
+                        "$ref": "#/$defs/Attribute"
+                      },
+                      "type": "array"
+                    },
+                    "maximum_extra_charge_cents": {
+                      "anyOf": [
+                        {
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "description": "Only set when the quoted request states an explicit extra/additional charge limit; value is cents."
+                    },
+                    "latest_arrival_within_days": {
+                      "anyOf": [
+                        {
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "description": "Only set for an explicit 'within/in N days' request, using the exact public N."
+                    },
+                    "target_stage": {
+                      "default": "settled",
+                      "description": "Use 'settled' for the currently supported Reference proof. 'delivered' means actual receipt, which this run can certify only when a natural interaction certifier is explicitly available.",
+                      "enum": [
+                        "settled",
+                        "delivered"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "goal_id",
+                    "line_alias",
+                    "public_request_span",
+                    "subject_mention",
+                    "quantity",
+                    "allowed_remedies"
+                  ],
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false,
+              "description": "Reuse all TaskDraft/RemedyDraft goals and public-request validation.\n\ncustomer_alias and line_alias are symbolic variables here. Only Grounder\nsupplies the real ScenarioSpec aliases to the native compiler.",
+              "properties": {
+                "task_id": {
+                  "type": "string"
+                },
+                "customer_alias": {
+                  "type": "string"
+                },
+                "customer_request": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "remedy_goals": {
+                  "default": [],
+                  "items": {
+                    "$ref": "#/$defs/RemedyDraft"
+                  },
+                  "type": "array"
+                },
+                "information_goals": {
+                  "default": [],
+                  "description": "Only use when task_certification_capabilities says a natural interaction certifier is available; the bounded native Reference proof certifies remedy goals, not communication goals.",
+                  "items": {
+                    "$ref": "#/$defs/InformationDraft"
+                  },
+                  "type": "array"
+                },
+                "parent_training_evidence_hashes": {
+                  "default": [],
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "challenge_protocol": {
+                  "const": "commerce-abstract-challenge-v1",
+                  "default": "commerce-abstract-challenge-v1",
+                  "type": "string"
+                },
+                "hypothesis": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "line_selectors": {
+                  "items": {
+                    "$ref": "#/$defs/LineSelector"
+                  },
+                  "maxItems": 8,
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "line_relations": {
+                  "default": [],
+                  "items": {
+                    "$ref": "#/$defs/LineRelation"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "task_id",
+                "customer_alias",
+                "customer_request",
+                "hypothesis",
+                "line_selectors"
+              ],
+              "type": "object"
+            }
+          }
+        }
+      ],
+      "tool_choice": "auto",
+      "stream": false,
+      "n": 1,
+      "parallel_tool_calls": false
+    },
+    "response": {
+      "id": "chatcmpl-80f0126a-ca02-951d-b3db-132ca6fdf458",
+      "created": 1792836729,
+      "model": "dashscope/qwen3.7-plus",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "finish_reason": "tool_calls",
+          "index": 0,
+          "message": {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "index": 0,
+                "function": {
+                  "arguments": "{\"task_id\": \"task_espresso_replacement\", \"customer_alias\": \"customer\", \"customer_request\": \"My espresso machine arrived damaged and I need a replacement.\", \"hypothesis\": \"Customer requests a replacement for a damaged espresso machine from a settled order.\", \"line_selectors\": \n[{\"alias\": \"espressoMachine\", \"family\": \"espresso-machine\", \"issue\": \"damaged\", \"minimum_quantity\": 1, \"maximum_quantity\": 1, \"return_required\": true}]\n\n, \"remedy_goals\": \n[{\"goal_id\": \"goal_1\", \"line_alias\": \"espressoMachine\", \"public_request_span\": \"My espresso machine arrived damaged and I need a replacement\", \"subject_mention\": \"espresso machine\", \"quantity\": 1, \"allowed_remedies\": [\"exchange\", \"reship\"], \"target_stage\": \"settled\"}]\n\n, \"challenge_protocol\": \"commerce-abstract-challenge-v1\"}",
+                  "name": "submit_customer_task"
+                },
+                "id": "call_4226af49efc4462586d87d90",
+                "type": "function"
+              }
+            ],
+            "reasoning_content": "Let me analyze the task carefully.\n\nI need to propose one abstract business challenge using the native schema. Let me understand the constraints:\n\n1. Domain: usami-commerce-v2\n2. Families available: coffee-grinder, dell_u27, espresso-machine, keychron_k2, mx_master, thinkpad_t15\n3. Issues: damaged, missing_parts, wrong_item\n4. Supported remedies: refund, exchange, reship\n5. Supported target stages: settled\n6. information_goals_certifiable: false (so I should NOT use information_goals)\n7. observed_line_kinds shows the actual line kinds that exist in the world\n\nLet me pick a scenario. I'll choose a single-line challenge with a damaged coffee-grinder where the customer wants a replacement (exchange/reship).\n\nLooking at observed_line_kinds:\n- coffee-grinder, damaged, quantity 1, return_required false\n- coffee-grinder, damaged, quantity 2, return_required false\n- dell_u27, missing_parts, quantity 1, return_required true\n- espresso-machine, damaged, quantity 1, return_required true\n- keychron_k2, wrong_item, quantity 1, return_required false\n- mx_master, wrong_item, quantity 2, return_required false\n- thinkpad_t15, damaged, quantity 1, return_required true\n\nLet me design a challenge with a damaged espresso-machine where the customer wants a replacement. The customer says \"replace\" which supports exchange or reship.\n\nActually, let me think about this more carefully. I need to:\n1. Create a customer_request that is natural\n2. Create line_selectors that match the observed line kinds\n3. Create remedy_goals with public_request_spans that are exact contiguous substrings\n4. The subject_mention must appear inside the public_request_span\n\nLet me go with a damaged espresso-machine, quantity 1, return_required true, and the customer wants a replacement.\n\nCustomer request: \"I received my espresso machine but it arrived damaged. I need a replacement sent to me.\"\n\nLine selector:\n- alias: \"espressoMachine\"\n- family: \"espresso-machine\"\n- issue: \"damaged\"\n- minimum_quantity: 1\n- maximum_quantity: 1\n- return_required: true\n\nRemedy goal:\n- goal_id: \"goal_1\"\n- line_alias: \"espressoMachine\"\n- public_request_span: \"I need a replacement sent to me\" - wait, this needs to include the subject_mention. Let me re-read.\n\n\"The quote must include subject_mention and explicitly support the requested outcome.\"\n\nSo the public_request_span must contain the subject_mention. Let me restructure.\n\nCustomer request: \"My espresso machine arrived damaged and I need a replacement.\"\n\npublic_request_span: \"My espresso machine arrived damaged and I need a replacement\"\nsubject_mention: \"espresso machine\"\nallowed_remedies: [\"exchange\", \"reship\"] (since \"replacement\" supports exchange or reship)\n\nLet me also think about whether I should include a second line. The task says \"Choose the business objective, constraints and number of related items yourself.\" I could do a single-line challenge.\n\nLet me also consider: the hypothesis should describe what we're testing.\n\nLet me finalize:\n\ntask_id: \"task_espresso_replacement\"\ncustomer_alias: \"customer\"\ncustomer_request: \"My espresso machine arrived damaged and I need a replacement.\"\nhypothesis: \"Customer requests a replacement for a damaged espresso machine from a settled order.\"\nline_selectors:\n  - alias: \"espressoMachine\"\n    family: \"espresso-machine\"\n    issue: \"damaged\"\n    minimum_quantity: 1\n    maximum_quantity: 1\n    return_required: true\nremedy_goals:\n  - goal_id: \"goal_1\"\n    line_alias: \"espressoMachine\"\n    public_request_span: \"My espresso machine arrived damaged and I need a replacement\"\n    subject_mention: \"espresso machine\"\n    quantity: 1\n    allowed_remedies: [\"exchange\", \"reship\"]\n    target_stage: \"settled\"\n\nWait, let me double-check: the public_request_span must be an exact contiguous substring of customer_request. \"My espresso machine arrived damaged and I need a replacement\" - yes, that's the entire customer_request, which is contiguous.\n\nsubject_mention \"espresso machine\" appears inside the public_request_span. ✓\n\nThe remedy \"replacement\" supports exchange or reship. ✓\n\ntarget_stage: \"settled\" is supported. ✓\n\ninformation_goals_certifiable is false, so I won't include information_goals. ✓\n\nThis looks good. Let me submit.",
+            "provider_specific_fields": {
+              "refusal": null
+            }
+          },
+          "provider_specific_fields": {}
+        }
+      ],
+      "usage": {
+        "completion_tokens": 1263,
+        "prompt_tokens": 3842,
+        "total_tokens": 5105,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1004,
+          "text_tokens": 1263
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 3842
+        }
+      }
+    },
+    "prompt_tokens": 3842,
+    "completion_tokens": 1263
+  },
+  "proposal": {
+    "record_hash": "6f4e8014ce056a2c4c38da464bbba18fed8aa6e5882a0b62473a6a87f1335693",
+    "task_id": "task_espresso_replacement",
+    "customer_alias": "customer",
+    "customer_request": "My espresso machine arrived damaged and I need a replacement.",
+    "remedy_goals": [
+      {
+        "record_hash": "c545aed85c35cea1e189230bd6bf9ac0a5a25afc4973fd1a2b38a1de9408a48c",
+        "goal_id": "goal_1",
+        "line_alias": "espressoMachine",
+        "public_request_span": "My espresso machine arrived damaged and I need a replacement",
+        "subject_mention": "espresso machine",
+        "quantity": 1,
+        "allowed_remedies": [
+          "exchange",
+          "reship"
+        ],
+        "required_attributes": [],
+        "maximum_extra_charge_cents": null,
+        "latest_arrival_within_days": null,
+        "target_stage": "settled"
+      }
+    ],
+    "information_goals": [],
+    "parent_training_evidence_hashes": [],
+    "challenge_protocol": "commerce-abstract-challenge-v1",
+    "hypothesis": "Customer requests a replacement for a damaged espresso machine from a settled order.",
+    "line_selectors": [
+      {
+        "record_hash": "7a89850e1efde157f533394931212307740676772325d9dc0cf2341d6520f6e3",
+        "alias": "espressoMachine",
+        "family": "espresso-machine",
+        "issue": "damaged",
+        "attributes": [],
+        "minimum_quantity": 1,
+        "maximum_quantity": 1,
+        "minimum_age_days": 0,
+        "maximum_age_days": null,
+        "return_required": true
+      }
+    ],
+    "line_relations": []
+  },
+  "status": "UNVERIFIED",
+  "receipt": {
+    "status": "UNVERIFIED",
+    "reason_code": "REFERENCE_UNPROVEN"
+  },
+  "attempt_ref": "488c8bddbddd83e327cb45722035db85ac5af9b47ef2de15264b3d4d6852e50a",
+  "archive_ref": "89b5a8ee61e87e39588828f8c685fcfe6fac0819d571792ebbfb47a407d82676"
+}

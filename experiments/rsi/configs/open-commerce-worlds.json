@@ -1,0 +1,47 @@
+{
+  "record_hash": "f63041e42e627b3ba4e66fa09fa40dc6737bf1ddb5cc032ed59cc87a62a0ab9b",
+  "protocol": "commerce-distribution-v1",
+  "distribution_id": "open-commerce-worlds-v1",
+  "version": 1,
+  "population_scope": "Synthetic order, SKU, stock and route compositions",
+  "claim": "synthetic_business_reference",
+  "sources": [
+    {
+      "record_hash": "b8923e7247a8b8b42021514103884f193dcd13b1352f3e2e4a3a822868db6429",
+      "source_id": "synthetic-commerce-constraints",
+      "kind": "synthetic_assumption",
+      "reference": "Usami native ScenarioDraft and commerce rules",
+      "version": "1",
+      "supported_claims": [
+        "synthetic legal business-world coverage"
+      ],
+      "restrictions": [],
+      "empirical_sample_count": null
+    }
+  ],
+  "strata": [
+    {
+      "record_hash": "f4ca1b382923e91106cfea158e1cd89f1ad517cf7762767c3998183f484a6394",
+      "stratum_id": "customer-order-composition",
+      "weight": 1,
+      "weight_basis_source_id": "synthetic-commerce-constraints",
+      "contexts": [
+        "Vary the ownership graph, number of customers, orders and purchased lines. Include different product families and issue types, with both return-required and no-return products."
+      ],
+      "dependencies": []
+    },
+    {
+      "record_hash": "f8945d04f76ca253adb47d841403808a691cd25ce2d6f515c7abcbf962666899",
+      "stratum_id": "inventory-route-composition",
+      "weight": 1,
+      "weight_basis_source_id": "synthetic-commerce-constraints",
+      "contexts": [
+        "Vary the number of SKU variants and warehouses, inventory availability and delivery/fee tradeoffs. Include no-return merchandise, multiple orders and at least two distinct product families."
+      ],
+      "dependencies": []
+    }
+  ],
+  "exclusions": [],
+  "max_generation_attempts": 100,
+  "split": "train"
+}

@@ -796,35 +796,28 @@ def _chat(phase, content, distribution, slot, errors=()):
     ]
 
 
-def design_and_certify(provider: DesignerProvider, distribution: DistributionSpec, slot: SamplingSlot, *,
-                       build_budget: Optional[BuildBudget] = None,
-                       proof_budget: Optional[ProofBudget] = None,
-                       allowed_training_hashes=(), history_signatures: Optional[Tuple[str, ...]] = None,
-                       customer_scenario_factory: Optional[Callable[[Any, TaskSpec], ProofCustomerScenario]] = None,
-                       training_evidence: Tuple[DesignerTrainingEvidence, ...] = (),
-                       interaction_certifier: Optional[Callable[[World, TaskSpec, ProofCustomerScenario], EpisodeRecord]] = None,
-                       information_goals_certifiable=False,
-                       delivery_confirmation_available=False,
-                       return_receipt_event_configured=False,
-                       policy_review_event_configured=False,
-                       max_attempts: int = 3) -> DesignerRun:
-    """Run the two LLM phases with bounded compiler feedback and native proof.
+class WorldDesignRun(Sealed):
+    """The existing World phase, reusable without generating a TaskDraft."""
+    status: Literal["SAT", "BLOCKED"]
+    sampling_slot: SamplingSlot
+    distribution: DistributionSpec
+    scenario_spec: Optional[ScenarioSpec] = None
+    build_result: Optional[BuildResult] = None
+    build_attempts: Tuple[BuildResult, ...] = ()
+    world_attempts: Tuple[WorldDesignAttempt, ...] = ()
+    calls: Tuple[DesignerCall, ...] = ()
+    validation_errors: Tuple[str, ...] = ()
 
-    Reference witnesses, Oracle data and private customer proof policy are never
-    added to a Designer prompt. Correction attempts receive rejection reasons only.
-    """
+
+def design_world_slot(provider: DesignerProvider, distribution: DistributionSpec, slot: SamplingSlot, *,
+                      build_budget: Optional[BuildBudget] = None, max_attempts: int = 3) -> WorldDesignRun:
+    """Generate one independently registered World using the native Designer/Builder."""
     distribution, slot = distribution.checked(), slot.checked()
     if slot.distribution_hash != distribution.record_hash:
         raise ValueError("pre-registered sampling slot belongs to another distribution")
-    if customer_scenario_factory is None:
-        raise ValueError("a trusted, private CustomerScenario factory is required before any Designer model call")
-    if max_attempts < 1 or max_attempts > 3:
+    if not 1 <= max_attempts <= 3:
         raise ValueError("Designer correction budget must be between one and three attempts")
-    evidence = tuple(row.checked() for row in training_evidence)
-    allowed_training_hashes = tuple(sorted(set(allowed_training_hashes)))
-    if any(row.source_record_hash not in set(allowed_training_hashes) for row in evidence):
-        raise ValueError("Designer context contains training evidence outside the authorized hash set")
-    build_budget, proof_budget = (build_budget or BuildBudget()).checked(), (proof_budget or ProofBudget()).checked()
+    build_budget = (build_budget or BuildBudget()).checked()
     calls, errors, scenario, build_attempts, world_attempts = [], [], None, [], []
     build = None
     for attempt in range(max_attempts):
@@ -870,6 +863,49 @@ def design_and_certify(provider: DesignerProvider, distribution: DistributionSpe
                                              validation_feedback=feedback)
             if _is_provider_failure(exc):
                 break
+    return WorldDesignRun(
+        status="SAT" if build is not None else "BLOCKED", sampling_slot=slot,
+        distribution=distribution, scenario_spec=scenario,
+        build_result=build if build is not None else candidate_build,
+        build_attempts=tuple(build_attempts), world_attempts=tuple(world_attempts),
+        calls=tuple(calls), validation_errors=tuple(errors))
+
+
+def design_and_certify(provider: DesignerProvider, distribution: DistributionSpec, slot: SamplingSlot, *,
+                       build_budget: Optional[BuildBudget] = None,
+                       proof_budget: Optional[ProofBudget] = None,
+                       allowed_training_hashes=(), history_signatures: Optional[Tuple[str, ...]] = None,
+                       customer_scenario_factory: Optional[Callable[[Any, TaskSpec], ProofCustomerScenario]] = None,
+                       training_evidence: Tuple[DesignerTrainingEvidence, ...] = (),
+                       interaction_certifier: Optional[Callable[[World, TaskSpec, ProofCustomerScenario], EpisodeRecord]] = None,
+                       information_goals_certifiable=False,
+                       delivery_confirmation_available=False,
+                       return_receipt_event_configured=False,
+                       policy_review_event_configured=False,
+                       max_attempts: int = 3) -> DesignerRun:
+    """Run the two LLM phases with bounded compiler feedback and native proof.
+
+    Reference witnesses, Oracle data and private customer proof policy are never
+    added to a Designer prompt. Correction attempts receive rejection reasons only.
+    """
+    distribution, slot = distribution.checked(), slot.checked()
+    if slot.distribution_hash != distribution.record_hash:
+        raise ValueError("pre-registered sampling slot belongs to another distribution")
+    if customer_scenario_factory is None:
+        raise ValueError("a trusted, private CustomerScenario factory is required before any Designer model call")
+    if max_attempts < 1 or max_attempts > 3:
+        raise ValueError("Designer correction budget must be between one and three attempts")
+    evidence = tuple(row.checked() for row in training_evidence)
+    allowed_training_hashes = tuple(sorted(set(allowed_training_hashes)))
+    if any(row.source_record_hash not in set(allowed_training_hashes) for row in evidence):
+        raise ValueError("Designer context contains training evidence outside the authorized hash set")
+    build_budget, proof_budget = (build_budget or BuildBudget()).checked(), (proof_budget or ProofBudget()).checked()
+    world_run = design_world_slot(provider, distribution, slot,
+                                  build_budget=build_budget, max_attempts=max_attempts)
+    scenario, candidate_build = world_run.scenario_spec, world_run.build_result
+    build = candidate_build if world_run.status == "SAT" else None
+    calls, errors = list(world_run.calls), list(world_run.validation_errors)
+    build_attempts, world_attempts = world_run.build_attempts, world_run.world_attempts
     if not scenario or not build or build.status != "SAT":
         # Preserve the last available attempt instead of manufacturing a world.
         return DesignerRun(

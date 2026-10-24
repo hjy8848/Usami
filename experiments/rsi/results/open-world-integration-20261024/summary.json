@@ -1,0 +1,341 @@
+{
+  "source_head_before_changes": "26235b3",
+  "deterministic": {
+    "periods": 2,
+    "statuses": [
+      "READY_FOR_TRAINING",
+      "READY_FOR_TRAINING"
+    ],
+    "native_episodes": 36,
+    "final_goal_reached": 36,
+    "strict_task_success": 36,
+    "oracle_safety": {
+      "PASS": 36
+    },
+    "replay_verified": 36,
+    "distinct_executed_worlds": 7,
+    "online_model_calls": 0,
+    "training_updates": 0,
+    "raw_directory": "/Users/spring/RSI/Usami-rsi-core/outputs/rsi-open-world-integration-20261024",
+    "episode_evidence": [
+      {
+        "file": "native-episodes/06968fd0c72d46bc9295270125535320.json",
+        "sha256": "5380af1c79281ea497209a9d7d2706e9c9753cfca41e8a18fb3e12227b99145a"
+      },
+      {
+        "file": "native-episodes/1ec172d5848c49d6a2414f63cb2b94c6.json",
+        "sha256": "7e004eaaee51c856d56d150b484c1f6543447bdce59fb4ebb258578ea5fc407f"
+      },
+      {
+        "file": "native-episodes/2f3227a3e13241e48529719394d0e699.json",
+        "sha256": "4e6c029d4718a643ae60c53d879cd1af9c375f209c0ce3a94ecc059978dba4d1"
+      },
+      {
+        "file": "native-episodes/b3d2fcd9ada4478d8b93ac8ddd5d2590.json",
+        "sha256": "250c6b905fd1307ed56e42aa7e34cee8362589f033d16c138b5848250b272a67"
+      },
+      {
+        "file": "native-episodes/124a5e67d9fe42e08f5da791e45aa9fe.json",
+        "sha256": "fc2c07f8af68b99e57809214a193322bf5c7f530be019bf30cd1ea23cedfd491"
+      },
+      {
+        "file": "native-episodes/a646c08547f340bfb1b2268adbad1bdc.json",
+        "sha256": "250c6b905fd1307ed56e42aa7e34cee8362589f033d16c138b5848250b272a67"
+      },
+      {
+        "file": "native-episodes/35ef0e7a053e408b9e621dc28661821d.json",
+        "sha256": "bf998c960c521169b81a0cc96af08d94b30ff7c6d1737ea6a9c91c3139533078"
+      },
+      {
+        "file": "native-episodes/0623a9f08861422786735ac40643f848.json",
+        "sha256": "c40b2afd634ad6ca450030cd2587df15bbf4a8d2215f83c72ff7ed849352e9fd"
+      },
+      {
+        "file": "native-episodes/b31a5fcf19884f348252e1aa69ff013a.json",
+        "sha256": "fc2c07f8af68b99e57809214a193322bf5c7f530be019bf30cd1ea23cedfd491"
+      },
+      {
+        "file": "native-episodes/f4c5f9c18c6e44a98bae0d3160820c18.json",
+        "sha256": "5380af1c79281ea497209a9d7d2706e9c9753cfca41e8a18fb3e12227b99145a"
+      },
+      {
+        "file": "native-episodes/e67b424128c0461fba336af208fe0b62.json",
+        "sha256": "5380af1c79281ea497209a9d7d2706e9c9753cfca41e8a18fb3e12227b99145a"
+      },
+      {
+        "file": "native-episodes/9c72802514d04d519b6889b4728c3864.json",
+        "sha256": "aa3e41928a92ea0e5b12542a87ca208ce0121d0289a991634beff23e7430ea40"
+      },
+      {
+        "file": "native-episodes/5b9a50657b6e4d7abdd9099d582131d4.json",
+        "sha256": "5380af1c79281ea497209a9d7d2706e9c9753cfca41e8a18fb3e12227b99145a"
+      },
+      {
+        "file": "native-episodes/6ee4c4c224ea4926a8e83af5d9fe2754.json",
+        "sha256": "4e6c029d4718a643ae60c53d879cd1af9c375f209c0ce3a94ecc059978dba4d1"
+      },
+      {
+        "file": "native-episodes/140d33ead6a54a5299da5fd9b56fe700.json",
+        "sha256": "7e004eaaee51c856d56d150b484c1f6543447bdce59fb4ebb258578ea5fc407f"
+      },
+      {
+        "file": "native-episodes/3110da606fa34e78a03bd786627dad8b.json",
+        "sha256": "fc2c07f8af68b99e57809214a193322bf5c7f530be019bf30cd1ea23cedfd491"
+      },
+      {
+        "file": "native-episodes/07b86b9f8eac4330849b7a3f01b06fe0.json",
+        "sha256": "5380af1c79281ea497209a9d7d2706e9c9753cfca41e8a18fb3e12227b99145a"
+      },
+      {
+        "file": "native-episodes/7ed5724d1d9c45caa09f502f32cb6921.json",
+        "sha256": "250c6b905fd1307ed56e42aa7e34cee8362589f033d16c138b5848250b272a67"
+      },
+      {
+        "file": "native-episodes/0e6a082f2d484911af74ec6b5faaa8ac.json",
+        "sha256": "250c6b905fd1307ed56e42aa7e34cee8362589f033d16c138b5848250b272a67"
+      },
+      {
+        "file": "native-episodes/7902672908c044b49f5af8fb692cec7a.json",
+        "sha256": "5380af1c79281ea497209a9d7d2706e9c9753cfca41e8a18fb3e12227b99145a"
+      },
+      {
+        "file": "native-episodes/4bd90e253dd346d9b98cc3c7409700f0.json",
+        "sha256": "250c6b905fd1307ed56e42aa7e34cee8362589f033d16c138b5848250b272a67"
+      },
+      {
+        "file": "native-episodes/5318850dac384d4b882ff62e9bcb0178.json",
+        "sha256": "4e6c029d4718a643ae60c53d879cd1af9c375f209c0ce3a94ecc059978dba4d1"
+      },
+      {
+        "file": "native-episodes/3667ae8cd6c34c76a93823e5a4dbb942.json",
+        "sha256": "250c6b905fd1307ed56e42aa7e34cee8362589f033d16c138b5848250b272a67"
+      },
+      {
+        "file": "native-episodes/b69f055608114471a7cdce958ead28a2.json",
+        "sha256": "4e6c029d4718a643ae60c53d879cd1af9c375f209c0ce3a94ecc059978dba4d1"
+      },
+      {
+        "file": "native-episodes/08f724a065af4a689922c296cb971449.json",
+        "sha256": "c40b2afd634ad6ca450030cd2587df15bbf4a8d2215f83c72ff7ed849352e9fd"
+      },
+      {
+        "file": "native-episodes/85e9471d8e9a4c279ca80951f12f81d3.json",
+        "sha256": "5380af1c79281ea497209a9d7d2706e9c9753cfca41e8a18fb3e12227b99145a"
+      },
+      {
+        "file": "native-episodes/9a87dc62f6bb4a26ac1df36c7fc97163.json",
+        "sha256": "4e6c029d4718a643ae60c53d879cd1af9c375f209c0ce3a94ecc059978dba4d1"
+      },
+      {
+        "file": "native-episodes/3bd03e63de8949de9f6014a6e300d311.json",
+        "sha256": "4e6c029d4718a643ae60c53d879cd1af9c375f209c0ce3a94ecc059978dba4d1"
+      },
+      {
+        "file": "native-episodes/97bcaa5efdea4c68894bdd5778253b31.json",
+        "sha256": "250c6b905fd1307ed56e42aa7e34cee8362589f033d16c138b5848250b272a67"
+      },
+      {
+        "file": "native-episodes/a5de8bc4c43646c7bc199a20f784a0d0.json",
+        "sha256": "4e6c029d4718a643ae60c53d879cd1af9c375f209c0ce3a94ecc059978dba4d1"
+      },
+      {
+        "file": "native-episodes/430833e4417b4d9cb89f6364864b5d8b.json",
+        "sha256": "fc2c07f8af68b99e57809214a193322bf5c7f530be019bf30cd1ea23cedfd491"
+      },
+      {
+        "file": "native-episodes/72059f751e8c43eba9435e5a41635153.json",
+        "sha256": "4e6c029d4718a643ae60c53d879cd1af9c375f209c0ce3a94ecc059978dba4d1"
+      },
+      {
+        "file": "native-episodes/b4213a556685471bad00ef7c16e29195.json",
+        "sha256": "bf998c960c521169b81a0cc96af08d94b30ff7c6d1737ea6a9c91c3139533078"
+      },
+      {
+        "file": "native-episodes/b0521c17624e4571ba8e1c1731ed3857.json",
+        "sha256": "aa3e41928a92ea0e5b12542a87ca208ce0121d0289a991634beff23e7430ea40"
+      },
+      {
+        "file": "native-episodes/fa704be6063d498c85e3df56231802a9.json",
+        "sha256": "5380af1c79281ea497209a9d7d2706e9c9753cfca41e8a18fb3e12227b99145a"
+      },
+      {
+        "file": "native-episodes/fc45a715a2fa43a39acd14d6d56fdd83.json",
+        "sha256": "250c6b905fd1307ed56e42aa7e34cee8362589f033d16c138b5848250b272a67"
+      }
+    ],
+    "worlds_per_period": [
+      3,
+      3
+    ],
+    "distinct_structures_per_period": [
+      3,
+      3
+    ]
+  },
+  "live_designer": [
+    {
+      "population": "existing-worlds",
+      "file": "validate-designer-attempt-001.json",
+      "status": "UNVERIFIED",
+      "error_code": null,
+      "receipt": {
+        "status": "UNVERIFIED",
+        "reason_code": "NO_MATCH"
+      },
+      "request": "The device arrived damaged and I need a replacement. Also, the lamp is the wrong item and I want a refund for it.",
+      "prompt_tokens": 3729,
+      "completion_tokens": 2095,
+      "archive_ref": "adad855e3c10cf26a60cf2a589300cac646f1ddeeac3f2fc14dbcceefebc0a05",
+      "period_ref": "d0b00b495931fa515d4a1aa2eef0f0d5ae9a30b3fbd6b7b7a68f18806b0da1ac"
+    },
+    {
+      "population": "existing-worlds",
+      "file": "validate-designer-attempt-002.json",
+      "status": "FAILED",
+      "error_code": "DESIGNER_SCHEMA_INVALID",
+      "receipt": null,
+      "request": null,
+      "prompt_tokens": 4233,
+      "completion_tokens": 2296,
+      "archive_ref": "6c9f2524ee2be8e5f1c2e0e76db37d51437ac1cdbc3cff4aa72fa84fd7dd190b",
+      "period_ref": "d0b00b495931fa515d4a1aa2eef0f0d5ae9a30b3fbd6b7b7a68f18806b0da1ac"
+    },
+    {
+      "population": "existing-worlds",
+      "file": "validate-designer-attempt-003.json",
+      "status": "CERTIFIED",
+      "error_code": null,
+      "receipt": {
+        "status": "CERTIFIED",
+        "task_ref": "open-8e511ac82415a50e15a19e90e6bccd0c6a19bc45504e1142926dc3f6f7502850",
+        "certificate_ref": "608b1a68db7616abc0d3d7a87a6eaf0fa5bcf3513fc44b09cce40c0bf020e6a2",
+        "certification_scope": "usami_v2.native_reference_task_certification",
+        "frozen": true
+      },
+      "request": "I received a damaged device, I want a refund.",
+      "prompt_tokens": 4078,
+      "completion_tokens": 1776,
+      "archive_ref": "f397ab8a61646464b72549d0e8bd72bc4db1dac1962688ec65f5ae6cd9029607",
+      "period_ref": "d0b00b495931fa515d4a1aa2eef0f0d5ae9a30b3fbd6b7b7a68f18806b0da1ac"
+    },
+    {
+      "population": "generated-worlds",
+      "file": "attempt-001.json",
+      "status": "UNVERIFIED",
+      "error_code": null,
+      "receipt": {
+        "status": "UNVERIFIED",
+        "reason_code": "REFERENCE_UNPROVEN"
+      },
+      "request": "My espresso machine arrived damaged and I need a replacement.",
+      "prompt_tokens": 3842,
+      "completion_tokens": 1263,
+      "archive_ref": "89b5a8ee61e87e39588828f8c685fcfe6fac0819d571792ebbfb47a407d82676",
+      "period_ref": "0bae5db341016da339631a33a3ac694c14ae55c7e5b787cf80e2104989cccb06"
+    },
+    {
+      "population": "generated-worlds",
+      "file": "attempt-002.json",
+      "status": "UNVERIFIED",
+      "error_code": null,
+      "receipt": {
+        "status": "UNVERIFIED",
+        "reason_code": "REFERENCE_UNPROVEN"
+      },
+      "request": "My coffee grinder arrived damaged and I need a replacement.",
+      "prompt_tokens": 4226,
+      "completion_tokens": 915,
+      "archive_ref": "1bd0dbbbce690c1323642a60d2b134332914d4944c01fde0cff60260227d8038",
+      "period_ref": "0bae5db341016da339631a33a3ac694c14ae55c7e5b787cf80e2104989cccb06"
+    },
+    {
+      "population": "generated-worlds",
+      "file": "attempt-003.json",
+      "status": "FAILED",
+      "error_code": "DESIGNER_SCHEMA_INVALID",
+      "receipt": null,
+      "request": null,
+      "prompt_tokens": 4248,
+      "completion_tokens": 1496,
+      "archive_ref": "819f6caa2bb516ffda504f25f509b1422286d59817b93a20823f21b3d806d2fb",
+      "period_ref": "0bae5db341016da339631a33a3ac694c14ae55c7e5b787cf80e2104989cccb06"
+    },
+    {
+      "population": "generated-worlds",
+      "file": "attempt-004.json",
+      "status": "FAILED",
+      "error_code": "DESIGNER_SCHEMA_INVALID",
+      "receipt": null,
+      "request": null,
+      "prompt_tokens": 4192,
+      "completion_tokens": 606,
+      "archive_ref": "ba58431223c2d2a0c7a640cb2bf5ce903d24abee4621988a1441ac49d8e2c06b",
+      "period_ref": "0bae5db341016da339631a33a3ac694c14ae55c7e5b787cf80e2104989cccb06"
+    },
+    {
+      "population": "generated-worlds",
+      "file": "attempt-005.json",
+      "status": "FAILED",
+      "error_code": "DESIGNER_SCHEMA_INVALID",
+      "receipt": null,
+      "request": null,
+      "prompt_tokens": 4228,
+      "completion_tokens": 1167,
+      "archive_ref": "d46e9a3e04f09058a8691e58622f9cf296f4e9c916583a014bcadfd114f2b069",
+      "period_ref": "0bae5db341016da339631a33a3ac694c14ae55c7e5b787cf80e2104989cccb06"
+    },
+    {
+      "population": "generated-worlds",
+      "file": "glm-attempt-001.json",
+      "status": "FAILED",
+      "error_code": "DESIGNER_SCHEMA_INVALID",
+      "receipt": null,
+      "request": null,
+      "prompt_tokens": 3809,
+      "completion_tokens": 2929,
+      "archive_ref": "39a65ac31c95c21278dceb20eb5bb79f898e7ca5e3af2d6306bd0b1af107090f",
+      "period_ref": "0bae5db341016da339631a33a3ac694c14ae55c7e5b787cf80e2104989cccb06"
+    }
+  ],
+  "live_world_generation": {
+    "statuses": [
+      "SAT",
+      "SAT"
+    ],
+    "distinct_structures": 2,
+    "shapes": [
+      {
+        "customers": 2,
+        "orders": 3,
+        "lines": 5,
+        "skus": 4,
+        "warehouses": 3
+      },
+      {
+        "customers": 2,
+        "orders": 3,
+        "lines": 5,
+        "skus": 5,
+        "warehouses": 2
+      }
+    ],
+    "calls": 2,
+    "prompt_tokens": 4324,
+    "completion_tokens": 10832,
+    "native_world_verification": true
+  },
+  "tests": {
+    "existing_focused_passed": 47,
+    "new_integration_passed": 8
+  },
+  "live_usage": {
+    "experiment_calls": 11,
+    "prompt_tokens": 40909,
+    "completion_tokens": 25375,
+    "unknown_usage_calls": 0,
+    "additional_gateway_availability_probe_calls": 1,
+    "online_service_calls": 0,
+    "reflection_calls": 0,
+    "parameter_updates": 0
+  }
+}

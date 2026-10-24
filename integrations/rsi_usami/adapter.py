@@ -137,6 +137,17 @@ class UsamiAdapter:
                 "score": "native strict_task_success confirmed true; UNKNOWN stays unresolved",
                 "observations": "authenticated identity, public Customer messages and native tool results"}
 
+    def register_task(self, task_ref, native_task):
+        """Register a Host-compiled task before its first native execution."""
+        if not isinstance(task_ref, str) or not task_ref:
+            raise ValueError("native task reference is required")
+        if not isinstance(native_task, NativeTask):
+            raise TypeError("UsamiAdapter accepts only native Usami task bindings")
+        if task_ref in self.tasks:
+            raise ValueError("native task reference is already registered")
+        self.tasks[task_ref] = native_task
+        return task_ref
+
     def research_feedback(self, result):
         """Return only baseline evidence visible to the research Agent.
 

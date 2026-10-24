@@ -28,6 +28,17 @@ class NativePackageVerifier:
     def __init__(self, tasks, archive):
         self.tasks, self.archive = dict(tasks), archive
 
+    def register(self, task_ref, native, origin_ref, scenario, certificate):
+        """Atomically add a frozen native task only after its Reference proof checks."""
+        if not isinstance(task_ref, str) or not task_ref or task_ref in self.tasks:
+            raise ValueError("native task reference is empty or already registered")
+        self.tasks[task_ref] = native
+        try:
+            return self.issue(task_ref, origin_ref, scenario, certificate)
+        except Exception:
+            del self.tasks[task_ref]
+            raise
+
     def issue(self, task_ref, origin_ref, scenario, certificate):
         native = self.tasks[task_ref]
         if scenario.customer_id != native.customer_profile.customer_id:

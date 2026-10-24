@@ -41,7 +41,7 @@ python -m pytest tests/test_rsi_core.py tests/test_rsi_evaluation.py \
 | 阶段 | 已有证据 | 尚未满足的要求 |
 | --- | --- | --- |
 | P0 | 原生公开请求与 S0 请求逐项一致；已认证退款夹具经原生执行与 Replay；可信包注册、原生证书核验、分区抽样与恢复 | 正式来源审核及足量自然任务池、固定 Customer/业务模型实际配置、适配预算完整登记 |
-| P1 | v0.1 容器与递归夹具；v0.2 新增完整 `(B,P,K)` Service / `(φ,M)` Designer 快照、挑战基线顺序、直接任务集和 K+1 周期编排；新增针对性合同测试 | 周期编排测试使用采集器替身；完整 Native Adapter + 动态认证器周期尚未端到端运行；固定预算恢复尚未验收 |
+| P1 | v0.1 容器与递归夹具；v0.2 新增完整 `(B,P,K)` Service / `(φ,M)` Designer 快照、挑战基线顺序、直接任务集和 K+1 周期编排；`usami_v2` 原生 Adapter + 动态任务认证的完整周期已由确定性 smoke 端到端运行 | 固定预算恢复尚未验收；自然任务分布和真实模型周期尚未运行 |
 | P2 | 可执行 probe 与独立 query 路径 | 自然失败固定候选集、随机/难度/分歧/学习选择和反馈遮蔽对照及独立 query 结果 |
 | P3 | 根 token/logprob/mask 数据协议；verl 0.9.1 的可选 AgentLoop、归档轨迹转换与 GRPO 单组导出代码（未运行） | 可训练研究模型、verl 运行时验证、真实参数更新、checkpoint 身份核对和独立开发比较 |
 | P4 | SELF_EDIT、Adapt/F、C_select 选择；G 条根轨迹采集、私有配对奖励；新增 `r_service` / `r_self` 分组优势与 verl 周期数据导出代码（未运行） | verl 加权 loss hook、训练启动器、checkpoint 对照、实际参数更新与自然任务数据 |
@@ -141,3 +141,18 @@ python -m experiments.rsi.examples.smoke_v02_period \
 输出包含周期摘要、快照、候选、认证记录、根轨迹、选择/奖励比较和 Replay 证据。本机运行结果保存在 `outputs/rsi-v02-period-smoke-20261024-final/`：Service 2/2 根提交、Gate 保留 S0；SELF_EDIT 2/2 根提交、Gate 选择并发布 M1；18 次算术任务 Replay、4 条研究事件链复核通过；周期状态 `COMPLETED`。
 
 这是零 API 的协议集成夹具。候选代码由固定脚本模型响应提供，token ID / logprob 是满足轨迹结构的合成值；identity hook 没有启动 verl、优化参数或更新 φ。算术 Adapter 也不等同于 Usami 电商业务、原生 Oracle 或自然任务分布。它证明 v0.2 周期各阶段能在同一入口下运行并归档，不证明模型学习或 RSI 能力提升。
+
+## RSI v0.2 接入原生 Usami 周期（2026-10-24）
+
+新增 `experiments/rsi/examples/smoke_v02_usami_period.py`，将 RSI Core 的 `run_period()` 实际接到 `integrations/rsi_usami.UsamiAdapter`。任务由原生 `usami_v2` Scenario Builder 创建，在冻结世界中由 `TaskSpecV2` 表达，再用现有 `certify_task / verify_task_certificate` 登记；Service 执行经过原生 Customer、Engine、Oracle、Episode 和 Replay。Designer 产生的新任务通过明确的动态注册接口进入 Adapter 与 `NativePackageVerifier`，不是直接改写内部字典。
+
+可重复运行：
+
+```sh
+PYTHONPATH=. python -m experiments.rsi.examples.smoke_v02_usami_period \
+  --output outputs/rsi-v02-usami-period-NEW
+```
+
+本次实际运行 `outputs/rsi-v02-usami-period-20261024-integrated/summary.json`：周期为 `READY_FOR_TRAINING`，36 条原生 Usami Episode 全部 Replay verified；两个 Service 根均提交成功，候选经配对选择因 `NO_PAIRED_GAIN` 保留 S0；Designer 的 M1 候选在固定 C_select 夹具上被选中。运行及回归测试均使用脚本化响应，无在线模型调用、无 verl 训练、无参数更新。RSI 专项回归 **51 项通过，62.10 秒**；`py_compile` 与 `git diff --check` 通过。
+
+这证明 RSI 周期代码已经能消费真实 Usami v2 任务、原生裁判与 Replay，并将通过 Gate 的 Designer 版本接入下一周期快照。候选和 Customer 均是固定测试程序，任务集合很小且人为构造，因此它只验证框架接线和归档，不证明自主出题质量、模型学习收益或 RSI 效果。这里接入的是 `usami_v2` Commerce runtime；尚未把 RSI Core 接入旧的八领域 `usami_benchmark` 注册表或网页 Research Studio。

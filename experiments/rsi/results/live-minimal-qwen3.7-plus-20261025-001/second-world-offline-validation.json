@@ -1,0 +1,34 @@
+{
+  "source_call_index": 2,
+  "validation_method": "offline replay of the exact recorded ScenarioDraft through native ScenarioDraft schema, compile, build_world and verify_build; no additional model request",
+  "sampling_slot": {
+    "stratum_id": "multi-line-mixed-issues",
+    "seed": 1811758832,
+    "slot_id": 1
+  },
+  "stratum_focus": "One customer owns an order with multiple product families and distinct issues.",
+  "proposal_validation": "PASS",
+  "scenario_compile": "PASS",
+  "builder_status": "SAT",
+  "builder_reason": "constructed business constraints satisfied; task/interaction not yet certified",
+  "verify_build": "PASS",
+  "world_hash": "6018f3178ba726434649bb974a80fb7ced674df9b516b9aefe80b3b1babfc32c",
+  "topology": {
+    "customers": 1,
+    "orders": 1,
+    "lines": 3,
+    "sku_families": [
+      "laptop",
+      "mouse",
+      "headset"
+    ],
+    "line_issues": [
+      "damaged",
+      "wrong_item",
+      "missing_parts"
+    ],
+    "warehouses": 1,
+    "stock_constraints": 3
+  },
+  "registered_in_completed_world_period": false
+}

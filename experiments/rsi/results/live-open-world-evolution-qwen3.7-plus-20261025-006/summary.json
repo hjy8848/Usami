@@ -2564,6 +2564,39 @@
     "selection_status": "NOT_RUN_SINGLE_CHALLENGE_DIAGNOSTIC",
     "submitted_ref": null
   },
+  "m_self_edit_300s_continuation": {
+    "archive_ref": "72f740743a53f2e28c47f798ec456a73eebdbf64781d6f351129bbc2dbd0ac10",
+    "candidate": {
+      "parent_ref": "e00f2f8ca806e3746c665c37a191e5c5a6b4313e3f51b55b52e64fcac46db08c",
+      "ref": "f5f045b4abf194ade9aaf54f38c24ddbf565fe1cc7b41d30a316f3751e99af6b",
+      "source_bytes": 22753,
+      "static_contract": "M"
+    },
+    "m_parent_ref": "e00f2f8ca806e3746c665c37a191e5c5a6b4313e3f51b55b52e64fcac46db08c",
+    "m_result": {
+      "archive_ref": "72f740743a53f2e28c47f798ec456a73eebdbf64781d6f351129bbc2dbd0ac10",
+      "candidate_refs": [
+        "f5f045b4abf194ade9aaf54f38c24ddbf565fe1cc7b41d30a316f3751e99af6b"
+      ],
+      "error": "",
+      "parent_ref": "e00f2f8ca806e3746c665c37a191e5c5a6b4313e3f51b55b52e64fcac46db08c",
+      "selected_by_independent_gate": false,
+      "status": "NOOP",
+      "submitted_ref": "e00f2f8ca806e3746c665c37a191e5c5a6b4313e3f51b55b52e64fcac46db08c"
+    },
+    "model_call_count": 1,
+    "provider_call": {
+      "call_index": 1,
+      "completion_tokens": 6403,
+      "prompt_tokens": 10754,
+      "request_bytes": 41526,
+      "status": "ok",
+      "total_tokens": 17157
+    },
+    "selection": "NOT_RUN_SINGLE_CHALLENGE_DIAGNOSTIC",
+    "status": "M_CANDIDATE_STAGED_NOT_SELECTED",
+    "training": "NOT_RUN"
+  },
   "model": "dashscope/qwen3.7-plus",
   "model_call_count": 29,
   "parameter_training": "NOT_RUN",

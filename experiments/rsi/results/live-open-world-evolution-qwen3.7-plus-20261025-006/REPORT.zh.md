@@ -32,3 +32,7 @@
 - `research-archive/`、`programs/`、`task-records/`：研究动作、程序与证书快照。
 
 这是单世界、单挑战的工程诊断。基线和候选在同一题上的比较不是独立选代，不能据此声称 RSI 能力提升。
+
+## M 自修改续跑
+
+首次 M 请求超时后，按 300 秒超时仅重试 M 阶段一次，复用相同公开上下文。模型成功生成 M 候选并通过静态接口检查；由于没有独立 M Probe，Host 保留父版本，候选未执行或选中。详见 [`m-self-edit-retry-300s/REPORT.zh.md`](m-self-edit-retry-300s/REPORT.zh.md)。

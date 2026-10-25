@@ -1,0 +1,667 @@
+[
+  {
+    "roots": [
+      {
+        "baseline_runs": [
+          {
+            "feedback": {
+              "operations": [
+                {
+                  "operation": {
+                    "name": "list_customer_orders",
+                    "params": {},
+                    "resource_id": "merchant_f30b75d26d2a",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "orders": [
+                        {
+                          "customer_id": "customer_4472485365a6",
+                          "delivered_at": "2026-01-08T12:00:00Z",
+                          "id": "order_e6ad2e9b814e",
+                          "merchant_id": "merchant_f30b75d26d2a",
+                          "paid_cents": 100897,
+                          "payment_channel": "original-card"
+                        }
+                      ]
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "get_order_details",
+                    "params": {},
+                    "resource_id": "order_e6ad2e9b814e",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "lines": [
+                        {
+                          "allocated_paid_cents": 89900,
+                          "id": "line_0b57113e75b1",
+                          "order_id": "order_e6ad2e9b814e",
+                          "quantity": 1,
+                          "sku_id": "sku_80e8a6489678"
+                        },
+                        {
+                          "allocated_paid_cents": 5998,
+                          "id": "line_4a3fde875166",
+                          "order_id": "order_e6ad2e9b814e",
+                          "quantity": 2,
+                          "sku_id": "sku_12bc5d1983a2"
+                        },
+                        {
+                          "allocated_paid_cents": 4999,
+                          "id": "line_c32c43f0464d",
+                          "order_id": "order_e6ad2e9b814e",
+                          "quantity": 1,
+                          "sku_id": "sku_7e27650e88b7"
+                        }
+                      ],
+                      "order": {
+                        "customer_id": "customer_4472485365a6",
+                        "delivered_at": "2026-01-08T12:00:00Z",
+                        "id": "order_e6ad2e9b814e",
+                        "merchant_id": "merchant_f30b75d26d2a",
+                        "paid_cents": 100897,
+                        "payment_channel": "original-card"
+                      }
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "get_sku_details",
+                    "params": {},
+                    "resource_id": "sku_80e8a6489678",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "sku": {
+                        "attributes": {
+                          "ram": "16GB",
+                          "screen": "15inch"
+                        },
+                        "id": "sku_80e8a6489678",
+                        "merchant_id": "merchant_f30b75d26d2a",
+                        "price_cents": 89900,
+                        "product_family": "laptop",
+                        "return_days": 30,
+                        "return_required": true,
+                        "revision": 0
+                      }
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "get_sku_details",
+                    "params": {},
+                    "resource_id": "sku_12bc5d1983a2",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "sku": {
+                        "attributes": {
+                          "color": "black"
+                        },
+                        "id": "sku_12bc5d1983a2",
+                        "merchant_id": "merchant_f30b75d26d2a",
+                        "price_cents": 2999,
+                        "product_family": "mouse",
+                        "return_days": 15,
+                        "return_required": true,
+                        "revision": 0
+                      }
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "get_sku_details",
+                    "params": {},
+                    "resource_id": "sku_7e27650e88b7",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "sku": {
+                        "attributes": {
+                          "ports": "7"
+                        },
+                        "id": "sku_7e27650e88b7",
+                        "merchant_id": "merchant_f30b75d26d2a",
+                        "price_cents": 4999,
+                        "product_family": "hub",
+                        "return_days": 30,
+                        "return_required": false,
+                        "revision": 0
+                      }
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "open_remedy_case",
+                    "params": {
+                      "issue": "missing_parts",
+                      "quantity": 1
+                    },
+                    "resource_id": "line_c32c43f0464d",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "case_id": "case_ad3b5c4deee3324ea7ae",
+                      "status": "open"
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "get_case_status",
+                    "params": {},
+                    "resource_id": "case_ad3b5c4deee3324ea7ae",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "case": {
+                        "committed_quote_id": null,
+                        "evidence_id": null,
+                        "id": "case_ad3b5c4deee3324ea7ae",
+                        "issue": "missing_parts",
+                        "line_id": "line_c32c43f0464d",
+                        "review_approved": false,
+                        "review_requested": false,
+                        "status": "open",
+                        "unit_indices": [
+                          0
+                        ]
+                      },
+                      "evidence": [
+                        {
+                          "evidence_id": "evidence_197712c3cff6",
+                          "issue": "missing_parts"
+                        }
+                      ],
+                      "quotes": [],
+                      "returns": []
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "verify_submitted_evidence",
+                    "params": {
+                      "evidence_id": "evidence_197712c3cff6"
+                    },
+                    "resource_id": "case_ad3b5c4deee3324ea7ae",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "case_id": "case_ad3b5c4deee3324ea7ae",
+                      "verified": true
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "prepare_remedy_quote",
+                    "params": {
+                      "pickup_slot": null,
+                      "remedy": "refund",
+                      "target_sku_id": null,
+                      "warehouse_id": null
+                    },
+                    "resource_id": "case_ad3b5c4deee3324ea7ae",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "quote": {
+                        "case_id": "case_ad3b5c4deee3324ea7ae",
+                        "customer_id": "customer_4472485365a6",
+                        "extra_charge_cents": 0,
+                        "id": "quote_d883f8a0382dc0175648",
+                        "inventory_id": null,
+                        "inventory_revision": null,
+                        "payment_channel": "original-card",
+                        "pickup_slot": null,
+                        "promised_arrival": null,
+                        "quantity": 1,
+                        "refund_cents": 4999,
+                        "remedy": "refund",
+                        "return_required": false,
+                        "revision": 1,
+                        "route_id": null,
+                        "route_revision": null,
+                        "sku_revision": null,
+                        "status": "prepared",
+                        "target_sku_id": null,
+                        "terms_hash": "3a024de3ba6e2520a7709d54758682095a9cf7c3cb049ca94a1164e34999abd0",
+                        "valid_until": "2026-01-15T13:00:00Z"
+                      }
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "commit_accepted_quote",
+                    "params": {},
+                    "resource_id": "quote_d883f8a0382dc0175648",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {
+                      "case_status": "resolved",
+                      "quote_id": "quote_d883f8a0382dc0175648"
+                    },
+                    "error_code": null,
+                    "success": true
+                  }
+                },
+                {
+                  "operation": {
+                    "name": "release_accepted_refund",
+                    "params": {},
+                    "resource_id": "case_ad3b5c4deee3324ea7ae",
+                    "scope_id": "merchant_f30b75d26d2a"
+                  },
+                  "result": {
+                    "data": {},
+                    "error_code": "ALREADY_SETTLED",
+                    "success": false
+                  }
+                }
+              ],
+              "protocol": "rsi-native-commerce-baseline-v0.3",
+              "run_ref": "6c77e673cbe04b7694e2bf7572684754",
+              "score": 0.0,
+              "status": "UNKNOWN",
+              "terminal_status": "customer_finished"
+            },
+            "replay_verified": true,
+            "score": 0.0,
+            "status": "UNKNOWN",
+            "task_ref": "open-f0ead1a4fae0bb1c39cd7244c577c499c9aacd10451bdb64e30ad80c48c7d38c"
+          }
+        ],
+        "candidate_feedback": [
+          {
+            "candidate_ref": "a515a84b01c0047decc1b7cfef5a460371ee613670537041bc9af7282426903a",
+            "kind": "STAGE",
+            "status": "VALID"
+          },
+          {
+            "candidate_ref": "a515a84b01c0047decc1b7cfef5a460371ee613670537041bc9af7282426903a",
+            "kind": "PROBE",
+            "probe_ref": "open-f0ead1a4fae0bb1c39cd7244c577c499c9aacd10451bdb64e30ad80c48c7d38c",
+            "result": {
+              "feedback": {
+                "operations": [
+                  {
+                    "operation": {
+                      "name": "list_customer_orders",
+                      "params": {},
+                      "resource_id": "merchant_f30b75d26d2a",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "orders": [
+                          {
+                            "customer_id": "customer_4472485365a6",
+                            "delivered_at": "2026-01-08T12:00:00Z",
+                            "id": "order_e6ad2e9b814e",
+                            "merchant_id": "merchant_f30b75d26d2a",
+                            "paid_cents": 100897,
+                            "payment_channel": "original-card"
+                          }
+                        ]
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  },
+                  {
+                    "operation": {
+                      "name": "get_order_details",
+                      "params": {},
+                      "resource_id": "order_e6ad2e9b814e",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "lines": [
+                          {
+                            "allocated_paid_cents": 89900,
+                            "id": "line_0b57113e75b1",
+                            "order_id": "order_e6ad2e9b814e",
+                            "quantity": 1,
+                            "sku_id": "sku_80e8a6489678"
+                          },
+                          {
+                            "allocated_paid_cents": 5998,
+                            "id": "line_4a3fde875166",
+                            "order_id": "order_e6ad2e9b814e",
+                            "quantity": 2,
+                            "sku_id": "sku_12bc5d1983a2"
+                          },
+                          {
+                            "allocated_paid_cents": 4999,
+                            "id": "line_c32c43f0464d",
+                            "order_id": "order_e6ad2e9b814e",
+                            "quantity": 1,
+                            "sku_id": "sku_7e27650e88b7"
+                          }
+                        ],
+                        "order": {
+                          "customer_id": "customer_4472485365a6",
+                          "delivered_at": "2026-01-08T12:00:00Z",
+                          "id": "order_e6ad2e9b814e",
+                          "merchant_id": "merchant_f30b75d26d2a",
+                          "paid_cents": 100897,
+                          "payment_channel": "original-card"
+                        }
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  },
+                  {
+                    "operation": {
+                      "name": "get_sku_details",
+                      "params": {},
+                      "resource_id": "sku_80e8a6489678",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "sku": {
+                          "attributes": {
+                            "ram": "16GB",
+                            "screen": "15inch"
+                          },
+                          "id": "sku_80e8a6489678",
+                          "merchant_id": "merchant_f30b75d26d2a",
+                          "price_cents": 89900,
+                          "product_family": "laptop",
+                          "return_days": 30,
+                          "return_required": true,
+                          "revision": 0
+                        }
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  },
+                  {
+                    "operation": {
+                      "name": "get_sku_details",
+                      "params": {},
+                      "resource_id": "sku_12bc5d1983a2",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "sku": {
+                          "attributes": {
+                            "color": "black"
+                          },
+                          "id": "sku_12bc5d1983a2",
+                          "merchant_id": "merchant_f30b75d26d2a",
+                          "price_cents": 2999,
+                          "product_family": "mouse",
+                          "return_days": 15,
+                          "return_required": true,
+                          "revision": 0
+                        }
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  },
+                  {
+                    "operation": {
+                      "name": "get_sku_details",
+                      "params": {},
+                      "resource_id": "sku_7e27650e88b7",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "sku": {
+                          "attributes": {
+                            "ports": "7"
+                          },
+                          "id": "sku_7e27650e88b7",
+                          "merchant_id": "merchant_f30b75d26d2a",
+                          "price_cents": 4999,
+                          "product_family": "hub",
+                          "return_days": 30,
+                          "return_required": false,
+                          "revision": 0
+                        }
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  },
+                  {
+                    "operation": {
+                      "name": "open_remedy_case",
+                      "params": {
+                        "issue": "missing_parts",
+                        "quantity": 1
+                      },
+                      "resource_id": "line_c32c43f0464d",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "case_id": "case_ad3b5c4deee3324ea7ae",
+                        "status": "open"
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  },
+                  {
+                    "operation": {
+                      "name": "get_case_status",
+                      "params": {},
+                      "resource_id": "case_ad3b5c4deee3324ea7ae",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "case": {
+                          "committed_quote_id": null,
+                          "evidence_id": null,
+                          "id": "case_ad3b5c4deee3324ea7ae",
+                          "issue": "missing_parts",
+                          "line_id": "line_c32c43f0464d",
+                          "review_approved": false,
+                          "review_requested": false,
+                          "status": "open",
+                          "unit_indices": [
+                            0
+                          ]
+                        },
+                        "evidence": [
+                          {
+                            "evidence_id": "evidence_197712c3cff6",
+                            "issue": "missing_parts"
+                          }
+                        ],
+                        "quotes": [],
+                        "returns": []
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  },
+                  {
+                    "operation": {
+                      "name": "verify_submitted_evidence",
+                      "params": {
+                        "evidence_id": "evidence_197712c3cff6"
+                      },
+                      "resource_id": "case_ad3b5c4deee3324ea7ae",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "case_id": "case_ad3b5c4deee3324ea7ae",
+                        "verified": true
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  },
+                  {
+                    "operation": {
+                      "name": "prepare_remedy_quote",
+                      "params": {
+                        "pickup_slot": null,
+                        "remedy": "refund",
+                        "target_sku_id": null,
+                        "warehouse_id": null
+                      },
+                      "resource_id": "case_ad3b5c4deee3324ea7ae",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "quote": {
+                          "case_id": "case_ad3b5c4deee3324ea7ae",
+                          "customer_id": "customer_4472485365a6",
+                          "extra_charge_cents": 0,
+                          "id": "quote_d883f8a0382dc0175648",
+                          "inventory_id": null,
+                          "inventory_revision": null,
+                          "payment_channel": "original-card",
+                          "pickup_slot": null,
+                          "promised_arrival": null,
+                          "quantity": 1,
+                          "refund_cents": 4999,
+                          "remedy": "refund",
+                          "return_required": false,
+                          "revision": 1,
+                          "route_id": null,
+                          "route_revision": null,
+                          "sku_revision": null,
+                          "status": "prepared",
+                          "target_sku_id": null,
+                          "terms_hash": "3a024de3ba6e2520a7709d54758682095a9cf7c3cb049ca94a1164e34999abd0",
+                          "valid_until": "2026-01-15T13:00:00Z"
+                        }
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  },
+                  {
+                    "operation": {
+                      "name": "commit_accepted_quote",
+                      "params": {},
+                      "resource_id": "quote_d883f8a0382dc0175648",
+                      "scope_id": "merchant_f30b75d26d2a"
+                    },
+                    "result": {
+                      "data": {
+                        "case_status": "resolved",
+                        "quote_id": "quote_d883f8a0382dc0175648"
+                      },
+                      "error_code": null,
+                      "success": true
+                    }
+                  }
+                ],
+                "protocol": "rsi-native-commerce-baseline-v0.3",
+                "run_ref": "2d05c71c88434f40a6d796842ea3989d",
+                "score": 0.0,
+                "status": "UNKNOWN",
+                "terminal_status": "customer_finished"
+              },
+              "replay_verified": true,
+              "run_ref": "2d05c71c88434f40a6d796842ea3989d",
+              "score": 0.0,
+              "status": "UNKNOWN"
+            }
+          }
+        ],
+        "challenge_attempts": [
+          {
+            "proposal": {
+              "challenge_protocol": "commerce-abstract-challenge-v2",
+              "customer_alias": "customer_1",
+              "hypothesis": "Customer received a hub with missing parts and seeks a remedy for the defective line.",
+              "information_goals": [],
+              "line_relations": [],
+              "line_selectors": [
+                {
+                  "alias": "hub_line",
+                  "attributes": [
+                    {
+                      "name": "ports",
+                      "value": "7"
+                    }
+                  ],
+                  "family": "hub",
+                  "issue": "missing_parts",
+                  "minimum_age_days": 0,
+                  "minimum_quantity": 1,
+                  "return_required": false
+                }
+              ],
+              "remedy_goals": [
+                {
+                  "allowed_remedies": [
+                    "refund",
+                    "exchange",
+                    "reship"
+                  ],
+                  "goal_id": "remedy_hub_1",
+                  "line_alias": "hub_line",
+                  "quantity": 1,
+                  "target_stage": "settled"
+                }
+              ],
+              "task_id": "task_missing_hub_parts"
+            },
+            "reason_code": "",
+            "status": "CERTIFIED"
+          }
+        ],
+        "error": "",
+        "status": "SUBMITTED"
+      }
+    ],
+    "status": "SUBMITTED"
+  }
+]

@@ -1,0 +1,146 @@
+{
+  "candidates": [
+    {
+      "parent_ref": "e00f2f8ca806e3746c665c37a191e5c5a6b4313e3f51b55b52e64fcac46db08c",
+      "ref": "f5f045b4abf194ade9aaf54f38c24ddbf565fe1cc7b41d30a316f3751e99af6b",
+      "source_bytes": 22753,
+      "static_contract": "M"
+    }
+  ],
+  "failed_stage": "",
+  "finished_at": "2026-10-25T16:09:17.662312+08:00",
+  "host_verification": {
+    "events": 6,
+    "model_replay": "recorded responses; no stochastic API rerun",
+    "run_id": "f851f4ec871949cf9721213e2550eebd",
+    "verified": true
+  },
+  "independent_selection": "NOT_RUN_NO_M_PROBE_SET",
+  "kind": "rsi-m-self-edit-timeout-retry-diagnostic-v1",
+  "ledger": {
+    "cpu_accounting": "Host wall-time upper bound for one-vCPU workers; not measured utilization",
+    "events": [
+      {
+        "scope": "prior_run",
+        "usage": {
+          "cpu_seconds": 8.4069507929999,
+          "episodes": 0,
+          "model_calls": 29,
+          "model_tokens": 162226,
+          "research_steps": 58,
+          "tool_steps": 21
+        }
+      },
+      {
+        "scope": "root",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "root",
+        "usage": {
+          "cpu_seconds": 0.144691375
+        }
+      },
+      {
+        "scope": "root",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "root",
+        "usage": {
+          "model_tokens": 17157
+        }
+      },
+      {
+        "scope": "root",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "root",
+        "usage": {
+          "cpu_seconds": 0.17513179099999832
+        }
+      },
+      {
+        "scope": "root",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "root",
+        "usage": {
+          "cpu_seconds": 0.13120620899999835
+        }
+      }
+    ],
+    "limits": {
+      "cpu_seconds": 7200,
+      "episodes": 2,
+      "memory_bytes": 134217728,
+      "model_calls": 64,
+      "model_tokens": 500000,
+      "research_steps": 512,
+      "response_bytes": 1048576,
+      "source_bytes": 65536,
+      "tool_steps": 600,
+      "wall_seconds": 10800
+    },
+    "reserved": {
+      "cpu_seconds": 0,
+      "episodes": 0,
+      "model_calls": 0,
+      "model_tokens": 0,
+      "research_steps": 0,
+      "tool_steps": 0
+    },
+    "used": {
+      "cpu_seconds": 8.857980167999898,
+      "episodes": 0,
+      "model_calls": 30,
+      "model_tokens": 179383,
+      "research_steps": 61,
+      "tool_steps": 21
+    },
+    "wall_seconds": 103.981898583
+  },
+  "m_parent_ref": "e00f2f8ca806e3746c665c37a191e5c5a6b4313e3f51b55b52e64fcac46db08c",
+  "m_result": {
+    "archive_ref": "72f740743a53f2e28c47f798ec456a73eebdbf64781d6f351129bbc2dbd0ac10",
+    "candidate_refs": [
+      "f5f045b4abf194ade9aaf54f38c24ddbf565fe1cc7b41d30a316f3751e99af6b"
+    ],
+    "error": "",
+    "parent_ref": "e00f2f8ca806e3746c665c37a191e5c5a6b4313e3f51b55b52e64fcac46db08c",
+    "selected_by_independent_gate": false,
+    "status": "NOOP",
+    "submitted_ref": "e00f2f8ca806e3746c665c37a191e5c5a6b4313e3f51b55b52e64fcac46db08c"
+  },
+  "model": "dashscope/qwen3.7-plus",
+  "model_call_count": 1,
+  "previous_failed_call_index": 29,
+  "previous_run_model_calls": 29,
+  "provider_call": {
+    "call_index": 1,
+    "completion_tokens": 6403,
+    "prompt_tokens": 10754,
+    "request_bytes": 41526,
+    "status": "ok",
+    "total_tokens": 17157
+  },
+  "public_context_matches_original": true,
+  "retry_model_tokens": 17157,
+  "retry_policy": "one explicit retry of the previously timed-out M request",
+  "selection": "NOT_RUN_SINGLE_CHALLENGE_DIAGNOSTIC",
+  "source_run": "/Users/spring/RSI/Usami-rsi-core/experiments/rsi/results/live-open-world-evolution-qwen3.7-plus-20261025-006",
+  "status": "M_CANDIDATE_STAGED_NOT_SELECTED",
+  "timeout_seconds": 300,
+  "training": "NOT_RUN",
+  "world_hash": "8c3a18f2b241c269149ef4bc9cb6eba45c437319ae0c81c0e5eccbcb46133fd2"
+}

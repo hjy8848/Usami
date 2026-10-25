@@ -1,0 +1,1089 @@
+{
+  "kind": "certified-task-service-rerun-diagnostic-v1",
+  "source_run": "/Users/spring/RSI/Usami-rsi-core/experiments/rsi/results/live-one-world-task-revision-20261025-003",
+  "training": "NOT_RUN",
+  "world_generation_calls": 0,
+  "challenge_generation_calls": 0,
+  "customer": "unchanged deterministic AcceptingCustomer fixture",
+  "service_episodes_started": 1,
+  "model": "dashscope/qwen3.7-plus",
+  "timeout_seconds": 180.0,
+  "status": "COMPLETED_ONE_EPISODE",
+  "world_hash": "8c3a18f2b241c269149ef4bc9cb6eba45c437319ae0c81c0e5eccbcb46133fd2",
+  "receipt": {
+    "status": "CERTIFIED",
+    "task_ref": "open-e918ad0d217be71a485a604c1cb1121d83fc14cf02b058c18498c665352cb467",
+    "certificate_ref": "432046116f22dfe102955d289947ef262825d687b178c5d53d035aaaba18b94e",
+    "certification_scope": "usami_v2.native_reference_task_certification",
+    "frozen": true
+  },
+  "challenge_replay_verification": {
+    "verified": true,
+    "status": "CERTIFIED"
+  },
+  "capabilities": {
+    "protocol": "commerce-task-design-capabilities-v1",
+    "certifier_protocol": "commerce-task-certification-v1",
+    "native_reference_certifies": [
+      "settled_remedy_goals"
+    ],
+    "supported_remedies": [
+      "refund",
+      "exchange",
+      "reship"
+    ],
+    "supported_target_stages": [
+      "settled"
+    ],
+    "interaction_certifier_available": false,
+    "information_goals_certifiable": false,
+    "delivery_confirmation_available": false,
+    "return_receipt_event_configured": false,
+    "policy_review_event_configured": false,
+    "grounding_protocol": "structured-intent-grounding-v2"
+  },
+  "service_snapshot_ref": "0d40f54d43dcc09e0a79c3b0ba41c985ba178b3e60871680cef88bed6ec9e312",
+  "task_result": {
+    "run_ref": "7316ce00891a4ba8a7c355554c723841",
+    "score": 0.0,
+    "status": "UNKNOWN",
+    "replay_verified": true,
+    "tool_steps": 9,
+    "model_calls": 10,
+    "model_tokens": 50964,
+    "feedback": {
+      "outcome": {
+        "record_hash": "8d5c99ed4ea71573ed58de8b59dfb2f80355b31b8ed88633356950c8de24aea2",
+        "protocol": "commerce-outcome-v2",
+        "state_goals": [
+          {
+            "record_hash": "a2f92130dd4f683bf20a22f401a36d3c3c83d74cefec67550a890eb08b4374d7",
+            "goal_id": "goal_1",
+            "status": "FAIL",
+            "evidence_refs": []
+          }
+        ],
+        "compliance": [
+          {
+            "record_hash": "9681f75c8d9eec266a204c5ba6016ffc9d694f7510fba423839810ec73508fcc",
+            "goal_id": "unrequested_settlements",
+            "status": "PASS",
+            "evidence_refs": []
+          },
+          {
+            "record_hash": "ca0cb2282803e27dbed36f4f7c8c15ff6e42b4f723cb2538d4f6c34af466c40f",
+            "goal_id": "service_operation_compliance",
+            "status": "PASS",
+            "evidence_refs": [
+              "c38241c7c14e41101c5c4c654538a4033d8778d22b2217362a4fbc8e3f0a38d7",
+              "376641e8d023e45d6cee12982522bc4c06b98416afe09751ada9b7a839dc79d5",
+              "5c1ebc816b230e7c0fa38a1193dbe041e1069dceb3467292d36669adf1e58668",
+              "65d723fcc179af7672931fdfe3e923a54cc7e3ea848ee4ea1279d38fd095cb18",
+              "458820c1e73bf35d9ced0fbfad97a1dd60fd22d801b0f7300680d807ebf6c953",
+              "1f195202dd348b2f9dc766e4ec1514cc1d6d6ead3852e7f463fc06abbdcebe99",
+              "83fa4f8f009dd3321de1ff7d0e308b1a0db72740cbb5fb63b0cec48ee6b9cba2",
+              "53b3ad592215f98797a9e7d3ec8d694642b11ba84ffce52a134bbb12ddc3b1ca",
+              "eea03d7ff732e576ad126ebb3da93fb86eb6f09f6fca4d77df3e87a198b03e26"
+            ]
+          }
+        ],
+        "communication_hash": "f0bb10054954f2cf46c36937cde1881a58d295e00d92f3fbeb6e56a1ebc3c60c",
+        "final_goal_reached": false,
+        "business_goal_success": false,
+        "state_goal_applicability": "APPLICABLE",
+        "process_errors": {
+          "record_hash": "93a7c1ca91c8fdf478c11d193a671bbc1161ff4ca2af26f001c1858b7e77d566",
+          "goal_id": "service_process_errors",
+          "status": "FAIL",
+          "evidence_refs": [
+            "e73fc60d115e617409167a8033a3429c4e00395ba1df29d8334c2f1cb8f2092b"
+          ]
+        },
+        "safety_violations": {
+          "record_hash": "e8578bdb5a5a673ffbdf0ffeb644ce045d16552576f4e6ce55370501a61f69ec",
+          "goal_id": "service_safety_violations",
+          "status": "PASS",
+          "evidence_refs": []
+        },
+        "interaction_reliability": {
+          "record_hash": "5b3575ca31d24f2fe2e6fce00f6d6c0369f8a8197d8788b9a44b7c81757590c8",
+          "goal_id": "interaction_reliability",
+          "status": "PASS",
+          "evidence_refs": []
+        },
+        "strict_task_success": false,
+        "evaluation_status": "UNRESOLVED",
+        "valid_end": true
+      },
+      "operations": [
+        {
+          "operation": {
+            "name": "list_customer_orders",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "merchant_f30b75d26d2a",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "orders": [
+                {
+                  "id": "order_e6ad2e9b814e",
+                  "merchant_id": "merchant_f30b75d26d2a",
+                  "customer_id": "customer_4472485365a6",
+                  "paid_cents": 100897,
+                  "payment_channel": "original-card",
+                  "delivered_at": "2026-01-08T12:00:00Z"
+                }
+              ]
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "list_customer_orders",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_order_details",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "order_e6ad2e9b814e",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "order": {
+                "id": "order_e6ad2e9b814e",
+                "merchant_id": "merchant_f30b75d26d2a",
+                "customer_id": "customer_4472485365a6",
+                "paid_cents": 100897,
+                "payment_channel": "original-card",
+                "delivered_at": "2026-01-08T12:00:00Z"
+              },
+              "lines": [
+                {
+                  "id": "line_0b57113e75b1",
+                  "order_id": "order_e6ad2e9b814e",
+                  "sku_id": "sku_80e8a6489678",
+                  "quantity": 1,
+                  "allocated_paid_cents": 89900
+                },
+                {
+                  "id": "line_4a3fde875166",
+                  "order_id": "order_e6ad2e9b814e",
+                  "sku_id": "sku_12bc5d1983a2",
+                  "quantity": 2,
+                  "allocated_paid_cents": 5998
+                },
+                {
+                  "id": "line_c32c43f0464d",
+                  "order_id": "order_e6ad2e9b814e",
+                  "sku_id": "sku_7e27650e88b7",
+                  "quantity": 1,
+                  "allocated_paid_cents": 4999
+                }
+              ]
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_order_details",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_sku_details",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "sku_80e8a6489678",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "sku": {
+                "id": "sku_80e8a6489678",
+                "merchant_id": "merchant_f30b75d26d2a",
+                "product_family": "laptop",
+                "attributes": {
+                  "ram": "16GB",
+                  "screen": "15inch"
+                },
+                "price_cents": 89900,
+                "revision": 0,
+                "return_days": 30,
+                "return_required": true
+              }
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_sku_details",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_sku_details",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "sku_12bc5d1983a2",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "sku": {
+                "id": "sku_12bc5d1983a2",
+                "merchant_id": "merchant_f30b75d26d2a",
+                "product_family": "mouse",
+                "attributes": {
+                  "color": "black"
+                },
+                "price_cents": 2999,
+                "revision": 0,
+                "return_days": 15,
+                "return_required": true
+              }
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_sku_details",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_sku_details",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "sku_7e27650e88b7",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "sku": {
+                "id": "sku_7e27650e88b7",
+                "merchant_id": "merchant_f30b75d26d2a",
+                "product_family": "hub",
+                "attributes": {
+                  "ports": "7"
+                },
+                "price_cents": 4999,
+                "revision": 0,
+                "return_days": 30,
+                "return_required": false
+              }
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_sku_details",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "open_remedy_case",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "line_c32c43f0464d",
+            "params": {
+              "quantity": 1,
+              "issue": "missing_parts"
+            }
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "case_id": "case_ad3b5c4deee3324ea7ae",
+              "status": "open"
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "open_remedy_case",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_case_status",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "case_ad3b5c4deee3324ea7ae",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "case": {
+                "id": "case_ad3b5c4deee3324ea7ae",
+                "line_id": "line_c32c43f0464d",
+                "unit_indices": [
+                  0
+                ],
+                "issue": "missing_parts",
+                "status": "open",
+                "evidence_id": null,
+                "review_requested": false,
+                "review_approved": false,
+                "committed_quote_id": null
+              },
+              "evidence": [
+                {
+                  "evidence_id": "evidence_197712c3cff6",
+                  "issue": "missing_parts"
+                }
+              ],
+              "quotes": [],
+              "returns": []
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_case_status",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a",
+                "after_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a"
+          }
+        },
+        {
+          "operation": {
+            "name": "verify_submitted_evidence",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "case_ad3b5c4deee3324ea7ae",
+            "params": {
+              "evidence_id": "evidence_197712c3cff6"
+            }
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "case_id": "case_ad3b5c4deee3324ea7ae",
+              "verified": true
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "verify_submitted_evidence",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a",
+                "after_hash": "1e30c75e197a7a11c00c2c0ab4aa077081a56dfacefff438f5d01d746f7c81aa"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "1e30c75e197a7a11c00c2c0ab4aa077081a56dfacefff438f5d01d746f7c81aa"
+          }
+        },
+        {
+          "operation": {
+            "name": "prepare_remedy_quote",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "case_ad3b5c4deee3324ea7ae",
+            "params": {
+              "remedy": "refund",
+              "target_sku_id": null,
+              "warehouse_id": null,
+              "pickup_slot": null
+            }
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "quote": {
+                "id": "quote_d883f8a0382dc0175648",
+                "case_id": "case_ad3b5c4deee3324ea7ae",
+                "customer_id": "customer_4472485365a6",
+                "remedy": "refund",
+                "quantity": 1,
+                "target_sku_id": null,
+                "inventory_id": null,
+                "route_id": null,
+                "refund_cents": 4999,
+                "extra_charge_cents": 0,
+                "payment_channel": "original-card",
+                "promised_arrival": null,
+                "return_required": false,
+                "pickup_slot": null,
+                "revision": 1,
+                "inventory_revision": null,
+                "sku_revision": null,
+                "route_revision": null,
+                "valid_until": "2026-01-15T13:00:00Z",
+                "status": "prepared",
+                "terms_hash": "3a024de3ba6e2520a7709d54758682095a9cf7c3cb049ca94a1164e34999abd0"
+              }
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "prepare_remedy_quote",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "1e30c75e197a7a11c00c2c0ab4aa077081a56dfacefff438f5d01d746f7c81aa",
+                "after_hash": "546c390f43ebbc17137283b587b3af45e69662d8011c280169dc140286545db7"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "546c390f43ebbc17137283b587b3af45e69662d8011c280169dc140286545db7"
+          }
+        }
+      ],
+      "terminal_status": "customer_finished",
+      "terminal_reason": "customer_finished_after_final_service_reply"
+    },
+    "forbidden_behavior": false
+  },
+  "oracle_replay": {
+    "verified": true,
+    "record_hash": "c7eeb5a1d98ced972d720be59b0cc2e6f94c52151ba302d1480ec37b13184eec",
+    "replay": {
+      "record_hash": "0c43a7ee3a84624408aea945257d6ef95017c890cd2ff79581a981a6a66a4020",
+      "verified": true,
+      "event_count": 25,
+      "operation_count": 9,
+      "final_world_hash": "546c390f43ebbc17137283b587b3af45e69662d8011c280169dc140286545db7",
+      "errors": [],
+      "outcome_hash": "8d5c99ed4ea71573ed58de8b59dfb2f80355b31b8ed88633356950c8de24aea2"
+    },
+    "costs": {
+      "customer_calls": 0,
+      "service_calls": 10,
+      "tool_calls": 9,
+      "known_total_tokens": 50964,
+      "unknown_usage_calls": 0
+    },
+    "strict_task_success": false,
+    "final_goal_reached": false
+  },
+  "model_call_count": 10,
+  "ledger": {
+    "limits": {
+      "model_calls": 64,
+      "model_tokens": 500000,
+      "episodes": 4,
+      "tool_steps": 500,
+      "research_steps": 1000,
+      "cpu_seconds": 7200,
+      "wall_seconds": 10800,
+      "memory_bytes": 134217728,
+      "source_bytes": 65536,
+      "response_bytes": 1048576
+    },
+    "used": {
+      "model_calls": 10,
+      "model_tokens": 50964,
+      "episodes": 0,
+      "tool_steps": 9,
+      "research_steps": 20,
+      "cpu_seconds": 2.7596028749999837
+    },
+    "reserved": {
+      "model_calls": 0,
+      "model_tokens": 0,
+      "episodes": 0,
+      "tool_steps": 0,
+      "research_steps": 0,
+      "cpu_seconds": 0
+    },
+    "wall_seconds": 38.843961916000005,
+    "cpu_accounting": "Host wall-time upper bound for one-vCPU workers; not measured utilization",
+    "events": [
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.12630133300000002
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 3994
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16393158400000019
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.10358049999999963
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 4115
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16761874999999904
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.11656716699999947
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 4582
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16288925000000098
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.10625441600000052
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 4790
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16779304099999948
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.10013266700000045
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 4979
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.15946812500000007
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.11285783299999963
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 5324
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16713350000000204
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.10792254199999718
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 5394
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.179094666000001
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.11007895899999909
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 5657
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16106258299999965
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.10118399999999994
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 5817
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16551299999999713
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.10792679199999355
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 6312
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.17229216699999483
+        }
+      },
+      {
+        "scope": "environment",
+        "usage": {
+          "tool_steps": 9
+        }
+      }
+    ]
+  }
+}

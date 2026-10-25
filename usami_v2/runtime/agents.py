@@ -171,12 +171,14 @@ def service_tools():
             }, "required": ["scope_id", "resource_id", "params"], "additionalProperties": False,
                 **({"$defs": definitions} if definitions else {})}}})
     tools.append({"type": "function", "function": {
-        "name": "respond_to_customer", "description": "Send the next customer-facing message or present an existing quote.",
+        "name": "respond_to_customer", "description": (
+            "Send the next customer-facing message. The runtime automatically includes any actual "
+            "quote that is awaiting the Customer's decision."
+        ),
         "parameters": {"type": "object", "properties": {
-            "message": {"type": "string"}, "present_quote_id": {"type": ["string", "null"]},
-            "present_for": {"type": "string", "enum": ["commit_accepted_quote", "release_accepted_refund"]},
+            "message": {"type": "string"},
             "subject_ids": {"type": "array", "items": {"type": "string"}},
-        }, "required": ["message", "present_quote_id", "present_for", "subject_ids"],
+        }, "required": ["message", "subject_ids"],
            "additionalProperties": False}}})
     return tools
 
@@ -256,8 +258,11 @@ class OpenAIServiceAgent:
         "the customer's public request and public tool results. You never receive hidden TaskSpec goals, "
         "Customer preferences, proof witnesses or Oracle decisions. Tool writes are not Customer consent. "
         "Never commit a quote unless the Customer runtime has separately recorded exact consent; never claim "
-        "completion without a successful tool result. Present the actual quote to the Customer before asking "
-        "for acceptance. The caller is already authenticated; use the supplied customer ID and merchant "
+        "completion without a successful tool result. After you prepare a quote, the runtime automatically "
+        "shows its exact terms to the Customer with your next customer-facing reply. Explain the quote and "
+        "ask whether the Customer accepts; do not choose a quote-presentation action or invent quote terms. "
+        "After a registered return receipt, the runtime likewise shows the committed refund terms before "
+        "requesting any release consent. The caller is already authenticated; use the supplied customer ID and merchant "
         "scope IDs instead of asking the Customer for account or order identifiers that the tools can look up. "
         "Use one function call for a business operation. A normal assistant message is also allowed for a "
         "customer-facing clarification or status update, but it has no business side effect and must not claim "

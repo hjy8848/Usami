@@ -491,6 +491,9 @@ def run_episode(initial_world: World, task: Union[TaskSpecV3, TaskSpecV2, TaskSp
 
     status, terminal_reason = "budget_exhausted", "service_decision_budget_exhausted"
     current_offer = None
+    # Quotes awaiting Customer review are queued from native operation results,
+    # never inferred from Service prose or selected by scanning World state.
+    pending_customer_offers = []
     observed_ids = {task.customer_id}
     request_counter = customer_turns = service_decisions = tool_count = model_calls = 0
     service_uses_model = bool(getattr(service_agent, "uses_model", True))
@@ -586,6 +589,19 @@ def run_episode(initial_world: World, task: Union[TaskSpecV3, TaskSpecV2, TaskSp
                 observed_ids.add(action.operation.resource_id)
                 facts.extend(_facts_for_result(world, action.operation, row.result.get("data", {}),
                                                events[-1].record_hash, tool_event_index))
+                if action.operation.name == "prepare_remedy_quote":
+                    data = row.result.get("data")
+                    quote_data = data.get("quote") if isinstance(data, dict) else None
+                    quote_id_value = quote_data.get("id") if isinstance(quote_data, dict) else None
+                    quote = world.quotes.get(quote_id_value) if isinstance(quote_id_value, str) else None
+                    if quote is None or quote.model_dump(mode="json") != quote_data:
+                        status, terminal_reason = "runner_error", (
+                            "successful quote preparation did not return the quote in the resulting World")
+                        break
+                    pending_customer_offers.append((quote.id, "commit_accepted_quote"))
+                elif action.operation.name == "cancel_pending_commitment":
+                    pending_customer_offers[:] = [row for row in pending_customer_offers
+                                                   if row[0] != action.operation.resource_id]
             # Mirror the exact one-tool-call exchange in the visible Service history.
             if action.call:
                 raw_message = action.call.response.get("choices", [{}])[0].get("message", {})
@@ -615,6 +631,11 @@ def run_episode(initial_world: World, task: Union[TaskSpecV3, TaskSpecV2, TaskSp
                     world = applied
                     events = _append(events, "external_event", {"event_id": ext.id,
                                         "reference_state_hash": expected.state_hash}, event_before, world)
+                    if ext.kind == "return_received":
+                        returned_case = world.cases[ext.target_id]
+                        returned_quote = world.quotes[returned_case.committed_quote_id]
+                        if returned_quote.remedy == "refund":
+                            pending_customer_offers.append((returned_quote.id, "release_accepted_refund"))
                 except Exception as exc:
                     status, terminal_reason = "runner_error", type(exc).__name__ + ": " + str(exc)
                     break
@@ -632,7 +653,23 @@ def run_episode(initial_world: World, task: Union[TaskSpecV3, TaskSpecV2, TaskSp
             status, terminal_reason = "service_protocol_error", "Service message references unobserved business objects"
             break
         event_index = len(events)
-        if action.present_quote_id:
+        if pending_customer_offers:
+            # The Service's ordinary reply is enough to deliver the exact
+            # quote created by the native Engine; no quote-ID tool choice needed.
+            quote_id_value, present_for = pending_customer_offers[0]
+            try:
+                current_offer = render_offer(world, quote_id_value, present_for,
+                                             "offer_" + str(event_index), event_index, action.message,
+                                             expected_customer_id=task.customer_id)
+            except ValueError as exc:
+                status, terminal_reason = "service_protocol_error", str(exc)
+                break
+            pending_customer_offers.pop(0)
+            events = _append(events, "offer_presented", current_offer.model_dump(mode="json"), world, world)
+            customer_text = action.message + "\n" + current_offer.rendered_terms
+        elif action.present_quote_id:
+            # Retain the direct in-process adapter path for existing scripted
+            # callers. Model-facing Service tools no longer expose this choice.
             if action.present_quote_id not in observed_ids:
                 status, terminal_reason = "service_protocol_error", "Service can present only a previously observed quote"
                 break

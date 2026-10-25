@@ -94,7 +94,7 @@ return CustomerDecision(message="Thank you.", finish=True)
 
 本次任务失败的控制流原因已经明确；模型、提示、接口及简化 Customer 驱动各自应承担多少责任，仍需要专项判断。
 
-## 修复边界与候选思路
+## 修复边界与 GPT 审阅前的候选思路
 
 需要保留精确的报价身份、报价版本、操作类型以及真实顾客同意。自然语言询问可以帮助交互，但不能凭此自动生成交易同意。
 
@@ -104,7 +104,7 @@ return CustomerDecision(message="Thank you.", finish=True)
 - 根据可见的结构化交互状态，限制或引导下一步可提交动作。请评估是否会错误限制澄清、拒绝、取消或改报其他方案。
 - 对确定性诊断 Customer 增加有限的继续交互策略：没有正式 offer 且请求尚未处理时，要求 Service 正式展示，超出预算或明确终止时再结束。需要说明它如何依赖公开请求或可信状态，并避免向 Service 泄漏隐藏答案。
 
-这些思路尚未实现。不要通过解析文字中的 Quote ID、自动接受最近报价、无限重试、跳过同意、放宽 Engine 或修改 Oracle 结果制造成功。也不要把强制报价通道等同于修改科研奖励或 RSI 学习算法。
+这些是首次审阅时提出的候选，后续采纳方案和代码状态见文末。不要通过解析文字中的 Quote ID、自动接受最近报价、无限重试、跳过同意、放宽 Engine 或修改 Oracle 结果制造成功。也不要把报价展示简化等同于修改科研奖励或 RSI 学习算法。
 
 ## 可直接核查的证据
 
@@ -112,3 +112,13 @@ return CustomerDecision(message="Thank you.", finish=True)
 - [运行 004 报告](../../experiments/rsi/results/live-certified-task-rerun-20261025-004/REPORT.zh.md)、[原始请求与回复](../../experiments/rsi/results/live-certified-task-rerun-20261025-004/model-calls.jsonl)、[完整 Episode](../../experiments/rsi/results/live-certified-task-rerun-20261025-004/native-episodes/7316ce00891a4ba8a7c355554c723841.json)、[独立结果与 Replay](../../experiments/rsi/results/live-certified-task-rerun-20261025-004/summary.json)。
 
 请优先给出根因判断、最小代码修改范围与可证伪的验收测试。本轮只准备审阅材料，没有再运行模型或修改业务实现。
+
+## GPT 审阅后的实现记录
+
+采纳的方向是：不再让 Service 模型选择报价展示接口。`respond_to_customer` 的模型 Schema 现在只要求普通消息和已观察对象；成功的 `prepare_remedy_quote` 会把这次 Engine 实际生成的 Quote 放入 Runner 的待展示队列。Service 下一次正常回复时，Runner 自动把同一个报价的原生条款附给 Customer，并生成可 Replay 的 `offer_presented` 事件。若报价在展示前被取消，会从队列移除。这个选择依据是具体操作结果的 Quote ID，不读自然语言，也不扫描 World 猜最新报价。
+
+退货签收事件被 Reference / Runtime 应用后，如果对应承诺报价是退款，Runner 会排队展示该实际退款条款，并要求 Customer 对 `release_accepted_refund` 单独作出精确同意。成交仍由 Engine 依据 `Consent` 检查；顾客未同意时，不能提交或释放退款。
+
+本次更新了 `usami_v2/runtime/agents.py` 与 `usami_v2/runtime/runner.py`。Model-facing 工具 Schema 不再包含 `present_quote_id` / `present_for`，但 Runner 暂时保留旧的进程内 scripted adapter 分支，以免改变现有确定性控制器接口。
+
+**验证状态：** 尚未跑新的真实模型 Episode，也未运行自动化测试。运行 003 / 004 是改动前轨迹，不是修复效果证据。下一次可复用同一冻结任务做一次 Service Episode，检查普通文字回复确实带出原生报价、结构化顾客同意后 Engine 执行、Replay 验证；成功只证明交互路径修复，不代表模型能力提升。

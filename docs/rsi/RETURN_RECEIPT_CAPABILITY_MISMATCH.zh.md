@@ -6,6 +6,8 @@
 
 ## 后续实施状态
 
+后续两次真实 Service 都停在报价展示与 Customer 结束处，已单独整理为 [给 GPT 的报价交互专项审阅](QUOTE_PRESENTATION_CUSTOMER_TERMINATION_GAP.zh.md)。该问题与本文件讨论的退货签收能力分开记录。
+
 已执行路径 A：复用原冻结 World，真实 Designer 根据上一轮公开拒绝原因修订为无需退货的 Hub 单目标退款任务，获得原生 `CERTIFIED` 后执行了真实 Service、Oracle 和 Replay。9 次业务操作均合法，Replay verified；Service 准备报价后没有提交正式报价展示动作，确定性 Customer 直接结束，最终退款目标没有达成，评价为 `UNRESOLVED`。[完整运行记录](../../experiments/rsi/results/live-one-world-task-revision-20261025-003/REPORT.zh.md)。
 
 随后落实动态 Schema：退货能力关闭时，每个 `LineSelector` 必须显式提供 `return_required=false`；能力开启时保持原 Schema。模型响应还会在本地按同一动态 Schema 校验。绕过模型 Schema 的直接调用仍由 Compiler 的 `RETURN_RECEIPT_UNAVAILABLE` 检查拒绝。

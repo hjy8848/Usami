@@ -1,0 +1,52 @@
+{
+  "kind": "directed-frozen-world-revision-diagnostic-v1",
+  "training": "NOT_RUN",
+  "world_generation_calls": 0,
+  "challenge_submissions": 0,
+  "service_episodes_started": 0,
+  "customer": "deterministic AcceptingCustomer fixture",
+  "model": "dashscope/qwen3.7-plus",
+  "timeout_seconds": 180.0,
+  "world_period_ref": "4f10a8d77bb50e6a4d0e74edefc8f66636e4a36a2af9213c56d0d4a9e1395278",
+  "previous_attempt_ref": "eb056d9f220bc705ee84eabcc1c320a6502c7b3db6019dc26791aeb7a15d9483",
+  "status": "FAILED",
+  "world_hash": "8c3a18f2b241c269149ef4bc9cb6eba45c437319ae0c81c0e5eccbcb46133fd2",
+  "failed_stage": "verify_frozen_inputs",
+  "error_type": "AttributeError",
+  "error": "'OrderLine' object has no attribute 'paid_cents'",
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/spring/RSI/Usami-rsi-core/experiments/rsi/results/live-one-world-task-revision-20261025-003/run_revision.py\", line 72, in main\n    summary[\"refund_policy_preflight\"] = {\"paid_cents\": hub.paid_cents,\n  File \"/Users/spring/RSI/Usami/.venv/lib/python3.9/site-packages/pydantic/main.py\", line 1042, in __getattr__\n    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')\nAttributeError: 'OrderLine' object has no attribute 'paid_cents'\n",
+  "model_call_count": 0,
+  "ledger": {
+    "limits": {
+      "model_calls": 64,
+      "model_tokens": 500000,
+      "episodes": 4,
+      "tool_steps": 500,
+      "research_steps": 1000,
+      "cpu_seconds": 7200,
+      "wall_seconds": 10800,
+      "memory_bytes": 134217728,
+      "source_bytes": 65536,
+      "response_bytes": 1048576
+    },
+    "used": {
+      "model_calls": 0,
+      "model_tokens": 0,
+      "episodes": 0,
+      "tool_steps": 0,
+      "research_steps": 0,
+      "cpu_seconds": 0
+    },
+    "reserved": {
+      "model_calls": 0,
+      "model_tokens": 0,
+      "episodes": 0,
+      "tool_steps": 0,
+      "research_steps": 0,
+      "cpu_seconds": 0
+    },
+    "wall_seconds": 0.01302491699999997,
+    "cpu_accounting": "Host wall-time upper bound for one-vCPU workers; not measured utilization",
+    "events": []
+  }
+}

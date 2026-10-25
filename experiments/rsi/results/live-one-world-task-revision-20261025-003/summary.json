@@ -1,0 +1,1545 @@
+{
+  "kind": "directed-frozen-world-revision-diagnostic-v1",
+  "training": "NOT_RUN",
+  "world_generation_calls": 0,
+  "challenge_submissions": 1,
+  "service_episodes_started": 1,
+  "customer": "deterministic AcceptingCustomer fixture",
+  "model": "dashscope/qwen3.7-plus",
+  "timeout_seconds": 180.0,
+  "world_period_ref": "4f10a8d77bb50e6a4d0e74edefc8f66636e4a36a2af9213c56d0d4a9e1395278",
+  "previous_attempt_ref": "eb056d9f220bc705ee84eabcc1c320a6502c7b3db6019dc26791aeb7a15d9483",
+  "status": "COMPLETED_ONE_EPISODE",
+  "world_hash": "8c3a18f2b241c269149ef4bc9cb6eba45c437319ae0c81c0e5eccbcb46133fd2",
+  "refund_policy_preflight": {
+    "paid_cents": 4999,
+    "approval_limit_cents": 100000,
+    "return_required": false
+  },
+  "capabilities": {
+    "protocol": "commerce-task-design-capabilities-v1",
+    "certifier_protocol": "commerce-task-certification-v1",
+    "native_reference_certifies": [
+      "settled_remedy_goals"
+    ],
+    "supported_remedies": [
+      "refund",
+      "exchange",
+      "reship"
+    ],
+    "supported_target_stages": [
+      "settled"
+    ],
+    "interaction_certifier_available": false,
+    "information_goals_certifiable": false,
+    "delivery_confirmation_available": false,
+    "return_receipt_event_configured": false,
+    "policy_review_event_configured": false,
+    "grounding_protocol": "structured-intent-grounding-v2"
+  },
+  "challenge_attempt": {
+    "kind": "rsi-autonomous-challenge-validation-v1",
+    "period_ref": "4f10a8d77bb50e6a4d0e74edefc8f66636e4a36a2af9213c56d0d4a9e1395278",
+    "parent_attempt_ref": "eb056d9f220bc705ee84eabcc1c320a6502c7b3db6019dc26791aeb7a15d9483",
+    "validation_scope": "Designer proposal/grounding/certification; no online Service or training",
+    "call": {
+      "record_hash": "bd835a8b834b80a89b57af7aef65cfe181c3b9c50c41fd0695ec545982511614",
+      "role": "designer",
+      "request": {
+        "max_tokens": 2048,
+        "temperature": 0,
+        "model": "dashscope/qwen3.7-plus",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are the Usami RSI Challenge Designer. Propose one abstract business challenge using the supplied native schema and authorized training population. Inspect its anonymous world_topologies before choosing customer/order relations; use only combinations shown by the topology. Choose the business objective, constraints and number of related items yourself. line_selectors declare symbolic variables; remedy_goals.line_alias references those variables. customer_alias is a symbolic Customer variable, not a World entity. A Grounder will enumerate customer-owned bindings. Submit only structured remedy/information intent fields and constraints; do not write customer_request, public_request_span or subject_mention. The Host will render the Customer text from those same structured goals, so the scored goals are authorized by construction, not by matching prose. Use only published supported capabilities. Submit the challenge with the registered tool; do not supply IDs, proof witnesses, answers or World changes."
+          },
+          {
+            "role": "user",
+            "content": "{\"domain\": \"usami-commerce-v2\", \"open_world_catalogue\": {\"attributes\": [{\"name\": \"color\", \"value\": \"black\"}, {\"name\": \"ports\", \"value\": \"7\"}, {\"name\": \"ram\", \"value\": \"16GB\"}, {\"name\": \"screen\", \"value\": \"15inch\"}], \"distinct_structures\": 1, \"families\": [\"hub\", \"laptop\", \"mouse\"], \"issues\": [\"damaged\", \"missing_parts\", \"wrong_item\"], \"observed_line_kinds\": [{\"family\": \"hub\", \"issue\": \"missing_parts\", \"quantity\": 1, \"return_required\": false}, {\"family\": \"laptop\", \"issue\": \"damaged\", \"quantity\": 1, \"return_required\": true}, {\"family\": \"mouse\", \"issue\": \"wrong_item\", \"quantity\": 2, \"return_required\": true}], \"protocol\": \"commerce-open-world-catalogue-v1\", \"request_contract\": \"Challenges contain structured Customer intents. The Host binds each intent to owned frozen objects and renders the public request from the same intent. No keyword or substring matching is used to authorize scored goals.\", \"world_count\": 1, \"world_topologies\": [{\"alias\": \"world_1\", \"customers\": [{\"alias\": \"customer_1\", \"orders\": [{\"alias\": \"order_1\", \"lines\": [{\"age_days\": 7, \"alias\": \"line_1\", \"attributes\": [{\"name\": \"screen\", \"value\": \"15inch\"}, {\"name\": \"ram\", \"value\": \"16GB\"}], \"family\": \"laptop\", \"issue\": \"damaged\", \"quantity\": 1, \"return_required\": true}, {\"age_days\": 7, \"alias\": \"line_2\", \"attributes\": [{\"name\": \"color\", \"value\": \"black\"}], \"family\": \"mouse\", \"issue\": \"wrong_item\", \"quantity\": 2, \"return_required\": true}, {\"age_days\": 7, \"alias\": \"line_3\", \"attributes\": [{\"name\": \"ports\", \"value\": \"7\"}], \"family\": \"hub\", \"issue\": \"missing_parts\", \"quantity\": 1, \"return_required\": false}]}]}]}]}, \"task_certification_capabilities\": {\"certifier_protocol\": \"commerce-task-certification-v1\", \"delivery_confirmation_available\": false, \"grounding_protocol\": \"structured-intent-grounding-v2\", \"information_goals_certifiable\": false, \"interaction_certifier_available\": false, \"native_reference_certifies\": [\"settled_remedy_goals\"], \"policy_review_event_configured\": false, \"protocol\": \"commerce-task-design-capabilities-v1\", \"return_receipt_event_configured\": false, \"supported_remedies\": [\"refund\", \"exchange\", \"reship\"], \"supported_target_stages\": [\"settled\"]}}"
+          },
+          {
+            "role": "user",
+            "content": "{\"instruction\": \"Revise your challenge using this controlled Host rejection and the authorized catalogue.\", \"prior_proposal\": {\"challenge_protocol\": \"commerce-abstract-challenge-v2\", \"customer_alias\": \"C\", \"hypothesis\": \"Customer C received a single order containing a damaged 15-inch 16GB laptop, a wrong black mouse (quantity 2), and a 7-port hub with missing parts. The customer wants a refund or exchange for the laptop, an exchange or reship for the wrong mice, and a refund for the incomplete hub.\", \"information_goals\": [], \"line_relations\": [{\"kind\": \"same_order\", \"left\": \"L1\", \"right\": \"L2\"}, {\"kind\": \"same_order\", \"left\": \"L1\", \"right\": \"L3\"}, {\"kind\": \"same_order\", \"left\": \"L2\", \"right\": \"L3\"}], \"line_selectors\": [{\"alias\": \"L1\", \"attributes\": [{\"name\": \"screen\", \"value\": \"15inch\"}, {\"name\": \"ram\", \"value\": \"16GB\"}], \"family\": \"laptop\", \"issue\": \"damaged\", \"maximum_age_days\": 7, \"maximum_quantity\": 1, \"minimum_age_days\": 7, \"minimum_quantity\": 1, \"return_required\": true}, {\"alias\": \"L2\", \"attributes\": [{\"name\": \"color\", \"value\": \"black\"}], \"family\": \"mouse\", \"issue\": \"wrong_item\", \"maximum_age_days\": 7, \"maximum_quantity\": 2, \"minimum_age_days\": 7, \"minimum_quantity\": 2, \"return_required\": true}, {\"alias\": \"L3\", \"attributes\": [{\"name\": \"ports\", \"value\": \"7\"}], \"family\": \"hub\", \"issue\": \"missing_parts\", \"maximum_age_days\": 7, \"maximum_quantity\": 1, \"minimum_age_days\": 7, \"minimum_quantity\": 1, \"return_required\": false}], \"parent_training_evidence_hashes\": [], \"remedy_goals\": [{\"allowed_remedies\": [\"refund\", \"exchange\"], \"goal_id\": \"goal_1\", \"latest_arrival_within_days\": null, \"line_alias\": \"L1\", \"maximum_extra_charge_cents\": null, \"quantity\": 1, \"required_attributes\": [], \"target_stage\": \"settled\"}, {\"allowed_remedies\": [\"exchange\", \"reship\"], \"goal_id\": \"goal_2\", \"latest_arrival_within_days\": null, \"line_alias\": \"L2\", \"maximum_extra_charge_cents\": null, \"quantity\": 2, \"required_attributes\": [], \"target_stage\": \"settled\"}, {\"allowed_remedies\": [\"refund\"], \"goal_id\": \"goal_3\", \"latest_arrival_within_days\": null, \"line_alias\": \"L3\", \"maximum_extra_charge_cents\": null, \"quantity\": 1, \"required_attributes\": [], \"target_stage\": \"settled\"}], \"task_id\": \"challenge-multi-remedy-001\"}, \"rejection\": {\"capability_codes\": [\"RETURN_RECEIPT_UNAVAILABLE\"], \"reason_code\": \"CAPABILITY_UNSUPPORTED\", \"status\": \"UNVERIFIED\", \"capability_feedback\": [\"RETURN_RECEIPT_UNAVAILABLE\"]}}"
+          },
+          {
+            "role": "user",
+            "content": "This is a directed minimal diagnostic revision, not unrestricted exploration. Keep the existing frozen World and capability configuration. Submit exactly one remedy goal and one selector: the missing-parts hub with return_required explicitly false. Request refund only, quantity 1, target_stage settled. Do not include laptop or mouse goals. Do not invent a return/approval event, modify the World, supply IDs or proof witnesses. The Host will independently check the refund against the native approval policy."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_customer_task",
+              "description": "Submit exactly one structured proposal for this design stage.",
+              "parameters": {
+                "$defs": {
+                  "Attribute": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "value": {
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value"
+                    ],
+                    "type": "object"
+                  },
+                  "InformationDraft": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "goal_id": {
+                        "type": "string"
+                      },
+                      "subject_alias": {
+                        "description": "Alias of an existing order or order line owned by the selected Customer, exactly as listed in that Customer's scope. Never use a Customer, SKU, or another Customer's object.",
+                        "type": "string"
+                      },
+                      "fact_kind": {
+                        "description": "The structured business fact requested; the Host renders its public question.",
+                        "enum": [
+                          "refund_amount",
+                          "extra_charge",
+                          "arrival_date",
+                          "refund_status",
+                          "shipment_status",
+                          "quantity",
+                          "currency"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "goal_id",
+                      "subject_alias",
+                      "fact_kind"
+                    ],
+                    "type": "object"
+                  },
+                  "LineRelation": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "left": {
+                        "type": "string"
+                      },
+                      "right": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "enum": [
+                          "same_order",
+                          "different_order"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "left",
+                      "right",
+                      "kind"
+                    ],
+                    "type": "object"
+                  },
+                  "LineSelector": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "alias": {
+                        "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+                        "type": "string"
+                      },
+                      "family": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null
+                      },
+                      "issue": {
+                        "anyOf": [
+                          {
+                            "enum": [
+                              "damaged",
+                              "wrong_item",
+                              "missing_parts"
+                            ],
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null
+                      },
+                      "attributes": {
+                        "default": [],
+                        "items": {
+                          "$ref": "#/$defs/Attribute"
+                        },
+                        "type": "array"
+                      },
+                      "minimum_quantity": {
+                        "default": 1,
+                        "minimum": 1,
+                        "type": "integer"
+                      },
+                      "maximum_quantity": {
+                        "anyOf": [
+                          {
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null
+                      },
+                      "minimum_age_days": {
+                        "default": 0,
+                        "minimum": 0,
+                        "type": "integer"
+                      },
+                      "maximum_age_days": {
+                        "anyOf": [
+                          {
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null
+                      },
+                      "return_required": {
+                        "anyOf": [
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null
+                      }
+                    },
+                    "required": [
+                      "alias"
+                    ],
+                    "type": "object"
+                  },
+                  "RemedyDraft": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "goal_id": {
+                        "type": "string"
+                      },
+                      "line_alias": {
+                        "type": "string"
+                      },
+                      "quantity": {
+                        "description": "Number of purchased units covered by this structured Customer intent.",
+                        "minimum": 1,
+                        "type": "integer"
+                      },
+                      "allowed_remedies": {
+                        "description": "Customer-authorized outcomes. The Host renders these structured outcomes into the request.",
+                        "items": {
+                          "enum": [
+                            "refund",
+                            "exchange",
+                            "reship"
+                          ],
+                          "type": "string"
+                        },
+                        "minItems": 1,
+                        "type": "array"
+                      },
+                      "required_attributes": {
+                        "default": [],
+                        "description": "Required outcome attributes, checked against frozen SKU facts.",
+                        "items": {
+                          "$ref": "#/$defs/Attribute"
+                        },
+                        "type": "array"
+                      },
+                      "maximum_extra_charge_cents": {
+                        "anyOf": [
+                          {
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Maximum authorized extra charge in cents; the Host renders the exact amount."
+                      },
+                      "latest_arrival_within_days": {
+                        "anyOf": [
+                          {
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Latest permitted arrival in whole days from frozen world time; rendered by the Host."
+                      },
+                      "target_stage": {
+                        "default": "settled",
+                        "description": "Use 'settled' for the currently supported Reference proof. 'delivered' means actual receipt, which this run can certify only when a natural interaction certifier is explicitly available.",
+                        "enum": [
+                          "settled"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "goal_id",
+                      "line_alias",
+                      "quantity",
+                      "allowed_remedies"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "additionalProperties": false,
+                "description": "Reuse the native structured-intent TaskDraft contract.\n\ncustomer_alias and line_alias are symbolic variables here. Only Grounder\nsupplies the real ScenarioSpec aliases to the native compiler.",
+                "properties": {
+                  "task_id": {
+                    "type": "string"
+                  },
+                  "customer_alias": {
+                    "type": "string"
+                  },
+                  "remedy_goals": {
+                    "default": [],
+                    "items": {
+                      "$ref": "#/$defs/RemedyDraft"
+                    },
+                    "type": "array"
+                  },
+                  "information_goals": {
+                    "default": [],
+                    "description": "Only use when task_certification_capabilities says a natural interaction certifier is available; the bounded native Reference proof certifies remedy goals, not communication goals.",
+                    "items": {
+                      "$ref": "#/$defs/InformationDraft"
+                    },
+                    "type": "array",
+                    "maxItems": 0
+                  },
+                  "parent_training_evidence_hashes": {
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "challenge_protocol": {
+                    "const": "commerce-abstract-challenge-v2",
+                    "default": "commerce-abstract-challenge-v2",
+                    "type": "string"
+                  },
+                  "hypothesis": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "line_selectors": {
+                    "items": {
+                      "$ref": "#/$defs/LineSelector"
+                    },
+                    "maxItems": 8,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "line_relations": {
+                    "default": [],
+                    "items": {
+                      "$ref": "#/$defs/LineRelation"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "task_id",
+                  "customer_alias",
+                  "hypothesis",
+                  "line_selectors"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "stream": false,
+        "n": 1,
+        "parallel_tool_calls": false
+      },
+      "response": {
+        "id": "chatcmpl-2a74c4b0-c9b1-9132-a1c9-322861334002",
+        "created": 1792907884,
+        "model": "dashscope/qwen3.7-plus",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "function": {
+                    "arguments": "{\"challenge_protocol\": \"commerce-abstract-challenge-v2\", \"customer_alias\": \"C\", \"hypothesis\": \"Customer C received a single order containing a 7-port hub with missing parts. The customer wants a refund for the incomplete hub and does not need to return it.\", \"line_selectors\": \n[{\"alias\": \"L3\", \"attributes\": [{\"name\": \"ports\", \"value\": \"7\"}], \"family\": \"hub\", \"issue\": \"missing_parts\", \"maximum_age_days\": 7, \"maximum_quantity\": 1, \"minimum_age_days\": 7, \"minimum_quantity\": 1, \"return_required\": false}]\n\n, \"line_relations\": \n[]\n\n, \"remedy_goals\": \n[{\"goal_id\": \"goal_1\", \"line_alias\": \"L3\", \"quantity\": 1, \"allowed_remedies\": [\"refund\"], \"target_stage\": \"settled\", \"required_attributes\": [], \"maximum_extra_charge_cents\": null, \"latest_arrival_within_days\": null}]\n\n, \"information_goals\": \n[]\n\n, \"parent_training_evidence_hashes\": \n[]\n\n, \"task_id\": \"challenge-hub-refund-001\"}",
+                    "name": "submit_customer_task"
+                  },
+                  "id": "call_26f0526ce70f4a4b813ba1ae",
+                  "type": "function"
+                }
+              ],
+              "provider_specific_fields": {
+                "refusal": null
+              }
+            },
+            "provider_specific_fields": {}
+          }
+        ],
+        "usage": {
+          "completion_tokens": 928,
+          "prompt_tokens": 3067,
+          "total_tokens": 3995,
+          "completion_tokens_details": {
+            "reasoning_tokens": 609,
+            "text_tokens": 928
+          },
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "text_tokens": 3067
+          }
+        }
+      },
+      "prompt_tokens": 3067,
+      "completion_tokens": 928
+    },
+    "proposal": {
+      "record_hash": "900869895c88c2096bdd82d7e7c2d0a9eca011a8f28f6e266f44b7df45898566",
+      "task_id": "challenge-hub-refund-001",
+      "customer_alias": "C",
+      "remedy_goals": [
+        {
+          "record_hash": "35845534af29d548ab789ad7abcfd6547fb72961a1646485433ad361b8406832",
+          "goal_id": "goal_1",
+          "line_alias": "L3",
+          "quantity": 1,
+          "allowed_remedies": [
+            "refund"
+          ],
+          "required_attributes": [],
+          "maximum_extra_charge_cents": null,
+          "latest_arrival_within_days": null,
+          "target_stage": "settled"
+        }
+      ],
+      "information_goals": [],
+      "parent_training_evidence_hashes": [],
+      "challenge_protocol": "commerce-abstract-challenge-v2",
+      "hypothesis": "Customer C received a single order containing a 7-port hub with missing parts. The customer wants a refund for the incomplete hub and does not need to return it.",
+      "line_selectors": [
+        {
+          "record_hash": "7787f5ed02929f8f858d21d9f10329c0da12b81d185e43895471cb6a1bd531ce",
+          "alias": "L3",
+          "family": "hub",
+          "issue": "missing_parts",
+          "attributes": [
+            {
+              "record_hash": "9e74d716aecec53e99d12a662812b3f914db60983f8b266ab64cea485d51d3e4",
+              "name": "ports",
+              "value": "7"
+            }
+          ],
+          "minimum_quantity": 1,
+          "maximum_quantity": 1,
+          "minimum_age_days": 7,
+          "maximum_age_days": 7,
+          "return_required": false
+        }
+      ],
+      "line_relations": []
+    },
+    "status": "CERTIFIED",
+    "receipt": {
+      "status": "CERTIFIED",
+      "task_ref": "open-e918ad0d217be71a485a604c1cb1121d83fc14cf02b058c18498c665352cb467",
+      "certificate_ref": "432046116f22dfe102955d289947ef262825d687b178c5d53d035aaaba18b94e",
+      "certification_scope": "usami_v2.native_reference_task_certification",
+      "frozen": true
+    },
+    "attempt_ref": "530863c5457b29def910f5cfda6cdf34cee6e057bdfc3b7dff6d5074e353d6eb",
+    "archive_ref": "6fb7dc307b11c763ab487846e02b60224ec2d01fb5a050f31f0290fa71307199"
+  },
+  "challenge_replay_verification": {
+    "verified": true,
+    "status": "CERTIFIED"
+  },
+  "task_result": {
+    "run_ref": "b508398352fb43d0af1ed57065a87dcf",
+    "score": 0.0,
+    "status": "UNKNOWN",
+    "replay_verified": true,
+    "tool_steps": 9,
+    "model_calls": 10,
+    "model_tokens": 51256,
+    "feedback": {
+      "outcome": {
+        "record_hash": "d5630f2da99d39ab9a654715422b952123ddcc074627eb22565990fd340246f5",
+        "protocol": "commerce-outcome-v2",
+        "state_goals": [
+          {
+            "record_hash": "a2f92130dd4f683bf20a22f401a36d3c3c83d74cefec67550a890eb08b4374d7",
+            "goal_id": "goal_1",
+            "status": "FAIL",
+            "evidence_refs": []
+          }
+        ],
+        "compliance": [
+          {
+            "record_hash": "9681f75c8d9eec266a204c5ba6016ffc9d694f7510fba423839810ec73508fcc",
+            "goal_id": "unrequested_settlements",
+            "status": "PASS",
+            "evidence_refs": []
+          },
+          {
+            "record_hash": "ca0cb2282803e27dbed36f4f7c8c15ff6e42b4f723cb2538d4f6c34af466c40f",
+            "goal_id": "service_operation_compliance",
+            "status": "PASS",
+            "evidence_refs": [
+              "c38241c7c14e41101c5c4c654538a4033d8778d22b2217362a4fbc8e3f0a38d7",
+              "376641e8d023e45d6cee12982522bc4c06b98416afe09751ada9b7a839dc79d5",
+              "5c1ebc816b230e7c0fa38a1193dbe041e1069dceb3467292d36669adf1e58668",
+              "65d723fcc179af7672931fdfe3e923a54cc7e3ea848ee4ea1279d38fd095cb18",
+              "458820c1e73bf35d9ced0fbfad97a1dd60fd22d801b0f7300680d807ebf6c953",
+              "1f195202dd348b2f9dc766e4ec1514cc1d6d6ead3852e7f463fc06abbdcebe99",
+              "83fa4f8f009dd3321de1ff7d0e308b1a0db72740cbb5fb63b0cec48ee6b9cba2",
+              "53b3ad592215f98797a9e7d3ec8d694642b11ba84ffce52a134bbb12ddc3b1ca",
+              "eea03d7ff732e576ad126ebb3da93fb86eb6f09f6fca4d77df3e87a198b03e26"
+            ]
+          }
+        ],
+        "communication_hash": "9b88efeaca3a1542ba70655e19739f1f452aa58a8b2b0d2c24e997101ea1f9aa",
+        "final_goal_reached": false,
+        "business_goal_success": false,
+        "state_goal_applicability": "APPLICABLE",
+        "process_errors": {
+          "record_hash": "93a7c1ca91c8fdf478c11d193a671bbc1161ff4ca2af26f001c1858b7e77d566",
+          "goal_id": "service_process_errors",
+          "status": "FAIL",
+          "evidence_refs": [
+            "e73fc60d115e617409167a8033a3429c4e00395ba1df29d8334c2f1cb8f2092b"
+          ]
+        },
+        "safety_violations": {
+          "record_hash": "e8578bdb5a5a673ffbdf0ffeb644ce045d16552576f4e6ce55370501a61f69ec",
+          "goal_id": "service_safety_violations",
+          "status": "PASS",
+          "evidence_refs": []
+        },
+        "interaction_reliability": {
+          "record_hash": "5b3575ca31d24f2fe2e6fce00f6d6c0369f8a8197d8788b9a44b7c81757590c8",
+          "goal_id": "interaction_reliability",
+          "status": "PASS",
+          "evidence_refs": []
+        },
+        "strict_task_success": false,
+        "evaluation_status": "UNRESOLVED",
+        "valid_end": true
+      },
+      "operations": [
+        {
+          "operation": {
+            "name": "list_customer_orders",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "merchant_f30b75d26d2a",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "orders": [
+                {
+                  "id": "order_e6ad2e9b814e",
+                  "merchant_id": "merchant_f30b75d26d2a",
+                  "customer_id": "customer_4472485365a6",
+                  "paid_cents": 100897,
+                  "payment_channel": "original-card",
+                  "delivered_at": "2026-01-08T12:00:00Z"
+                }
+              ]
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "list_customer_orders",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_order_details",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "order_e6ad2e9b814e",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "order": {
+                "id": "order_e6ad2e9b814e",
+                "merchant_id": "merchant_f30b75d26d2a",
+                "customer_id": "customer_4472485365a6",
+                "paid_cents": 100897,
+                "payment_channel": "original-card",
+                "delivered_at": "2026-01-08T12:00:00Z"
+              },
+              "lines": [
+                {
+                  "id": "line_0b57113e75b1",
+                  "order_id": "order_e6ad2e9b814e",
+                  "sku_id": "sku_80e8a6489678",
+                  "quantity": 1,
+                  "allocated_paid_cents": 89900
+                },
+                {
+                  "id": "line_4a3fde875166",
+                  "order_id": "order_e6ad2e9b814e",
+                  "sku_id": "sku_12bc5d1983a2",
+                  "quantity": 2,
+                  "allocated_paid_cents": 5998
+                },
+                {
+                  "id": "line_c32c43f0464d",
+                  "order_id": "order_e6ad2e9b814e",
+                  "sku_id": "sku_7e27650e88b7",
+                  "quantity": 1,
+                  "allocated_paid_cents": 4999
+                }
+              ]
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_order_details",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_sku_details",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "sku_80e8a6489678",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "sku": {
+                "id": "sku_80e8a6489678",
+                "merchant_id": "merchant_f30b75d26d2a",
+                "product_family": "laptop",
+                "attributes": {
+                  "ram": "16GB",
+                  "screen": "15inch"
+                },
+                "price_cents": 89900,
+                "revision": 0,
+                "return_days": 30,
+                "return_required": true
+              }
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_sku_details",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_sku_details",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "sku_12bc5d1983a2",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "sku": {
+                "id": "sku_12bc5d1983a2",
+                "merchant_id": "merchant_f30b75d26d2a",
+                "product_family": "mouse",
+                "attributes": {
+                  "color": "black"
+                },
+                "price_cents": 2999,
+                "revision": 0,
+                "return_days": 15,
+                "return_required": true
+              }
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_sku_details",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_sku_details",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "sku_7e27650e88b7",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "sku": {
+                "id": "sku_7e27650e88b7",
+                "merchant_id": "merchant_f30b75d26d2a",
+                "product_family": "hub",
+                "attributes": {
+                  "ports": "7"
+                },
+                "price_cents": 4999,
+                "revision": 0,
+                "return_days": 30,
+                "return_required": false
+              }
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_sku_details",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8"
+          }
+        },
+        {
+          "operation": {
+            "name": "open_remedy_case",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "line_c32c43f0464d",
+            "params": {
+              "quantity": 1,
+              "issue": "missing_parts"
+            }
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "case_id": "case_ad3b5c4deee3324ea7ae",
+              "status": "open"
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "open_remedy_case",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "0745b67ee5d2f7851615499eae976f37172518d931995429e4414490442b7ef8",
+                "after_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a"
+          }
+        },
+        {
+          "operation": {
+            "name": "get_case_status",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "case_ad3b5c4deee3324ea7ae",
+            "params": {}
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "case": {
+                "id": "case_ad3b5c4deee3324ea7ae",
+                "line_id": "line_c32c43f0464d",
+                "unit_indices": [
+                  0
+                ],
+                "issue": "missing_parts",
+                "status": "open",
+                "evidence_id": null,
+                "review_requested": false,
+                "review_approved": false,
+                "committed_quote_id": null
+              },
+              "evidence": [
+                {
+                  "evidence_id": "evidence_197712c3cff6",
+                  "issue": "missing_parts"
+                }
+              ],
+              "quotes": [],
+              "returns": []
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "get_case_status",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a",
+                "after_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a"
+          }
+        },
+        {
+          "operation": {
+            "name": "verify_submitted_evidence",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "case_ad3b5c4deee3324ea7ae",
+            "params": {
+              "evidence_id": "evidence_197712c3cff6"
+            }
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "case_id": "case_ad3b5c4deee3324ea7ae",
+              "verified": true
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "verify_submitted_evidence",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "f738e3ecdc57e29589edd7bba46764e79cda40f8fbd3623ec225399d72bfce0a",
+                "after_hash": "1e30c75e197a7a11c00c2c0ab4aa077081a56dfacefff438f5d01d746f7c81aa"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "1e30c75e197a7a11c00c2c0ab4aa077081a56dfacefff438f5d01d746f7c81aa"
+          }
+        },
+        {
+          "operation": {
+            "name": "prepare_remedy_quote",
+            "scope_id": "merchant_f30b75d26d2a",
+            "resource_id": "case_ad3b5c4deee3324ea7ae",
+            "params": {
+              "remedy": "refund",
+              "target_sku_id": null,
+              "warehouse_id": null,
+              "pickup_slot": null
+            }
+          },
+          "result": {
+            "success": true,
+            "error_code": null,
+            "data": {
+              "quote": {
+                "id": "quote_d883f8a0382dc0175648",
+                "case_id": "case_ad3b5c4deee3324ea7ae",
+                "customer_id": "customer_4472485365a6",
+                "remedy": "refund",
+                "quantity": 1,
+                "target_sku_id": null,
+                "inventory_id": null,
+                "route_id": null,
+                "refund_cents": 4999,
+                "extra_charge_cents": 0,
+                "payment_channel": "original-card",
+                "promised_arrival": null,
+                "return_required": false,
+                "pickup_slot": null,
+                "revision": 1,
+                "inventory_revision": null,
+                "sku_revision": null,
+                "route_revision": null,
+                "valid_until": "2026-01-15T13:00:00Z",
+                "status": "prepared",
+                "terms_hash": "3a024de3ba6e2520a7709d54758682095a9cf7c3cb049ca94a1164e34999abd0"
+              }
+            }
+          },
+          "oracle": {
+            "domain": "commerce",
+            "version": "commerce-2.0.0",
+            "trace_valid": true,
+            "status": "pass",
+            "operations": [
+              {
+                "event_id": "event_000002",
+                "operation": "prepare_remedy_quote",
+                "authorized": true,
+                "reference_allowed": true,
+                "reference_error_code": null,
+                "success": true,
+                "classification": "legal_execution",
+                "operation_correct": true,
+                "violations": [],
+                "before_hash": "1e30c75e197a7a11c00c2c0ab4aa077081a56dfacefff438f5d01d746f7c81aa",
+                "after_hash": "546c390f43ebbc17137283b587b3af45e69662d8011c280169dc140286545db7"
+              }
+            ],
+            "violations": [],
+            "metrics": {
+              "legal_execution": 1,
+              "rejected_invalid_attempt": 0,
+              "successful_business_violation": 0,
+              "authorization_only": 0,
+              "false_rejection": 0,
+              "unscored": 0
+            },
+            "final_state_hash": "546c390f43ebbc17137283b587b3af45e69662d8011c280169dc140286545db7"
+          }
+        }
+      ],
+      "terminal_status": "customer_finished",
+      "terminal_reason": "customer_finished_after_final_service_reply"
+    },
+    "forbidden_behavior": false
+  },
+  "oracle_replay": {
+    "verified": true,
+    "record_hash": "f4ca252c7e1642e5111a07446f4e1d18e21a396c4178ec49cd9362d149460095",
+    "replay": {
+      "record_hash": "c632bc41ae72e63f666213520bfdf93463b9dabc61fb9cc6af5a550612023c84",
+      "verified": true,
+      "event_count": 25,
+      "operation_count": 9,
+      "final_world_hash": "546c390f43ebbc17137283b587b3af45e69662d8011c280169dc140286545db7",
+      "errors": [],
+      "outcome_hash": "d5630f2da99d39ab9a654715422b952123ddcc074627eb22565990fd340246f5"
+    },
+    "costs": {
+      "customer_calls": 0,
+      "service_calls": 10,
+      "tool_calls": 9,
+      "known_total_tokens": 51256,
+      "unknown_usage_calls": 0
+    },
+    "strict_task_success": false,
+    "final_goal_reached": false
+  },
+  "model_call_count": 11,
+  "ledger": {
+    "limits": {
+      "model_calls": 64,
+      "model_tokens": 500000,
+      "episodes": 4,
+      "tool_steps": 500,
+      "research_steps": 1000,
+      "cpu_seconds": 7200,
+      "wall_seconds": 10800,
+      "memory_bytes": 134217728,
+      "source_bytes": 65536,
+      "response_bytes": 1048576
+    },
+    "used": {
+      "model_calls": 10,
+      "model_tokens": 51256,
+      "episodes": 0,
+      "tool_steps": 9,
+      "research_steps": 20,
+      "cpu_seconds": 2.9145187089999958
+    },
+    "reserved": {
+      "model_calls": 0,
+      "model_tokens": 0,
+      "episodes": 0,
+      "tool_steps": 0,
+      "research_steps": 0,
+      "cpu_seconds": 0
+    },
+    "wall_seconds": 65.237435375,
+    "cpu_accounting": "Host wall-time upper bound for one-vCPU workers; not measured utilization",
+    "events": [
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.14770724999999985
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 4022
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16206975000000057
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.12218558400000035
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 4057
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16887974999999855
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.11848949999999903
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 4726
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.18265524999999982
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.12403716700000089
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 4892
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.15226166600000113
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.10645279199999891
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 5082
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16867379199999988
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.11688437499999793
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 5466
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.1803192499999966
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.11791508299999975
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 5355
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.18434966699999933
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.11337816700000047
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 5615
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.1742241660000019
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.11856325000000112
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 5778
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16685733299999583
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.1205604999999963
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_calls": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "model_tokens": 6263
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "research_steps": 1
+        }
+      },
+      {
+        "scope": "solver",
+        "usage": {
+          "cpu_seconds": 0.16805441700000756
+        }
+      },
+      {
+        "scope": "environment",
+        "usage": {
+          "tool_steps": 9
+        }
+      }
+    ]
+  }
+}

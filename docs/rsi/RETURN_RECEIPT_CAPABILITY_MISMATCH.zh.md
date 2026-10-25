@@ -4,6 +4,14 @@
 
 **范围：** 只讨论一次真实模型最小运行中，退货签收能力未配置导致 Challenge 无法认证的问题。
 
+## 后续实施状态
+
+已执行路径 A：复用原冻结 World，真实 Designer 根据上一轮公开拒绝原因修订为无需退货的 Hub 单目标退款任务，获得原生 `CERTIFIED` 后执行了真实 Service、Oracle 和 Replay。9 次业务操作均合法，Replay verified；Service 准备报价后没有提交正式报价展示动作，确定性 Customer 直接结束，最终退款目标没有达成，评价为 `UNRESOLVED`。[完整运行记录](../../experiments/rsi/results/live-one-world-task-revision-20261025-003/REPORT.zh.md)。
+
+随后落实动态 Schema：退货能力关闭时，每个 `LineSelector` 必须显式提供 `return_required=false`；能力开启时保持原 Schema。模型响应还会在本地按同一动态 Schema 校验。绕过模型 Schema 的直接调用仍由 Compiler 的 `RETURN_RECEIPT_UNAVAILABLE` 检查拒绝。
+
+真实退货计划、外部事件、Runtime 和 Replay 的整套联调仍未实施。以下保留最初问题和评审上下文。
+
 ## 希望 GPT 判断的问题
 
 这次失败应如何归因和修复？模型收到 `return_receipt_event_configured=false` 后，仍然为需要退货的商品提出换货/补发目标；但 Challenge Schema 允许这些目标，Compiler 才在提交后拒绝。请判断：

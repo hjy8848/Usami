@@ -122,3 +122,9 @@ return CustomerDecision(message="Thank you.", finish=True)
 本次更新了 `usami_v2/runtime/agents.py` 与 `usami_v2/runtime/runner.py`。Model-facing 工具 Schema 不再包含 `present_quote_id` / `present_for`，但 Runner 暂时保留旧的进程内 scripted adapter 分支，以免改变现有确定性控制器接口。
 
 **验证状态：** 尚未跑新的真实模型 Episode，也未运行自动化测试。运行 003 / 004 是改动前轨迹，不是修复效果证据。下一次可复用同一冻结任务做一次 Service Episode，检查普通文字回复确实带出原生报价、结构化顾客同意后 Engine 执行、Replay 验证；成功只证明交互路径修复，不代表模型能力提升。
+
+## 最小复跑结果
+
+随后以同一冻结 World 和 CERTIFIED Challenge、真实 Qwen3.7-Plus Service、确定性 Customer 执行 1 条 Episode。Runner 自动把报价交给 Customer，顾客结构化接受，Engine 实际提交退款，Native Replay 验证通过。最终业务目标达到，但 Service 有 2 次被正确拒绝的无效尝试，因此 `Process Errors=FAIL`、`Strict Task Success=false`、Adapter 仍为 `UNKNOWN`；这证明报价展示断点已打通，不等于整个 Service 任务无错。
+
+完整报告、原始模型请求响应、summary 和 episode 见 [修复后最小实验](../../experiments/rsi/results/live-certified-task-rerun-20261025-005/REPORT.zh.md)。运行还发现配置的 `EpisodeBudget.max_model_calls=12` 未限制 P Controller 内部实际请求，本次共调用 14 次，仍在总 Ledger 上限内。真实模型改动后回归尚未运行。

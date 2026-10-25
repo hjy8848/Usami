@@ -1,0 +1,1 @@
+{"kind":"P","parent_ref":"","protocol":"rsi-python-v0.2","source":"def step(view, state):\n    if \"model_observation\" in view:\n        return {\"kind\": \"ACTION\", \"state\": state, \"action\": view[\"model_observation\"]}\n    return {\"kind\": \"MODEL\", \"state\": state, \"request\": view[\"baseline_request\"]}\n"}

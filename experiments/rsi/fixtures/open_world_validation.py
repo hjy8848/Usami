@@ -116,6 +116,8 @@ class FixtureResearchModel:
         if "line_selectors" in properties:
             self.proposals += 1
             output = proposal(self.proposals % 2 == 0, "proposal-" + str(self.proposals))
+            for selector in output["line_selectors"]:
+                selector["return_required"] = False
         elif {"policy_source", "experience"} <= properties:
             output = {"policy_source": self.policy_source,
                       "experience": {"fixture": "observed public training evidence", "proposal": self.proposals}}

@@ -429,6 +429,14 @@ class OpenAIDesignerProvider:
                 "EMPTY_TOOL_ARGUMENTS",
                 "Designer submitted an empty object; provide the required fields for this proposal stage",
             )
+        if schema_override is not None:
+            from jsonschema import Draft202012Validator, ValidationError as SchemaValidationError
+            try:
+                Draft202012Validator(schema_override).validate(arguments)
+            except SchemaValidationError as exc:
+                path = ".".join(str(part) for part in exc.absolute_path)
+                raise ServiceError("DESIGNER_SCHEMA_INVALID",
+                    "Designer proposal violates this run's schema at {}: {}".format(path, exc.message)) from None
         try:
             output = model.model_validate(arguments)
         except ValidationError as exc:

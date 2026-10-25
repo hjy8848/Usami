@@ -98,6 +98,64 @@ def test_no_match_budget_and_relations_are_explicit(tmp_path):
         assert len({orders[alias] for _, alias in candidate.line_binding}) == 2
 
 
+@pytest.mark.parametrize("return_required", [None, True])
+def test_no_receipt_schema_rejects_missing_or_return_required_selectors(tmp_path, return_required):
+    from jsonschema import Draft202012Validator, ValidationError
+    from usami.service.client import ServiceError
+    from usami.service.models import ModelSettings
+    from usami_v2.scenarios.designer import OpenAIDesignerProvider
+
+    population, ref = pool(tmp_path / "worlds")
+    integration = bridge(tmp_path, population, ref)
+    schema = integration.public_view()["open_world_catalogue"]["challenge_schema"]
+    draft = proposal()
+    if return_required is not None:
+        draft["line_selectors"][0]["return_required"] = return_required
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(draft)
+
+    class Client:
+        settings = ModelSettings(model="test", base_url="http://example.invalid/v1")
+
+        def complete(self, request):
+            return {"choices": [{"finish_reason": "tool_calls", "message": {"role": "assistant",
+                "tool_calls": [{"id": "call-1", "type": "function", "function": {
+                    "name": "submit_customer_task", "arguments": json.dumps(draft)}}]}}]}
+
+    # Enforce the dynamic schema locally too, even if a provider ignores its constraints.
+    with pytest.raises(ServiceError, match="violates this run's schema") as rejected:
+        OpenAIDesignerProvider(Client()).submit("task", [], AbstractChallenge, schema_override=schema)
+    assert rejected.value.code == "DESIGNER_SCHEMA_INVALID"
+
+
+def test_no_receipt_schema_allows_nonreturn_goal_through_native_certification(tmp_path):
+    from jsonschema import Draft202012Validator
+
+    population, ref = pool(tmp_path / "worlds")
+    integration = bridge(tmp_path, population, ref)
+    draft = proposal()
+    draft["line_selectors"][0]["return_required"] = False
+    schema = integration.public_view()["open_world_catalogue"]["challenge_schema"]
+    Draft202012Validator.check_schema(schema)
+    Draft202012Validator(schema).validate(draft)
+    receipt = integration.certify(draft)
+    assert receipt["status"] == "CERTIFIED"
+    assert integration.verify_attempt(integration.attempt_refs[-1])["verified"]
+
+
+def test_receipt_enabled_schema_preserves_optional_and_true_selectors(tmp_path):
+    from jsonschema import Draft202012Validator
+
+    population, ref = pool(tmp_path / "worlds")
+    integration = bridge(tmp_path, population, ref)
+    integration.capability_options = {"return_receipt_event_configured": True}
+    schema = integration.public_view()["open_world_catalogue"]["challenge_schema"]
+    draft = proposal()
+    Draft202012Validator(schema).validate(draft)
+    draft["line_selectors"][0]["return_required"] = True
+    Draft202012Validator(schema).validate(draft)
+
+
 def test_reference_registration_replay_and_scope_failures(tmp_path):
     population, ref = pool(tmp_path / "worlds")
     integration = bridge(tmp_path, population, ref)
@@ -331,7 +389,14 @@ def test_native_return_receipt_capability_remains_available(tmp_path):
     population = WorldPopulation(tmp_path / "return-worlds", distribution(), ReturnWorlds(), seed=84)
     ref = population.next_period(2)
     integration = bridge(tmp_path, population, ref)
-    assert integration.certify(proposal())["status"] == "UNVERIFIED"
+    rejected = integration.certify(proposal())
+    assert rejected == {"status": "UNVERIFIED", "reason_code": "CAPABILITY_UNSUPPORTED",
+                        "capability_codes": ["RETURN_RECEIPT_UNAVAILABLE"]}
+    assert integration.verify_attempt(integration.attempt_refs[-1])["verified"]
+    # Direct callers can bypass the model schema; the native compiler must still reject returns.
+    direct_return = proposal()
+    direct_return["line_selectors"][0]["return_required"] = True
+    assert integration.certify(direct_return) == rejected
     assert integration.verify_attempt(integration.attempt_refs[-1])["verified"]
     from integrations.rsi_usami.open_world import propose_open_challenge
     from usami_v2.runtime.agents import AgentCall

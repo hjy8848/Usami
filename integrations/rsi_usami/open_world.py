@@ -59,6 +59,13 @@ def _abstract_challenge_schema(capabilities):
     remedy = schema["$defs"]["RemedyDraft"]["properties"]
     remedy["allowed_remedies"]["items"]["enum"] = supported_remedies
     remedy["target_stage"]["enum"] = supported_target_stages
+    if not capabilities["return_receipt_event_configured"]:
+        selector = schema["$defs"]["LineSelector"]
+        selector["properties"]["return_required"] = {
+            "type": "boolean", "const": False,
+            "description": "This run has no return-receipt events; select only items not requiring return.",
+        }
+        selector["required"].append("return_required")
     if not capabilities["information_goals_certifiable"]:
         schema["properties"]["information_goals"]["maxItems"] = 0
     return schema
